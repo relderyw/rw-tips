@@ -212,127 +212,127 @@
         }
 
         .metric-item:hover {
-            transform: translateY(-2px);
+            transform: translateY(-3px);
         }
 
-        .h2h-analysis {
-            background: var(--card-background);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-            border: 1px solid var(--border-color);
+        .metric-item h4 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .metric-item .highlight {
+            color: var(--success-color);
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .metric-item p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
         }
 
         .game-card {
             background: var(--card-hover);
-            border-radius: 10px;
             padding: 15px;
+            border-radius: 10px;
             margin: 10px 0;
-            text-align: center;
-            border: 1px solid var(--border-color);
             transition: transform 0.2s;
         }
 
         .game-card:hover {
-            transform: translateY(-2px);
+            transform: translateY(-3px);
         }
 
-        .team {
+        .game-card .team {
             display: flex;
-            justify-content: center;
             align-items: center;
-            gap: 15px;
-            padding: 10px;
+            justify-content: space-between;
+            margin-bottom: 10px;
         }
 
-        .team img {
-            width: 35px;
-            height: 35px;
+        .game-card .team img {
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
-            border: 2px solid var(--secondary-color);
+            object-fit: cover;
         }
 
-        .team span {
-            font-size: 0.9rem;
-            color: var(--text-primary);
-        }
-
-        .highlight {
+        .game-card .highlight {
             color: var(--success-color);
-            font-weight: 600;
+            font-weight: bold;
         }
 
         .back-button {
-            background: var(--secondary-color);
-            color: var(--text-primary);
-            padding: 12px 30px;
-            border-radius: 25px;
-            border: none;
-            cursor: pointer;
-            display: block;
-            margin: 20px auto;
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--secondary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
             transition: all 0.3s ease;
         }
 
         .back-button:hover {
+            background-color: #1976d2;
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
-        }
-
-        #h2hGames {
-            max-width: 800px;
-            margin: 20px auto;
         }
 
         @media (max-width: 768px) {
-            body {
-                padding: 15px;
+            .container {
+                flex-direction: column;
+            }
+
+            .probability-cards {
+                flex-direction: column;
+            }
+
+            .probability-card {
+                max-width: none;
+            }
+
+            .h2h-stats-grid {
+                grid-template-columns: 1fr;
             }
 
             .metrics-grid {
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                grid-template-columns: 1fr 1fr;
             }
         }
     </style>
 </head>
 <body>
+    <a href="javascript:history.back()" class="back-button">← Voltar</a>
+
     <div class="logo-container">
         <img src="https://i.ibb.co/v6MhLNJX/11zon-cropped.png" alt="RW Tips Logo" class="logo">
         <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
     </div>
 
-    <h1>Análise H2H</h1>
-    <button class="back-button" onclick="goBack()">Voltar</button>
+    <div class="container">
+        <div class="player-section" id="playerA"></div>
+        <div class="player-section" id="playerB"></div>
+    </div>
 
     <div class="probability-section">
         <h3>Probabilidades H2H</h3>
         <div class="probability-cards" id="probabilityCards"></div>
     </div>
 
-    <div class="h2h-analysis">
-        <h3>Análise de Confrontos Diretos</h3>
-        <div class="h2h-stats-grid" id="h2hStatsGrid"></div>
-    </div>
+    <div class="h2h-stats-grid" id="h2hStatsGrid"></div>
 
-    <div class="container">
-        <div id="playerB" class="player-section"></div>
-        <div id="playerA" class="player-section"></div>
-    </div>
-
-    <div id="h2hGames" class="h2h-analysis">
-        <h3>Histórico de Confrontos</h3>
-        <div id="h2hGamesList"></div>
-    </div>
+    <h3>Histórico de Confrontos</h3>
+    <div id="h2hGamesList"></div>
 
     <script>
-        function goBack() {
-            localStorage.setItem('needsUpdate', 'true');
-            window.history.back();
-        }
-
-        function processH2HStats(lastGames) {
-            let stats = {
-                totalGames: lastGames.length,
+        function processH2HStats(games) {
+            const stats = {
+                totalGames: games.length,
+                winHome: 0,
+                winAway: 0,
+                draw: 0,
                 over1_5HT: 0,
                 over2_5HT: 0,
                 over2_5FT: 0,
@@ -341,37 +341,34 @@
                 bttsHT: 0,
                 bttsFT: 0,
                 totalGoalsHT: 0,
-                totalGoalsFT: 0,
-                winHome: 0,
-                winAway: 0,
-                draw: 0
+                totalGoalsFT: 0
             };
 
-            lastGames.forEach(game => {
+            games.forEach(game => {
                 const [homeGoals, awayGoals] = game.score.split('-').map(Number);
                 const [homeHT, awayHT] = game.scoreHT.split('-').map(Number);
 
+                // Resultados
+                if (homeGoals > awayGoals) stats.winHome++;
+                else if (homeGoals < awayGoals) stats.winAway++;
+                else stats.draw++;
+
+                // Gols HT
                 const totalGoalsHT = homeHT + awayHT;
-                const totalGoalsFT = homeGoals + awayGoals;
-
                 stats.totalGoalsHT += totalGoalsHT;
-                stats.totalGoalsFT += totalGoalsFT;
-
-                // Half Time Stats
                 if (totalGoalsHT > 1) stats.over1_5HT++;
                 if (totalGoalsHT > 2) stats.over2_5HT++;
-                if (homeHT > 0 && awayHT > 0) stats.bttsHT++;
 
-                // Full Time Stats
+                // Gols FT
+                const totalGoalsFT = homeGoals + awayGoals;
+                stats.totalGoalsFT += totalGoalsFT;
                 if (totalGoalsFT > 2) stats.over2_5FT++;
                 if (totalGoalsFT > 3) stats.over3_5FT++;
                 if (totalGoalsFT > 4) stats.over4_5FT++;
-                if (homeGoals > 0 && awayGoals > 0) stats.bttsFT++;
 
-                // Match Result
-                if (homeGoals > awayGoals) stats.winHome++;
-                else if (awayGoals > homeGoals) stats.winAway++;
-                else stats.draw++;
+                // BTTS
+                if (homeHT > 0 && awayHT > 0) stats.bttsHT++;
+                if (homeGoals > 0 && awayGoals > 0) stats.bttsFT++;
             });
 
             return stats;
@@ -564,10 +561,17 @@
         const awayPlayer = urlParams.get('away');
         const homeID = urlParams.get('homeID');
         const awayID = urlParams.get('awayID');
-        const leagueID = urlParams.get('leagueID');
+        const leagueID = urlParams.get('leagueID') || urlParams.get('league'); // Aceita ambos os formatos
 
         // Fetch e processamento dos dados
-        fetch(`https://api.green365.com.br/api/e-soccer/event/stats?homeID=${homeID}&awayID=${awayID}&home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&league=${leagueID}&eventID=0&period=last_30`)
+        let apiUrl;
+        if (leagueID === '22614') {
+            apiUrl = `https://api.green365.com.br/api/e-soccer/event/stats?homeID=${homeID}&awayID=${awayID}&home=${encodeURIComponent(homePlayer.toLowerCase())}&away=${encodeURIComponent(awayPlayer.toLowerCase())}&homeTeam=&awayTeam=&league=${leagueID}&eventID=0&period=last_30`;
+        } else {
+            apiUrl = `https://api.green365.com.br/api/e-soccer/event/stats?homeID=${homeID}&awayID=${awayID}&home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&league=${leagueID}&eventID=0&period=last_30`;
+        }
+
+        fetch(apiUrl)
             .then(response => response.json())
             .then(data => {
                 const players = data.players;
