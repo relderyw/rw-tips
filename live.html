@@ -163,7 +163,7 @@
             border-top: 1px solid rgba(255,255,255,0.1);
         }
 
-        .h2h-button, .stats-button {
+        .h2h-button {
             flex: 1;
             padding: 8px 15px;
             border: none;
@@ -173,19 +173,11 @@
             font-weight: 600;
             transition: all 0.3s ease;
             text-transform: uppercase;
-        }
-
-        .h2h-button {
             background: linear-gradient(135deg, #00d4ff 0%, #00a6ff 100%);
             color: #000;
         }
 
-        .stats-button {
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-            color: white;
-        }
-
-        .h2h-button:hover, .stats-button:hover {
+        .h2h-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
@@ -304,9 +296,6 @@
                     <div class="button-group">
                         <button class="h2h-button" onclick="window.location.href='h2h_analysis.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${match.homeID}&awayID=${match.awayID}&leagueID=${match.leagueID}'">
                             Ver H2H
-                        </button>
-                        <button class="stats-button" onclick="window.location.href='player_stats.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${match.homeID}&awayID=${match.awayID}'">
-                            Estatísticas
                         </button>
                     </div>
                 `;
