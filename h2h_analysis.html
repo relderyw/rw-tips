@@ -83,6 +83,7 @@
             gap: 30px;
             flex-wrap: wrap;
             justify-content: space-between;
+            flex-direction: row; /* Garante que playerA fique à esquerda e playerB à direita */
         }
 
         .player-section {
@@ -315,8 +316,8 @@
     </div>
 
     <div class="container">
-        <div id="playerB" class="player-section"></div>
-        <div id="playerA" class="player-section"></div>
+        <div id="playerA" class="player-section"></div> 
+        <div id="playerB" class="player-section"></div> 
     </div>
 
     <div id="h2hGames" class="h2h-analysis">
@@ -580,10 +581,14 @@
             const players = data.players;
             const h2hStats = processH2HStats(data.mutualInfos.lastGames);
 
+            // Renderiza as métricas e jogos do playerA (Madisson) na seção playerA
             renderPlayerSection(players.playerA, 'playerA');
+
+            // Renderiza as métricas e jogos do playerB (Zangief) na seção playerB
             renderPlayerSection(players.playerB, 'playerB');
+
             renderH2HAnalysis(h2hStats);
-            renderProbabilities(h2hStats, players.playerA.name, players.playerB.name); // Passando os nomes
+            renderProbabilities(h2hStats, players.playerA.name, players.playerB.name);
             renderH2HGames(data.mutualInfos.lastGames);
         })
         .catch(error => {
