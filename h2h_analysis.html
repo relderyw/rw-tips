@@ -212,93 +212,85 @@
         }
 
         .metric-item:hover {
-            transform: translateY(-3px);
+            transform: translateY(-2px);
         }
 
-        .metric-item h4 {
-            color: var(--secondary-color);
-            margin-bottom: 10px;
-            font-size: 1rem;
-        }
-
-        .metric-item .highlight {
-            color: var(--success-color);
-            font-size: 1.8rem;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-
-        .metric-item p {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
+        .h2h-analysis {
+            background: var(--card-background);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid var(--border-color);
         }
 
         .game-card {
             background: var(--card-hover);
-            padding: 15px;
             border-radius: 10px;
+            padding: 15px;
             margin: 10px 0;
+            text-align: center;
+            border: 1px solid var(--border-color);
             transition: transform 0.2s;
         }
 
         .game-card:hover {
-            transform: translateY(-3px);
+            transform: translateY(-2px);
         }
 
-        .game-card .team {
+        .team {
             display: flex;
+            justify-content: center;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
+            gap: 15px;
+            padding: 10px;
         }
 
-        .game-card .team img {
-            width: 30px;
-            height: 30px;
+        .team img {
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
-            object-fit: cover;
+            border: 2px solid var(--secondary-color);
         }
 
-        .game-card .highlight {
+        .team span {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .highlight {
             color: var(--success-color);
-            font-weight: bold;
+            font-weight: 600;
         }
 
         .back-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: var(--secondary-color);
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            background: var(--secondary-color);
+            color: var(--text-primary);
+            padding: 12px 30px;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
             transition: all 0.3s ease;
         }
 
         .back-button:hover {
-            background-color: #1976d2;
             transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        }
+
+        #h2hGames {
+            max-width: 800px;
+            margin: 20px auto;
         }
 
         @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-            }
-
-            .probability-cards {
-                flex-direction: column;
-            }
-
-            .probability-card {
-                max-width: none;
-            }
-
-            .h2h-stats-grid {
-                grid-template-columns: 1fr;
+            body {
+                padding: 15px;
             }
 
             .metrics-grid {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             }
         }
     </style>
