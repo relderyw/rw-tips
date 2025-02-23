@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RW TIPS - Últimos Resultados</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2196f3;
+            --secondary-color: #1e88e5;
+            --background-dark: #121212;
+            --card-background: #1e1e1e;
+            --card-hover: #252525;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --success-color: #4CAF50;
+            --gold-color: #ffd700;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --neon-green: #00ff00;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-dark);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 30px;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+        }
+
+        .logo {
+            width: 150px;
+            height: auto;
+            margin-bottom: 15px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        .logo-text {
+            font-size: 2rem;
+            color: var(--neon-green);
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+            margin: 10px 0;
+            font-family: Arial, sans-serif;
+            letter-spacing: 2px;
+        }
+
+        @keyframes glow {
+            from {
+                filter: drop-shadow(0 0 5px rgba(0, 255, 0, 0.7));
+            }
+            to {
+                filter: drop-shadow(0 0 20px rgba(0, 255, 0, 0.9));
+            }
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        #backToGamesButton {
+            display: block;
+            margin: 30px auto;
+            padding: 15px 35px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #000;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        }
+
+        #backToGamesButton:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+        }
+
+        #resultsContainer {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .result-card {
+            background: linear-gradient(145deg, var(--card-background), var(--card-hover));
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .league-name {
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .team-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            max-width: 40%;
+            padding: 15px;
+        }
+
+        .team img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid var(--primary-color);
+            padding: 3px;
+            background: var(--card-background);
+            transition: all 0.3s ease;
+        }
+
+        .team:hover img {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(33, 150, 243, 0.4);
+        }
+
+        .score {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gold-color);
+            padding: 0 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .winner {
+            color: var(--success-color);
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .team-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .team {
+                max-width: 100%;
+            }
+
+            .score {
+                font-size: 2rem;
+                padding: 15px 0;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <img src="https://i.ibb.co/v6MhLNJX/11zon-cropped.png" alt="RW Tips Logo" class="logo">
+        <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
+    </div>
+
+    <h1>Últimos Resultados</h1>
+    <button id="backToGamesButton">Voltar para Próximos Jogos</button>
+    <div id="resultsContainer"></div>
+
+    <script>
+        document.getElementById('backToGamesButton').addEventListener('click', function () {
+            localStorage.setItem('needsUpdate', 'true');
+            window.location.href = 'visualization.html';
+        });
+
+        fetch('https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=1')
+            .then(response => response.json())
+            .then(data => {
+                const results = data.data;
+                const resultsContainer = document.getElementById('resultsContainer');
+
+                results.forEach(result => {
+                    const resultCard = document.createElement('div');
+                    resultCard.className = 'result-card';
+
+                    const leagueName = document.createElement('div');
+                    leagueName.className = 'league-name';
+                    leagueName.innerText = result.leagueName;
+
+                    // Set league name color based on league
+                    switch (result.leagueName) {
+                        case "Esoccer Battle - 8 mins play":
+                            leagueName.style.color = "#FF5733";
+                            break;
+                        case "Esoccer Battle Volta - 6 mins play":
+                            leagueName.style.color = "#33FF57";
+                            break;
+                        case "Esoccer GT Leagues – 12 mins play":
+                            leagueName.style.color = "#3357FF";
+                            break;
+                        case "Esoccer H2H GG League - 8 mins play":
+                            leagueName.style.color = "#FF33A1";
+                            break;
+                        case "Esoccer Adriatic League - 10 mins play":
+                            leagueName.style.color = "#FFC300";
+                            break;
+                        default:
+                            leagueName.style.color = "#ffffff";
+                    }
+
+                    // Extract team and player names
+                    const extractInfo = (teamString) => {
+                        const match = teamString.match(/(.*)\s\((.*)\)/);
+                        return match ? { team: match[1], player: match[2] } : { team: teamString, player: '' };
+                    };
+
+                    const homeInfo = extractInfo(result.home);
+                    const awayInfo = extractInfo(result.away);
+
+                    const homeTeam = document.createElement('div');
+                    homeTeam.className = 'team';
+                    homeTeam.innerHTML = `<img src="${result.homeImage}" alt="${homeInfo.team}">
+                                          <span>${homeInfo.player}</span>
+                                          <span>(${homeInfo.team})</span>`;
+
+                    const awayTeam = document.createElement('div');
+                    awayTeam.className = 'team';
+                    awayTeam.innerHTML = `<img src="${result.awayImage}" alt="${awayInfo.team}">
+                                          <span>${awayInfo.player}</span>
+                                          <span>(${awayInfo.team})</span>`;
+
+                    const score = document.createElement('div');
+                    score.className = 'score';
+                    score.innerText = result.score;
+
+                    // Highlight the winner
+                    const [homeScore, awayScore] = result.score.split('-').map(Number);
+                    if (homeScore > awayScore) {
+                        homeTeam.querySelector('span').className = 'winner';
+                    } else if (awayScore > homeScore) {
+                        awayTeam.querySelector('span').className = 'winner';
+                    }
+
+                    const teamContainer = document.createElement('div');
+                    teamContainer.className = 'team-container';
+                    teamContainer.appendChild(homeTeam);
+                    teamContainer.appendChild(score);
+                    teamContainer.appendChild(awayTeam);
+
+                    resultCard.appendChild(leagueName);
+                    resultCard.appendChild(teamContainer);
+                    resultsContainer.appendChild(resultCard);
+                });
+            })
+            .catch(error => {
+                console.error('Erro ao buscar dados:', error);
+                alert('Erro ao carregar resultados. Por favor, tente novamente.');
+            });
+    </script>
+</body>
+</html>
