@@ -296,36 +296,43 @@
     </style>
 </head>
 <body>
-    <a href="javascript:history.back()" class="back-button">← Voltar</a>
-
     <div class="logo-container">
         <img src="https://i.ibb.co/v6MhLNJX/11zon-cropped.png" alt="RW Tips Logo" class="logo">
         <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
     </div>
 
-    <div class="container">
-        <div class="player-section" id="playerA"></div>
-        <div class="player-section" id="playerB"></div>
-    </div>
+    <h1>Análise H2H</h1>
+    <button class="back-button" onclick="goBack()">Voltar</button>
 
     <div class="probability-section">
         <h3>Probabilidades H2H</h3>
         <div class="probability-cards" id="probabilityCards"></div>
     </div>
 
-    <div class="h2h-stats-grid" id="h2hStatsGrid"></div>
+    <div class="h2h-analysis">
+        <h3>Análise de Confrontos Diretos</h3>
+        <div class="h2h-stats-grid" id="h2hStatsGrid"></div>
+    </div>
 
-    <h3>Histórico de Confrontos</h3>
-    <div id="h2hGamesList"></div>
+    <div class="container">
+        <div id="playerB" class="player-section"></div>
+        <div id="playerA" class="player-section"></div>
+    </div>
+
+    <div id="h2hGames" class="h2h-analysis">
+        <h3>Histórico de Confrontos</h3>
+        <div id="h2hGamesList"></div>
+    </div>
 
     <script>
-        // Funções do segundo código
-        function processH2HStats(games) {
-            const stats = {
-                totalGames: games.length,
-                winHome: 0,
-                winAway: 0,
-                draw: 0,
+        function goBack() {
+            localStorage.setItem('needsUpdate', 'true');
+            window.history.back();
+        }
+
+        function processH2HStats(lastGames) {
+            let stats = {
+                totalGames: lastGames.length,
                 over1_5HT: 0,
                 over2_5HT: 0,
                 over2_5FT: 0,
@@ -334,34 +341,37 @@
                 bttsHT: 0,
                 bttsFT: 0,
                 totalGoalsHT: 0,
-                totalGoalsFT: 0
+                totalGoalsFT: 0,
+                winHome: 0,
+                winAway: 0,
+                draw: 0
             };
 
-            games.forEach(game => {
+            lastGames.forEach(game => {
                 const [homeGoals, awayGoals] = game.score.split('-').map(Number);
                 const [homeHT, awayHT] = game.scoreHT.split('-').map(Number);
 
-                // Resultados
-                if (homeGoals > awayGoals) stats.winHome++;
-                else if (homeGoals < awayGoals) stats.winAway++;
-                else stats.draw++;
-
-                // Gols HT
                 const totalGoalsHT = homeHT + awayHT;
+                const totalGoalsFT = homeGoals + awayGoals;
+
                 stats.totalGoalsHT += totalGoalsHT;
+                stats.totalGoalsFT += totalGoalsFT;
+
+                // Half Time Stats
                 if (totalGoalsHT > 1) stats.over1_5HT++;
                 if (totalGoalsHT > 2) stats.over2_5HT++;
+                if (homeHT > 0 && awayHT > 0) stats.bttsHT++;
 
-                // Gols FT
-                const totalGoalsFT = homeGoals + awayGoals;
-                stats.totalGoalsFT += totalGoalsFT;
+                // Full Time Stats
                 if (totalGoalsFT > 2) stats.over2_5FT++;
                 if (totalGoalsFT > 3) stats.over3_5FT++;
                 if (totalGoalsFT > 4) stats.over4_5FT++;
-
-                // BTTS
-                if (homeHT > 0 && awayHT > 0) stats.bttsHT++;
                 if (homeGoals > 0 && awayGoals > 0) stats.bttsFT++;
+
+                // Match Result
+                if (homeGoals > awayGoals) stats.winHome++;
+                else if (awayGoals > homeGoals) stats.winAway++;
+                else stats.draw++;
             });
 
             return stats;
@@ -554,17 +564,10 @@
         const awayPlayer = urlParams.get('away');
         const homeID = urlParams.get('homeID');
         const awayID = urlParams.get('awayID');
-        const leagueID = urlParams.get('leagueID') || urlParams.get('league'); // Aceita ambos os formatos
+        const leagueID = urlParams.get('leagueID');
 
         // Fetch e processamento dos dados
-        let apiUrl;
-        if (leagueID === '22614') {
-            apiUrl = `https://api.green365.com.br/api/e-soccer/event/stats?homeID=${homeID}&awayID=${awayID}&home=${encodeURIComponent(homePlayer.toLowerCase())}&away=${encodeURIComponent(awayPlayer.toLowerCase())}&homeTeam=&awayTeam=&league=${leagueID}&eventID=0&period=last_30`;
-        } else {
-            apiUrl = `https://api.green365.com.br/api/e-soccer/event/stats?homeID=${homeID}&awayID=${awayID}&home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&league=${leagueID}&eventID=0&period=last_30`;
-        }
-
-        fetch(apiUrl)
+        fetch(`https://api.green365.com.br/api/e-soccer/event/stats?homeID=${homeID}&awayID=${awayID}&home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&league=${leagueID}&eventID=0&period=last_30`)
             .then(response => response.json())
             .then(data => {
                 const players = data.players;
