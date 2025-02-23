@@ -377,34 +377,34 @@
             return stats;
         }
 
-        function renderProbabilities(h2hStats) {
-            const container = document.getElementById('probabilityCards');
-            const totalGames = h2hStats.totalGames;
-            
-            const homeWinPercent = ((h2hStats.winHome / totalGames) * 100).toFixed(1);
-            const awayWinPercent = ((h2hStats.winAway / totalGames) * 100).toFixed(1);
-            const drawPercent = ((h2hStats.draw / totalGames) * 100).toFixed(1);
-            
-            const probabilityHTML = `
-                <div class="probability-card">
-                    <h4>${game.home}</h4>
-                    <div class="probability-value">${homeWinPercent}%</div>
-                    <p>Em ${h2hStats.winHome} de ${totalGames} jogos</p>
-                </div>
-                <div class="probability-card">
-                    <h4>Empate</h4>
-                    <div class="probability-value">${drawPercent}%</div>
-                    <p>Em ${h2hStats.draw} de ${totalGames} jogos</p>
-                </div>
-                <div class="probability-card">
-                    <h4>${game.away}</h4>
-                    <div class="probability-value">${awayWinPercent}%</div>
-                    <p>Em ${h2hStats.winAway} de ${totalGames} jogos</p>
-                </div>
-            `;
+        function renderProbabilities(h2hStats, playerAName, playerBName) {
+        const container = document.getElementById('probabilityCards');
+        const totalGames = h2hStats.totalGames;
+        
+        const homeWinPercent = ((h2hStats.winHome / totalGames) * 100).toFixed(1);
+        const awayWinPercent = ((h2hStats.winAway / totalGames) * 100).toFixed(1);
+        const drawPercent = ((h2hStats.draw / totalGames) * 100).toFixed(1);
+        
+        const probabilityHTML = `
+            <div class="probability-card">
+                <h4>Vitória ${playerAName}</h4>
+                <div class="probability-value">${homeWinPercent}%</div>
+                <p>Em ${h2hStats.winHome} de ${totalGames} jogos</p>
+            </div>
+            <div class="probability-card">
+                <h4>Empate</h4>
+                <div class="probability-value">${drawPercent}%</div>
+                <p>Em ${h2hStats.draw} de ${totalGames} jogos</p>
+            </div>
+            <div class="probability-card">
+                <h4>Vitória ${playerBName}</h4>
+                <div class="probability-value">${awayWinPercent}%</div>
+                <p>Em ${h2hStats.winAway} de ${totalGames} jogos</p>
+            </div>
+        `;
 
-            container.innerHTML = probabilityHTML;
-        }
+        container.innerHTML = probabilityHTML;
+    }
 
         function renderH2HAnalysis(stats) {
             const container = document.getElementById('h2hStatsGrid');
@@ -575,21 +575,21 @@
         }
 
         fetch(apiUrl)
-            .then(response => response.json())
-            .then(data => {
-                const players = data.players;
-                const h2hStats = processH2HStats(data.mutualInfos.lastGames);
+        .then(response => response.json())
+        .then(data => {
+            const players = data.players;
+            const h2hStats = processH2HStats(data.mutualInfos.lastGames);
 
-                renderPlayerSection(players.playerA, 'playerA');
-                renderPlayerSection(players.playerB, 'playerB');
-                renderH2HAnalysis(h2hStats);
-                renderProbabilities(h2hStats);
-                renderH2HGames(data.mutualInfos.lastGames);
-            })
-            .catch(error => {
-                console.error('Erro ao carregar dados:', error);
-                alert('Erro ao carregar dados. Por favor, tente novamente.');
-            });
+            renderPlayerSection(players.playerA, 'playerA');
+            renderPlayerSection(players.playerB, 'playerB');
+            renderH2HAnalysis(h2hStats);
+            renderProbabilities(h2hStats, players.playerA.name, players.playerB.name); // Passando os nomes
+            renderH2HGames(data.mutualInfos.lastGames);
+        })
+        .catch(error => {
+            console.error('Erro ao carregar dados:', error);
+            alert('Erro ao carregar dados. Por favor, tente novamente.');
+        });
     </script>
 </body>
 </html>
