@@ -155,6 +155,41 @@
             transform: translateY(-2px);
         }
 
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .h2h-button, .stats-button {
+            flex: 1;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .h2h-button {
+            background: linear-gradient(135deg, #00d4ff 0%, #00a6ff 100%);
+            color: #000;
+        }
+
+        .stats-button {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+
+        .h2h-button:hover, .stats-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
         @keyframes blink {
             50% { opacity: 0.5; }
         }
@@ -180,6 +215,20 @@
             .logo-text {
                 font-size: 1.5rem;
             }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+
+        .error {
+            color: #ff4444;
+            text-align: center;
+            padding: 20px;
+            background-color: var(--secondary-color);
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 600px;
         }
     </style>
 </head>
@@ -221,6 +270,9 @@
             container.innerHTML = '';
 
             matches.forEach(match => {
+                const homePlayer = match.home.match(/\(([^)]+)\)/) ? match.home.match(/\(([^)]+)\)/)[1] : match.home;
+                const awayPlayer = match.away.match(/\(([^)]+)\)/) ? match.away.match(/\(([^)]+)\)/)[1] : match.away;
+
                 const matchElement = document.createElement('div');
                 matchElement.className = 'match-card';
                 matchElement.innerHTML = `
@@ -249,6 +301,14 @@
                             <span>Escanteios: ${match.stats?.corners?.[0] || 0} - ${match.stats?.corners?.[1] || 0}</span>
                         </div>
                     </div>
+                    <div class="button-group">
+                        <button class="h2h-button" onclick="window.location.href='h2h_analysis.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${match.homeID}&awayID=${match.awayID}&leagueID=${match.leagueID}'">
+                            Ver H2H
+                        </button>
+                        <button class="stats-button" onclick="window.location.href='player_stats.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${match.homeID}&awayID=${match.awayID}'">
+                            Estatísticas
+                        </button>
+                    </div>
                 `;
                 container.appendChild(matchElement);
             });
@@ -261,6 +321,16 @@
         // Atualiza quando a página se torna visível
         document.addEventListener('visibilitychange', function() {
             if (document.visibilityState === 'visible') {
+                fetchMatches();
+            }
+        });
+
+        // Atualiza quando a página recebe foco
+        window.addEventListener('focus', fetchMatches);
+
+        // Atualiza quando volta da navegação
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
                 fetchMatches();
             }
         });
