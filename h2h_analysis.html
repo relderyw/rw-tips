@@ -387,7 +387,7 @@
             
             const probabilityHTML = `
                 <div class="probability-card">
-                    <h4>Vitória Casa</h4>
+                    <h4>${game.home}</h4>
                     <div class="probability-value">${homeWinPercent}%</div>
                     <p>Em ${h2hStats.winHome} de ${totalGames} jogos</p>
                 </div>
@@ -397,7 +397,7 @@
                     <p>Em ${h2hStats.draw} de ${totalGames} jogos</p>
                 </div>
                 <div class="probability-card">
-                    <h4>Vitória Fora</h4>
+                    <h4>${game.away}</h4>
                     <div class="probability-value">${awayWinPercent}%</div>
                     <p>Em ${h2hStats.winAway} de ${totalGames} jogos</p>
                 </div>
