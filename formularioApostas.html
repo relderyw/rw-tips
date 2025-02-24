@@ -146,18 +146,25 @@
             <label>Jogador 2:
                 <input type="text" id="jogador2" required>
             </label>
-            <label>Stake:
-                <input type="number" id="stake" required>
+            <label>Stake (R$):
+                <input type="text" id="stake" pattern="R\$\s\d+,\d{2}" placeholder="R$ 0,00" required>
             </label>
             <label>Odds:
-                <input type="number" step="0.01" id="odds">
+                <input type="number" step="0.001" id="odds" min="1.000" placeholder="1.000" required>
             </label>
             <label>Resultado:
                 <select id="resultado">
                     <option value="RED">RED</option>
                     <option value="GREEN">GREEN</option>
+                    <option value="MEIO_GREEN">MEIO GREEN</option>
+                    <option value="MEIO_RED">MEIO RED</option>
+                    <option value="REEMBOLSO">REEMBOLSO</option>
                 </select>
             </label>
+            <label>Valor (R$):
+                <input type="text" id="valor" pattern="R\$\s\d+,\d{2}" placeholder="R$ 0,00" required>
+            </label>
+
             <button type="submit">Salvar</button>
         </form>
     </div>
@@ -168,8 +175,42 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94bmxzbHh1Zm1seHpuaHhrYnptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAzNjMwMjAsImV4cCI6MjA1NTkzOTAyMH0.Wg8eEiSY1rqAkf2zCdHJzXU_fUOcs3sVrlmj_7YQaxQ';
         const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(value);
+        }
+
+        function parseCurrency(value) {
+            return parseFloat(value.replace('R$', '').replace('.', '').replace(',', '.').trim());
+        }
+
         document.getElementById('form-aposta').addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            const stake = parseCurrency(document.getElementById('stake').value);
+            const odds = parseFloat(document.getElementById('odds').value);
+            const resultado = document.getElementById('resultado').value;
+            
+            let valorCalculado = 0;
+            switch(resultado) {
+                case 'GREEN':
+                    valorCalculado = stake * odds;
+                    break;
+                case 'RED':
+                    valorCalculado = -stake;
+                    break;
+                case 'MEIO_GREEN':
+                    valorCalculado = (stake * odds) / 2;
+                    break;
+                case 'MEIO_RED':
+                    valorCalculado = -stake / 2;
+                    break;
+                case 'REEMBOLSO':
+                    valorCalculado = 0;
+                    break;
+            }
 
             const { data, error } = await supabase.from('apostas').insert([{
                 data_aposta: document.getElementById('data_aposta').value,
@@ -177,10 +218,12 @@
                 metodo: document.getElementById('metodo').value,
                 jogador1: document.getElementById('jogador1').value,
                 jogador2: document.getElementById('jogador2').value,
-                stake: parseFloat(document.getElementById('stake').value),
-                odds: parseFloat(document.getElementById('odds').value),
-                resultado: document.getElementById('resultado').value
+                stake: stake,
+                odds: odds,
+                resultado: resultado,
+                valor: valorCalculado
             }]);
+
 
             if (error) {
                 alert('Erro ao salvar aposta: ' + error.message);
