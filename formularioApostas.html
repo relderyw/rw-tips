@@ -3,182 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar Aposta</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>RW TIPS - Últimos Resultados</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #2196f3;
+            --secondary-color: #1e88e5;
+            --background-dark: #121212;
+            --card-background: #1e1e1e;
+            --card-hover: #252525;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --success-color: #4CAF50;
+            --gold-color: #ffd700;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --neon-green: #00ff00;
+        }
+
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-dark);
+            color: var(--text-primary);
             margin: 0;
-            color: #333;
-        }
-        .container {
-            background-color: #fff;
             padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 400px;
+            min-height: 100vh;
+            line-height: 1.6;
         }
-        h2 {
+
+        .logo-container {
             text-align: center;
-            color: #2a5298;
-            margin-bottom: 20px;
-            font-size: 24px;
-            font-weight: 600;
+            margin: 20px 0;
+            padding: 20px;
         }
-        label {
+
+        .logo {
+            width: 150px;
+            height: auto;
+            margin-bottom: 15px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        .logo-text {
+            font-size: 2rem;
+            color: var(--neon-green);
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+            margin: 10px 0;
+            font-family: Arial, sans-serif;
+            letter-spacing: 2px;
+        }
+
+        @keyframes glow {
+            from {
+                filter: drop-shadow(0 0 5px rgba(0, 255, 0, 0.7));
+            }
+            to {
+                filter: drop-shadow(0 0 20px rgba(0, 255, 0, 0.9));
+            }
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        #backToGamesButton {
             display: block;
-            margin-top: 15px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #555;
+            margin: 30px auto;
+            padding: 15px 35px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #000;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
         }
-        input, select, button {
-            width: 100%;
-            padding: 10px;
-            margin-top: 8px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
+
+        #backToGamesButton:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+        }
+
+        #resultsContainer {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .result-card {
+            background: linear-gradient(145deg, var(--card-background), var(--card-hover));
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
             transition: all 0.3s ease;
         }
-        input:focus, select:focus {
-            border-color: #2a5298;
-            box-shadow: 0 0 5px rgba(42, 82, 152, 0.3);
-            outline: none;
+
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
         }
-        button {
-            background-color: #2a5298;
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-weight: 500;
-            margin-top: 20px;
+
+        .league-name {
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
         }
-        button:hover {
-            background-color: #1e3c72;
-            transform: translateY(-2px);
+
+        .team-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
         }
-        #valor {
-            background-color: #f9f9f9;
-            cursor: not-allowed;
+
+        .team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            max-width: 40%;
+            padding: 15px;
         }
-        @media (max-width: 480px) {
-            .container {
-                padding: 20px;
+
+        .team img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid var(--primary-color);
+            padding: 3px;
+            background: var(--card-background);
+            transition: all 0.3s ease;
+        }
+
+        .team:hover img {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(33, 150, 243, 0.4);
+        }
+
+        .score {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gold-color);
+            padding: 0 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .winner {
+            color: var(--success-color);
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
             }
-            h2 {
-                font-size: 20px;
+
+            .team-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .team {
+                max-width: 100%;
+            }
+
+            .score {
+                font-size: 2rem;
+                padding: 15px 0;
+            }
+
+            h1 {
+                font-size: 2rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Registrar Aposta</h2>
-        <form id="form-aposta">
-            <label>Data da Aposta:
-                <input type="datetime-local" id="data_aposta" required>
-            </label>
-            <label>Liga:
-                <input type="text" id="liga" required>
-            </label>
-            <label>Método:
-                <input type="text" id="metodo">
-            </label>
-            <label>Jogador 1:
-                <input type="text" id="jogador1" required>
-            </label>
-            <label>Jogador 2:
-                <input type="text" id="jogador2" required>
-            </label>
-            <label>Stake:
-                <input type="number" id="stake" required>
-            </label>
-            <label>Odds:
-                <input type="number" step="0.01" id="odds">
-            </label>
-            <label>Resultado:
-                <select id="resultado">
-                    <option value="RED">RED</option>
-                    <option value="GREEN">GREEN</option>
-                    <option value="MEIO_GREEN">MEIO GREEN</option>
-                    <option value="MEIO_RED">MEIO RED</option>
-                    <option value="REEMBOLSO">REEMBOLSO</option>
-                </select>
-            </label>
-            <label>Valor (R$):
-                <input type="text" id="valor" readonly>
-            </label>
-            <button type="submit">Salvar</button>
-        </form>
+    <div class="logo-container">
+        <img src="https://i.ibb.co/v6MhLNJX/11zon-cropped.png" alt="RW Tips Logo" class="logo">
+        <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
     </div>
 
+    <h1>Últimos Resultados</h1>
+    <button id="backToGamesButton">Voltar para Próximos Jogos</button>
+    <div id="resultsContainer"></div>
+
     <script>
-        // Conexão com o Supabase
-        const supabaseUrl = 'https://oxnlslxufmlxznhxkbzm.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94bmxzbHh1Zm1seHpuaHhrYnptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAzNjMwMjAsImV4cCI6MjA1NTkzOTAyMH0.Wg8eEiSY1rqAkf2zCdHJzXU_fUOcs3sVrlmj_7YQaxQ';
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
-        const resultadoSelect = document.getElementById('resultado');
-        const stakeInput = document.getElementById('stake');
-        const oddsInput = document.getElementById('odds');
-        const valorInput = document.getElementById('valor');
-
-        function calcularValor() {
-            const resultado = resultadoSelect.value;
-            const stake = parseFloat(stakeInput.value) || 0;
-            const odds = parseFloat(oddsInput.value) || 0;
-            let valor = 0;
-
-            if (resultado === 'GREEN') {
-                valor = stake * odds;
-            } else if (resultado === 'RED') {
-                valor = -stake;
-            } else if (resultado === 'MEIO_GREEN') {
-                valor = (stake * odds) / 2;
-            } else if (resultado === 'MEIO_RED') {
-                valor = -stake / 2;
-            } else if (resultado === 'REEMBOLSO') {
-                valor = 0;
-            }
-
-            valorInput.value = valor.toFixed(2);
-        }
-
-        resultadoSelect.addEventListener('change', calcularValor);
-        stakeInput.addEventListener('input', calcularValor);
-        oddsInput.addEventListener('input', calcularValor);
-
-        document.getElementById('form-aposta').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const { data, error } = await supabase.from('apostas').insert([{
-                data_aposta: document.getElementById('data_aposta').value,
-                liga: document.getElementById('liga').value,
-                metodo: document.getElementById('metodo').value,
-                jogador1: document.getElementById('jogador1').value,
-                jogador2: document.getElementById('jogador2').value,
-                stake: parseFloat(stakeInput.value),
-                odds: parseFloat(oddsInput.value),
-                resultado: resultadoSelect.value,
-                valor: parseFloat(valorInput.value)
-            }]);
-
-            if (error) {
-                alert('Erro ao salvar aposta: ' + error.message);
-            } else {
-                alert('Aposta registrada com sucesso!');
-                document.getElementById('form-aposta').reset();
-                valorInput.value = '';
-            }
+        document.getElementById('backToGamesButton').addEventListener('click', function () {
+            localStorage.setItem('needsUpdate', 'true');
+            window.location.href = 'visualization.html';
         });
+
+        fetch('https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=1')
+            .then(response => response.json())
+            .then(data => {
+                const results = data.data;
+                const resultsContainer = document.getElementById('resultsContainer');
+
+                results.forEach(result => {
+                    const resultCard = document.createElement('div');
+                    resultCard.className = 'result-card';
+
+                    const leagueName = document.createElement('div');
+                    leagueName.className = 'league-name';
+                    leagueName.innerText = result.leagueName;
+
+                    // Set league name color based on league
+                    switch (result.leagueName) {
+                        case "Esoccer Battle - 8 mins play":
+                            leagueName.style.color = "#FF5733";
+                            break;
+                        case "Esoccer Battle Volta - 6 mins play":
+                            leagueName.style.color = "#33FF57";
+                            break;
+                        case "Esoccer GT Leagues – 12 mins play":
+                            leagueName.style.color = "#3357FF";
+                            break;
+                        case "Esoccer H2H GG League - 8 mins play":
+                            leagueName.style.color = "#FF33A1";
+                            break;
+                        case "Esoccer Adriatic League - 10 mins play":
+                            leagueName.style.color = "#FFC300";
+                            break;
+                        default:
+                            leagueName.style.color = "#ffffff";
+                    }
+
+                    // Extract team and player names
+                    const extractInfo = (teamString) => {
+                        const match = teamString.match(/(.*)\s\((.*)\)/);
+                        return match ? { team: match[1], player: match[2] } : { team: teamString, player: '' };
+                    };
+
+                    const homeInfo = extractInfo(result.home);
+                    const awayInfo = extractInfo(result.away);
+
+                    const homeTeam = document.createElement('div');
+                    homeTeam.className = 'team';
+                    homeTeam.innerHTML = `<img src="${result.homeImage}" alt="${homeInfo.team}">
+                                          <span>${homeInfo.player}</span>
+                                          <span>(${homeInfo.team})</span>`;
+
+                    const awayTeam = document.createElement('div');
+                    awayTeam.className = 'team';
+                    awayTeam.innerHTML = `<img src="${result.awayImage}" alt="${awayInfo.team}">
+                                          <span>${awayInfo.player}</span>
+                                          <span>(${awayInfo.team})</span>`;
+
+                    const score = document.createElement('div');
+                    score.className = 'score';
+                    score.innerText = result.score;
+
+                    // Highlight the winner
+                    const [homeScore, awayScore] = result.score.split('-').map(Number);
+                    if (homeScore > awayScore) {
+                        homeTeam.querySelector('span').className = 'winner';
+                    } else if (awayScore > homeScore) {
+                        awayTeam.querySelector('span').className = 'winner';
+                    }
+
+                    const teamContainer = document.createElement('div');
+                    teamContainer.className = 'team-container';
+                    teamContainer.appendChild(homeTeam);
+                    teamContainer.appendChild(score);
+                    teamContainer.appendChild(awayTeam);
+
+                    resultCard.appendChild(leagueName);
+                    resultCard.appendChild(teamContainer);
+                    resultsContainer.appendChild(resultCard);
+                });
+            })
+            .catch(error => {
+                console.error('Erro ao buscar dados:', error);
+                alert('Erro ao carregar resultados. Por favor, tente novamente.');
+            });
     </script>
 </body>
 </html>
