@@ -191,21 +191,49 @@
         document.getElementById('form-aposta').addEventListener('submit', async (e) => {
             e.preventDefault();
 
+            // Captura os valores do formulário
+            const dataAposta = document.getElementById('data_aposta').value;
+            const liga = document.getElementById('liga').value;
+            const metodo = document.getElementById('metodo').value;
+            const jogador1 = document.getElementById('jogador1').value;
+            const jogador2 = document.getElementById('jogador2').value;
+            const stake = parseFloat(stakeInput.value);
+            const odds = parseFloat(oddsInput.value);
+            const resultado = resultadoSelect.value;
+            const valor = parseFloat(valorInput.value);
+
+            // Exibe os valores no console para depuração
+            console.log("Dados do formulário:", {
+                dataAposta,
+                liga,
+                metodo,
+                jogador1,
+                jogador2,
+                stake,
+                odds,
+                resultado,
+                valor
+            });
+
+            // Insere os dados no Supabase
             const { data, error } = await supabase.from('apostas').insert([{
-                data_aposta: document.getElementById('data_aposta').value,
-                liga: document.getElementById('liga').value,
-                metodo: document.getElementById('metodo').value,
-                jogador1: document.getElementById('jogador1').value,
-                jogador2: document.getElementById('jogador2').value,
-                stake: parseFloat(stakeInput.value),
-                odds: parseFloat(oddsInput.value),
-                resultado: resultadoSelect.value,
-                valor: parseFloat(valorInput.value)
+                data_aposta: dataAposta,
+                liga: liga,
+                metodo: metodo,
+                jogador1: jogador1,
+                jogador2: jogador2,
+                stake: stake,
+                odds: odds,
+                resultado: resultado,
+                valor: valor
             }]);
 
+            // Verifica se houve erro
             if (error) {
+                console.error("Erro ao salvar aposta:", error);
                 alert('Erro ao salvar aposta: ' + error.message);
             } else {
+                console.log("Aposta salva com sucesso:", data);
                 alert('Aposta registrada com sucesso!');
                 document.getElementById('form-aposta').reset();
                 valorInput.value = '';
