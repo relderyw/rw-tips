@@ -5,127 +5,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrar Aposta</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-
-        :root {
-            --primary-color: #00d4ff;
-            --secondary-color: #1f1f1f;
-            --background-dark: #121212;
-            --text-primary: #ffffff;
-            --text-secondary: #cccccc;
-            --card-hover: #2a2a2a;
-            --button-hover: #00aacc;
-            --neon-green: #00ff00;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--background-dark);
-            color: var(--text-primary);
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            padding: 20px;
+            color: #333;
         }
-
         .container {
-            background-color: var(--secondary-color);
+            background-color: #fff;
             padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            width: 450px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
         }
-
         h2 {
             text-align: center;
-            color: var(--primary-color);
-            margin-bottom: 25px;
-            font-size: 1.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            color: #2a5298;
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: 600;
         }
-
         label {
             display: block;
             margin-top: 15px;
-            color: var(--text-primary);
-            font-size: 0.9rem;
+            font-size: 14px;
+            font-weight: 500;
+            color: #555;
         }
-
-        input, select {
+        input, select, button {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             margin-top: 8px;
-            border: 2px solid var(--primary-color);
-            border-radius: 8px;
-            background-color: var(--background-dark);
-            color: var(--text-primary);
+            border: 1px solid #ddd;
+            border-radius: 6px;
             font-size: 14px;
             transition: all 0.3s ease;
         }
-
         input:focus, select:focus {
+            border-color: #2a5298;
+            box-shadow: 0 0 5px rgba(42, 82, 152, 0.3);
             outline: none;
-            border-color: var(--button-hover);
-            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.2);
         }
-
         button {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #00d4ff 0%, #00a6ff 100%);
-            color: #000;
+            background-color: #2a5298;
+            color: white;
             border: none;
-            border-radius: 8px;
             cursor: pointer;
-            font-weight: 600;
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 25px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+            font-weight: 500;
+            margin-top: 20px;
         }
-
         button:hover {
-            background: linear-gradient(135deg, #00a6ff 0%, #0080ff 100%);
+            background-color: #1e3c72;
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
         }
-
-        button:active {
-            transform: translateY(1px);
-            box-shadow: 0 2px 10px rgba(0, 212, 255, 0.3);
+        #valor {
+            background-color: #f9f9f9;
+            cursor: not-allowed;
         }
-
         @media (max-width: 480px) {
             .container {
-                width: 90%;
                 padding: 20px;
             }
-            
             h2 {
-                font-size: 1.5rem;
-            }
-            
-            input, select, button {
-                padding: 10px;
-                font-size: 13px;
+                font-size: 20px;
             }
         }
     </style>
-
 </head>
 <body>
     <div class="container">
@@ -146,11 +98,11 @@
             <label>Jogador 2:
                 <input type="text" id="jogador2" required>
             </label>
-            <label>Stake (R$):
-                <input type="text" id="stake" pattern="R\$\s\d+,\d{2}" placeholder="R$ 0,00" required>
+            <label>Stake:
+                <input type="number" id="stake" required>
             </label>
             <label>Odds:
-                <input type="number" step="0.001" id="odds" min="1.000" placeholder="1.000" required>
+                <input type="number" step="0.01" id="odds">
             </label>
             <label>Resultado:
                 <select id="resultado">
@@ -162,9 +114,8 @@
                 </select>
             </label>
             <label>Valor (R$):
-                <input type="text" id="valor" pattern="R\$\s\d+,\d{2}" placeholder="R$ 0,00" required>
+                <input type="text" id="valor" readonly>
             </label>
-
             <button type="submit">Salvar</button>
         </form>
     </div>
@@ -175,42 +126,38 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94bmxzbHh1Zm1seHpuaHhrYnptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAzNjMwMjAsImV4cCI6MjA1NTkzOTAyMH0.Wg8eEiSY1rqAkf2zCdHJzXU_fUOcs3sVrlmj_7YQaxQ';
         const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-        function formatCurrency(value) {
-            return new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            }).format(value);
+        const resultadoSelect = document.getElementById('resultado');
+        const stakeInput = document.getElementById('stake');
+        const oddsInput = document.getElementById('odds');
+        const valorInput = document.getElementById('valor');
+
+        function calcularValor() {
+            const resultado = resultadoSelect.value;
+            const stake = parseFloat(stakeInput.value) || 0;
+            const odds = parseFloat(oddsInput.value) || 0;
+            let valor = 0;
+
+            if (resultado === 'GREEN') {
+                valor = stake * odds;
+            } else if (resultado === 'RED') {
+                valor = -stake;
+            } else if (resultado === 'MEIO_GREEN') {
+                valor = (stake * odds) / 2;
+            } else if (resultado === 'MEIO_RED') {
+                valor = -stake / 2;
+            } else if (resultado === 'REEMBOLSO') {
+                valor = 0;
+            }
+
+            valorInput.value = valor.toFixed(2);
         }
 
-        function parseCurrency(value) {
-            return parseFloat(value.replace('R$', '').replace('.', '').replace(',', '.').trim());
-        }
+        resultadoSelect.addEventListener('change', calcularValor);
+        stakeInput.addEventListener('input', calcularValor);
+        oddsInput.addEventListener('input', calcularValor);
 
         document.getElementById('form-aposta').addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            const stake = parseCurrency(document.getElementById('stake').value);
-            const odds = parseFloat(document.getElementById('odds').value);
-            const resultado = document.getElementById('resultado').value;
-            
-            let valorCalculado = 0;
-            switch(resultado) {
-                case 'GREEN':
-                    valorCalculado = stake * odds;
-                    break;
-                case 'RED':
-                    valorCalculado = -stake;
-                    break;
-                case 'MEIO_GREEN':
-                    valorCalculado = (stake * odds) / 2;
-                    break;
-                case 'MEIO_RED':
-                    valorCalculado = -stake / 2;
-                    break;
-                case 'REEMBOLSO':
-                    valorCalculado = 0;
-                    break;
-            }
 
             const { data, error } = await supabase.from('apostas').insert([{
                 data_aposta: document.getElementById('data_aposta').value,
@@ -218,18 +165,18 @@
                 metodo: document.getElementById('metodo').value,
                 jogador1: document.getElementById('jogador1').value,
                 jogador2: document.getElementById('jogador2').value,
-                stake: stake,
-                odds: odds,
-                resultado: resultado,
-                valor: valorCalculado
+                stake: parseFloat(stakeInput.value),
+                odds: parseFloat(oddsInput.value),
+                resultado: resultadoSelect.value,
+                valor: parseFloat(valorInput.value)
             }]);
-
 
             if (error) {
                 alert('Erro ao salvar aposta: ' + error.message);
             } else {
                 alert('Aposta registrada com sucesso!');
                 document.getElementById('form-aposta').reset();
+                valorInput.value = '';
             }
         });
     </script>
