@@ -333,7 +333,7 @@
         <div class="button-container">
             <button id="viewResultsButton" class="action-button">Ver Últimos Resultados</button>
             <button id="viewStatisticsButton" class="action-button">Ver Estatísticas das Ligas</button>
-            <button id="registerBetButton" class="action-button" onclick="window.location.href='formularioApostas.html'">Registrar Aposta</button>
+            <button id="registerBetButton" class="action-button">Registrar Aposta</button>
         </div>
 
 
@@ -453,6 +453,10 @@
     
         document.getElementById('viewStatisticsButton').addEventListener('click', function() {
             window.location.href = 'statistics.html';
+        });
+
+        document.getElementById('registerBetButton').addEventListener('click', function() {
+            window.location.href = 'formularioApostas.html';
         });
     
         document.getElementById('filter').addEventListener('change', function() {
