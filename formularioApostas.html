@@ -27,6 +27,7 @@
       width: 100%;
       max-width: 450px;
       transition: transform 0.3s ease-in-out;
+      position: relative;
     }
 
     .container:hover {
@@ -87,12 +88,6 @@
       }
     }
 
-    /* Animação de Hover nos Inputs */
-    input:hover, select:hover {
-      background-color: #333;
-    }
-
-    /* Transição Suave para o Resultado */
     .result span {
       display: block;
       margin-top: 10px;
@@ -100,10 +95,49 @@
       color: #03dac6;
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     }
+
+    /* Botão de Voltar */
+    .back-button {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background-color: #bb86fc;
+      color: #121212;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s ease, background-color 0.3s ease;
+    }
+
+    .back-button:hover {
+      background-color: #9c27b0;
+      transform: scale(1.1);
+    }
+
+    /* Ícone de Voltar */
+    .back-button::before {
+      content: "←";
+      font-weight: bold;
+    }
+
+    /* Animação de Hover nos Inputs */
+    input:hover, select:hover {
+      background-color: #333;
+    }
   </style>
 </head>
 <body>
   <div class="container">
+    <!-- Botão de Voltar -->
+    <button class="back-button" onclick="voltar()"></button>
+
     <h1>Aposta</h1>
 
     <label for="data-hora">Data e Hora da Aposta:</label>
@@ -192,6 +226,11 @@
       const agora = new Date();
       const options = { dateStyle: 'short', timeStyle: 'medium' };
       document.getElementById('data-hora').value = agora.toLocaleString('pt-BR', options);
+    }
+
+    // Função para voltar
+    function voltar() {
+      window.history.back(); // Volta para a página anterior
     }
 
     // Atualiza a data e hora ao carregar a página
