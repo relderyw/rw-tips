@@ -28,6 +28,8 @@
       max-width: 450px;
       transition: transform 0.3s ease-in-out;
       position: relative;
+      overflow-y: auto; /* Adicionado para permitir rolagem interna */
+      max-height: 90vh; /* Limita a altura máxima do container */
     }
 
     .container:hover {
@@ -360,6 +362,7 @@
     }
 
     // Função para carregar as apostas do Firestore
+        // Função para carregar as apostas do Firestore
     function carregarApostas() {
       const apostasLista = document.getElementById('apostas-lista');
       apostasLista.innerHTML = "";
@@ -454,6 +457,11 @@
 
         alert('Dados salvos com sucesso!');
         limparCampos(); // Limpa os campos após salvar
+
+        // Evita rolagem automática ao adicionar um novo registro
+        setTimeout(() => {
+          document.querySelector('.container').scrollTo(0, 0);
+        }, 100);
       } catch (error) {
         console.error("Erro ao salvar os dados: ", error);
         alert('Ocorreu um erro ao salvar os dados.');
