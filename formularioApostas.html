@@ -1,322 +1,258 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar Aposta</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    <style>
-        :root {
-            --background-dark: #0f0f13;
-            --card-background: #1a1a23;
-            --input-background: #222222;
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0b0;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --success-color: #10b981;
-            --danger-color: #ef4444;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--background-dark);
-            color: var(--text-primary);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            background: var(--card-background);
-            padding: 2rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            width: 100%;
-            max-width: 28rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .header h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 0.25rem;
-            transition: all 0.2s;
-        }
-
-        .close-btn:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        label {
-            display: block;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 0.5rem 0.75rem;
-            background: var(--input-background);
-            border: 1px solid var(--border-color);
-            border-radius: 0.25rem;
-            color: var(--text-primary);
-            font-size: 0.875rem;
-            margin-bottom: 1rem;
-        }
-
-        .grid-cols-2 {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-        }
-
-        .value-display {
-            background: var(--input-background);
-            border: 1px solid var(--border-color);
-            border-radius: 0.25rem;
-            padding: 1rem;
-            margin: 1.5rem 0;
-        }
-
-        .value-display label {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.25rem;
-        }
-
-        .value-display .amount {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.75rem;
-            margin-top: 1.5rem;
-        }
-
-        button {
-            padding: 0.5rem 1rem;
-            border-radius: 0.25rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-        }
-
-        .btn-outline:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .btn-primary {
-            background: var(--success-color);
-            border: none;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #0d9f6e;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulário de Aposta</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1A1F2C;
+      color: white;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .modal {
+      background-color: #1A1F2C;
+      border-radius: 8px;
+      border: 1px solid #333;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .header h2 {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    .header button {
+      background: none;
+      border: none;
+      color: #666;
+      cursor: pointer;
+    }
+    .header button:hover {
+      color: white;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.875rem;
+      color: #666;
+      margin-bottom: 5px;
+    }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 8px;
+      background-color: #222;
+      border: 1px solid #444;
+      border-radius: 4px;
+      color: white;
+    }
+    .form-group input[type="number"] {
+      padding-left: 30px;
+    }
+    .form-group .currency {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #666;
+    }
+    .calculated-value {
+      background-color: #222;
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .calculated-value .label {
+      font-size: 0.875rem;
+      color: #666;
+      margin-bottom: 5px;
+    }
+    .calculated-value .value {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    .calculated-value .value.positive {
+      color: #10B981;
+    }
+    .calculated-value .value.negative {
+      color: #EF4444;
+    }
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .actions button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .actions button.cancel {
+      background-color: transparent;
+      border: 1px solid #666;
+      color: #666;
+    }
+    .actions button.cancel:hover {
+      background-color: #333;
+      color: white;
+    }
+    .actions button.save {
+      background-color: #10B981;
+      color: white;
+    }
+    .actions button.save:hover {
+      background-color: #059669;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h2>Criar Aposta</h2>
-            <button class="close-btn" onclick="window.history.back()">×</button>
-        </div>
-
-        <form id="betting-form">
-            <!-- Data da Aposta -->
-            <div>
-                <label>Data da Aposta</label>
-                <input type="datetime-local" id="bet-date" required>
-            </div>
-
-            <!-- Liga -->
-            <div>
-                <label>Liga</label>
-                <select id="league" required>
-                    <option value="esoccer">E-Soccer - Esportes Battle - (8 MIN)</option>
-                </select>
-            </div>
-
-            <!-- Jogadores -->
-            <div class="grid-cols-2">
-                <div>
-                    <label>Jogador 1</label>
-                    <input type="text" id="player1" required>
-                </div>
-                <div>
-                    <label>Jogador 2</label>
-                    <input type="text" id="player2" required>
-                </div>
-            </div>
-
-            <!-- Método -->
-            <div>
-                <label>Método</label>
-                <select id="method" required>
-                    <option value="method1">Método 1</option>
-                    <option value="method2">Método 2</option>
-                </select>
-            </div>
-
-            <!-- Stake e Odds -->
-            <div class="grid-cols-2">
-                <div>
-                    <label>Stake</label>
-                    <div style="position: relative;">
-                        <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary);">R$</span>
-                        <input type="number" id="stake" step="0.01" required style="padding-left: 2rem;">
-                    </div>
-                </div>
-                <div>
-                    <label>Odds</label>
-                    <input type="number" id="odds" step="0.01" required>
-                </div>
-            </div>
-
-            <!-- Resultado -->
-            <div>
-                <label>Resultado</label>
-                <select id="result" required>
-                    <option value="green">GREEN</option>
-                    <option value="red">RED</option>
-                    <option value="half_green">MEIO GREEN</option>
-                    <option value="half_red">MEIO RED</option>
-                    <option value="refund">REEMBOLSO</option>
-                </select>
-            </div>
-
-            <!-- Valor Calculado -->
-            <div class="value-display">
-                <label>Valor Calculado</label>
-                <div id="calculated-value" class="amount">R$ 0,00</div>
-            </div>
-
-            <!-- Ações -->
-            <div class="actions">
-                <button type="button" class="btn-outline" onclick="window.history.back()">Cancelar</button>
-                <button type="submit" class="btn-primary">Salvar</button>
-            </div>
-        </form>
+  <div class="modal">
+    <div class="header">
+      <div>
+        <button onclick="handleBackClick()">←</button>
+        <h2>Criar Aposta</h2>
+      </div>
+      <button onclick="closeModal()">✕</button>
     </div>
+    <div class="form-group">
+      <label>Data Da Aposta</label>
+      <input type="datetime-local" id="date" value="2023-10-01T12:00">
+    </div>
+    <div class="form-group">
+      <label>LIGA</label>
+      <select id="league">
+        <option value="esoccer">E-Soccer - Esportes Battle - (8 MIN)</option>
+      </select>
+    </div>
+    <div class="form-group grid">
+      <div>
+        <label>JOGADOR 1</label>
+        <input type="text" id="player1">
+      </div>
+      <div>
+        <label>JOGADOR 2</label>
+        <input type="text" id="player2">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Método</label>
+      <select id="method">
+        <option value="method1">Método 1</option>
+        <option value="method2">Método 2</option>
+      </select>
+    </div>
+    <div class="form-group grid">
+      <div>
+        <label>Stake</label>
+        <div class="relative">
+          <span class="currency">R$</span>
+          <input type="number" id="stake" value="0">
+        </div>
+      </div>
+      <div>
+        <label>Odds</label>
+        <input type="number" id="odds" value="0" step="0.01">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>RESULTADOS</label>
+      <select id="result">
+        <option value="green">GREEN</option>
+        <option value="red">RED</option>
+        <option value="half_green">MEIO GREEN</option>
+        <option value="half_red">MEIO RED</option>
+        <option value="refund">REEMBOLSO</option>
+      </select>
+    </div>
+    <div class="calculated-value">
+      <div class="label">Valor Calculado</div>
+      <div class="value" id="calculatedValue">R$ 0,00</div>
+    </div>
+    <div class="actions">
+      <button class="cancel" onclick="closeModal()">Cancelar</button>
+      <button class="save" onclick="saveForm()">Salvar</button>
+    </div>
+  </div>
 
-    <script>
-        // Função para formatar valores monetários
-        function formatCurrency(value) {
-            return new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            }).format(value);
-        }
+  <script>
+    function handleBackClick() {
+      alert('Voltar para a página anterior');
+    }
 
-        // Função para calcular o valor
-        function calculateValue() {
-            const stake = parseFloat(document.getElementById('stake').value) || 0;
-            const odds = parseFloat(document.getElementById('odds').value) || 0;
-            const result = document.getElementById('result').value;
+    function closeModal() {
+      alert('Fechar modal');
+    }
 
-            const totalReturn = stake * odds; // Retorno total se ganhar
-            const profit = totalReturn - stake; // Lucro líquido se ganhar
+    function saveForm() {
+      alert('Formulário salvo');
+    }
 
-            let calculatedValue = 0;
-            switch(result) {
-                case 'green':
-                    calculatedValue = totalReturn; // Retorno total (stake + lucro)
-                    break;
-                case 'red':
-                    calculatedValue = -stake; // Perde o stake
-                    break;
-                case 'half_green':
-                    calculatedValue = stake + (profit / 2); // Stake + metade do lucro
-                    break;
-                case 'half_red':
-                    calculatedValue = stake / 2; // Retorna metade do stake
-                    break;
-                case 'refund':
-                    calculatedValue = 0;
-                    break;
-            }
+    function updateCalculatedValue() {
+      const stake = parseFloat(document.getElementById('stake').value) || 0;
+      const odds = parseFloat(document.getElementById('odds').value) || 0;
+      const result = document.getElementById('result').value;
+      let calculatedValue = 0;
 
-            const valueDisplay = document.getElementById('calculated-value');
-            valueDisplay.textContent = formatCurrency(calculatedValue);
-            valueDisplay.style.color = calculatedValue > stake ? 'var(--success-color)' : 
-                                      calculatedValue < stake ? 'var(--danger-color)' : 
-                                      'var(--text-primary)';
-        }
+      switch (result) {
+        case 'green':
+          calculatedValue = stake * odds - stake;
+          break;
+        case 'red':
+          calculatedValue = -stake;
+          break;
+        case 'half_green':
+          calculatedValue = (stake * odds + stake) / 2 - stake;
+          break;
+        case 'half_red':
+          calculatedValue = -stake / 2;
+          break;
+        case 'refund':
+          calculatedValue = 0;
+          break;
+        default:
+          calculatedValue = 0;
+      }
 
-        // Adicionar listeners para cálculo automático
-        document.getElementById('stake').addEventListener('input', calculateValue);
-        document.getElementById('odds').addEventListener('input', calculateValue);
-        document.getElementById('result').addEventListener('change', calculateValue);
+      const formattedValue = new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      }).format(calculatedValue);
 
-        // Preencher data atual automaticamente
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        document.getElementById('bet-date').value = `${year}-${month}-${day}T${hours}:${minutes}`;
+      const calculatedValueElement = document.getElementById('calculatedValue');
+      calculatedValueElement.textContent = formattedValue;
 
-        // Configurar evento de submit do formulário
-        document.getElementById('betting-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
+      if (calculatedValue > 0) {
+        calculatedValueElement.className = 'value positive';
+      } else if (calculatedValue < 0) {
+        calculatedValueElement.className = 'value negative';
+      } else {
+        calculatedValueElement.className = 'value';
+      }
+    }
 
-            const { data, error } = await supabase.from('apostas').insert([{
-                data_aposta: document.getElementById('bet-date').value,
-                liga: document.getElementById('league').value,
-                jogador1: document.getElementById('player1').value,
-                jogador2: document.getElementById('player2').value,
-                metodo: document.getElementById('method').value,
-                stake: parseFloat(document.getElementById('stake').value),
-                odds: parseFloat(document.getElementById('odds').value),
-                resultado: document.getElementById('result').value,
-                valor: parseFloat(document.getElementById('calculated-value').textContent.replace('R$', '').replace('.', '').replace(',', '.'))
-            }]);
-
-            if (error) {
-                alert('Erro ao salvar aposta: ' + error.message);
-            } else {
-                alert('Aposta registrada com sucesso!');
-                window.location.href = 'visualization.html';
-            }
-        });
-    </script>
+    document.getElementById('stake').addEventListener('input', updateCalculatedValue);
+    document.getElementById('odds').addEventListener('input', updateCalculatedValue);
+    document.getElementById('result').addEventListener('change', updateCalculatedValue);
+  </script>
 </body>
 </html>
