@@ -96,6 +96,37 @@
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     }
 
+    /* Botão Voltar */
+    .back-button {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background-color: #bb86fc;
+      color: #121212;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s ease, background-color 0.3s ease;
+    }
+
+    .back-button:hover {
+      background-color: #9c27b0;
+      transform: scale(1.1);
+    }
+
+    /* Ícone de Voltar */
+    .back-button::before {
+      content: "←";
+      font-weight: bold;
+    }
+
     /* Botão Salvar Dados */
     #salvar-dados {
       width: 100%;
@@ -156,10 +187,41 @@
     .aposta-actions button:hover {
       background-color: #9c27b0;
     }
+
+    /* Resumo de Ganhos/Perdas */
+    .resumo {
+      margin-top: 20px;
+      padding: 15px;
+      background: linear-gradient(145deg, #1a1a1a, #121212);
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .resumo-item {
+      text-align: center;
+    }
+
+    .resumo-item.green {
+      color: #03dac6;
+    }
+
+    .resumo-item.red {
+      color: #cf6679;
+    }
+
+    .resumo-item.gray {
+      color: #888;
+    }
   </style>
 </head>
 <body>
   <div class="container">
+    <!-- Botão de Voltar -->
+    <button class="back-button" onclick="voltar()"></button>
+
     <h1>Aposta</h1>
 
     <label for="data-hora">Data e Hora da Aposta:</label>
@@ -204,6 +266,19 @@
       R$ Valor: <span>Calculando...</span>
     </div>
 
+    <!-- Resumo de Ganhos/Perdas -->
+    <div class="resumo">
+      <div class="resumo-item green" id="ganho-total">
+        Ganho Total: <strong>R$ 0,00</strong>
+      </div>
+      <div class="resumo-item red" id="perda-total">
+        Perda Total: <strong>R$ 0,00</strong>
+      </div>
+      <div class="resumo-item gray" id="saldo-total">
+        Saldo Total: <strong>R$ 0,00</strong>
+      </div>
+    </div>
+
     <!-- Lista de Apostas -->
     <div class="apostas-lista" id="apostas-lista"></div>
   </div>
@@ -211,7 +286,7 @@
   <!-- Importar o SDK do Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, serverTimestamp, query, where } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyALiAKWq7Z6B9ut6KCHt9L4g8Vt8VHF6iM",
@@ -289,8 +364,20 @@
       const apostasLista = document.getElementById('apostas-lista');
       apostasLista.innerHTML = "";
 
-      const apostasRef = collection(db, "apostas");
+      const hoje = new Date();
+      const inicioDoDia = new Date(hoje.setHours(0, 0, 0, 0));
+      const fimDoDia = new Date(hoje.setHours(23, 59, 59, 999));
+
+      const apostasRef = query(
+        collection(db, "apostas"),
+        where("timestamp", ">=", inicioDoDia),
+        where("timestamp", "<=", fimDoDia)
+      );
+
       onSnapshot(apostasRef, (snapshot) => {
+        let ganhoTotal = 0;
+        let perdaTotal = 0;
+
         snapshot.forEach((doc) => {
           const aposta = doc.data();
           const apostaItem = document.createElement("div");
@@ -308,7 +395,25 @@
           `;
 
           apostasLista.appendChild(apostaItem);
+
+          // Calcular ganhos/perdas
+          const stake = parseFloat(aposta.stake.replace('R$', '').replace(',', '.'));
+          const odds = parseFloat(aposta.odds.replace(',', '.'));
+          if (aposta.resultado === "green") {
+            ganhoTotal += stake * odds;
+          } else if (aposta.resultado === "red") {
+            perdaTotal += stake;
+          } else if (aposta.resultado === "meio-green") {
+            ganhoTotal += (stake / 2) + ((stake / 2) * odds);
+          } else if (aposta.resultado === "meio-red") {
+            perdaTotal += stake / 2;
+          }
         });
+
+        // Atualizar resumo
+        document.getElementById('ganho-total').innerHTML = `Ganho Total: <strong>${formatarMoeda(ganhoTotal)}</strong>`;
+        document.getElementById('perda-total').innerHTML = `Perda Total: <strong>${formatarMoeda(perdaTotal)}</strong>`;
+        document.getElementById('saldo-total').innerHTML = `Saldo Total: <strong>${formatarMoeda(ganhoTotal - perdaTotal)}</strong>`;
       });
     }
 
@@ -354,6 +459,11 @@
         alert('Ocorreu um erro ao salvar os dados.');
       }
     });
+
+    // Função para voltar
+    function voltar() {
+      window.history.back();
+    }
 
     // Inicializa a página
     window.onload = () => {
