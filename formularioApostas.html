@@ -6,108 +6,238 @@
     <title>Registrar Aposta</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <style>
+        :root {
+            --background-dark: #0f0f13;
+            --card-background: #1a1a23;
+            --input-background: #222222;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Inter', sans-serif;
+            background: var(--background-dark);
+            color: var(--text-primary);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
-        }
-        .container {
-            background-color: #fff;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 400px;
         }
-        h2 {
-            text-align: center;
+
+        .container {
+            background: var(--card-background);
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 28rem;
+            border: 1px solid var(--border-color);
         }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
         label {
             display: block;
-            margin-top: 10px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
         }
-        input, select, button {
+
+        input, select {
             width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            padding: 0.5rem 0.75rem;
+            background: var(--input-background);
+            border: 1px solid var(--border-color);
+            border-radius: 0.25rem;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
         }
+
+        .grid-cols-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .value-display {
+            background: var(--input-background);
+            border: 1px solid var(--border-color);
+            border-radius: 0.25rem;
+            padding: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .value-display label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .value-display .amount {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
         button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
             cursor: pointer;
+            transition: all 0.2s;
         }
-        button:hover {
-            background-color: #45a049;
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
         }
-        .back-button {
-            background-color: #f44336;
-            margin-top: 10px;
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.05);
         }
-        .back-button:hover {
-            background-color: #d32f2f;
+
+        .btn-primary {
+            background: var(--success-color);
+            border: none;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0d9f6e;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Registrar Aposta</h2>
-        <form id="form-aposta">
-            <label>Data da Aposta:
-                <input type="datetime-local" id="data_aposta" required>
-            </label>
-            <label>Liga:
-                <input type="text" id="liga" required>
-            </label>
-            <label>Método:
-                <input type="text" id="metodo">
-            </label>
-            <label>Jogador 1:
-                <input type="text" id="jogador1" required>
-            </label>
-            <label>Jogador 2:
-                <input type="text" id="jogador2" required>
-            </label>
-            <label>Stake (R$):
-                <input type="text" id="stake" pattern="R\$\s\d+,\d{2}" placeholder="R$ 0,00" required>
-            </label>
-            <label>Odds:
-                <input type="number" step="0.001" id="odds" min="1.000" placeholder="1.000" required>
-            </label>
-            <label>Resultado:
-                <select id="resultado">
-                    <option value="RED">RED</option>
-                    <option value="GREEN">GREEN</option>
-                    <option value="MEIO_GREEN">MEIO GREEN</option>
-                    <option value="MEIO_RED">MEIO RED</option>
-                    <option value="REEMBOLSO">REEMBOLSO</option>
+        <div class="header">
+            <h2>Criar Aposta</h2>
+            <button class="close-btn" onclick="window.history.back()">×</button>
+        </div>
+
+        <form id="betting-form">
+            <!-- Data da Aposta -->
+            <div>
+                <label>Data da Aposta</label>
+                <input type="datetime-local" id="bet-date" required>
+            </div>
+
+            <!-- Liga -->
+            <div>
+                <label>Liga</label>
+                <select id="league" required>
+                    <option value="esoccer">E-Soccer - Esportes Battle - (8 MIN)</option>
                 </select>
-            </label>
-            <label>Valor (R$):
-                <input type="text" id="valor" pattern="R\$\s\d+,\d{2}" placeholder="R$ 0,00" readonly>
-            </label>
-            <button type="submit">Salvar</button>
-            <button type="button" class="back-button" onclick="window.location.href='visualization.html'">Voltar</button>
+            </div>
+
+            <!-- Jogadores -->
+            <div class="grid-cols-2">
+                <div>
+                    <label>Jogador 1</label>
+                    <input type="text" id="player1" required>
+                </div>
+                <div>
+                    <label>Jogador 2</label>
+                    <input type="text" id="player2" required>
+                </div>
+            </div>
+
+            <!-- Método -->
+            <div>
+                <label>Método</label>
+                <select id="method" required>
+                    <option value="method1">Método 1</option>
+                    <option value="method2">Método 2</option>
+                </select>
+            </div>
+
+            <!-- Stake e Odds -->
+            <div class="grid-cols-2">
+                <div>
+                    <label>Stake</label>
+                    <div style="position: relative;">
+                        <span style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary);">R$</span>
+                        <input type="number" id="stake" step="0.01" required style="padding-left: 2rem;">
+                    </div>
+                </div>
+                <div>
+                    <label>Odds</label>
+                    <input type="number" id="odds" step="0.01" required>
+                </div>
+            </div>
+
+            <!-- Resultado -->
+            <div>
+                <label>Resultado</label>
+                <select id="result" required>
+                    <option value="green">GREEN</option>
+                    <option value="red">RED</option>
+                    <option value="half_green">MEIO GREEN</option>
+                    <option value="half_red">MEIO RED</option>
+                    <option value="refund">REEMBOLSO</option>
+                </select>
+            </div>
+
+            <!-- Valor Calculado -->
+            <div class="value-display">
+                <label>Valor Calculado</label>
+                <div id="calculated-value" class="amount">R$ 0,00</div>
+            </div>
+
+            <!-- Ações -->
+            <div class="actions">
+                <button type="button" class="btn-outline" onclick="window.history.back()">Cancelar</button>
+                <button type="submit" class="btn-primary">Salvar</button>
+            </div>
         </form>
     </div>
 
     <script>
-        // Conexão com o Supabase
-        const supabaseUrl = 'https://oxnlslxufmlxznhxkbzm.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94bmxzbHh1Zm1seHpuaHhrYnptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAzNjMwMjAsImV4cCI6MjA1NTkzOTAyMH0.Wg8eEiSY1rqAkf2zCdHJzXU_fUOcs3sVrlmj_7YQaxQ';
-        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-
-        // Preenche a data atual automaticamente
-        const now = new Date();
-        const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-        document.getElementById('data_aposta').value = localDateTime;
-
-        // Funções para formatar e parsear valores monetários
+        // Função para formatar valores monetários
         function formatCurrency(value) {
             return new Intl.NumberFormat('pt-BR', {
                 style: 'currency',
@@ -115,69 +245,73 @@
             }).format(value);
         }
 
-        function parseCurrency(value) {
-            return parseFloat(value.replace('R$', '').replace('.', '').replace(',', '.').trim());
-        }
+        // Função para calcular o valor
+        function calculateValue() {
+            const stake = parseFloat(document.getElementById('stake').value) || 0;
+            const odds = parseFloat(document.getElementById('odds').value) || 0;
+            const result = document.getElementById('result').value;
 
-        // Atualiza o valor automaticamente
-        function updateValor() {
-            const stake = parseCurrency(document.getElementById('stake').value);
-            const odds = parseFloat(document.getElementById('odds').value);
-            const resultado = document.getElementById('resultado').value;
-            
-            let valorCalculado = 0;
-            switch(resultado) {
-                case 'GREEN':
-                    valorCalculado = stake * odds;
+            let calculatedValue = 0;
+            switch(result) {
+                case 'green':
+                    calculatedValue = stake * odds - stake;
                     break;
-                case 'RED':
-                    valorCalculado = -stake;
+                case 'red':
+                    calculatedValue = -stake;
                     break;
-                case 'MEIO_GREEN':
-                    valorCalculado = (stake * odds) / 2;
+                case 'half_green':
+                    calculatedValue = (stake * odds + stake) / 2 - stake;
                     break;
-                case 'MEIO_RED':
-                    valorCalculado = -stake / 2;
+                case 'half_red':
+                    calculatedValue = -stake / 2;
                     break;
-                case 'REEMBOLSO':
-                    valorCalculado = 0;
+                case 'refund':
+                    calculatedValue = 0;
                     break;
             }
-            document.getElementById('valor').value = formatCurrency(valorCalculado);
+
+            const valueDisplay = document.getElementById('calculated-value');
+            valueDisplay.textContent = formatCurrency(calculatedValue);
+            valueDisplay.style.color = calculatedValue > 0 ? 'var(--success-color)' : 
+                                      calculatedValue < 0 ? 'var(--danger-color)' : 
+                                      'var(--text-primary)';
         }
 
-        // Adiciona listeners para atualização automática
-        document.getElementById('stake').addEventListener('input', updateValor);
-        document.getElementById('odds').addEventListener('input', updateValor);
-        document.getElementById('resultado').addEventListener('change', updateValor);
+        // Adicionar listeners para cálculo automático
+        document.getElementById('stake').addEventListener('input', calculateValue);
+        document.getElementById('odds').addEventListener('input', calculateValue);
+        document.getElementById('result').addEventListener('change', calculateValue);
 
-        document.getElementById('form-aposta').addEventListener('submit', async (e) => {
+        // Preencher data atual automaticamente
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('bet-date').value = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+        // Configurar evento de submit do formulário
+        document.getElementById('betting-form').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const stake = parseCurrency(document.getElementById('stake').value);
-            const odds = parseFloat(document.getElementById('odds').value);
-            const resultado = document.getElementById('resultado').value;
-            const valor = parseCurrency(document.getElementById('valor').value);
-
             const { data, error } = await supabase.from('apostas').insert([{
-                data_aposta: document.getElementById('data_aposta').value,
-                liga: document.getElementById('liga').value,
-                metodo: document.getElementById('metodo').value,
-                jogador1: document.getElementById('jogador1').value,
-                jogador2: document.getElementById('jogador2').value,
-                stake: stake,
-                odds: odds,
-                resultado: resultado,
-                valor: valor
+                data_aposta: document.getElementById('bet-date').value,
+                liga: document.getElementById('league').value,
+                jogador1: document.getElementById('player1').value,
+                jogador2: document.getElementById('player2').value,
+                metodo: document.getElementById('method').value,
+                stake: parseFloat(document.getElementById('stake').value),
+                odds: parseFloat(document.getElementById('odds').value),
+                resultado: document.getElementById('result').value,
+                valor: parseFloat(document.getElementById('calculated-value').textContent.replace('R$', '').replace('.', '').replace(',', '.'))
             }]);
 
             if (error) {
                 alert('Erro ao salvar aposta: ' + error.message);
             } else {
                 alert('Aposta registrada com sucesso!');
-                document.getElementById('form-aposta').reset();
-                document.getElementById('data_aposta').value = localDateTime;
-                document.getElementById('valor').value = formatCurrency(0);
+                window.location.href = 'visualization.html';
             }
         });
     </script>
