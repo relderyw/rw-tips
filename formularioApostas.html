@@ -251,19 +251,22 @@
             const odds = parseFloat(document.getElementById('odds').value) || 0;
             const result = document.getElementById('result').value;
 
+            const totalReturn = stake * odds; // Retorno total se ganhar
+            const profit = totalReturn - stake; // Lucro líquido se ganhar
+
             let calculatedValue = 0;
             switch(result) {
                 case 'green':
-                    calculatedValue = stake * odds - stake;
+                    calculatedValue = totalReturn; // Retorno total (stake + lucro)
                     break;
                 case 'red':
-                    calculatedValue = -stake;
+                    calculatedValue = -stake; // Perde o stake
                     break;
                 case 'half_green':
-                    calculatedValue = (stake * odds + stake) / 2 - stake;
+                    calculatedValue = stake + (profit / 2); // Stake + metade do lucro
                     break;
                 case 'half_red':
-                    calculatedValue = -stake / 2;
+                    calculatedValue = stake / 2; // Retorna metade do stake
                     break;
                 case 'refund':
                     calculatedValue = 0;
@@ -272,8 +275,8 @@
 
             const valueDisplay = document.getElementById('calculated-value');
             valueDisplay.textContent = formatCurrency(calculatedValue);
-            valueDisplay.style.color = calculatedValue > 0 ? 'var(--success-color)' : 
-                                      calculatedValue < 0 ? 'var(--danger-color)' : 
+            valueDisplay.style.color = calculatedValue > stake ? 'var(--success-color)' : 
+                                      calculatedValue < stake ? 'var(--danger-color)' : 
                                       'var(--text-primary)';
         }
 
