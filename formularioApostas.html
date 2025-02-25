@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Formulário de Aposta</title>
+  <title>Aposta Moderna</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #1A1F2C;
-      color: white;
+      background-color: #121212;
+      color: #e0e0e0;
       margin: 0;
       padding: 0;
       display: flex;
@@ -16,243 +16,156 @@
       align-items: center;
       height: 100vh;
     }
-    .modal {
-      background-color: #1A1F2C;
-      border-radius: 8px;
-      border: 1px solid #333;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    .container {
+      background-color: #1e1e1e;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
       width: 100%;
       max-width: 400px;
-      padding: 20px;
     }
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+
+    h1 {
+      text-align: center;
+      color: #bb86fc;
       margin-bottom: 20px;
     }
-    .header h2 {
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
-    .header button {
-      background: none;
-      border: none;
-      color: #666;
-      cursor: pointer;
-    }
-    .header button:hover {
-      color: white;
-    }
-    .form-group {
-      margin-bottom: 15px;
-    }
-    .form-group label {
+
+    label {
       display: block;
-      font-size: 0.875rem;
-      color: #666;
-      margin-bottom: 5px;
-    }
-    .form-group input,
-    .form-group select {
-      width: 100%;
-      padding: 8px;
-      background-color: #222;
-      border: 1px solid #444;
-      border-radius: 4px;
-      color: white;
-    }
-    .form-group input[type="number"] {
-      padding-left: 30px;
-    }
-    .form-group .currency {
-      position: absolute;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #666;
-    }
-    .calculated-value {
-      background-color: #222;
-      border: 1px solid #444;
-      border-radius: 8px;
-      padding: 15px;
-      margin-top: 20px;
-      text-align: center;
-    }
-    .calculated-value .label {
-      font-size: 0.875rem;
-      color: #666;
-      margin-bottom: 5px;
-    }
-    .calculated-value .value {
-      font-size: 1.5rem;
+      margin-top: 10px;
       font-weight: bold;
     }
-    .calculated-value .value.positive {
-      color: #10B981;
-    }
-    .calculated-value .value.negative {
-      color: #EF4444;
-    }
-    .actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      margin-top: 20px;
-    }
-    .actions button {
-      padding: 8px 16px;
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
       border: none;
-      border-radius: 4px;
+      border-radius: 5px;
+      background-color: #333;
+      color: #e0e0e0;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #bb86fc;
+      color: #121212;
+      font-size: 16px;
       cursor: pointer;
     }
-    .actions button.cancel {
-      background-color: transparent;
-      border: 1px solid #666;
-      color: #666;
+
+    button:hover {
+      background-color: #9c27b0;
     }
-    .actions button.cancel:hover {
-      background-color: #333;
-      color: white;
-    }
-    .actions button.save {
-      background-color: #10B981;
-      color: white;
-    }
-    .actions button.save:hover {
-      background-color: #059669;
+
+    .result {
+      margin-top: 20px;
+      font-size: 18px;
+      text-align: center;
+      color: #bb86fc;
     }
   </style>
 </head>
 <body>
-  <div class="modal">
-    <div class="header">
-      <div>
-        <button onclick="handleBackClick()">←</button>
-        <h2>Criar Aposta</h2>
-      </div>
-      <button onclick="closeModal()">✕</button>
-    </div>
-    <div class="form-group">
-      <label>Data Da Aposta</label>
-      <input type="datetime-local" id="date" value="2023-10-01T12:00">
-    </div>
-    <div class="form-group">
-      <label>LIGA</label>
-      <select id="league">
-        <option value="esoccer">E-Soccer - Esportes Battle - (8 MIN)</option>
-      </select>
-    </div>
-    <div class="form-group grid">
-      <div>
-        <label>JOGADOR 1</label>
-        <input type="text" id="player1">
-      </div>
-      <div>
-        <label>JOGADOR 2</label>
-        <input type="text" id="player2">
-      </div>
-    </div>
-    <div class="form-group">
-      <label>Método</label>
-      <select id="method">
-        <option value="method1">Método 1</option>
-        <option value="method2">Método 2</option>
-      </select>
-    </div>
-    <div class="form-group grid">
-      <div>
-        <label>Stake</label>
-        <div class="relative">
-          <span class="currency">R$</span>
-          <input type="number" id="stake" value="0">
-        </div>
-      </div>
-      <div>
-        <label>Odds</label>
-        <input type="number" id="odds" value="0" step="0.01">
-      </div>
-    </div>
-    <div class="form-group">
-      <label>RESULTADOS</label>
-      <select id="result">
-        <option value="green">GREEN</option>
-        <option value="red">RED</option>
-        <option value="half_green">MEIO GREEN</option>
-        <option value="half_red">MEIO RED</option>
-        <option value="refund">REEMBOLSO</option>
-      </select>
-    </div>
-    <div class="calculated-value">
-      <div class="label">Valor Calculado</div>
-      <div class="value" id="calculatedValue">R$ 0,00</div>
-    </div>
-    <div class="actions">
-      <button class="cancel" onclick="closeModal()">Cancelar</button>
-      <button class="save" onclick="saveForm()">Salvar</button>
-    </div>
+  <div class="container">
+    <h1>Aposta</h1>
+
+    <label for="data-hora">Data e Hora da Aposta:</label>
+    <input type="text" id="data-hora" readonly>
+
+    <label for="liga">Liga:</label>
+    <select id="liga">
+      <option value="Battle 6 min">Battle 6 min</option>
+      <option value="Battle 8 min">Battle 8 min</option>
+      <option value="Battle 8 min (H2H)">Battle 8 min (H2H)</option>
+      <option value="Adriact 10 min">Adriact 10 min</option>
+      <option value="GT 12 min">GT 12 min</option>
+    </select>
+
+    <label for="jogador1">Jogador 1:</label>
+    <input type="text" id="jogador1" placeholder="Nome do Jogador 1">
+
+    <label for="jogador2">Jogador 2:</label>
+    <input type="text" id="jogador2" placeholder="Nome do Jogador 2">
+
+    <label for="mercado">Mercado:</label>
+    <input type="text" id="mercado" placeholder="Ex: Vitória, Empate">
+
+    <label for="stake">Stake (R$):</label>
+    <input type="text" id="stake" placeholder="Ex: R$ 100,00">
+
+    <label for="odds">Odds:</label>
+    <input type="text" id="odds" placeholder="Ex: 1.65">
+
+    <label for="resultado">Resultado:</label>
+    <select id="resultado">
+      <option value="green">Green</option>
+      <option value="red">Red</option>
+      <option value="meio-green">Meio Green</option>
+      <option value="meio-red">Meio Red</option>
+      <option value="reembolso">Reembolso</option>
+    </select>
+
+    <button onclick="calcularValor()">Calcular Valor</button>
+
+    <div class="result" id="resultado-final"></div>
   </div>
 
   <script>
-    function handleBackClick() {
-      alert('Voltar para a página anterior');
+    // Função para formatar valores monetários
+    function formatarMoeda(valor) {
+      return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
     }
 
-    function closeModal() {
-      alert('Fechar modal');
-    }
+    // Função para calcular o valor final
+    function calcularValor() {
+      const stake = parseFloat(document.getElementById('stake').value.replace('R$', '').replace(',', '.'));
+      const odds = parseFloat(document.getElementById('odds').value.replace(',', '.'));
+      const resultado = document.getElementById('resultado').value;
 
-    function saveForm() {
-      alert('Formulário salvo');
-    }
+      let valorFinal = 0;
 
-    function updateCalculatedValue() {
-      const stake = parseFloat(document.getElementById('stake').value) || 0;
-      const odds = parseFloat(document.getElementById('odds').value) || 0;
-      const result = document.getElementById('result').value;
-      let calculatedValue = 0;
+      if (isNaN(stake) || isNaN(odds)) {
+        alert('Por favor, preencha os campos Stake e Odds corretamente.');
+        return;
+      }
 
-      switch (result) {
+      switch (resultado) {
         case 'green':
-          calculatedValue = stake * odds - stake;
+          valorFinal = stake * odds;
           break;
         case 'red':
-          calculatedValue = -stake;
+          valorFinal = -stake;
           break;
-        case 'half_green':
-          calculatedValue = (stake * odds + stake) / 2 - stake;
+        case 'meio-green':
+          valorFinal = (stake * odds - stake) / 2;
           break;
-        case 'half_red':
-          calculatedValue = -stake / 2;
+        case 'meio-red':
+          valorFinal = -stake / 2;
           break;
-        case 'refund':
-          calculatedValue = 0;
+        case 'reembolso':
+          valorFinal = 0;
           break;
-        default:
-          calculatedValue = 0;
       }
 
-      const formattedValue = new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL'
-      }).format(calculatedValue);
-
-      const calculatedValueElement = document.getElementById('calculatedValue');
-      calculatedValueElement.textContent = formattedValue;
-
-      if (calculatedValue > 0) {
-        calculatedValueElement.className = 'value positive';
-      } else if (calculatedValue < 0) {
-        calculatedValueElement.className = 'value negative';
-      } else {
-        calculatedValueElement.className = 'value';
-      }
+      document.getElementById('resultado-final').textContent = `R$ Valor: ${formatarMoeda(valorFinal)}`;
     }
 
-    document.getElementById('stake').addEventListener('input', updateCalculatedValue);
-    document.getElementById('odds').addEventListener('input', updateCalculatedValue);
-    document.getElementById('result').addEventListener('change', updateCalculatedValue);
+    // Função para exibir a data e hora atual
+    function atualizarDataHora() {
+      const agora = new Date();
+      const options = { dateStyle: 'short', timeStyle: 'medium' };
+      document.getElementById('data-hora').value = agora.toLocaleString('pt-BR', options);
+    }
+
+    // Atualiza a data e hora ao carregar a página
+    window.onload = atualizarDataHora;
   </script>
 </body>
 </html>
