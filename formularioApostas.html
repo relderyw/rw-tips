@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Aposta Moderna</title>
   <style>
+    /* Estilo Geral */
     body {
-      font-family: Arial, sans-serif;
-      background-color: #121212;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0f0f0f;
       color: #e0e0e0;
       margin: 0;
       padding: 0;
@@ -15,60 +16,89 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+      overflow-x: hidden;
     }
 
     .container {
-      background-color: #1e1e1e;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+      background: linear-gradient(145deg, #1a1a1a, #121212);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), 0 4px 6px rgba(0, 0, 0, 0.3);
       width: 100%;
-      max-width: 400px;
+      max-width: 450px;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .container:hover {
+      transform: scale(1.02);
     }
 
     h1 {
       text-align: center;
       color: #bb86fc;
+      font-size: 24px;
       margin-bottom: 20px;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     }
 
     label {
       display: block;
-      margin-top: 10px;
+      margin-top: 15px;
       font-weight: bold;
+      color: #bb86fc;
+      font-size: 14px;
+      transition: color 0.3s ease;
     }
 
     input, select {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin-top: 5px;
       border: none;
-      border-radius: 5px;
-      background-color: #333;
+      border-radius: 8px;
+      background-color: #2c2c2c;
       color: #e0e0e0;
+      font-size: 14px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
     }
 
-    button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 20px;
-      border: none;
-      border-radius: 5px;
-      background-color: #bb86fc;
-      color: #121212;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #9c27b0;
+    input:focus, select:focus {
+      background-color: #3a3a3a;
+      transform: scale(1.02);
+      outline: none;
     }
 
     .result {
-      margin-top: 20px;
+      margin-top: 25px;
       font-size: 18px;
       text-align: center;
       color: #bb86fc;
+      font-weight: bold;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* Animação de Hover nos Inputs */
+    input:hover, select:hover {
+      background-color: #333;
+    }
+
+    /* Transição Suave para o Resultado */
+    .result span {
+      display: block;
+      margin-top: 10px;
+      font-size: 20px;
+      color: #03dac6;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     }
   </style>
 </head>
@@ -112,9 +142,9 @@
       <option value="reembolso">Reembolso</option>
     </select>
 
-    <button onclick="calcularValor()">Calcular Valor</button>
-
-    <div class="result" id="resultado-final"></div>
+    <div class="result" id="resultado-final">
+      R$ Valor: <span>Calculando...</span>
+    </div>
   </div>
 
   <script>
@@ -123,7 +153,7 @@
       return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
     }
 
-    // Função para calcular o valor final
+    // Função para calcular o valor final dinamicamente
     function calcularValor() {
       const stake = parseFloat(document.getElementById('stake').value.replace('R$', '').replace(',', '.'));
       const odds = parseFloat(document.getElementById('odds').value.replace(',', '.'));
@@ -132,29 +162,29 @@
       let valorFinal = 0;
 
       if (isNaN(stake) || isNaN(odds)) {
-        alert('Por favor, preencha os campos Stake e Odds corretamente.');
+        document.getElementById('resultado-final').innerHTML = `R$ Valor: <span>Preencha Stake e Odds</span>`;
         return;
       }
 
       switch (resultado) {
         case 'green':
-          valorFinal = stake * odds;
+          valorFinal = stake * odds; // Green: Stake * Odds
           break;
         case 'red':
-          valorFinal = -stake;
+          valorFinal = -stake; // Red: Perde todo o stake
           break;
         case 'meio-green':
-          valorFinal = (stake * odds - stake) / 2;
+          valorFinal = (stake / 2) + ((stake / 2) * odds); // Meio Green: Metade devolvida + metade multiplicada pela odd
           break;
         case 'meio-red':
-          valorFinal = -stake / 2;
+          valorFinal = -stake / 2; // Meio Red: Perde metade do stake
           break;
         case 'reembolso':
-          valorFinal = 0;
+          valorFinal = 0; // Reembolso: Retorna R$ 0,00
           break;
       }
 
-      document.getElementById('resultado-final').textContent = `R$ Valor: ${formatarMoeda(valorFinal)}`;
+      document.getElementById('resultado-final').innerHTML = `R$ Valor: <span>${formatarMoeda(valorFinal)}</span>`;
     }
 
     // Função para exibir a data e hora atual
@@ -165,7 +195,15 @@
     }
 
     // Atualiza a data e hora ao carregar a página
-    window.onload = atualizarDataHora;
+    window.onload = () => {
+      atualizarDataHora();
+      calcularValor(); // Calcula o valor inicial
+    };
+
+    // Adiciona listeners para atualizar o cálculo automaticamente
+    document.getElementById('stake').addEventListener('input', calcularValor);
+    document.getElementById('odds').addEventListener('input', calcularValor);
+    document.getElementById('resultado').addEventListener('change', calcularValor);
   </script>
 </body>
 </html>
