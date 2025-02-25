@@ -96,48 +96,70 @@
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     }
 
-    /* Botão de Voltar */
-    .back-button {
-      position: absolute;
-      top: 15px;
-      left: 15px;
+    /* Botão Salvar Dados */
+    #salvar-dados {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #bb86fc;
+      color: #121212;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    #salvar-dados:hover {
+      background-color: #9c27b0;
+      transform: scale(1.05);
+    }
+
+    /* Lista de Apostas */
+    .apostas-lista {
+      margin-top: 20px;
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 10px;
+      background-color: #1e1e1e;
+    }
+
+    .aposta-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #333;
+    }
+
+    .aposta-item:last-child {
+      border-bottom: none;
+    }
+
+    .aposta-info {
+      flex: 1;
+    }
+
+    .aposta-actions button {
       background-color: #bb86fc;
       color: #121212;
       border: none;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      font-size: 18px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      border-radius: 5px;
+      padding: 5px 10px;
       cursor: pointer;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-      transition: transform 0.2s ease, background-color 0.3s ease;
+      transition: background-color 0.3s ease;
     }
 
-    .back-button:hover {
+    .aposta-actions button:hover {
       background-color: #9c27b0;
-      transform: scale(1.1);
-    }
-
-    /* Ícone de Voltar */
-    .back-button::before {
-      content: "←";
-      font-weight: bold;
-    }
-
-    /* Animação de Hover nos Inputs */
-    input:hover, select:hover {
-      background-color: #333;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Botão de Voltar -->
-    <button class="back-button" onclick="voltar()"></button>
-
     <h1>Aposta</h1>
 
     <label for="data-hora">Data e Hora da Aposta:</label>
@@ -176,20 +198,21 @@
       <option value="reembolso">Reembolso</option>
     </select>
 
-    <button id="salvar-dados" style="margin-top: 20px;">Salvar Dados</button>
+    <button id="salvar-dados">Salvar Dados</button>
 
     <div class="result" id="resultado-final">
       R$ Valor: <span>Calculando...</span>
     </div>
+
+    <!-- Lista de Apostas -->
+    <div class="apostas-lista" id="apostas-lista"></div>
   </div>
 
   <!-- Importar o SDK do Firebase -->
   <script type="module">
-    // Importar as funções necessárias do Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 
-    // Configuração do Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyALiAKWq7Z6B9ut6KCHt9L4g8Vt8VHF6iM",
       authDomain: "rw-tips.firebaseapp.com",
@@ -200,7 +223,6 @@
       measurementId: "G-64HF8TWQV4"
     };
 
-    // Inicializar o Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
@@ -250,9 +272,55 @@
       document.getElementById('data-hora').value = agora.toLocaleString('pt-BR', options);
     }
 
-    // Função para voltar
-    function voltar() {
-      window.history.back(); // Volta para a página anterior
+    // Função para limpar os campos do formulário
+    function limparCampos() {
+      document.getElementById('liga').value = "";
+      document.getElementById('jogador1').value = "";
+      document.getElementById('jogador2').value = "";
+      document.getElementById('mercado').value = "";
+      document.getElementById('stake').value = "";
+      document.getElementById('odds').value = "";
+      document.getElementById('resultado').value = "green";
+      document.getElementById('resultado-final').innerHTML = `R$ Valor: <span>Calculando...</span>`;
+    }
+
+    // Função para carregar as apostas do Firestore
+    function carregarApostas() {
+      const apostasLista = document.getElementById('apostas-lista');
+      apostasLista.innerHTML = "";
+
+      const apostasRef = collection(db, "apostas");
+      onSnapshot(apostasRef, (snapshot) => {
+        snapshot.forEach((doc) => {
+          const aposta = doc.data();
+          const apostaItem = document.createElement("div");
+          apostaItem.classList.add("aposta-item");
+
+          apostaItem.innerHTML = `
+            <div class="aposta-info">
+              <strong>${aposta.liga}</strong><br>
+              ${aposta.jogador1} vs ${aposta.jogador2}<br>
+              Stake: ${aposta.stake}, Odds: ${aposta.odds}
+            </div>
+            <div class="aposta-actions">
+              <button onclick="removerAposta('${doc.id}')">Remover</button>
+            </div>
+          `;
+
+          apostasLista.appendChild(apostaItem);
+        });
+      });
+    }
+
+    // Função para remover uma aposta
+    async function removerAposta(id) {
+      try {
+        await deleteDoc(doc(db, "apostas", id));
+        alert("Aposta removida com sucesso!");
+      } catch (error) {
+        console.error("Erro ao remover aposta:", error);
+        alert("Ocorreu um erro ao remover a aposta.");
+      }
     }
 
     // Função para salvar os dados no Firestore
@@ -267,7 +335,6 @@
       const resultado = document.getElementById('resultado').value;
 
       try {
-        // Salvar os dados no Firestore
         await addDoc(collection(db, "apostas"), {
           dataHora,
           liga,
@@ -281,16 +348,18 @@
         });
 
         alert('Dados salvos com sucesso!');
+        limparCampos(); // Limpa os campos após salvar
       } catch (error) {
         console.error("Erro ao salvar os dados: ", error);
         alert('Ocorreu um erro ao salvar os dados.');
       }
     });
 
-    // Atualiza a data e hora ao carregar a página
+    // Inicializa a página
     window.onload = () => {
       atualizarDataHora();
-      calcularValor(); // Calcula o valor inicial
+      calcularValor();
+      carregarApostas();
     };
 
     // Adiciona listeners para atualizar o cálculo automaticamente
