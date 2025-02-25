@@ -176,12 +176,34 @@
       <option value="reembolso">Reembolso</option>
     </select>
 
+    <button id="salvar-dados" style="margin-top: 20px;">Salvar Dados</button>
+
     <div class="result" id="resultado-final">
       R$ Valor: <span>Calculando...</span>
     </div>
   </div>
 
-  <script>
+  <!-- Importar o SDK do Firebase -->
+  <script type="module">
+    // Importar as funções necessárias do Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+
+    // Configuração do Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyALiAKWq7Z6B9ut6KCHt9L4g8Vt8VHF6iM",
+      authDomain: "rw-tips.firebaseapp.com",
+      projectId: "rw-tips",
+      storageBucket: "rw-tips.firebasestorage.app",
+      messagingSenderId: "806941219354",
+      appId: "1:806941219354:web:6f904532b6884251444fa3",
+      measurementId: "G-64HF8TWQV4"
+    };
+
+    // Inicializar o Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
     // Função para formatar valores monetários
     function formatarMoeda(valor) {
       return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
@@ -232,6 +254,38 @@
     function voltar() {
       window.history.back(); // Volta para a página anterior
     }
+
+    // Função para salvar os dados no Firestore
+    document.getElementById('salvar-dados').addEventListener('click', async () => {
+      const dataHora = document.getElementById('data-hora').value;
+      const liga = document.getElementById('liga').value;
+      const jogador1 = document.getElementById('jogador1').value;
+      const jogador2 = document.getElementById('jogador2').value;
+      const mercado = document.getElementById('mercado').value;
+      const stake = document.getElementById('stake').value;
+      const odds = document.getElementById('odds').value;
+      const resultado = document.getElementById('resultado').value;
+
+      try {
+        // Salvar os dados no Firestore
+        await addDoc(collection(db, "apostas"), {
+          dataHora,
+          liga,
+          jogador1,
+          jogador2,
+          mercado,
+          stake,
+          odds,
+          resultado,
+          timestamp: serverTimestamp()
+        });
+
+        alert('Dados salvos com sucesso!');
+      } catch (error) {
+        console.error("Erro ao salvar os dados: ", error);
+        alert('Ocorreu um erro ao salvar os dados.');
+      }
+    });
 
     // Atualiza a data e hora ao carregar a página
     window.onload = () => {
