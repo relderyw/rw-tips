@@ -5,150 +5,364 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrar Aposta</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #2196f3;
-            --secondary-color: #1e88e5;
-            --background-dark: #121212;
-            --card-background: #1e1e1e;
-            --card-hover: #252525;
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --background-dark: #0f0f13;
+            --card-background: #1a1a23;
+            --card-hover: #242433;
+            --input-background: #12121a;
             --text-primary: #ffffff;
-            --text-secondary: #b3b3b3;
-            --success-color: #4CAF50;
-            --gold-color: #ffd700;
-            --border-color: rgba(255, 255, 255, 0.1);
-            --neon-green: #00ff00;
+            --text-secondary: #a0a0b0;
+            --text-muted: #6b7280;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #3b82f6;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --glow-color: rgba(79, 70, 229, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Inter', sans-serif;
             background: var(--background-dark);
             color: var(--text-primary);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
+            padding: 20px;
+            line-height: 1.6;
         }
 
         .container {
             background: var(--card-background);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
             width: 100%;
-            max-width: 400px;
+            max-width: 450px;
             border: 1px solid var(--border-color);
+            backdrop-filter: blur(5px);
+        }
+
+        .header {
+            margin-bottom: 2rem;
+            text-align: center;
         }
 
         h2 {
-            text-align: center;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-            font-size: 24px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            color: var(--text-primary);
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
         }
 
         label {
             display: block;
-            margin-top: 15px;
-            font-size: 14px;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
             font-weight: 500;
             color: var(--text-secondary);
         }
 
-        input, select, button {
+        input, select {
             width: 100%;
-            padding: 10px;
-            margin-top: 8px;
+            padding: 0.875rem 1rem;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 14px;
+            border-radius: 8px;
+            font-size: 0.95rem;
             transition: all 0.3s ease;
-            background: var(--card-hover);
+            background: var(--input-background);
             color: var(--text-primary);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         input:focus, select:focus {
             border-color: var(--primary-color);
-            box-shadow: 0 0 5px rgba(33, 150, 243, 0.3);
+            box-shadow: 0 0 0 3px var(--glow-color);
             outline: none;
         }
 
-        button {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border: none;
+        .input-icon-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            top: 50%;
+            right: 1rem;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.25rem;
+        }
+
+        .resultado-select {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
+        .resultado-option {
+            flex: 1;
+            min-width: calc(50% - 0.5rem);
+            text-align: center;
+            padding: 0.75rem 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             cursor: pointer;
+            font-size: 0.85rem;
             font-weight: 500;
-            margin-top: 20px;
-            padding: 12px;
-            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .resultado-option.active {
+            border-color: var(--primary-color);
+            background: rgba(79, 70, 229, 0.1);
+        }
+
+        .resultado-option[data-value="GREEN"] {
+            color: var(--success-color);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .resultado-option[data-value="GREEN"].active {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--success-color);
+        }
+
+        .resultado-option[data-value="RED"] {
+            color: var(--danger-color);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .resultado-option[data-value="RED"].active {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--danger-color);
+        }
+
+        .resultado-option[data-value="MEIO_GREEN"],
+        .resultado-option[data-value="MEIO_RED"] {
+            color: var(--warning-color);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .resultado-option[data-value="MEIO_GREEN"].active,
+        .resultado-option[data-value="MEIO_RED"].active {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: var(--warning-color);
+        }
+
+        .resultado-option[data-value="REEMBOLSO"] {
+            color: var(--info-color);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .resultado-option[data-value="REEMBOLSO"].active {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--info-color);
+        }
+
+        .valor-display {
+            text-align: center;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border-radius: 10px;
+            background: var(--card-hover);
+            border: 1px solid var(--border-color);
+        }
+
+        .valor-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .valor-amount {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .green-value {
+            color: var(--success-color);
+        }
+
+        .red-value {
+            color: var(--danger-color);
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            background: var(--primary-color);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
             transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
         }
 
         button:hover {
-            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            background: var(--primary-hover);
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
         }
 
-        #valor {
-            background: var(--card-hover);
-            cursor: not-allowed;
+        button:active {
+            transform: translateY(0);
         }
 
-        @media (max-width: 480px) {
+        .button-icon {
+            font-size: 1.25rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .form-col {
+            flex: 1;
+        }
+
+        @media (max-width: 520px) {
             .container {
-                padding: 20px;
+                padding: 1.5rem;
             }
-            h2 {
-                font-size: 20px;
+            
+            .form-row {
+                flex-direction: column;
+                gap: 1.25rem;
+            }
+            
+            .resultado-option {
+                min-width: 100%;
+                padding: 0.75rem 0.5rem;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Registrar Aposta</h2>
+        <div class="header">
+            <h2>Registrar Aposta</h2>
+            <p class="header-subtitle">Controle suas apostas com facilidade</p>
+        </div>
+        
         <form id="form-aposta">
-            <label>Data da Aposta:
-                <input type="datetime-local" id="data_aposta" required>
-            </label>
-            <label>Liga:
-                <input type="text" id="liga" required>
-            </label>
-            <label>Método:
-                <input type="text" id="metodo">
-            </label>
-            <label>Jogador 1:
-                <input type="text" id="jogador1" required>
-            </label>
-            <label>Jogador 2:
-                <input type="text" id="jogador2" required>
-            </label>
-            <label>Stake:
-                <input type="number" id="stake" required>
-            </label>
-            <label>Odds:
-                <input type="number" step="0.01" id="odds">
-            </label>
-            <label>Resultado:
-                <select id="resultado">
+            <div class="form-group">
+                <label for="data_aposta">Data e Hora da Aposta</label>
+                <div class="input-icon-wrapper">
+                    <input type="datetime-local" id="data_aposta" required>
+                    <i class="input-icon ri-calendar-line"></i>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="liga">Liga</label>
+                <div class="input-icon-wrapper">
+                    <input type="text" id="liga" placeholder="Ex: NBA, Premier League" required>
+                    <i class="input-icon ri-trophy-line"></i>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="metodo">Método</label>
+                <div class="input-icon-wrapper">
+                    <input type="text" id="metodo" placeholder="Ex: Handicap, Over/Under">
+                    <i class="input-icon ri-settings-line"></i>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-col">
+                    <label for="jogador1">Jogador/Time 1</label>
+                    <input type="text" id="jogador1" placeholder="Nome do jogador/time" required>
+                </div>
+                <div class="form-col">
+                    <label for="jogador2">Jogador/Time 2</label>
+                    <input type="text" id="jogador2" placeholder="Nome do jogador/time" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-col">
+                    <label for="stake">Stake</label>
+                    <div class="input-icon-wrapper">
+                        <input type="number" id="stake" placeholder="Valor apostado" required>
+                        <i class="input-icon ri-money-dollar-circle-line"></i>
+                    </div>
+                </div>
+                <div class="form-col">
+                    <label for="odds">Odds</label>
+                    <div class="input-icon-wrapper">
+                        <input type="number" step="0.01" id="odds" placeholder="Ex: 1.85">
+                        <i class="input-icon ri-percentage-line"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Resultado</label>
+                <select id="resultado" style="display: none;">
                     <option value="RED">RED</option>
                     <option value="GREEN">GREEN</option>
                     <option value="MEIO_GREEN">MEIO GREEN</option>
                     <option value="MEIO_RED">MEIO RED</option>
                     <option value="REEMBOLSO">REEMBOLSO</option>
                 </select>
-            </label>
-            <label>Valor (R$):
-                <input type="text" id="valor" readonly>
-            </label>
-            <button type="submit">Salvar</button>
+                <div class="resultado-select">
+                    <div class="resultado-option" data-value="GREEN">GREEN</div>
+                    <div class="resultado-option" data-value="RED">RED</div>
+                    <div class="resultado-option" data-value="MEIO_GREEN">MEIO GREEN</div>
+                    <div class="resultado-option" data-value="MEIO_RED">MEIO RED</div>
+                    <div class="resultado-option" data-value="REEMBOLSO">REEMBOLSO</div>
+                </div>
+            </div>
+            
+            <div class="valor-display">
+                <span class="valor-label">Valor da Aposta (R$)</span>
+                <div id="valor-amount" class="valor-amount">0,00</div>
+            </div>
+            
+            <input type="hidden" id="valor">
+            
+            <button type="submit">
+                <i class="button-icon ri-save-line"></i>
+                Salvar Aposta
+            </button>
         </form>
     </div>
 
@@ -158,10 +372,43 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94bmxzbHh1Zm1seHpuaHhrYnptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAzNjMwMjAsImV4cCI6MjA1NTkzOTAyMH0.Wg8eEiSY1rqAkf2zCdHJzXU_fUOcs3sVrlmj_7YQaxQ';
         const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
+        // Data atual para o input de data
+        const now = new Date();
+        const localDatetime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+        document.getElementById('data_aposta').value = localDatetime;
+
+        // Seletor de resultado
         const resultadoSelect = document.getElementById('resultado');
+        const resultadoOptions = document.querySelectorAll('.resultado-option');
         const stakeInput = document.getElementById('stake');
         const oddsInput = document.getElementById('odds');
         const valorInput = document.getElementById('valor');
+        const valorAmount = document.getElementById('valor-amount');
+
+        // Função para formatar valores monetários
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(value);
+        }
+
+        // Atualização das opções de resultado
+        resultadoOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                // Remove active de todas as opções
+                resultadoOptions.forEach(opt => opt.classList.remove('active'));
+                // Adiciona active à opção clicada
+                option.classList.add('active');
+                // Atualiza o select
+                resultadoSelect.value = option.getAttribute('data-value');
+                // Calcula o valor
+                calcularValor();
+            });
+        });
+
+        // Define GREEN como padrão
+        resultadoOptions[0].click();
 
         function calcularValor() {
             const resultado = resultadoSelect.value;
@@ -182,6 +429,15 @@
             }
 
             valorInput.value = valor.toFixed(2);
+            valorAmount.textContent = formatCurrency(valor);
+            
+            // Adicionar classe para cor com base no valor
+            valorAmount.classList.remove('green-value', 'red-value');
+            if (valor > 0) {
+                valorAmount.classList.add('green-value');
+            } else if (valor < 0) {
+                valorAmount.classList.add('red-value');
+            }
         }
 
         resultadoSelect.addEventListener('change', calcularValor);
@@ -190,6 +446,10 @@
 
         document.getElementById('form-aposta').addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="ri-loader-4-line button-icon"></i> Salvando...';
 
             // Captura os valores do formulário
             const dataAposta = document.getElementById('data_aposta').value;
@@ -202,41 +462,55 @@
             const resultado = resultadoSelect.value;
             const valor = parseFloat(valorInput.value);
 
-            // Exibe os valores no console para depuração
-            console.log("Dados do formulário:", {
-                dataAposta,
-                liga,
-                metodo,
-                jogador1,
-                jogador2,
-                stake,
-                odds,
-                resultado,
-                valor
-            });
+            try {
+                // Insere os dados no Supabase
+                const { data, error } = await supabase.from('apostas').insert([{
+                    data_aposta: dataAposta,
+                    liga: liga,
+                    metodo: metodo,
+                    jogador1: jogador1,
+                    jogador2: jogador2,
+                    stake: stake,
+                    odds: odds,
+                    resultado: resultado,
+                    valor: valor
+                }]);
 
-            // Insere os dados no Supabase
-            const { data, error } = await supabase.from('apostas').insert([{
-                data_aposta: dataAposta,
-                liga: liga,
-                metodo: metodo,
-                jogador1: jogador1,
-                jogador2: jogador2,
-                stake: stake,
-                odds: odds,
-                resultado: resultado,
-                valor: valor
-            }]);
+                // Verifica se houve erro
+                if (error) {
+                    console.error("Erro ao salvar aposta:", error);
+                    alert('Erro ao salvar aposta: ' + error.message);
+                } else {
+                    console.log("Aposta salva com sucesso:", data);
+                    
+                    // Mensagem de sucesso
+                    const originalButtonText = submitButton.innerHTML;
+                    submitButton.innerHTML = '<i class="ri-check-line button-icon"></i> Aposta Salva!';
+                    submitButton.style.background = 'var(--success-color)';
+                    
+                    setTimeout(() => {
+                        document.getElementById('form-aposta').reset();
+                        valorAmount.textContent = '0,00';
+                        valorAmount.classList.remove('green-value', 'red-value');
+                        valorInput.value = '';
+                        
+                        // Restaura o botão
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = originalButtonText;
+                        submitButton.style.background = '';
 
-            // Verifica se houve erro
-            if (error) {
-                console.error("Erro ao salvar aposta:", error);
-                alert('Erro ao salvar aposta: ' + error.message);
-            } else {
-                console.log("Aposta salva com sucesso:", data);
-                alert('Aposta registrada com sucesso!');
-                document.getElementById('form-aposta').reset();
-                valorInput.value = '';
+                        // Data atual para o input de data
+                        document.getElementById('data_aposta').value = localDatetime;
+                        
+                        // Reseta o resultado para GREEN
+                        resultadoOptions[0].click();
+                    }, 2000);
+                }
+            } catch (error) {
+                console.error("Erro ao processar a requisição:", error);
+                alert('Erro ao processar a requisição: ' + error.message);
+                submitButton.disabled = false;
+                submitButton.innerHTML = '<i class="ri-save-line button-icon"></i> Salvar Aposta';
             }
         });
     </script>
