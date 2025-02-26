@@ -28,8 +28,8 @@
       max-width: 450px;
       transition: transform 0.3s ease-in-out;
       position: relative;
-      overflow-y: auto; /* Adicionado para permitir rolagem interna */
-      max-height: 90vh; /* Limita a altura máxima do container */
+      overflow-y: auto;
+      max-height: 90vh;
     }
 
     .container:hover {
@@ -294,7 +294,7 @@
       apiKey: "AIzaSyALiAKWq7Z6B9ut6KCHt9L4g8Vt8VHF6iM",
       authDomain: "rw-tips.firebaseapp.com",
       projectId: "rw-tips",
-      storageBucket: "rw-tips.firebasestorage.app",
+      storageBucket: "rw-tips.appspot.com",
       messagingSenderId: "806941219354",
       appId: "1:806941219354:web:6f904532b6884251444fa3",
       measurementId: "G-64HF8TWQV4"
@@ -362,7 +362,6 @@
     }
 
     // Função para carregar as apostas do Firestore
-        // Função para carregar as apostas do Firestore
     function carregarApostas() {
       const apostasLista = document.getElementById('apostas-lista');
       apostasLista.innerHTML = "";
@@ -425,6 +424,7 @@
       try {
         await deleteDoc(doc(db, "apostas", id));
         alert("Aposta removida com sucesso!");
+        carregarApostas(); // Recarrega a lista de apostas após a remoção
       } catch (error) {
         console.error("Erro ao remover aposta:", error);
         alert("Ocorreu um erro ao remover a aposta.");
@@ -457,20 +457,16 @@
 
         alert('Dados salvos com sucesso!');
         limparCampos(); // Limpa os campos após salvar
-
-        // Evita rolagem automática ao adicionar um novo registro
-        setTimeout(() => {
-          document.querySelector('.container').scrollTo(0, 0);
-        }, 100);
+        carregarApostas(); // Recarrega a lista de apostas
       } catch (error) {
         console.error("Erro ao salvar os dados: ", error);
         alert('Ocorreu um erro ao salvar os dados.');
       }
     });
 
-    // Função para voltar
+    // Função para voltar para visualization.html
     function voltar() {
-      window.history.back();
+      window.location.href = "visualization.html";
     }
 
     // Inicializa a página
