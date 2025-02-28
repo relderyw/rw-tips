@@ -1,476 +1,788 @@
-<!doctype html>
-<html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Registrar Aposta</title>
-    <style>
-      /* Estilo Geral */
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #0f0f0f;
-        color: #e0e0e0;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        overflow-x: hidden;
-      }
-      .container {
-        background: linear-gradient(145deg, #1a1a1a, #121212);
-        padding: 30px;
-        border-radius: 15px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), 0 4px 16px rgba(0, 0, 0, 0.4);
-        width: 100%;
-        max-width: 450px;
-        transition: transform 0.3s ease-in-out;
-        position: relative;
-        overflow-y: auto;
-        max-height: 90vh;
-        margin: 20px 0;
-      }
-      .container:hover {
-        transform: scale(1.02);
-      }
-      h1 {
-        text-align: center;
-        color: #bb86fc;
-        font-size: 28px;
-        margin-bottom: 25px;
-        letter-spacing: 1px;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-      }
-      label {
-        display: block;
-        margin-top: 15px;
-        font-weight: bold;
-        color: #bb86fc;
-        font-size: 14px;
-        transition: color 0.3s ease;
-        margin-bottom: 5px;
-      }
-      input,
-      select {
-        width: 100%;
-        padding: 12px;
-        margin-top: 5px;
-        border: 2px solid #333;
-        border-radius: 8px;
-        background-color: #2c2c2c;
-        color: #e0e0e0;
-        font-size: 14px;
-        transition: all 0.3s ease;
-        box-sizing: border-box;
-      }
-      input:focus,
-      select:focus {
-        background-color: #3a3a3a;
-        border-color: #bb86fc;
-        transform: scale(1.02);
-        outline: none;
-        box-shadow: 0 0 8px rgba(187, 134, 252, 0.5);
-      }
-      .result {
-        margin-top: 25px;
-        font-size: 18px;
-        text-align: center;
-        color: #bb86fc;
-        font-weight: bold;
-        animation: fadeIn 1s ease-in-out;
-        padding: 15px;
-        border-radius: 10px;
-        background-color: rgba(187, 134, 252, 0.1);
-      }
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
-      }
-      .result span {
-        display: block;
-        margin-top: 10px;
-        font-size: 24px;
-        color: #03dac6;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-      }
-      /* Botão Voltar */
-      .back-button {
-        position: absolute;
-        top: 15px;
-        left: 15px;
-        background-color: #bb86fc;
-        color: #121212;
-        border: none;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        font-size: 18px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-        transition: transform 0.2s ease, background-color 0.3s ease;
-        z-index: 10;
-      }
-      .back-button:hover {
-        background-color: #9c27b0;
-        transform: scale(1.1);
-      }
-      /* Ícone de Voltar */
-      .back-button::before {
-        content: "←";
-        font-weight: bold;
-      }
-      /* Botão Salvar Dados */
-      #salvar-dados {
-        width: 100%;
-        padding: 14px;
-        margin-top: 25px;
-        border: none;
-        border-radius: 8px;
-        background-color: #bb86fc;
-        color: #121212;
-        font-size: 16px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-      }
-      #salvar-dados:hover {
-        background-color: #9c27b0;
-        transform: scale(1.03);
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-      }
-      /* Lista de Apostas */
-      .apostas-lista {
-        margin-top: 25px;
-        max-height: 200px;
-        overflow-y: auto;
-        border: 2px solid #333;
-        border-radius: 10px;
-        padding: 15px;
-        background-color: rgba(30, 30, 30, 0.8);
-        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
-      }
-      .apostas-lista::-webkit-scrollbar {
-        width: 8px;
-      }
-      .apostas-lista::-webkit-scrollbar-track {
-        background: #1a1a1a;
-        border-radius: 10px;
-      }
-      .apostas-lista::-webkit-scrollbar-thumb {
-        background: #bb86fc;
-        border-radius: 10px;
-      }
-      .aposta-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px;
-        border-bottom: 1px solid #333;
-        transition: background-color 0.2s ease;
-        border-radius: 8px;
-        margin-bottom: 8px;
-      }
-      .aposta-item:hover {
-        background-color: #252525;
-      }
-      .aposta-item:last-child {
-        border-bottom: none;
-        margin-bottom: 0;
-      }
-      .aposta-info {
-        flex: 1;
-        line-height: 1.5;
-      }
-      .aposta-actions button {
-        background-color: #cf6679;
-        color: #121212;
-        border: none;
-        border-radius: 5px;
-        padding: 8px 12px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-weight: bold;
-        margin-left: 10px;
-      }
-      .aposta-actions button:hover {
-        background-color: #ff4060;
-        transform: scale(1.05);
-      }
-      /* Resumo de Ganhos/Perdas */
-      .resumo {
-        margin-top: 25px;
-        padding: 20px;
-        background: linear-gradient(145deg, #222, #181818);
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-      .resumo-item {
-        text-align: center;
-        padding: 10px;
-        flex: 1;
-        min-width: 120px;
-        transition: transform 0.3s ease;
-      }
-      .resumo-item:hover {
-        transform: scale(1.05);
-      }
-      .resumo-item.green {
-        color: #03dac6;
-      }
-      .resumo-item.red {
-        color: #cf6679;
-      }
-      .resumo-item.gray {
-        color: #bb86fc;
-      }
-      .resumo-item strong {
-        display: block;
-        margin-top: 5px;
-        font-size: 18px;
-      }
-      /* Gráfico */
-      .grafico-container {
-        margin-top: 25px;
-        padding: 15px;
-        background: linear-gradient(145deg, #222, #181818);
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-        height: 250px;
-      }
-      /* Loading animation */
-      .loading {
-        text-align: center;
-        padding: 20px;
-        color: #bb86fc;
-      }
-      .loading::after {
-        content: "...";
-        animation: dots 1.5s infinite;
-      }
-      @keyframes dots {
-        0%,
-        20% {
-          content: ".";
-        }
-        40% {
-          content: "..";
-        }
-        60%,
-        100% {
-          content: "...";
-        }
-      }
-      /* Status badges */
-      .status-badge {
-        display: inline-block;
-        padding: 3px 8px;
-        border-radius: 12px;
-        font-size: 12px;
-        font-weight: bold;
-        margin-left: 5px;
-      }
-      .status-green {
-        background-color: rgba(3, 218, 198, 0.2);
-        color: #03dac6;
-        border: 1px solid #03dac6;
-      }
-      .status-red {
-        background-color: rgba(207, 102, 121, 0.2);
-        color: #cf6679;
-        border: 1px solid #cf6679;
-      }
-      .status-meio-green {
-        background-color: rgba(3, 218, 198, 0.1);
-        color: #03dac6;
-        border: 1px dashed #03dac6;
-      }
-      .status-meio-red {
-        background-color: rgba(207, 102, 121, 0.1);
-        color: #cf6679;
-        border: 1px dashed #cf6679;
-      }
-      .status-reembolso {
-        background-color: rgba(187, 134, 252, 0.1);
-        color: #bb86fc;
-        border: 1px dashed #bb86fc;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <!-- Botão de Voltar -->
-      <button class="back-button" id="voltar-btn"></button>
-      <h1>Aposta Moderna</h1>
-      <label for="data-hora">Data e Hora da Aposta:</label>
-      <input type="text" id="data-hora" readonly />
-      <label for="liga">Liga:</label>
-      <select id="liga">
-        <option value="Battle 6 min">Battle 6 min</option>
-        <option value="Battle 8 min">Battle 8 min</option>
-        <option value="Battle 8 min (H2H)">Battle 8 min (H2H)</option>
-        <option value="Adriact 10 min">Adriact 10 min</option>
-        <option value="GT 12 min">GT 12 min</option>
-      </select>
-      <label for="jogador1">Jogador 1:</label>
-      <select id="jogador1">
-        <option value="">Selecione Jogador 1</option>
-      </select>
-      <label for="jogador2">Jogador 2:</label>
-      <select id="jogador2">
-        <option value="">Selecione Jogador 2</option>
-      </select>
-      <label for="mercado">Mercado:</label>
-      <input type="text" id="mercado" placeholder="Ex: Vitória, Empate" />
-      <label for="stake">Stake (R$):</label>
-      <input type="text" id="stake" placeholder="Ex: 100,00" />
-      <label for="odds">Odds:</label>
-      <input type="text" id="odds" placeholder="Ex: 1.65" />
-      <label for="resultado">Resultado:</label>
-      <select id="resultado">
-        <option value="green">Green</option>
-        <option value="red">Red</option>
-        <option value="meio-green">Meio Green</option>
-        <option value="meio-red">Meio Red</option>
-        <option value="reembolso">Reembolso</option>
-      </select>
-      <button id="salvar-dados">Salvar Dados</button>
-      <div class="result" id="resultado-final">
-        R$ Valor: <span>Calculando...</span>
-      </div>
-      <!-- Resumo de Ganhos/Perdas -->
-      <div class="resumo">
-        <div class="resumo-item green" id="ganho-total">
-          Ganho Total
-          <strong>R$ 0,00</strong>
-        </div>
-        <div class="resumo-item red" id="perda-total">
-          Perda Total
-          <strong>R$ 0,00</strong>
-        </div>
-        <div class="resumo-item gray" id="saldo-total">
-          Saldo Total
-          <strong>R$ 0,00</strong>
-        </div>
-      </div>
-      <!-- Gráfico de Ganhos/Perdas -->
-      <div class="grafico-container" id="grafico">
-        <div class="loading">Carregando gráfico</div>
-      </div>
-      <!-- Lista de Apostas -->
-      <h3 style="margin-top: 25px; color: #bb86fc">Histórico de Apostas</h3>
-      <div class="apostas-lista" id="apostas-lista">
-        <div class="loading">Carregando apostas</div>
-      </div>
-    </div>
-    <!-- Importar Chart.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <!-- Importar o SDK do Firebase -->
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-      import {
-        getFirestore,
-        collection,
-        addDoc,
-        deleteDoc,
-        doc,
-        onSnapshot,
-        serverTimestamp,
-        query,
-        where,
-        orderBy,
-        getDocs,
-      } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
-
-      const firebaseConfig = {
-        apiKey: "AIzaSyALiAKWq7Z6B9ut6KCHt9L4g8Vt8VHF6iM",
-        authDomain: "rw-tips.firebaseapp.com",
-        projectId: "rw-tips",
-        storageBucket: "rw-tips.appspot.com",
-        messagingSenderId: "806941219354",
-        appId: "1:806941219354:web:6f904532b6884251444fa3",
-        measurementId: "G-64HF8TWQV4",
-      };
-
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
-
-      // Função para carregar os jogadores da API
-      async function carregarJogadores() {
-        const url = "https://api.green365.com.br/api/league/upcoming?sport=fifa&leagueId=&page=1";
-        try {
-          const response = await fetch(url);
-          const data = await response.json();
-          const jogadores = new Set(); // Usamos um Set para evitar repetições
-
-          // Mapeamento das ligas do seu sistema para as ligas da API
-          const ligasMap = {
-            "Battle 6 min": "Esoccer Battle Volta - 6 mins play",
-            "Battle 8 min": "Esoccer Battle - 8 mins play",
-            "Battle 8 min (H2H)": "Esoccer Battle - 8 mins play", // Ajuste conforme necessário
-            "Adriact 10 min": "Adriact 10 min", // Ajuste conforme necessário
-            "GT 12 min": "GT 12 min", // Ajuste conforme necessário
-          };
-
-          const ligaSelecionada = document.getElementById("liga").value;
-          const ligaAPI = ligasMap[ligaSelecionada];
-
-          // Filtra os jogadores pela liga selecionada
-          data.data.forEach((jogo) => {
-            if (jogo.leagueName === ligaAPI) {
-              jogadores.add(jogo.home);
-              jogadores.add(jogo.away);
-            }
-          });
-
-          // Converte o Set para um array e ordena alfabeticamente
-          const jogadoresOrdenados = Array.from(jogadores).sort((a, b) => a.localeCompare(b));
-
-          // Preenche os campos "Jogador 1" e "Jogador 2"
-          const jogador1Select = document.getElementById("jogador1");
-          const jogador2Select = document.getElementById("jogador2");
-
-          // Limpa os campos antes de preencher
-          jogador1Select.innerHTML = '<option value="">Selecione Jogador 1</option>';
-          jogador2Select.innerHTML = '<option value="">Selecione Jogador 2</option>';
-
-          // Adiciona os jogadores aos campos
-          jogadoresOrdenados.forEach((jogador) => {
-            const option1 = document.createElement("option");
-            option1.value = jogador;
-            option1.textContent = jogador;
-            jogador1Select.appendChild(option1);
-
-            const option2 = document.createElement("option");
-            option2.value = jogador;
-            option2.textContent = jogador;
-            jogador2Select.appendChild(option2);
-          });
-        } catch (error) {
-          console.error("Erro ao carregar jogadores:", error);
-        }
-      }
-
-      // Event listener para carregar os jogadores quando a liga é alterada
-      document.getElementById("liga").addEventListener("change", carregarJogadores);
-
-      // Carrega os jogadores ao carregar a página
-      window.onload = () => {
-        carregarJogadores();
-      };
-    </script>
-  </body>
-</html>
-
+<!doctype html> 
+<html lang="pt-br"> 
+  <head> 
+    <meta charset="UTF-8" /> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
+    <title>Registrar Aposta</title> 
+    <style> 
+      /* Estilo Geral */ 
+      body { 
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; 
+        background-color: #0f0f0f; 
+        color: #e0e0e0; 
+        margin: 0; 
+        padding: 0; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        min-height: 100vh; 
+        overflow-x: hidden; 
+      } 
+      .container { 
+        background: linear-gradient(145deg, #1a1a1a, #121212); 
+        padding: 30px; 
+        border-radius: 15px; 
+        box-shadow: 
+          0 8px 32px rgba(0, 0, 0, 0.7), 
+          0 4px 16px rgba(0, 0, 0, 0.4); 
+        width: 100%; 
+        max-width: 450px; 
+        transition: transform 0.3s ease-in-out; 
+        position: relative; 
+        overflow-y: auto; 
+        max-height: 90vh; 
+        margin: 20px 0; 
+      } 
+      .container:hover { 
+        transform: scale(1.02); 
+      } 
+      h1 { 
+        text-align: center; 
+        color: #bb86fc; 
+        font-size: 28px; 
+        margin-bottom: 25px; 
+        letter-spacing: 1px; 
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); 
+      } 
+      label { 
+        display: block; 
+        margin-top: 15px; 
+        font-weight: bold; 
+        color: #bb86fc; 
+        font-size: 14px; 
+        transition: color 0.3s ease; 
+        margin-bottom: 5px; 
+      } 
+      input, 
+      select { 
+        width: 100%; 
+        padding: 12px; 
+        margin-top: 5px; 
+        border: 2px solid #333; 
+        border-radius: 8px; 
+        background-color: #2c2c2c; 
+        color: #e0e0e0; 
+        font-size: 14px; 
+        transition: all 0.3s ease; 
+        box-sizing: border-box; 
+      } 
+      input:focus, 
+      select:focus { 
+        background-color: #3a3a3a; 
+        border-color: #bb86fc; 
+        transform: scale(1.02); 
+        outline: none; 
+        box-shadow: 0 0 8px rgba(187, 134, 252, 0.5); 
+      } 
+      .result { 
+        margin-top: 25px; 
+        font-size: 18px; 
+        text-align: center; 
+        color: #bb86fc; 
+        font-weight: bold; 
+        animation: fadeIn 1s ease-in-out; 
+        padding: 15px; 
+        border-radius: 10px; 
+        background-color: rgba(187, 134, 252, 0.1); 
+      } 
+      @keyframes fadeIn { 
+        from { 
+          opacity: 0; 
+        } 
+        to { 
+          opacity: 1; 
+        } 
+      } 
+      .result span { 
+        display: block; 
+        margin-top: 10px; 
+        font-size: 24px; 
+        color: #03dac6; 
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); 
+      } 
+      /* Botão Voltar */ 
+      .back-button { 
+        position: absolute; 
+        top: 15px; 
+        left: 15px; 
+        background-color: #bb86fc; 
+        color: #121212; 
+        border: none; 
+        border-radius: 50%; 
+        width: 40px; 
+        height: 40px; 
+        font-size: 18px; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        cursor: pointer; 
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); 
+        transition: 
+          transform 0.2s ease, 
+          background-color 0.3s ease; 
+        z-index: 10; 
+      } 
+      .back-button:hover { 
+        background-color: #9c27b0; 
+        transform: scale(1.1); 
+      } 
+      /* Ícone de Voltar */ 
+      .back-button::before { 
+        content: "←"; 
+        font-weight: bold; 
+      } 
+      /* Botão Salvar Dados */ 
+      #salvar-dados { 
+        width: 100%; 
+        padding: 14px; 
+        margin-top: 25px; 
+        border: none; 
+        border-radius: 8px; 
+        background-color: #bb86fc; 
+        color: #121212; 
+        font-size: 16px; 
+        font-weight: bold; 
+        cursor: pointer; 
+        transition: all 0.3s ease; 
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); 
+      } 
+      #salvar-dados:hover { 
+        background-color: #9c27b0; 
+        transform: scale(1.03); 
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4); 
+      } 
+      /* Lista de Apostas */ 
+      .apostas-lista { 
+        margin-top: 25px; 
+        max-height: 200px; 
+        overflow-y: auto; 
+        border: 2px solid #333; 
+        border-radius: 10px; 
+        padding: 15px; 
+        background-color: rgba(30, 30, 30, 0.8); 
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5); 
+      } 
+      .apostas-lista::-webkit-scrollbar { 
+        width: 8px; 
+      } 
+      .apostas-lista::-webkit-scrollbar-track { 
+        background: #1a1a1a; 
+        border-radius: 10px; 
+      } 
+      .apostas-lista::-webkit-scrollbar-thumb { 
+        background: #bb86fc; 
+        border-radius: 10px; 
+      } 
+      .aposta-item { 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        padding: 12px; 
+        border-bottom: 1px solid #333; 
+        transition: background-color 0.2s ease; 
+        border-radius: 8px; 
+        margin-bottom: 8px; 
+      } 
+      .aposta-item:hover { 
+        background-color: #252525; 
+      } 
+      .aposta-item:last-child { 
+        border-bottom: none; 
+        margin-bottom: 0; 
+      } 
+      .aposta-info { 
+        flex: 1; 
+        line-height: 1.5; 
+      } 
+      .aposta-actions button { 
+        background-color: #cf6679; 
+        color: #121212; 
+        border: none; 
+        border-radius: 5px; 
+        padding: 8px 12px; 
+        cursor: pointer; 
+        transition: all 0.3s ease; 
+        font-weight: bold; 
+        margin-left: 10px; 
+      } 
+      .aposta-actions button:hover { 
+        background-color: #ff4060; 
+        transform: scale(1.05); 
+      } 
+      /* Resumo de Ganhos/Perdas */ 
+      .resumo { 
+        margin-top: 25px; 
+        padding: 20px; 
+        background: linear-gradient(145deg, #222, #181818); 
+        border-radius: 12px; 
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); 
+        display: flex; 
+        justify-content: space-around; 
+        align-items: center; 
+        flex-wrap: wrap; 
+      } 
+      .resumo-item { 
+        text-align: center; 
+        padding: 10px; 
+        flex: 1; 
+        min-width: 120px; 
+        transition: transform 0.3s ease; 
+      } 
+      .resumo-item:hover { 
+        transform: scale(1.05); 
+      } 
+      .resumo-item.green { 
+        color: #03dac6; 
+      } 
+      .resumo-item.red { 
+        color: #cf6679; 
+      } 
+      .resumo-item.gray { 
+        color: #bb86fc; 
+      } 
+      .resumo-item strong { 
+        display: block; 
+        margin-top: 5px; 
+        font-size: 18px; 
+      } 
+      /* Gráfico */ 
+      .grafico-container { 
+        margin-top: 25px; 
+        padding: 15px; 
+        background: linear-gradient(145deg, #222, #181818); 
+        border-radius: 12px; 
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); 
+        height: 250px; 
+      } 
+      /* Loading animation */ 
+      .loading { 
+        text-align: center; 
+        padding: 20px; 
+        color: #bb86fc; 
+      } 
+      .loading::after { 
+        content: "..."; 
+        animation: dots 1.5s infinite; 
+      } 
+      @keyframes dots { 
+        0%, 
+        20% { 
+          content: "."; 
+        } 
+        40% { 
+          content: ".."; 
+        } 
+        60%, 
+        100% { 
+          content: "..."; 
+        } 
+      } 
+      /* Status badges */ 
+      .status-badge { 
+        display: inline-block; 
+        padding: 3px 8px; 
+        border-radius: 12px; 
+        font-size: 12px; 
+        font-weight: bold; 
+        margin-left: 5px; 
+      } 
+      .status-green { 
+        background-color: rgba(3, 218, 198, 0.2); 
+        color: #03dac6; 
+        border: 1px solid #03dac6; 
+      } 
+      .status-red { 
+        background-color: rgba(207, 102, 121, 0.2); 
+        color: #cf6679; 
+        border: 1px solid #cf6679; 
+      } 
+      .status-meio-green { 
+        background-color: rgba(3, 218, 198, 0.1); 
+        color: #03dac6; 
+        border: 1px dashed #03dac6; 
+      } 
+      .status-meio-red { 
+        background-color: rgba(207, 102, 121, 0.1); 
+        color: #cf6679; 
+        border: 1px dashed #cf6679; 
+      } 
+      .status-reembolso { 
+        background-color: rgba(187, 134, 252, 0.1); 
+        color: #bb86fc; 
+        border: 1px dashed #bb86fc; 
+      } 
+    </style> 
+  </head> 
+  <body> 
+    <div class="container"> 
+      <!-- Botão de Voltar --> 
+      <button class="back-button" id="voltar-btn"></button> 
+      <h1>Aposta Moderna</h1> 
+      <label for="data-hora">Data e Hora da Aposta:</label> 
+      <input type="text" id="data-hora" readonly /> 
+      <label for="liga">Liga:</label> 
+      <select id="liga"> 
+        <option value="Battle 6 min">Battle 6 min</option> 
+        <option value="Battle 8 min">Battle 8 min</option> 
+        <option value="Battle 8 min (H2H)">Battle 8 min (H2H)</option> 
+        <option value="Adriact 10 min">Adriact 10 min</option> 
+        <option value="GT 12 min">GT 12 min</option> 
+      </select> 
+      <label for="jogador1">Jogador 1:</label> 
+      <input type="text" id="jogador1" placeholder="Nome do Jogador 1" /> 
+      <label for="jogador2">Jogador 2:</label> 
+      <input type="text" id="jogador2" placeholder="Nome do Jogador 2" /> 
+      <label for="mercado">Mercado:</label> 
+      <input type="text" id="mercado" placeholder="Ex: Vitória, Empate" /> 
+      <label for="stake">Stake (R$):</label> 
+      <input type="text" id="stake" placeholder="Ex: 100,00" /> 
+      <label for="odds">Odds:</label> 
+      <input type="text" id="odds" placeholder="Ex: 1.65" /> 
+      <label for="resultado">Resultado:</label> 
+      <select id="resultado"> 
+        <option value="green">Green</option> 
+        <option value="red">Red</option> 
+        <option value="meio-green">Meio Green</option> 
+        <option value="meio-red">Meio Red</option> 
+        <option value="reembolso">Reembolso</option> 
+      </select> 
+      <button id="salvar-dados">Salvar Dados</button> 
+      <div class="result" id="resultado-final"> 
+        R$ Valor: <span>Calculando...</span> 
+      </div> 
+      <!-- Resumo de Ganhos/Perdas --> 
+      <div class="resumo"> 
+        <div class="resumo-item green" id="ganho-total"> 
+          Ganho Total 
+          <strong>R$ 0,00</strong> 
+        </div> 
+        <div class="resumo-item red" id="perda-total"> 
+          Perda Total 
+          <strong>R$ 0,00</strong> 
+        </div> 
+        <div class="resumo-item gray" id="saldo-total"> 
+          Saldo Total 
+          <strong>R$ 0,00</strong> 
+        </div> 
+      </div> 
+      <!-- Gráfico de Ganhos/Perdas --> 
+      <div class="grafico-container" id="grafico"> 
+        <div class="loading">Carregando gráfico</div> 
+      </div> 
+      <!-- Lista de Apostas --> 
+      <h3 style="margin-top: 25px; color: #bb86fc">Histórico de Apostas</h3> 
+      <div class="apostas-lista" id="apostas-lista"> 
+        <div class="loading">Carregando apostas</div> 
+      </div> 
+    </div> 
+    <!-- Importar Chart.js --> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js">> 
+    <!-- Importar o SDK do Firebase --> 
+    <script type="module"> 
+      import { initializeApp } from  "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js"; 
+      import { 
+        getFirestore, 
+        collection, 
+        addDoc, 
+        deleteDoc, 
+        doc, 
+        onSnapshot, 
+        serverTimestamp, 
+        query, 
+        where, 
+        orderBy, 
+        getDocs, 
+      } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js"; 
+      const firebaseConfig = { 
+        apiKey: "AIzaSyALiAKWq7Z6B9ut6KCHt9L4g8Vt8VHF6iM", 
+        authDomain: "rw-tips.firebaseapp.com", 
+        projectId: "rw-tips", 
+        storageBucket: "rw-tips.appspot.com", 
+        messagingSenderId: "806941219354", 
+        appId: "1:806941219354:web:6f904532b6884251444fa3", 
+        measurementId: "G-64HF8TWQV4", 
+      }; 
+      const app = initializeApp(firebaseConfig); 
+      const db = getFirestore(app); 
+      // Definindo funções no escopo global 
+      window.removerAposta = async function (id) { 
+        try { 
+          await deleteDoc(doc(db, "apostas", id)); 
+          console.log("Aposta removida com sucesso!"); 
+        } catch (error) { 
+          console.error("Erro ao remover aposta:", error); 
+          alert("Ocorreu um erro ao remover a aposta: " + error.message); 
+        } 
+      }; 
+      window.voltar = function () { 
+        window.location.href = "visualization.html"; 
+      }; 
+      // Função para formatar valores monetários 
+      function formatarMoeda(valor) { 
+        return new Intl.NumberFormat("pt-BR", { 
+          style: "currency", 
+          currency: "BRL", 
+        }).format(valor); 
+      } 
+      // Função para calcular o valor final dinamicamente 
+      function calcularValor() { 
+        const stakeEl = document.getElementById("stake"); 
+        const oddsEl = document.getElementById("odds"); 
+        if (!stakeEl.value || !oddsEl.value) { 
+          document.getElementById("resultado-final").innerHTML = 
+            `R$ Valor: <span>Preencha Stake e Odds</span>`; 
+          return; 
+        } 
+        const stake = parseFloat( 
+          stakeEl.value.replace("R$", "").replace(",", "."), 
+        ); 
+        const odds = parseFloat(oddsEl.value.replace(",", ".")); 
+        const resultado = document.getElementById("resultado").value; 
+        let valorFinal = 0; 
+        if (isNaN(stake) || isNaN(odds)) { 
+          document.getElementById("resultado-final").innerHTML = 
+            `R$ Valor: <span>Valores inválidos</span>`; 
+          return; 
+        } 
+        switch (resultado) { 
+          case "green": 
+            valorFinal = stake * (odds - 1); // Green: Lucro = Stake * (Odds - 1) 
+            break; 
+          case "red": 
+            valorFinal = -stake; // Red: Perde todo o stake 
+            break; 
+          case "meio-green": 
+            valorFinal = (stake / 2) * (odds - 1); // Meio Green: Lucro metade do stake 
+            break; 
+          case "meio-red": 
+            valorFinal = -stake / 2; // Meio Red: Perde metade do stake 
+            break; 
+          case "reembolso": 
+            valorFinal = 0; // Reembolso: Retorna R$ 0,00 
+            break; 
+        } 
+        document.getElementById("resultado-final").innerHTML = 
+          `R$ Valor: <span>${formatarMoeda(valorFinal)}</span>`; 
+      } 
+      // Função para exibir a data e hora atual 
+      function atualizarDataHora() { 
+        const agora = new Date(); 
+        const options = { dateStyle: "short", timeStyle: "medium" }; 
+        document.getElementById("data-hora").value = agora.toLocaleString( 
+          "pt-BR", 
+          options, 
+        ); 
+      } 
+      // Função para limpar os campos do formulário 
+      function limparCampos() { 
+        document.getElementById("jogador1").value = ""; 
+        document.getElementById("jogador2").value = ""; 
+        document.getElementById("mercado").value = ""; 
+        document.getElementById("stake").value = ""; 
+        document.getElementById("odds").value = ""; 
+        document.getElementById("resultado").value = "green"; 
+        atualizarDataHora(); 
+        calcularValor(); 
+      } 
+      // Função para obter o tipo de status baseado no resultado 
+      function getStatusClass(resultado) { 
+        switch (resultado) { 
+          case "green": 
+            return "status-green"; 
+          case "red": 
+            return "status-red"; 
+          case "meio-green": 
+            return "status-meio-green"; 
+          case "meio-red": 
+            return "status-meio-red"; 
+          case "reembolso": 
+            return "status-reembolso"; 
+          default: 
+            return ""; 
+        } 
+      } 
+      // Função para obter o texto do status 
+      function getStatusText(resultado) { 
+        switch (resultado) { 
+          case "green": 
+            return "Green"; 
+          case "red": 
+            return "Red"; 
+          case "meio-green": 
+            return "½ Green"; 
+          case "meio-red": 
+            return "½ Red"; 
+          case "reembolso": 
+            return "Reembolso"; 
+          default: 
+            return ""; 
+        } 
+      } 
+      // Função para criar o gráfico de apostas por dia 
+      async function criarGrafico() { 
+        const ctx = document.createElement("canvas"); 
+        document.getElementById("grafico").innerHTML = ""; 
+        document.getElementById("grafico").appendChild(ctx); 
+        // Obter os últimos 7 dias 
+        const datas = []; 
+        for (let i = 6; i >= 0; i--) { 
+          const data = new Date(); 
+          data.setDate(data.getDate() - i); 
+          datas.push(data); 
+        } 
+        // Buscar todas as apostas 
+        const apostasQuery = query( 
+          collection(db, "apostas"), 
+          orderBy("timestamp", "asc"), 
+        ); 
+        const snapshot = await getDocs(apostasQuery); 
+        const todasApostas = []; 
+        snapshot.forEach((doc) => { 
+          const data = doc.data(); 
+          todasApostas.push({ 
+            ...data, 
+            id: doc.id, 
+            timestamp: data.timestamp?.toDate() || new Date(), 
+          }); 
+        }); 
+        // Calcular saldos diários 
+        const saldosDiarios = datas.map((data) => { 
+          const dataStr = data.toLocaleDateString("pt-BR"); 
+          const inicioDoDia = new Date(data.setHours(0, 0, 0, 0)); 
+          const fimDoDia = new Date(data.setHours(23, 59, 59, 999)); 
+          // Filtrar apostas para este dia 
+          const apostasDoDia = todasApostas.filter((aposta) => { 
+            return ( 
+              aposta.timestamp >= inicioDoDia && aposta.timestamp <= fimDoDia 
+            ); 
+          }); 
+          // Calcular saldo para o dia 
+          let saldoDoDia = 0; 
+          apostasDoDia.forEach((aposta) => { 
+            const stake = parseFloat( 
+              aposta.stake.replace(/[^\d.,]/g, "").replace(",", "."), 
+            ); 
+            const odds = parseFloat(aposta.odds.replace(",", ".")); 
+            switch (aposta.resultado) { 
+              case "green": 
+                saldoDoDia += stake * (odds - 1); 
+                break; 
+              case "red": 
+                saldoDoDia -= stake; 
+                break; 
+              case "meio-green": 
+                saldoDoDia += (stake / 2) * (odds - 1); 
+                break; 
+              case "meio-red": 
+                saldoDoDia -= stake / 2; 
+                break; 
+            } 
+          }); 
+          return { 
+            data: dataStr, 
+            saldo: saldoDoDia, 
+          }; 
+        }); 
+        // Preparar dados para o gráfico 
+        const labels = saldosDiarios.map((item) => item.data); 
+        const dados = saldosDiarios.map((item) => item.saldo); 
+        // Criar gráfico 
+        new Chart(ctx, { 
+          type: "line", 
+          data: { 
+            labels: labels, 
+            datasets: [ 
+              { 
+                label: "Saldo Diário", 
+                data: dados, 
+                borderColor: "#bb86fc", 
+                backgroundColor: "rgba(187, 134, 252, 0.1)", 
+                borderWidth: 3, 
+                pointBackgroundColor: "#03dac6", 
+                pointRadius: 5, 
+                pointHoverRadius: 7, 
+                tension: 0.2, 
+                fill: true, 
+              }, 
+            ], 
+          }, 
+          options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            plugins: { 
+              legend: { 
+                labels: { 
+                  color: "#e0e0e0", 
+                }, 
+              }, 
+              tooltip: { 
+                backgroundColor: "rgba(30, 30, 30, 0.9)", 
+                titleColor: "#bb86fc", 
+                bodyColor: "#e0e0e0", 
+                callbacks: { 
+                  label: function (context) { 
+                    return "Saldo: " + formatarMoeda(context.raw); 
+                  }, 
+                }, 
+              }, 
+            }, 
+            scales: { 
+              y: { 
+                grid: { 
+                  color: "rgba(255, 255, 255, 0.1)", 
+                }, 
+                ticks: { 
+                  color: "#e0e0e0", 
+                  callback: function (value) { 
+                    return formatarMoeda(value); 
+                  }, 
+                }, 
+              }, 
+              x: { 
+                grid: { 
+                  color: "rgba(255, 255, 255, 0.1)", 
+                }, 
+                ticks: { 
+                  color: "#e0e0e0", 
+                }, 
+              }, 
+            }, 
+          }, 
+        }); 
+      } 
+      // Função para carregar as apostas do Firestore 
+      function carregarApostas() { 
+        const apostasLista = document.getElementById("apostas-lista"); 
+        apostasLista.innerHTML = 
+          '<div class="loading">Carregando apostas</div>'; 
+        const hoje = new Date(); 
+        const inicioDoDia = new Date(hoje.setHours(0, 0, 0, 0)); 
+        const fimDoDia = new Date(hoje.setHours(23, 59, 59, 999)); 
+        const apostasRef = query( 
+          collection(db, "apostas"), 
+          where("timestamp", ">", inicioDoDia), 
+          where("timestamp", "<", fimDoDia), 
+          orderBy("timestamp", "desc"), 
+        ); 
+        onSnapshot(apostasRef, (snapshot) => { 
+          let ganhoTotal = 0; 
+          let perdaTotal = 0; 
+          let todasApostas = []; 
+          if (snapshot.empty) { 
+            apostasLista.innerHTML = 
+              '<div style="text-align: center; padding: 15px; color: #888;">Nenhuma aposta registrada hoje</div>'; 
+            document.getElementById("grafico").innerHTML = 
+              '<div style="text-align: center; padding: 15px; color: #888;">Sem dados para exibir</div>'; 
+            return; 
+          } 
+          apostasLista.innerHTML = ""; 
+          snapshot.forEach((doc) => { 
+            const aposta = doc.data(); 
+            todasApostas.push({ ...aposta, id: doc.id }); 
+            const apostaItem = document.createElement("div"); 
+            apostaItem.classList.add("aposta-item"); 
+            const stake = parseFloat( 
+              aposta.stake.replace(/[^\d.,]/g, "").replace(",", "."), 
+            ); 
+            const odds = parseFloat(aposta.odds.replace(",", ".")); 
+            let valorFinal = 0; 
+            // Calcular ganhos/perdas 
+            switch (aposta.resultado) { 
+              case "green": 
+                valorFinal = stake * (odds - 1); 
+                ganhoTotal += valorFinal; 
+                break; 
+              case "red": 
+                valorFinal = -stake; 
+                perdaTotal += stake; 
+                break; 
+              case "meio-green": 
+                valorFinal = (stake / 2) * (odds - 1); 
+                ganhoTotal += valorFinal; 
+                break; 
+              case "meio-red": 
+                valorFinal = -stake / 2; 
+                perdaTotal += stake / 2; 
+                break; 
+            } 
+            const statusClass = getStatusClass(aposta.resultado); 
+            const statusText = getStatusText(aposta.resultado); 
+            const valorFinalText = 
+              valorFinal === 0 ? "" : ` (${formatarMoeda(valorFinal)})`; 
+            apostaItem.innerHTML = ` 
+            <div class="aposta-info"> 
+              <strong>${aposta.liga}</strong> · <span class="${statusClass}">${statusText}${valorFinalText}</span><br> 
+              ${aposta.jogador1} vs ${aposta.jogador2}<br> 
+              <small>${aposta.mercado} · Stake: ${formatarMoeda(stake)} · Odds: ${odds}</small> 
+            </div> 
+            <div class="aposta-actions"> 
+              <button onclick="removerAposta('${doc.id}')">Remover</button> 
+            </div> 
+          `; 
+            apostasLista.appendChild(apostaItem); 
+          }); 
+          // Atualizar resumo 
+          document.getElementById("ganho-total").innerHTML = 
+            `Ganho Total<strong>${formatarMoeda(ganhoTotal)}</strong>`; 
+          document.getElementById("perda-total").innerHTML = 
+            `Perda Total<strong>${formatarMoeda(perdaTotal)}</strong>`; 
+          document.getElementById("saldo-total").innerHTML = 
+            `Saldo Total<strong>${formatarMoeda(ganhoTotal - perdaTotal)}</strong>`; 
+          // Criar gráfico por dia 
+          criarGrafico(); 
+        }); 
+      } 
+      // Função para salvar os dados no Firestore 
+      document 
+        .getElementById("salvar-dados") 
+        .addEventListener("click", async () => { 
+          const dataHora = document.getElementById("data-hora").value; 
+          const liga = document.getElementById("liga").value; 
+          const jogador1 = document.getElementById("jogador1").value; 
+          const jogador2 = document.getElementById("jogador2").value; 
+          const mercado = document.getElementById("mercado").value; 
+          const stake = document.getElementById("stake").value; 
+          const odds = document.getElementById("odds").value; 
+          const resultado = document.getElementById("resultado").value; 
+          // Validar campos obrigatórios 
+          if (!jogador1 || !jogador2 || !stake || !odds) { 
+            alert("Preencha todos os campos obrigatórios!"); 
+            return; 
+          } 
+          try { 
+            await addDoc(collection(db, "apostas"), { 
+              dataHora, 
+              liga, 
+              jogador1, 
+              jogador2, 
+              mercado: mercado || "Vitória", 
+              stake: stake.includes("R$") ? stake : `R$ ${stake}`, 
+              odds, 
+              resultado, 
+              timestamp: serverTimestamp(), 
+            }); 
+            alert("Aposta registrada com sucesso!"); 
+            limparCampos(); // Limpa os campos após salvar 
+          } catch (error) { 
+            console.error("Erro ao salvar os dados: ", error); 
+            alert("Ocorreu um erro ao salvar os dados: " + error.message); 
+          } 
+        }); 
+      // Event listeners 
+      document 
+        .getElementById("voltar-btn") 
+        .addEventListener("click", window.voltar); 
+      document.getElementById("stake").addEventListener("input", calcularValor); 
+      document.getElementById("odds").addEventListener("input", calcularValor); 
+      document 
+        .getElementById("resultado") 
+        .addEventListener("change", calcularValor); 
+      // Inicializa a página 
+      window.onload = () => { 
+        atualizarDataHora(); 
+        calcularValor(); 
+        carregarApostas(); 
+      }; 
+    </script> 
+  </body> 
+</html> 
