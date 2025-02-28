@@ -3,28 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulário de Apostas</title>
+    <title>Formulário de Apostas - RW Tips</title>
     <style>
         :root {
-            --neon-primary: #0ff;
-            --neon-secondary: #f0f;
             --dark-bg: #121212;
             --dark-secondary: #1e1e1e;
-            --text-primary: #fff;
-            --text-secondary: #888;
+            --neon-primary: #00ffff;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: var(--dark-bg);
+            background: var(--dark-bg);
             color: var(--text-primary);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
+            min-height: 100vh;
             padding: 20px;
         }
 
@@ -35,55 +34,52 @@
         }
 
         h1 {
-            color: var(--neon-primary);
             text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin: 20px 0;
-            text-shadow: 0 0 10px var(--neon-primary);
+            color: var(--neon-primary);
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
         }
 
         label {
-            color: var(--text-secondary);
-            margin-bottom: 5px;
             display: block;
-            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
         }
 
-        select, input {
+        input, select {
             width: 100%;
-            background-color: var(--dark-secondary);
-            border: 1px solid var(--neon-primary);
-            color: var(--text-primary);
             padding: 12px;
+            margin-bottom: 20px;
+            background: var(--dark-secondary);
+            border: 2px solid var(--neon-primary);
             border-radius: 8px;
-            margin-bottom: 15px;
-            outline: none;
+            color: var(--text-primary);
+            font-size: 16px;
             transition: all 0.3s ease;
         }
 
-        select:focus, input:focus {
+        input:focus, select:focus {
+            outline: none;
             box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
         }
 
-        #salvar-dados {
-            background: var(--dark-secondary);
-            color: var(--neon-primary);
-            border: 2px solid var(--neon-primary);
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        button {
             width: 100%;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
-        #salvar-dados:hover {
+            padding: 15px;
             background: var(--neon-primary);
             color: var(--dark-bg);
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        button:hover {
+            background: #00cccc;
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
             transform: translateY(-2px);
         }
@@ -93,47 +89,77 @@
             top: 20px;
             left: 20px;
             background: transparent;
-            border: none;
+            border: 2px solid var(--neon-primary);
             color: var(--neon-primary);
+            padding: 10px 20px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 24px;
+            transition: all 0.3s ease;
         }
 
         .back-button::before {
-            content: "←";
-            text-shadow: 0 0 10px var(--neon-primary);
+            content: "← Voltar";
+        }
+
+        .back-button:hover {
+            background: var(--neon-primary);
+            color: var(--dark-bg);
+        }
+
+        .result {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: var(--dark-secondary);
+            border-radius: 8px;
+            border: 2px solid var(--neon-primary);
         }
 
         .apostas-lista {
-            margin-top: 25px;
-            max-height: 300px;
-            overflow-y: auto;
-            border: 2px solid var(--neon-primary);
-            border-radius: 12px;
-            padding: 15px;
-            background-color: rgba(30, 30, 30, 0.8);
-            box-shadow: inset 0 0 20px rgba(0, 255, 255, 0.2);
+            margin-top: 20px;
         }
 
         .aposta-item {
             background: var(--dark-secondary);
-            border: 1px solid var(--neon-primary);
-            border-radius: 10px;
-            padding: 15px;
-            margin: 10px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 2px solid var(--neon-primary);
             transition: all 0.3s ease;
         }
 
         .aposta-item:hover {
+            transform: translateY(-3px);
             box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
-            transform: translateX(5px);
         }
 
-        .aposta-info {
-            flex: 1;
+        .aposta-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .aposta-data {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        .aposta-status {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .aposta-content {
+            margin: 15px 0;
+        }
+
+        .aposta-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 15px;
         }
 
         .aposta-actions button {
@@ -179,16 +205,6 @@
             font-size: 24px;
         }
 
-        .green {
-            color: #0f0;
-            text-shadow: 0 0 5px #0f0;
-        }
-
-        .red {
-            color: #f00;
-            text-shadow: 0 0 5px #f00;
-        }
-
         .grafico-container {
             margin-top: 25px;
             padding: 20px;
@@ -206,6 +222,54 @@
             font-style: italic;
         }
 
+        .feedback {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            animation: slideIn 0.3s ease-out;
+            z-index: 1000;
+        }
+
+        .feedback.sucesso {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #0f0;
+            color: #0f0;
+        }
+
+        .feedback.erro {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #f00;
+            color: #f00;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        input.invalido, select.invalido {
+            border-color: #f00;
+            box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+        }
+
+        .green {
+            color: #0f0;
+            text-shadow: 0 0 5px #0f0;
+        }
+
+        .red {
+            color: #f00;
+            text-shadow: 0 0 5px #f00;
+        }
+
         @keyframes dots {
             0%, 20% { content: "."; }
             40% { content: ".."; }
@@ -215,6 +279,20 @@
         .loading::after {
             content: "";
             animation: dots 1.5s infinite;
+        }
+
+        @media (max-width: 768px) {
+            .resumo {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
         }
     </style>
 </head>
@@ -332,6 +410,15 @@
             });
         }
 
+        function formatarInputMoeda(input) {
+            let valor = input.value.replace(/\D/g, "");
+            valor = (parseFloat(valor) / 100).toFixed(2);
+            input.value = valor.toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+        }
+
         function getStatusClass(resultado) {
             const classes = {
                 'green': 'green',
@@ -352,6 +439,49 @@
                 'reembolso': 'Reembolso'
             };
             return textos[resultado] || resultado;
+        }
+
+        function mostrarFeedback(tipo, mensagem) {
+            const feedback = document.createElement('div');
+            feedback.className = `feedback ${tipo}`;
+            feedback.textContent = mensagem;
+            
+            document.querySelector('.container').appendChild(feedback);
+            
+            setTimeout(() => feedback.remove(), 3000);
+        }
+
+        function validarFormulario() {
+            const campos = {
+                jogador1: document.getElementById("jogador1").value,
+                jogador2: document.getElementById("jogador2").value,
+                stake: document.getElementById("stake").value,
+                odds: document.getElementById("odds").value
+            };
+
+            const mensagens = {
+                jogador1: "Selecione o Jogador 1",
+                jogador2: "Selecione o Jogador 2",
+                stake: "Digite um valor para a stake",
+                odds: "Digite um valor para as odds"
+            };
+
+            for (const [campo, valor] of Object.entries(campos)) {
+                if (!valor.trim()) {
+                    mostrarFeedback('erro', mensagens[campo]);
+                    document.getElementById(campo).classList.add('invalido');
+                    return false;
+                } else {
+                    document.getElementById(campo).classList.remove('invalido');
+                }
+            }
+
+            if (campos.jogador1 === campos.jogador2) {
+                mostrarFeedback('erro', "Os jogadores não podem ser iguais");
+                return false;
+            }
+
+            return true;
         }
 
         // Função para buscar jogadores da API
@@ -394,7 +524,7 @@
                 });
             } catch (error) {
                 console.error("Erro ao buscar jogadores:", error);
-                alert("Erro ao carregar jogadores. Por favor, tente novamente.");
+                mostrarFeedback('erro', "Erro ao carregar jogadores. Por favor, tente novamente.");
             }
         }
 
@@ -465,195 +595,90 @@
             const todasApostas = [];
             
             snapshot.forEach((doc) => {
-                const data = doc.data();
-                todasApostas.push({
-                    ...data,
-                    id: doc.id,
-                    timestamp: data.timestamp?.toDate() || new Date(),
-                });
+                todasApostas.push({ ...doc.data(), id: doc.id });
             });
 
-            const saldosDiarios = datas.map((data) => {
-                const dataStr = data.toLocaleDateString("pt-BR");
-                const inicioDoDia = new Date(data.setHours(0, 0, 0, 0));
-                const fimDoDia = new Date(data.setHours(23, 59, 59, 999));
-
-                const apostasDoDia = todasApostas.filter((aposta) => {
-                    return aposta.timestamp >= inicioDoDia && aposta.timestamp <= fimDoDia;
-                });
-
-                let saldoDia = 0;
-                apostasDoDia.forEach((aposta) => {
-                    const stake = parseFloat(
-                        aposta.stake.replace(/[^\d.,]/g, "").replace(",", ".")
-                    );
-                    const odds = parseFloat(aposta.odds.replace(",", "."));
-
-                    switch (aposta.resultado) {
-                        case "green":
-                            saldoDia += stake * (odds - 1);
-                            break;
-                        case "red":
-                            saldoDia -= stake;
-                            break;
-                        case "meio-green":
-                            saldoDia += (stake / 2) * (odds - 1);
-                            break;
-                        case "meio-red":
-                            saldoDia -= stake / 2;
-                            break;
-                    }
-                });
-
-                return {
-                    data: dataStr,
-                    saldo: saldoDia,
-                };
-            });
-
-            const ctx = document.getElementById("grafico");
-            if (window.myChart) {
-                window.myChart.destroy();
-            }
-
-            window.myChart = new Chart(ctx, {
+            const ctx = document.getElementById("grafico").getContext("2d");
+            new Chart(ctx, {
                 type: "line",
                 data: {
-                    labels: saldosDiarios.map((item) => item.data),
-                    datasets: [
-                        {
-                            label: "Saldo Diário",
-                            data: saldosDiarios.map((item) => item.saldo),
-                            borderColor: "#0ff",
-                            backgroundColor: "rgba(0, 255, 255, 0.1)",
-                            tension: 0.4,
-                            fill: true,
-                        },
-                    ],
+                    labels: datas.map(data => data.toLocaleDateString()),
+                    datasets: [{
+                        label: "Saldo Diário",
+                        data: datas.map(data => {
+                            const apostasDoDia = todasApostas.filter(aposta => {
+                                const dataAposta = new Date(aposta.dataHora);
+                                return dataAposta.toDateString() === data.toDateString();
+                            });
+                            
+                            return apostasDoDia.reduce((acc, aposta) => {
+                                const stake = parseFloat(aposta.stake.replace(/[^\d.,]/g, "").replace(",", "."));
+                                const odds = parseFloat(aposta.odds);
+                                
+                                switch (aposta.resultado) {
+                                    case "green": return acc + stake * (odds - 1);
+                                    case "red": return acc - stake;
+                                    case "meio-green": return acc + (stake / 2) * (odds - 1);
+                                    case "meio-red": return acc - stake / 2;
+                                    default: return acc;
+                                }
+                            }, 0);
+                        }),
+                        borderColor: "#00ffff",
+                        tension: 0.1
+                    }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            labels: {
-                                color: "#e0e0e0",
-                            },
-                        },
+                            display: false
+                        }
                     },
                     scales: {
                         y: {
                             grid: {
-                                color: "rgba(255, 255, 255, 0.1)",
+                                color: "rgba(255, 255, 255, 0.1)"
                             },
                             ticks: {
-                                color: "#e0e0e0",
-                            },
+                                color: "#ffffff"
+                            }
                         },
                         x: {
                             grid: {
-                                color: "rgba(255, 255, 255, 0.1)",
+                                color: "rgba(255, 255, 255, 0.1)"
                             },
                             ticks: {
-                                color: "#e0e0e0",
-                            },
-                        },
-                    },
-                },
-            });
-        }
-
-        // Função para carregar apostas
-        function carregarApostas() {
-            const apostasLista = document.getElementById("apostas-lista");
-            apostasLista.innerHTML = '<div class="loading">Carregando apostas</div>';
-
-            const hoje = new Date();
-            const inicioDoDia = new Date(hoje.setHours(0, 0, 0, 0));
-            const fimDoDia = new Date(hoje.setHours(23, 59, 59, 999));
-
-            const apostasRef = query(
-                collection(db, "apostas"),
-                where("timestamp", ">", inicioDoDia),
-                where("timestamp", "<", fimDoDia),
-                orderBy("timestamp", "desc")
-            );
-
-            onSnapshot(apostasRef, (snapshot) => {
-                let ganhoTotal = 0;
-                let perdaTotal = 0;
-                let todasApostas = [];
-
-                if (snapshot.empty) {
-                    apostasLista.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Nenhuma aposta registrada hoje</div>';
-                    document.getElementById("grafico").innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Sem dados para exibir</div>';
-                    return;
-                }
-
-                apostasLista.innerHTML = "";
-
-                snapshot.forEach((doc) => {
-                    const aposta = doc.data();
-                    todasApostas.push({ ...aposta, id: doc.id });
-
-                    const stake = parseFloat(aposta.stake.replace(/[^\d.,]/g, "").replace(",", "."));
-                    const odds = parseFloat(aposta.odds.replace(",", "."));
-                    let valorFinal = 0;
-
-                    switch (aposta.resultado) {
-                        case "green":
-                            valorFinal = stake * (odds - 1);
-                            ganhoTotal += valorFinal;
-                            break;
-                        case "red":
-                            valorFinal = -stake;
-                            perdaTotal += stake;
-                            break;
-                        case "meio-green":
-                            valorFinal = (stake / 2) * (odds - 1);
-                            ganhoTotal += valorFinal;
-                            break;
-                        case "meio-red":
-                            valorFinal = -stake / 2;
-                            perdaTotal += stake / 2;
-                            break;
+                                color: "#ffffff"
+                            }
+                        }
                     }
-
-                    const statusClass = getStatusClass(aposta.resultado);
-                    const statusText = getStatusText(aposta.resultado);
-                    const valorFinalText = valorFinal === 0 ? "" : ` (${formatarMoeda(valorFinal)})`;
-
-                    const apostaItem = document.createElement("div");
-                    apostaItem.classList.add("aposta-item");
-                    apostaItem.innerHTML = `
-                        <div class="aposta-info">
-                            <strong>${aposta.liga}</strong> · <span class="${statusClass}">${statusText}${valorFinalText}</span><br>
-                            ${aposta.jogador1} vs ${aposta.jogador2}<br>
-                            <small>${aposta.mercado} · Stake: ${formatarMoeda(stake)} · Odds: ${odds}</small>
-                        </div>
-                        <div class="aposta-actions">
-                            <button onclick="removerAposta('${doc.id}')">Remover</button>
-                        </div>
-                    `;
-                    apostasLista.appendChild(apostaItem);
-                });
-
-                document.getElementById("ganho-total").innerHTML = `Ganho Total<strong>${formatarMoeda(ganhoTotal)}</strong>`;
-                document.getElementById("perda-total").innerHTML = `Perda Total<strong>${formatarMoeda(perdaTotal)}</strong>`;
-                document.getElementById("saldo-total").innerHTML = `Saldo Total<strong>${formatarMoeda(ganhoTotal - perdaTotal)}</strong>`;
-
-                criarGrafico();
+                }
             });
         }
 
         // Event Listeners
-        document.getElementById("liga").addEventListener("change", buscarJogadores);
-        document.getElementById("stake").addEventListener("input", calcularValor);
+        document.getElementById("liga").addEventListener("change", () => {
+            buscarJogadores();
+            limparCampos();
+        });
+
+        document.getElementById("stake").addEventListener("input", function(e) {
+            formatarInputMoeda(this);
+            calcularValor();
+        });
+
         document.getElementById("odds").addEventListener("input", calcularValor);
         document.getElementById("resultado").addEventListener("change", calcularValor);
-        document.getElementById("voltar-btn").addEventListener("click", () => window.location.href = "visualization.html");
+
+        document.getElementById("voltar-btn").addEventListener("click", () => {
+            window.location.href = "visualization.html";
+        });
 
         document.getElementById("salvar-dados").addEventListener("click", async () => {
+            if (!validarFormulario()) return;
+
             const dataHora = document.getElementById("data-hora").value;
             const liga = document.getElementById("liga").value;
             const jogador1 = document.getElementById("jogador1").value;
@@ -662,11 +687,6 @@
             const stake = document.getElementById("stake").value;
             const odds = document.getElementById("odds").value;
             const resultado = document.getElementById("resultado").value;
-
-            if (!jogador1 || !jogador2 || !stake || !odds) {
-                alert("Preencha todos os campos obrigatórios!");
-                return;
-            }
 
             try {
                 await addDoc(collection(db, "apostas"), {
@@ -680,32 +700,38 @@
                     resultado,
                     timestamp: serverTimestamp(),
                 });
-                alert("Aposta registrada com sucesso!");
+                mostrarFeedback('sucesso', "Aposta registrada com sucesso!");
                 limparCampos();
             } catch (error) {
                 console.error("Erro ao salvar os dados: ", error);
-                alert("Ocorreu um erro ao salvar os dados: " + error.message);
+                mostrarFeedback('erro', "Erro ao salvar: " + error.message);
             }
         });
 
-        // Função global para remover aposta
-        window.removerAposta = async function (id) {
-            try {
-                await deleteDoc(doc(db, "apostas", id));
-                console.log("Aposta removida com sucesso!");
-            } catch (error) {
-                console.error("Erro ao remover aposta:", error);
-                alert("Ocorreu um erro ao remover a aposta: " + error.message);
-            }
-        };
-
         // Inicialização
-        window.onload = () => {
-            atualizarDataHora();
-            calcularValor();
-            carregarApostas();
-            buscarJogadores();
-        };
+        atualizarDataHora();
+        buscarJogadores();
+        criarGrafico();
+
+        // Atualização automática
+        let ultimaAtualizacao = 0;
+        const INTERVALO_ATUALIZACAO = 5 * 60 * 1000; // 5 minutos
+
+        async function atualizarJogadoresAutomaticamente() {
+            const agora = Date.now();
+            if (agora - ultimaAtualizacao > INTERVALO_ATUALIZACAO) {
+                await buscarJogadores();
+                ultimaAtualizacao = agora;
+            }
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                atualizarJogadoresAutomaticamente();
+            }
+        });
+
+        setInterval(atualizarJogadoresAutomaticamente, INTERVALO_ATUALIZACAO);
     </script>
 </body>
 </html>
