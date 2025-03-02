@@ -3,23 +3,1123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="0; url=visualization.html">
-
-    <!-- Controle de cache para garantir atualização -->
+    
+    <!-- Controle de cache -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 
-    <!-- Favicon usando jsDelivr -->
+    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
-
-    <!-- Favicon vazio em base64 para evitar busca no local padrão -->
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 
-    <title>RW Tips</title>
+    <title>RW Tips - Login</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-firestore-compat.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #0a0a0a;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(6, 212, 233, 0.1) 0%, rgba(0, 0, 0, 0) 20%),
+                radial-gradient(circle at 80% 30%, rgba(233, 6, 233, 0.1) 0%, rgba(0, 0, 0, 0) 20%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, 
+                rgba(6, 212, 233, 0.05) 0%, 
+                rgba(0, 0, 0, 0) 70%);
+            pointer-events: none;
+        }
+        
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .login-container {
+            background-color: rgba(17, 17, 23, 0.85);
+            border-radius: 15px;
+            border: 1px solid rgba(6, 212, 233, 0.3);
+            box-shadow: 
+                0 0 20px rgba(6, 212, 233, 0.2),
+                0 0 60px rgba(6, 212, 233, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .login-container:hover {
+            box-shadow: 
+                0 0 25px rgba(6, 212, 233, 0.3),
+                0 0 70px rgba(6, 212, 233, 0.15);
+            border: 1px solid rgba(6, 212, 233, 0.5);
+        }
+        
+        .logo-container {
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: 2px solid rgba(6, 212, 233, 0.3);
+            box-shadow: 0 0 15px rgba(6, 212, 233, 0.5);
+        }
+        
+        .logo-text {
+            color: #fff;
+            text-shadow: 
+                0 0 5px #06d4e9,
+                0 0 10px rgba(6, 212, 233, 0.5);
+            font-size: 24px;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: none;
+            border-radius: 8px;
+            background-color: rgba(30, 30, 40, 0.7);
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(6, 212, 233, 0.1);
+        }
+        
+        .input-group input:focus {
+            background-color: rgba(30, 30, 40, 0.9);
+            box-shadow: 0 0 0 2px rgba(6, 212, 233, 0.3);
+            outline: none;
+            border: 1px solid rgba(6, 212, 233, 0.5);
+        }
+        
+        .input-group select {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: none;
+            border-radius: 8px;
+            background-color: rgba(30, 30, 40, 0.7);
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(6, 212, 233, 0.1);
+            appearance: none;
+        }
+        
+        .input-group select:focus {
+            background-color: rgba(30, 30, 40, 0.9);
+            box-shadow: 0 0 0 2px rgba(6, 212, 233, 0.3);
+            outline: none;
+            border: 1px solid rgba(6, 212, 233, 0.5);
+        }
+        
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(6, 212, 233, 0.7);
+            font-size: 20px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, rgba(6, 212, 233, 0.8), rgba(90, 0, 223, 0.8));
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(6, 212, 233, 0.5);
+            margin-bottom: 15px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 5px 15px rgba(6, 212, 233, 0.5),
+                0 0 30px rgba(6, 212, 233, 0.3);
+        }
+        
+        button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                transparent, 
+                transparent, 
+                transparent, 
+                rgba(255, 255, 255, 0.1)
+            );
+            transform: rotate(30deg);
+            transition: all 0.5s ease;
+        }
+        
+        button:hover::after {
+            transform: rotate(30deg) translate(10%, 10%);
+        }
+        
+        .loader {
+            display: none;
+            border: 4px solid rgba(6, 212, 233, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #06d4e9;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            color: #ff4d6a;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+            text-shadow: 0 0 5px rgba(255, 77, 106, 0.5);
+        }
+        
+        .success-message {
+            color: #06e959;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+            text-shadow: 0 0 5px rgba(6, 233, 89, 0.5);
+        }
+        
+        .warning-message {
+            color: #ffc107;
+            margin-top: 15px;
+            font-size: 14px;
+            text-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
+        }
+        
+        /* Efeito neon pulsante sutil */
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+        
+        .neon-pulse {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            z-index: -1;
+            animation: pulse 4s infinite;
+        }
+        
+        .pulse1 {
+            top: 20%;
+            right: 20%;
+            width: 150px;
+            height: 150px;
+            background-color: rgba(6, 212, 233, 0.1);
+        }
+        
+        .pulse2 {
+            bottom: 30%;
+            left: 10%;
+            width: 200px;
+            height: 200px;
+            background-color: rgba(233, 6, 233, 0.07);
+            animation-delay: 2s;
+        }
+        
+        /* Efeito de partículas (pontos brilhantes) */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+            top: 0;
+            left: 0;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: rgba(6, 212, 233, 0.7);
+            box-shadow: 0 0 10px 2px rgba(6, 212, 233, 0.5);
+            border-radius: 50%;
+            animation: particleFloat 20s infinite linear;
+        }
+        
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+        
+        /* Admin Panel Styles */
+        .admin-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            color: rgba(6, 212, 233, 0.5);
+            border: none;
+            width: auto;
+            font-size: 14px;
+            box-shadow: none;
+            padding: 5px;
+            cursor: pointer;
+            z-index: 100;
+        }
+        
+        .admin-button:hover {
+            color: rgba(6, 212, 233, 0.8);
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .admin-panel {
+            display: none;
+            background-color: rgba(17, 17, 23, 0.95);
+            border-radius: 15px;
+            border: 1px solid rgba(6, 212, 233, 0.3);
+            box-shadow: 
+                0 0 20px rgba(6, 212, 233, 0.3),
+                0 0 60px rgba(6, 212, 233, 0.2);
+            padding: 30px;
+            width: 100%;
+            max-width: 800px;
+            margin-top: 30px;
+            text-align: left;
+            color: #fff;
+        }
+        
+        .admin-panel h2 {
+            color: #fff;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 0 0 5px #06d4e9;
+        }
+        
+        .admin-panel .input-row {
+            display: flex;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+        
+        .admin-panel .input-row .input-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        
+        .admin-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(6, 212, 233, 0.3);
+        }
+        
+        .admin-tab {
+            padding: 10px 15px;
+            background: transparent;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            opacity: 0.7;
+            transition: all 0.3s;
+            width: auto;
+            box-shadow: none;
+            margin-bottom: 0;
+        }
+        
+        .admin-tab:hover {
+            opacity: 1;
+            background: transparent;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .admin-tab.active {
+            opacity: 1;
+            border-bottom: 2px solid #06d4e9;
+            text-shadow: 0 0 5px #06d4e9;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .user-list {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid rgba(6, 212, 233, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+        }
+        
+        .user-item {
+            padding: 10px;
+            border-bottom: 1px solid rgba(6, 212, 233, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-item:last-child {
+            border-bottom: none;
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-email {
+            color: #fff;
+            font-size: 16px;
+        }
+        
+        .user-created, .user-expires {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 12px;
+            margin-top: 3px;
+        }
+        
+        .user-expires.expired {
+            color: #ff4d6a;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .user-actions button {
+            padding: 5px 10px;
+            font-size: 12px;
+            width: auto;
+            margin: 0;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: rgba(17, 17, 23, 0.95);
+            border-radius: 15px;
+            border: 1px solid rgba(6, 212, 233, 0.3);
+            width: 90%;
+            max-width: 400px;
+            padding: 30px;
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        /* Switch Component */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            margin-left: 10px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(30, 30, 40, 0.7);
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: rgba(6, 212, 233, 0.8);
+        }
+        
+        input:focus + .slider {
+            box-shadow: 0 0 1px rgba(6, 212, 233, 0.8);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        .admin-login {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <p>Redirecionando para <a href="visualization.html">RW Tips</a>...</p>
+    <!-- Efeitos de background -->
+    <div class="neon-pulse pulse1"></div>
+    <div class="neon-pulse pulse2"></div>
+    <div class="particles" id="particles"></div>
+    
+    <!-- Botão Admin -->
+    <button class="admin-button" id="show-admin-login">Admin</button>
+    
+    <div class="container">
+        <!-- Container de Login -->
+        <div class="login-container" id="login-form">
+            <div class="logo-container">
+                <img src="https://i.ibb.co/v6MhLNJX/11zon-cropped.png" alt="RW Tips Logo" class="logo">
+                <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
+            </div>
+            
+            <div class="input-group">
+                <i>📧</i>
+                <input type="email" id="login-email" placeholder="Seu e-mail" required>
+            </div>
+            
+            <div class="input-group">
+                <i>🔒</i>
+                <input type="password" id="login-password" placeholder="Sua senha" required>
+            </div>
+            
+            <button id="login-button">
+                <span id="login-text">ENTRAR</span>
+                <div class="loader" id="login-loader"></div>
+            </button>
+            
+            <div class="error-message" id="login-error"></div>
+            <div class="success-message" id="login-success"></div>
+            <div class="warning-message" id="login-warning" style="display: none;"></div>
+        </div>
+
+        <!-- Painel Admin (escondido inicialmente) -->
+        <div class="admin-panel" id="admin-panel">
+            <h2>Painel Administrativo</h2>
+            
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-tab="create-user">Criar Usuário</button>
+                <button class="admin-tab" data-tab="manage-users">Gerenciar Usuários</button>
+            </div>
+            
+            <div class="tab-content active" id="create-user-tab">
+                <div class="input-group">
+                    <i>👤</i>
+                    <input type="text" id="new-user-name" placeholder="Nome completo" required>
+                </div>
+                
+                <div class="input-group">
+                    <i>📧</i>
+                    <input type="email" id="new-user-email" placeholder="Email" required>
+                </div>
+                
+                <div class="input-group">
+                    <i>🔒</i>
+                    <input type="password" id="new-user-password" placeholder="Senha" required>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <i>📅</i>
+                        <input type="number" id="password-validity" placeholder="Dias de validade" value="30" min="1" max="365">
+                    </div>
+                    
+                    <div class="input-group">
+                        <i>🔑</i>
+                        <select id="user-role">
+                            <option value="user">Usuário</option>
+                            <option value="admin">Administrador</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button id="create-user-button">
+                    <span id="create-user-text">CRIAR USUÁRIO</span>
+                    <div class="loader" id="create-user-loader"></div>
+                </button>
+                
+                <div class="error-message" id="create-user-error"></div>
+                <div class="success-message" id="create-user-success"></div>
+            </div>
+            
+            <div class="tab-content" id="manage-users-tab">
+                <button id="refresh-users-button">
+                    <span id="refresh-users-text">ATUALIZAR LISTA</span>
+                    <div class="loader" id="refresh-users-loader"></div>
+                </button>
+                
+                <div class="user-list" id="user-list">
+                    <p style="text-align: center; padding: 20px;">Carregando usuários...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Login Admin (escondido inicialmente) -->
+        <div class="login-container admin-login hidden" id="admin-login-form">
+            <div class="logo-container">
+                <h2 class="logo-text">🔐 Admin</h2>
+            </div>
+            
+            <div class="input-group">
+                <i>👤</i>
+                <input type="text" id="admin-username" placeholder="Nome de usuário" required>
+            </div>
+            
+            <div class="input-group">
+                <i>🔒</i>
+                <input type="password" id="admin-password" placeholder="Senha" required>
+            </div>
+            
+            <button id="admin-login-button">
+                <span id="admin-login-text">ENTRAR</span>
+                <div class="loader" id="admin-login-loader"></div>
+            </button>
+            
+            <div class="error-message" id="admin-login-error"></div>
+            
+            <button id="back-to-login" style="background: transparent; box-shadow: none; color: rgba(6, 212, 233, 0.8);">
+                VOLTAR
+            </button>
+        </div>
+    </div>
+    
+    <!-- Modal para renovação de senha -->
+    <div class="modal" id="renew-password-modal">
+        <div class="modal-content">
+            <span class="close-modal" id="close-renew-modal">&times;</span>
+            <h2 style="margin-bottom: 20px; text-align: center; color: #fff;">Renovar Senha</h2>
+            
+            <div class="input-group">
+                <i>👤</i>
+                <input type="text" id="renew-user-email" readonly>
+            </div>
+            
+            <div class="input-row">
+                <div class="input-group">
+                    <i>📅</i>
+                    <input type="number" id="renew-validity" placeholder="Dias de validade" value="30" min="1" max="365">
+                </div>
+            </div>
+            
+            <button id="renew-password-button">
+                <span id="renew-password-text">RENOVAR SENHA</span>
+                <div class="loader" id="renew-password-loader"></div>
+            </button>
+            
+            <div class="error-message" id="renew-password-error"></div>
+            <div class="success-message" id="renew-password-success"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyALiAKWq7Z6B9ut6KCHt9L4g8Vt8VHF6iM",
+            authDomain: "rw-tips.firebaseapp.com",
+            projectId: "rw-tips",
+            storageBucket: "rw-tips.appspot.com",
+            messagingSenderId: "806941219354",
+            appId: "1:806941219354:web:6f904532b6884251444fa3",
+            measurementId: "G-64HF8TWQV4",
+        };
+        
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        // Elementos DOM
+        const loginForm = document.getElementById('login-form');
+        const adminPanel = document.getElementById('admin-panel');
+        const adminLoginForm = document.getElementById('admin-login-form');
+        
+        const loginButton = document.getElementById('login-button');
+        const loginLoader = document.getElementById('login-loader');
+        const loginText = document.getElementById('login-text');
+        const loginError = document.getElementById('login-error');
+        const loginSuccess = document.getElementById('login-success');
+        const loginWarning = document.getElementById('login-warning');
+        
+        const showAdminLoginBtn = document.getElementById('show-admin-login');
+        const backToLoginBtn = document.getElementById('back-to-login');
+        const adminLoginButton = document.getElementById('admin-login-button');
+        
+        const adminTabs = document.querySelectorAll('.admin-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        const createUserButton = document.getElementById('create-user-button');
+        const createUserLoader = document.getElementById('create-user-loader');
+        const createUserText = document.getElementById('create-user-text');
+        const createUserError = document.getElementById('create-user-error');
+        const createUserSuccess = document.getElementById('create-user-success');
+        
+        const refreshUsersButton = document.getElementById('refresh-users-button');
+        const userList = document.getElementById('user-list');
+        
+        const renewPasswordModal = document.getElementById('renew-password-modal');
+        const closeRenewModal = document.getElementById('close-renew-modal');
+        const renewUserEmail = document.getElementById('renew-user-email');
+        const renewPasswordButton = document.getElementById('renew-password-button');
+        
+        // Admin credentials
+        const ADMIN_USERNAME = "assuncao";
+        const ADMIN_PASSWORD = "131609@sH";
+        
+        // Verificar se o usuário já está logado ao carregar a página
+        window.addEventListener('DOMContentLoaded', () => {
+            if (sessionStorage.getItem('loggedIn') === 'true') {
+                window.location.href = 'visualization.html';
+            }
+            
+            // Criar partículas para o efeito de fundo
+            createParticles();
+        });
+        
+        // Função para criar partículas
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const numberOfParticles = 30;
+            
+            for (let i = 0; i < numberOfParticles; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Posicionamento aleatório
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100 + 100; // Começar abaixo da tela
+                const size = Math.random() * 2 + 1;
+                const duration = Math.random() * 10 + 10;
+                const delay = Math.random() * 5;
+                
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // Função para login
+        loginButton.addEventListener('click', () => {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            if (!email || !password) {
+                showError(loginError, 'Por favor, preencha todos os campos');
+                return;
+            }
+            
+            // Mostrar loader
+            loginText.style.display = 'none';
+            loginLoader.style.display = 'block';
+            loginButton.disabled = true;
+            
+            // Tentar login
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Login bem-sucedido
+                    const user = userCredential.user;
+                    
+                    // Verificar se o usuário existe no Firestore e se a senha não expirou
+                    db.collection('users').doc(user.uid).get()
+                        .then((doc) => {
+                            if (doc.exists) {
+                                const userData = doc.data();
+                                const currentDate = new Date();
+                                const expirationDate = userData.expirationDate.toDate();
+
+                                if (currentDate > expirationDate) {
+                                    // Senha expirada
+                                    auth.signOut().then(() => {
+                                        showError(loginError, 'Sua senha expirou. Entre em contato com o administrador.');
+                                        loginText.style.display = 'block';
+                                        loginLoader.style.display = 'none';
+                                        loginButton.disabled = false;
+                                    });
+                                } else {
+                                    // Senha válida, redirecionar para a página de visualização
+                                    sessionStorage.setItem('loggedIn', 'true');
+                                    window.location.href = 'visualization.html';
+                                }
+                            } else {
+                                // Usuário não encontrado no Firestore
+                                auth.signOut().then(() => {
+                                    showError(loginError, 'Usuário não encontrado.');
+                                    loginText.style.display = 'block';
+                                    loginLoader.style.display = 'none';
+                                    loginButton.disabled = false;
+                                });
+                            }
+                        })
+                        .catch((error) => {
+                            showError(loginError, 'Erro ao verificar usuário: ' + error.message);
+                            loginText.style.display = 'block';
+                            loginLoader.style.display = 'none';
+                            loginButton.disabled = false;
+                        });
+                })
+                .catch((error) => {
+                    // Erro no login
+                    showError(loginError, 'Erro ao fazer login: ' + error.message);
+                    loginText.style.display = 'block';
+                    loginLoader.style.display = 'none';
+                    loginButton.disabled = false;
+                });
+        });
+
+        // Função para exibir mensagens de erro
+        function showError(element, message) {
+            element.textContent = message;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+
+        // Função para exibir mensagens de sucesso
+        function showSuccess(element, message) {
+            element.textContent = message;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+
+        // Mostrar o formulário de login admin
+        showAdminLoginBtn.addEventListener('click', () => {
+            loginForm.style.display = 'none';
+            adminLoginForm.classList.remove('hidden');
+        });
+
+        // Voltar para o formulário de login normal
+        backToLoginBtn.addEventListener('click', () => {
+            adminLoginForm.classList.add('hidden');
+            loginForm.style.display = 'block';
+        });
+
+        // Login do administrador
+        adminLoginButton.addEventListener('click', () => {
+            const username = document.getElementById('admin-username').value;
+            const password = document.getElementById('admin-password').value;
+
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                // Login bem-sucedido, mostrar painel admin
+                adminLoginForm.classList.add('hidden');
+                adminPanel.style.display = 'block';
+            } else {
+                showError(document.getElementById('admin-login-error'), 'Credenciais inválidas.');
+            }
+        });
+
+        // Trocar entre as abas do painel admin
+        adminTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+
+                // Remover a classe 'active' de todas as abas e conteúdos
+                adminTabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+
+                // Adicionar a classe 'active' à aba e conteúdo selecionados
+                tab.classList.add('active');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+
+        // Criar novo usuário
+        createUserButton.addEventListener('click', () => {
+            const name = document.getElementById('new-user-name').value;
+            const email = document.getElementById('new-user-email').value;
+            const password = document.getElementById('new-user-password').value;
+            const validityDays = parseInt(document.getElementById('password-validity').value);
+            const role = document.getElementById('user-role').value;
+
+            if (!name || !email || !password || !validityDays) {
+                showError(createUserError, 'Por favor, preencha todos os campos.');
+                return;
+            }
+
+            // Mostrar loader
+            createUserText.style.display = 'none';
+            createUserLoader.style.display = 'block';
+            createUserButton.disabled = true;
+
+            // Calcular a data de expiração
+            const expirationDate = new Date();
+            expirationDate.setDate(expirationDate.getDate() + validityDays);
+
+            // Criar usuário no Firebase Auth
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+
+                    // Salvar informações adicionais no Firestore
+                    db.collection('users').doc(user.uid).set({
+                        name: name,
+                        email: email,
+                        role: role,
+                        expirationDate: expirationDate,
+                        createdAt: new Date()
+                    })
+                    .then(() => {
+                        showSuccess(createUserSuccess, 'Usuário criado com sucesso!');
+                        createUserText.style.display = 'block';
+                        createUserLoader.style.display = 'none';
+                        createUserButton.disabled = false;
+                    })
+                    .catch((error) => {
+                        showError(createUserError, 'Erro ao salvar usuário: ' + error.message);
+                        createUserText.style.display = 'block';
+                        createUserLoader.style.display = 'none';
+                        createUserButton.disabled = false;
+                    });
+                })
+                .catch((error) => {
+                    showError(createUserError, 'Erro ao criar usuário: ' + error.message);
+                    createUserText.style.display = 'block';
+                    createUserLoader.style.display = 'none';
+                    createUserButton.disabled = false;
+                });
+        });
+
+        // Atualizar lista de usuários
+        refreshUsersButton.addEventListener('click', () => {
+            refreshUsersButton.disabled = true;
+            refreshUsersButton.querySelector('.loader').style.display = 'block';
+            refreshUsersButton.querySelector('span').style.display = 'none';
+
+            db.collection('users').get()
+                .then((querySnapshot) => {
+                    userList.innerHTML = '';
+                    querySnapshot.forEach((doc) => {
+                        const userData = doc.data();
+                        const userItem = document.createElement('div');
+                        userItem.classList.add('user-item');
+
+                        const userInfo = document.createElement('div');
+                        userInfo.classList.add('user-info');
+
+                        const userEmail = document.createElement('div');
+                        userEmail.classList.add('user-email');
+                        userEmail.textContent = userData.email;
+
+                        const userCreated = document.createElement('div');
+                        userCreated.classList.add('user-created');
+                        userCreated.textContent = `Criado em: ${userData.createdAt.toDate().toLocaleDateString()}`;
+
+                        const userExpires = document.createElement('div');
+                        userExpires.classList.add('user-expires');
+                        userExpires.textContent = `Expira em: ${userData.expirationDate.toDate().toLocaleDateString()}`;
+
+                        if (new Date() > userData.expirationDate.toDate()) {
+                            userExpires.classList.add('expired');
+                        }
+
+                        userInfo.appendChild(userEmail);
+                        userInfo.appendChild(userCreated);
+                        userInfo.appendChild(userExpires);
+
+                        const userActions = document.createElement('div');
+                        userActions.classList.add('user-actions');
+
+                        const renewButton = document.createElement('button');
+                        renewButton.textContent = 'Renovar';
+                        renewButton.addEventListener('click', () => {
+                            renewUserEmail.value = userData.email;
+                            renewPasswordModal.style.display = 'flex';
+                        });
+
+                        userActions.appendChild(renewButton);
+
+                        userItem.appendChild(userInfo);
+                        userItem.appendChild(userActions);
+
+                        userList.appendChild(userItem);
+                    });
+
+                    refreshUsersButton.disabled = false;
+                    refreshUsersButton.querySelector('.loader').style.display = 'none';
+                    refreshUsersButton.querySelector('span').style.display = 'block';
+                })
+                .catch((error) => {
+                    showError(userList, 'Erro ao carregar usuários: ' + error.message);
+                    refreshUsersButton.disabled = false;
+                    refreshUsersButton.querySelector('.loader').style.display = 'none';
+                    refreshUsersButton.querySelector('span').style.display = 'block';
+                });
+        });
+
+        // Fechar modal de renovação de senha
+        closeRenewModal.addEventListener('click', () => {
+            renewPasswordModal.style.display = 'none';
+        });
+
+        // Renovar senha do usuário
+        renewPasswordButton.addEventListener('click', () => {
+            const email = renewUserEmail.value;
+            const validityDays = parseInt(document.getElementById('renew-validity').value);
+
+            if (!validityDays) {
+                showError(document.getElementById('renew-password-error'), 'Por favor, insira um número válido de dias.');
+                return;
+            }
+
+            renewPasswordButton.disabled = true;
+            renewPasswordButton.querySelector('.loader').style.display = 'block';
+            renewPasswordButton.querySelector('span').style.display = 'none';
+
+            // Atualizar a data de expiração no Firestore
+            db.collection('users').where('email', '==', email).get()
+                .then((querySnapshot) => {
+                    if (!querySnapshot.empty) {
+                        const userDoc = querySnapshot.docs[0];
+                        const newExpirationDate = new Date();
+                        newExpirationDate.setDate(newExpirationDate.getDate() + validityDays);
+
+                        userDoc.ref.update({
+                            expirationDate: newExpirationDate
+                        })
+                        .then(() => {
+                            showSuccess(document.getElementById('renew-password-success'), 'Senha renovada com sucesso!');
+                            renewPasswordButton.disabled = false;
+                            renewPasswordButton.querySelector('.loader').style.display = 'none';
+                            renewPasswordButton.querySelector('span').style.display = 'block';
+                            renewPasswordModal.style.display = 'none';
+                            refreshUsersButton.click(); // Atualizar a lista de usuários
+                        })
+                        .catch((error) => {
+                            showError(document.getElementById('renew-password-error'), 'Erro ao renovar senha: ' + error.message);
+                            renewPasswordButton.disabled = false;
+                            renewPasswordButton.querySelector('.loader').style.display = 'none';
+                            renewPasswordButton.querySelector('span').style.display = 'block';
+                        });
+                    } else {
+                        showError(document.getElementById('renew-password-error'), 'Usuário não encontrado.');
+                        renewPasswordButton.disabled = false;
+                        renewPasswordButton.querySelector('.loader').style.display = 'none';
+                        renewPasswordButton.querySelector('span').style.display = 'block';
+                    }
+                })
+                .catch((error) => {
+                    showError(document.getElementById('renew-password-error'), 'Erro ao buscar usuário: ' + error.message);
+                    renewPasswordButton.disabled = false;
+                    renewPasswordButton.querySelector('.loader').style.display = 'none';
+                    renewPasswordButton.querySelector('span').style.display = 'block';
+                });
+        });
+    </script>
 </body>
 </html>
