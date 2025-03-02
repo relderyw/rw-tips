@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RW TIPS - Visualização de Jogos</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js"></script>
     <style>
+        /* Seus estilos CSS aqui */
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
         :root {
@@ -336,7 +340,6 @@
             <button id="registerBetButton" class="action-button">Registrar Aposta</button>
         </div>
 
-
         <select id="filter">
             <option value="">Todas as Ligas</option>
             <option value="Esoccer Battle - 8 mins play">Esoccer Battle - 8 mins play</option>
@@ -350,6 +353,33 @@
     </div>
 
     <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyALiAKWq7Z6B9ut6KCHt9L4g8Vt8VHF6iM",
+            authDomain: "rw-tips.firebaseapp.com",
+            projectId: "rw-tips",
+            storageBucket: "rw-tips.appspot.com",
+            messagingSenderId: "806941219354",
+            appId: "1:806941219354:web:6f904532b6884251444fa3",
+            measurementId: "G-64HF8TWQV4",
+        };
+
+        // Inicialize o Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Verifique o estado de autenticação
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                // Se o usuário não estiver autenticado, redirecione para a página de login
+                window.location.href = "https://rw-tips.netlify.app/";
+            } else {
+                // Se o usuário estiver autenticado, permita o acesso à página
+                console.log("Usuário autenticado:", user.email);
+            }
+        });
+
+        // Restante do seu código JavaScript aqui
         function extractPlayerName(text) {
             const match = text.match(/\(([^)]+)\)/);
             return match ? match[1] : text;
