@@ -4,11 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RW TIPS - Visualização de Jogos</title>
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js"></script>
     <style>
-        /* Seus estilos CSS aqui */
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
         :root {
@@ -340,6 +336,7 @@
             <button id="registerBetButton" class="action-button">Registrar Aposta</button>
         </div>
 
+
         <select id="filter">
             <option value="">Todas as Ligas</option>
             <option value="Esoccer Battle - 8 mins play">Esoccer Battle - 8 mins play</option>
@@ -353,184 +350,153 @@
     </div>
 
     <script>
-        // Configuração do Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyALiAKWq7Z6B9ut6KCHt9L4g8Vt8VHF6iM",
-            authDomain: "rw-tips.firebaseapp.com",
-            projectId: "rw-tips",
-            storageBucket: "rw-tips.appspot.com",
-            messagingSenderId: "806941219354",
-            appId: "1:806941219354:web:6f904532b6884251444fa3",
-            measurementId: "G-64HF8TWQV4",
-        };
-
-        // Inicialize o Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-
-        // Verifique o estado de autenticação
-        auth.onAuthStateChanged((user) => {
-            if (!user) {
-                // Se o usuário não estiver autenticado, redirecione para a página de login
-                window.location.href = "https://rw-tips.netlify.app/";
-            } else {
-                // Se o usuário estiver autenticado, carregue o conteúdo da página
-                console.log("Usuário autenticado:", user.email);
-                initializePage();
-            }
-        });
-
-        // Função para inicializar a página após autenticação
-        function initializePage() {
-            // Restante do seu código JavaScript aqui
-            function extractPlayerName(text) {
-                const match = text.match(/\(([^)]+)\)/);
-                return match ? match[1] : text;
-            }
-
-            function getLeagueDisplayName(leagueName) {
-                const leagueMappings = {
-                    "Esoccer Battle - 8 mins play": { name: "Esoccer Battle - 8 mins play", color: "#FF4C4C" },
-                    "Esoccer Battle Volta - 6 mins play": { name: "Esoccer Battle Volta - 6 mins play", color: "#FFD700" },
-                    "Esoccer GT Leagues – 12 mins play": { name: "Esoccer GT Leagues – 12 mins play", color: "#32CD32" },
-                    "Esoccer H2H GG League - 8 mins play": { name: "Esoccer H2H GG League - 8 mins play", color: "#8A2BE2" },
-                    "Esoccer Adriatic League - 10 mins play": { name: "Esoccer Adriatic League - 10 mins play", color: "#1E90FF" }
-                };
-                return leagueMappings[leagueName] || { name: leagueName, color: "#FFFFFF" };
-            }
-
-            function updateGames() {
-                fetch('https://api.green365.com.br/api/league/upcoming?sport=fifa&leagueId=&page=1')
-                    .then(response => response.json())
-                    .then(data => {
-                        const games = data.data;
-                        const gamesContainer = document.getElementById('gamesContainer');
-                        gamesContainer.innerHTML = '';
-
-                        games.forEach(game => {
-                            const card = document.createElement('div');
-                            card.className = 'card';
-
-                            const leagueInfo = getLeagueDisplayName(game.leagueName);
-                            const leagueName = document.createElement('div');
-                            leagueName.className = 'league-name';
-                            leagueName.innerText = leagueInfo.name;
-                            leagueName.style.color = leagueInfo.color;
-
-                            const teams = document.createElement('div');
-                            teams.className = 'teams';
-
-                            const homePlayer = extractPlayerName(game.home);
-                            const awayPlayer = extractPlayerName(game.away);
-
-                            const homeTeam = document.createElement('div');
-                            homeTeam.className = 'team';
-                            homeTeam.innerHTML = `<img src="${game.homeImage}" alt="${game.home_team_name}"> 
-                                                <span>${homePlayer}</span>
-                                                <span>(${game.home_team_name})</span>`;
-
-                            const awayTeam = document.createElement('div');
-                            awayTeam.className = 'team';
-                            awayTeam.innerHTML = `<img src="${game.awayImage}" alt="${game.away_team_name}"> 
-                                                <span>${awayPlayer}</span>
-                                                <span>(${game.away_team_name})</span>`;
-
-                            teams.appendChild(homeTeam);
-                            teams.appendChild(awayTeam);
-
-                            const matchTime = document.createElement('div');
-                            matchTime.className = 'match-time';
-                            matchTime.innerText = `${game.day} ${game.hour}`;
-
-                            const homeID = game.homeID;
-                            const awayID = game.awayID;
-                            const leagueID = game.leagueID;
-
-                            const h2hButton = document.createElement('button');
-                            h2hButton.className = 'h2h-button';
-                            h2hButton.innerText = 'Ver H2H';
-                            h2hButton.onclick = function() {
-                                window.location.href = `h2h_analysis.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${homeID}&awayID=${awayID}&leagueID=${leagueID}`;
-                            };
-
-                            card.appendChild(leagueName);
-                            card.appendChild(teams);
-                            card.appendChild(matchTime);
-                            card.appendChild(h2hButton);
-                            gamesContainer.appendChild(card);
-                        });
-
-                        // Aplica o filtro atual
-                        const selectedLeague = document.getElementById('filter').value;
-                        if (selectedLeague) {
-                            const cards = gamesContainer.getElementsByClassName('card');
-                            for (let i = 0; i < cards.length; i++) {
-                                const leagueName = cards[i].getElementsByClassName('league-name')[0];
-                                if (leagueName) {
-                                    const leagueText = leagueName.innerText;
-                                    cards[i].style.display = selectedLeague === leagueText ? '' : 'none';
-                                }
+        function extractPlayerName(text) {
+            const match = text.match(/\(([^)]+)\)/);
+            return match ? match[1] : text;
+        }
+    
+        function getLeagueDisplayName(leagueName) {
+            const leagueMappings = {
+                "Esoccer Battle - 8 mins play": { name: "Esoccer Battle - 8 mins play", color: "#FF4C4C" },
+                "Esoccer Battle Volta - 6 mins play": { name: "Esoccer Battle Volta - 6 mins play", color: "#FFD700" },
+                "Esoccer GT Leagues – 12 mins play": { name: "Esoccer GT Leagues – 12 mins play", color: "#32CD32" },
+                "Esoccer H2H GG League - 8 mins play": { name: "Esoccer H2H GG League - 8 mins play", color: "#8A2BE2" },
+                "Esoccer Adriatic League - 10 mins play": { name: "Esoccer Adriatic League - 10 mins play", color: "#1E90FF" }
+            };
+            return leagueMappings[leagueName] || { name: leagueName, color: "#FFFFFF" };
+        }
+    
+        function updateGames() {
+            fetch('https://api.green365.com.br/api/league/upcoming?sport=fifa&leagueId=&page=1')
+                .then(response => response.json())
+                .then(data => {
+                    const games = data.data;
+                    const gamesContainer = document.getElementById('gamesContainer');
+                    gamesContainer.innerHTML = '';
+    
+                    games.forEach(game => {
+                        const card = document.createElement('div');
+                        card.className = 'card';
+    
+                        const leagueInfo = getLeagueDisplayName(game.leagueName);
+                        const leagueName = document.createElement('div');
+                        leagueName.className = 'league-name';
+                        leagueName.innerText = leagueInfo.name;
+                        leagueName.style.color = leagueInfo.color;
+    
+                        const teams = document.createElement('div');
+                        teams.className = 'teams';
+    
+                        const homePlayer = extractPlayerName(game.home);
+                        const awayPlayer = extractPlayerName(game.away);
+    
+                        const homeTeam = document.createElement('div');
+                        homeTeam.className = 'team';
+                        homeTeam.innerHTML = `<img src="${game.homeImage}" alt="${game.home_team_name}"> 
+                                            <span>${homePlayer}</span>
+                                            <span>(${game.home_team_name})</span>`;
+    
+                        const awayTeam = document.createElement('div');
+                        awayTeam.className = 'team';
+                        awayTeam.innerHTML = `<img src="${game.awayImage}" alt="${game.away_team_name}"> 
+                                            <span>${awayPlayer}</span>
+                                            <span>(${game.away_team_name})</span>`;
+    
+                        teams.appendChild(homeTeam);
+                        teams.appendChild(awayTeam);
+    
+                        const matchTime = document.createElement('div');
+                        matchTime.className = 'match-time';
+                        matchTime.innerText = `${game.day} ${game.hour}`;
+    
+                        const homeID = game.homeID;
+                        const awayID = game.awayID;
+                        const leagueID = game.leagueID;
+    
+                        const h2hButton = document.createElement('button');
+                        h2hButton.className = 'h2h-button';
+                        h2hButton.innerText = 'Ver H2H';
+                        h2hButton.onclick = function() {
+                            window.location.href = `h2h_analysis.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${homeID}&awayID=${awayID}&leagueID=${leagueID}`;
+                        };
+    
+                        card.appendChild(leagueName);
+                        card.appendChild(teams);
+                        card.appendChild(matchTime);
+                        card.appendChild(h2hButton);
+                        gamesContainer.appendChild(card);
+                    });
+    
+                    // Aplica o filtro atual
+                    const selectedLeague = document.getElementById('filter').value;
+                    if (selectedLeague) {
+                        const cards = gamesContainer.getElementsByClassName('card');
+                        for (let i = 0; i < cards.length; i++) {
+                            const leagueName = cards[i].getElementsByClassName('league-name')[0];
+                            if (leagueName) {
+                                const leagueText = leagueName.innerText;
+                                cards[i].style.display = selectedLeague === leagueText ? '' : 'none';
                             }
                         }
-                    })
-                    .catch(error => {
-                        console.error('Erro ao buscar dados:', error);
-                        alert('Erro ao carregar dados. Por favor, tente novamente.');
-                    });
-            }
-
-            // Event Listeners
-            document.getElementById('viewResultsButton').addEventListener('click', function() {
-                window.location.href = 'results.html';
-            });
-
-            document.getElementById('viewStatisticsButton').addEventListener('click', function() {
-                window.location.href = 'statistics.html';
-            });
-
-            document.getElementById('registerBetButton').addEventListener('click', function() {
-                window.location.href = 'formularioApostas.html';
-            });
-
-            document.getElementById('filter').addEventListener('change', function() {
-                const selectedLeague = this.value;
-                const cards = document.getElementById('gamesContainer').getElementsByClassName('card');
-                for (let i = 0; i < cards.length; i++) {
-                    const leagueName = cards[i].getElementsByClassName('league-name')[0];
-                    if (leagueName) {
-                        const leagueText = leagueName.innerText;
-                        cards[i].style.display = selectedLeague === "" || selectedLeague === leagueText ? '' : 'none';
                     }
-                }
-            });
-
-            // Inicialização e atualizações automáticas
-            updateGames(); // Atualização inicial
-            setInterval(updateGames, 15000); // Atualiza a cada 15 segundos
-
-            // Atualiza quando a página se torna visível
-            document.addEventListener('visibilitychange', function() {
-                if (document.visibilityState === 'visible') {
-                    updateGames();
-                }
-            });
-
-            // Atualiza quando a página recebe foco
-            window.addEventListener('focus', updateGames);
-
-            // Atualiza quando volta da navegação
-            window.addEventListener('pageshow', function(event) {
-                if (event.persisted) {
-                    updateGames();
-                }
-            });
-
-            // Força atualização ao carregar a página
-            window.onload = updateGames;
-
-            // Atualiza quando retorna à página usando history.back()
-            window.addEventListener('popstate', updateGames);
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar dados:', error);
+                    alert('Erro ao carregar dados. Por favor, tente novamente.');
+                });
         }
+    
+        // Event Listeners
+        document.getElementById('viewResultsButton').addEventListener('click', function() {
+            window.location.href = 'results.html';
+        });
+    
+        document.getElementById('viewStatisticsButton').addEventListener('click', function() {
+            window.location.href = 'statistics.html';
+        });
+
+        document.getElementById('registerBetButton').addEventListener('click', function() {
+            window.location.href = 'formularioApostas.html';
+        });
+    
+        document.getElementById('filter').addEventListener('change', function() {
+            const selectedLeague = this.value;
+            const cards = document.getElementById('gamesContainer').getElementsByClassName('card');
+            for (let i = 0; i < cards.length; i++) {
+                const leagueName = cards[i].getElementsByClassName('league-name')[0];
+                if (leagueName) {
+                    const leagueText = leagueName.innerText;
+                    cards[i].style.display = selectedLeague === "" || selectedLeague === leagueText ? '' : 'none';
+                }
+            }
+        });
+    
+        // Inicialização e atualizações automáticas
+        updateGames(); // Atualização inicial
+        setInterval(updateGames, 15000); // Atualiza a cada 15 segundos
+    
+        // Atualiza quando a página se torna visível
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                updateGames();
+            }
+        });
+    
+        // Atualiza quando a página recebe foco
+        window.addEventListener('focus', updateGames);
+    
+        // Atualiza quando volta da navegação
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                updateGames();
+            }
+        });
+    
+        // Força atualização ao carregar a página
+        window.onload = updateGames;
+    
+        // Atualiza quando retorna à página usando history.back()
+        window.addEventListener('popstate', updateGames);
     </script>
 </body>
 </html>
