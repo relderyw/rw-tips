@@ -350,6 +350,16 @@
     </div>
 
     <script>
+        // Verificar se o usuário está logado
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar o status de login no sessionStorage
+            if (sessionStorage.getItem('loggedIn') !== 'true') {
+                // Não está logado, redirecionar para a página de login
+                window.location.href = 'index.html';
+            }
+        });
+
+        const gamesContainer = document.getElementById('gamesContainer');
         function extractPlayerName(text) {
             const match = text.match(/\(([^)]+)\)/);
             return match ? match[1] : text;
@@ -498,5 +508,12 @@
         // Atualiza quando retorna à página usando history.back()
         window.addEventListener('popstate', updateGames);
     </script>
+    <script>
+        // Verifica se o usuário está logado
+        if (!sessionStorage.getItem('loggedIn')) {
+          // Redireciona para a página de login se o usuário não estiver logado
+          window.location.href = 'index.html';
+        }
+      </script>
 </body>
 </html>
