@@ -453,6 +453,15 @@
 </head>
 
 <body>
+  <!-- Adicionar div de autenticação após o body -->
+  <div id="auth-screen" style="display: none;" class="auth-error">
+    <h2>Autenticação Necessária</h2>
+    <div class="form-group">
+      <input type="email" id="auth-email" placeholder="Seu e-mail" class="form-input">
+    </div>
+    <button id="auth-button">Entrar</button>
+  </div>
+
   <!-- Botão voltar sem o redirecionamento automático -->
   <button class="back-button" id="back-button"></button>
 
@@ -733,9 +742,9 @@
         currentUser = localStorage.getItem('currentUser');
         currentUserKey = localStorage.getItem('currentUserKey');
 
-        // Verificar se existe usuário no localStorage
+        // Se não houver usuário no localStorage, mostrar tela de autenticação
         if (!currentUser || !currentUserKey) {
-          window.location.replace('index.html');
+          showAuthScreen();
           return false;
         }
 
@@ -745,22 +754,54 @@
         const querySnapshot = await getDocs(q);
 
         if (querySnapshot.empty) {
-          // Se o usuário não existe no banco, limpar localStorage e redirecionar
-          localStorage.removeItem('currentUser');
-          localStorage.removeItem('currentUserKey');
-          window.location.replace('index.html');
+          showAuthScreen();
           return false;
         }
 
-        // Atualizar interface do usuário
+        // Se chegou aqui, o usuário está autenticado
+        hideAuthScreen();
+        document.querySelector('.container').style.display = 'block';
         document.getElementById('user-email').textContent = currentUser;
         document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
 
         return true;
       } catch (error) {
         console.error("Erro na verificação de login:", error);
-        window.location.replace('index.html');
+        showAuthScreen();
         return false;
+      }
+    }
+
+    function showAuthScreen() {
+      document.getElementById('auth-screen').style.display = 'flex';
+      document.querySelector('.container').style.display = 'none';
+    }
+
+    function hideAuthScreen() {
+      document.getElementById('auth-screen').style.display = 'none';
+      document.querySelector('.container').style.display = 'block';
+    }
+
+    async function handleAuth(email) {
+      try {
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("email", "==", email));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          const userDoc = querySnapshot.docs[0];
+          const userData = userDoc.data();
+
+          localStorage.setItem('currentUser', email);
+          localStorage.setItem('currentUserKey', userData.key || '');
+
+          location.reload();
+        } else {
+          alert('Usuário não encontrado. Por favor, verifique o e-mail informado.');
+        }
+      } catch (error) {
+        console.error("Erro na autenticação:", error);
+        alert('Erro ao autenticar. Por favor, tente novamente.');
       }
     }
 
@@ -1168,11 +1209,22 @@
       jogador2.setAttribute("list", "jogadores-lista");
     }
 
-
     // Event Listeners
     document.addEventListener("DOMContentLoaded", async () => {
+      // Inicialmente ocultar o container principal
+      document.querySelector('.container').style.display = 'none';
+
       // Verificar autenticação
       if (!await checkUserLogin()) {
+        // Adicionar evento para o botão de autenticação
+        document.getElementById('auth-button').addEventListener('click', async () => {
+          const email = document.getElementById('auth-email').value.trim();
+          if (email) {
+            await handleAuth(email);
+          } else {
+            alert('Por favor, insira seu e-mail.');
+          }
+        });
         return;
       }
 
