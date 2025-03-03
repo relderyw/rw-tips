@@ -186,45 +186,58 @@
             opacity: 1;
         }
 
-        .stat-value {
-            font-size: 3.5rem;
-            font-weight: 700;
-            background: linear-gradient(45deg, var(--accent-purple), var(--accent-pink));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin: 10px 0;
+        .stat-block .stat-value {
+            font-size: 4rem;
+            font-weight: 800;
+            margin: 15px 0;
             position: relative;
         }
 
-        .stat-label {
-            font-size: 1.2rem;
+        .stat-block .stat-value.home {
+            background: linear-gradient(45deg, var(--accent-purple), #8B5CF6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .stat-block .stat-value.away {
+            background: linear-gradient(45deg, #EC4899, var(--accent-pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .stat-block .stat-value.draw {
+            background: linear-gradient(45deg, #94A3B8, #CBD5E1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .stat-block .stat-label {
+            font-size: 1.4rem;
             color: var(--text-primary);
             margin: 15px 0;
-            font-weight: 500;
+            font-weight: 600;
             letter-spacing: 1px;
         }
 
-        .stat-detail {
-            font-size: 1.1rem;
-            background: linear-gradient(45deg, var(--accent-pink), var(--accent-purple));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+        .stat-block .stat-detail {
+            font-size: 1.3rem;
             font-weight: bold;
+            letter-spacing: 0.5px;
         }
 
         .game-history-container {
-            margin-top: 30px;
+            margin-top: 40px;
             text-align: center;
-            position: relative;
         }
 
         .game-history-title {
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             color: var(--text-primary);
-            margin-bottom: 20px;
-            font-weight: 500;
+            margin-bottom: 25px;
+            font-weight: 600;
             letter-spacing: 1px;
         }
 
@@ -346,20 +359,27 @@
         }
 
         .h2h-stat-card h4 {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
+            font-size: 1.3rem;
+            color: var(--text-primary);
             margin-bottom: 15px;
+            font-weight: 600;
             letter-spacing: 0.5px;
         }
 
         .h2h-stat-value {
-            font-size: 2.5rem;
-            font-weight: bold;
+            font-size: 3rem;
+            font-weight: 800;
             background: linear-gradient(45deg, var(--accent-pink), var(--accent-purple));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             margin: 15px 0;
+        }
+
+        .h2h-stat-card p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-top: 10px;
         }
 
         .player-section {
@@ -431,13 +451,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
+            gap: 20px;
             margin-bottom: 15px;
         }
 
         .team-vs img {
-            width: 32px;
-            height: 32px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             border: 2px solid var(--glass-border);
             transition: transform 0.3s ease;
@@ -445,6 +465,12 @@
 
         .team-vs img:hover {
             transform: scale(1.1);
+        }
+
+        .team-vs span {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--text-primary);
         }
 
         .score-info {
@@ -501,6 +527,36 @@
             .metrics-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+        }
+
+        .player-games-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .player-games-container .game-history-title {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .player-games-container .game-history-title span {
+            font-weight: 600;
+        }
+
+        .player-games-container .game-history-title .vs {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+
+        .player-name-home {
+            color: var(--accent-purple);
+        }
+
+        .player-name-away {
+            color: var(--accent-pink);
         }
     </style>
 </head>
@@ -807,20 +863,13 @@
             const gamesHTML = `
                 <div class="player-games-container">
                     <div class="game-history-container">
-                        <div class="game-history-title">Histórico: ${playerAName} vs ${playerBName}</div>
+                        <div class="game-history-title">
+                            <span class="player-name-home">${playerAName}</span>
+                            <span class="vs">vs</span>
+                            <span class="player-name-away">${playerBName}</span>
+                        </div>
                         <div class="game-history">
-                            ${recentGames.map(game => {
-                const [homeGoals, awayGoals] = game.score.split('-').map(Number);
-                let resultClass;
-                if (homeGoals > awayGoals) {
-                    resultClass = 'home';
-                } else if (awayGoals > homeGoals) {
-                    resultClass = 'away';
-                } else {
-                    resultClass = 'draw';
-                }
-                return `<div class="history-dot ${resultClass}" title="${game.home} ${game.score} ${game.away}"></div>`;
-            }).join('')}
+                            ${generateGameHistory(recentGames, 10)}
                         </div>
                     </div>
                     ${recentGames.map(game => `
