@@ -1035,8 +1035,20 @@
 
     // Event Listeners
     document.addEventListener("DOMContentLoaded", async () => {
-      if (!checkUserLogin()) return;
+      // Verificar se os dados do usuário existem no localStorage
+      currentUser = localStorage.getItem('currentUser');
+      currentUserKey = localStorage.getItem('currentUserKey');
 
+      if (!currentUser || !currentUserKey) {
+        window.location.replace('index.html');
+        return;
+      }
+
+      // Atualizar interface do usuário
+      document.getElementById('user-email').textContent = currentUser;
+      document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
+
+      // Inicializar a página
       setupTabs();
       await carregarMercados();
       await carregarApostas();
