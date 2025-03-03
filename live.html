@@ -346,7 +346,7 @@
 
         function updateLiveGames() {
             console.log('Buscando jogos ao vivo...');
-            fetch('https://api.green365.com.br/api/events/live?sport_id=4&competition_id=&page=1')
+            fetch('https://api.green365.com.br/api/events/inplay?sport_id=4&competition_id=')
                 .then(response => {
                     console.log('Resposta recebida:', response.status);
                     if (!response.ok) {
