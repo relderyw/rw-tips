@@ -544,6 +544,23 @@
     let currentUserKey = null;
     let chart = null;
 
+    // Definindo função removerAposta no escopo global
+    window.removerAposta = async function (id) {
+      if (!confirm("Tem certeza que deseja remover esta aposta?")) return;
+
+      try {
+        await deleteDoc(doc(db, "apostas", id));
+        console.log("Aposta removida com sucesso!");
+        await carregarApostas();
+      } catch (error) {
+        console.error("Erro ao remover aposta:", error);
+        alert("Erro ao remover aposta: " + error.message);
+      }
+    };
+
+    // Cache de jogadores
+    let jogadoresCache = {};
+
     // Funções utilitárias
     function formatarMoeda(valor) {
       return new Intl.NumberFormat("pt-BR", {
@@ -904,6 +921,28 @@
       });
     }
 
+    // Função para mapear liga da API para o select
+    function mapearLiga(ligaNome) {
+      const mapeamento = {
+        '6 mins': 'Battle 6 min',
+        '8 mins H2H': 'Battle 8 min (H2H)',
+        '8 mins': 'Battle 8 min',
+        '10 mins': 'Adriact 10 min',
+        '12 mins': 'GT 12 min'
+      };
+
+      for (const [key, value] of Object.entries(mapeamento)) {
+        if (ligaNome.includes(key)) return value;
+      }
+      return ligaNome;
+    }
+
+    // Função para extrair nome do jogador
+    function extrairNomeJogador(texto) {
+      const match = texto.match(/\(([^)]+)\)/);
+      return match ? match[1].trim() : texto.trim();
+    }
+
     // Função para buscar jogadores da API
     async function buscarDadosAPI() {
       try {
@@ -914,47 +953,60 @@
           const jogadoresPorLiga = {};
 
           data.data.forEach(match => {
-            const liga = match.leagueName;
+            const ligaOriginal = match.leagueName;
+            const liga = mapearLiga(ligaOriginal);
+
             if (!jogadoresPorLiga[liga]) {
               jogadoresPorLiga[liga] = new Set();
             }
 
-            if (match.home) jogadoresPorLiga[liga].add(match.home);
-            if (match.away) jogadoresPorLiga[liga].add(match.away);
+            if (match.home) {
+              const jogador = extrairNomeJogador(match.home);
+              jogadoresPorLiga[liga].add(jogador);
+            }
+            if (match.away) {
+              const jogador = extrairNomeJogador(match.away);
+              jogadoresPorLiga[liga].add(jogador);
+            }
           });
 
-          // Criar datalists para cada liga
-          Object.keys(jogadoresPorLiga).forEach(liga => {
-            const datalist = document.createElement('datalist');
-            datalist.id = `jogadores-${liga.replace(/\s+/g, '-').toLowerCase()}`;
+          // Atualizar cache
+          jogadoresCache = jogadoresPorLiga;
 
-            Array.from(jogadoresPorLiga[liga]).forEach(jogador => {
-              const option = document.createElement('option');
-              option.value = jogador;
-              datalist.appendChild(option);
-            });
-
-            document.body.appendChild(datalist);
-          });
-
-          // Atualizar inputs de jogadores
-          const liga = document.getElementById('liga');
-          const jogador1 = document.getElementById('jogador1');
-          const jogador2 = document.getElementById('jogador2');
-
-          jogador1.setAttribute('list', `jogadores-${liga.value.replace(/\s+/g, '-').toLowerCase()}`);
-          jogador2.setAttribute('list', `jogadores-${liga.value.replace(/\s+/g, '-').toLowerCase()}`);
-
-          // Adicionar evento para atualizar datalist quando mudar a liga
-          liga.addEventListener('change', () => {
-            const datalistId = `jogadores-${liga.value.replace(/\s+/g, '-').toLowerCase()}`;
-            jogador1.setAttribute('list', datalistId);
-            jogador2.setAttribute('list', datalistId);
-          });
+          // Criar e atualizar datalists
+          atualizarDatalistsJogadores();
         }
       } catch (error) {
         console.error("Erro ao buscar dados da API:", error);
       }
+    }
+
+    // Função para atualizar datalists dos jogadores
+    function atualizarDatalistsJogadores() {
+      const liga = document.getElementById("liga").value;
+      const jogadores = jogadoresCache[liga] || new Set();
+
+      // Criar ou atualizar datalist
+      let datalist = document.getElementById("jogadores-lista");
+      if (!datalist) {
+        datalist = document.createElement("datalist");
+        datalist.id = "jogadores-lista";
+        document.body.appendChild(datalist);
+      }
+
+      // Limpar e preencher datalist
+      datalist.innerHTML = "";
+      Array.from(jogadores).sort().forEach(jogador => {
+        const option = document.createElement("option");
+        option.value = jogador;
+        datalist.appendChild(option);
+      });
+
+      // Conectar inputs ao datalist
+      const jogador1 = document.getElementById("jogador1");
+      const jogador2 = document.getElementById("jogador2");
+      jogador1.setAttribute("list", "jogadores-lista");
+      jogador2.setAttribute("list", "jogadores-lista");
     }
 
     // Event Listeners
@@ -965,6 +1017,11 @@
       await carregarMercados();
       await carregarApostas();
       await buscarDadosAPI();
+
+      // Adicionar evento para atualizar jogadores quando mudar a liga
+      document.getElementById("liga").addEventListener("change", () => {
+        atualizarDatalistsJogadores();
+      });
 
       // Form de apostas
       document.getElementById("bet-form").addEventListener("submit", async (e) => {
