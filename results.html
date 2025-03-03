@@ -305,14 +305,30 @@
         }
 
         function updateResults() {
+            console.log('Iniciando busca de resultados...');
             fetch('https://api.green365.com.br/api/league/results?sport=fifa&leagueId=&page=1')
-                .then(response => response.json())
+                .then(response => {
+                    console.log('Resposta recebida:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
+                    console.log('Dados recebidos:', data);
+
+                    // Verifica se data.data existe e é um array
+                    if (!data || !data.data || !Array.isArray(data.data)) {
+                        throw new Error('Formato de dados inválido');
+                    }
+
                     const results = data.data;
+                    console.log('Número de resultados:', results.length);
+
                     const resultsContainer = document.getElementById('resultsContainer');
                     resultsContainer.innerHTML = '';
 
-                    if (!results || results.length === 0) {
+                    if (results.length === 0) {
                         resultsContainer.innerHTML = `
                             <div style="text-align: center; padding: 20px; color: var(--text-secondary);">
                                 Nenhum resultado encontrado
@@ -321,43 +337,55 @@
                         return;
                     }
 
-                    results.forEach(result => {
-                        const homePlayer = extractPlayerName(result.home);
-                        const awayPlayer = extractPlayerName(result.away);
+                    results.forEach((result, index) => {
+                        console.log(`Processando resultado ${index + 1}:`, result);
 
-                        const card = document.createElement('div');
-                        card.className = 'result-card';
+                        try {
+                            const homePlayer = result.home ? extractPlayerName(result.home) : 'Jogador Casa';
+                            const awayPlayer = result.away ? extractPlayerName(result.away) : 'Jogador Visitante';
 
-                        const leagueInfo = getLeagueDisplayName(result.leagueName);
+                            const card = document.createElement('div');
+                            card.className = 'result-card';
 
-                        const scoreClass = result.score.includes('-') ?
-                            (parseInt(result.score.split('-')[0]) > parseInt(result.score.split('-')[1]) ? 'home-win' :
-                                parseInt(result.score.split('-')[0]) < parseInt(result.score.split('-')[1]) ? 'away-win' : 'draw') : '';
+                            const leagueInfo = getLeagueDisplayName(result.leagueName || 'Liga Desconhecida');
 
-                        card.innerHTML = `
-                            <div class="league-name" style="color: ${leagueInfo.color}">${leagueInfo.name}</div>
-                            <div class="match-info">
-                                <div class="team">
-                                    <img src="${result.homeImage || 'placeholder.png'}" alt="${result.home_team_name}" 
-                                         onerror="this.src='https://via.placeholder.com/70'">
-                                    <div class="team-name">${result.home_team_name || 'Time Casa'}</div>
-                                    <div class="player-name">${homePlayer}</div>
+                            let scoreClass = '';
+                            if (result.score && result.score.includes('-')) {
+                                const [homeScore, awayScore] = result.score.split('-').map(Number);
+                                if (!isNaN(homeScore) && !isNaN(awayScore)) {
+                                    if (homeScore > awayScore) scoreClass = 'home-win';
+                                    else if (awayScore > homeScore) scoreClass = 'away-win';
+                                    else scoreClass = 'draw';
+                                }
+                            }
+
+                            card.innerHTML = `
+                                <div class="league-name" style="color: ${leagueInfo.color}">${leagueInfo.name}</div>
+                                <div class="match-info">
+                                    <div class="team">
+                                        <img src="${result.homeImage || 'https://via.placeholder.com/70'}" alt="${result.home_team_name || 'Time Casa'}" 
+                                             onerror="this.src='https://via.placeholder.com/70'">
+                                        <div class="team-name">${result.home_team_name || 'Time Casa'}</div>
+                                        <div class="player-name">${homePlayer}</div>
+                                    </div>
+                                    <div class="score ${scoreClass}">${result.score || '0-0'}</div>
+                                    <div class="team">
+                                        <img src="${result.awayImage || 'https://via.placeholder.com/70'}" alt="${result.away_team_name || 'Time Visitante'}"
+                                             onerror="this.src='https://via.placeholder.com/70'">
+                                        <div class="team-name">${result.away_team_name || 'Time Visitante'}</div>
+                                        <div class="player-name">${awayPlayer}</div>
+                                    </div>
                                 </div>
-                                <div class="score ${scoreClass}">${result.score || '0-0'}</div>
-                                <div class="team">
-                                    <img src="${result.awayImage || 'placeholder.png'}" alt="${result.away_team_name}"
-                                         onerror="this.src='https://via.placeholder.com/70'">
-                                    <div class="team-name">${result.away_team_name || 'Time Visitante'}</div>
-                                    <div class="player-name">${awayPlayer}</div>
+                                <div class="match-details">
+                                    <div>HT: ${result.scoreHT || '0-0'}</div>
+                                    <div>${result.day || ''} ${result.hour || ''}</div>
                                 </div>
-                            </div>
-                            <div class="match-details">
-                                <div>HT: ${result.scoreHT || '0-0'}</div>
-                                <div>${result.day || ''} ${result.hour || ''}</div>
-                            </div>
-                        `;
+                            `;
 
-                        resultsContainer.appendChild(card);
+                            resultsContainer.appendChild(card);
+                        } catch (err) {
+                            console.error(`Erro ao processar resultado ${index + 1}:`, err);
+                        }
                     });
 
                     // Aplicar filtro atual
@@ -375,7 +403,10 @@
                     const resultsContainer = document.getElementById('resultsContainer');
                     resultsContainer.innerHTML = `
                         <div style="text-align: center; padding: 20px; color: var(--danger-color);">
-                            Erro ao carregar resultados. Por favor, tente novamente.
+                            Erro ao carregar resultados. Por favor, tente novamente.<br>
+                            <small style="display: block; margin-top: 10px; color: var(--text-secondary);">
+                                ${error.message}
+                            </small>
                         </div>
                     `;
                 });
