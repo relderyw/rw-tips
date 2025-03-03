@@ -147,38 +147,52 @@
             border: none;
             position: relative;
             background: linear-gradient(145deg, var(--card-bg), var(--card-hover));
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);
-            animation: cardGlow 2s infinite alternate;
+            border-left: 4px solid #ffd700;
+            box-shadow: -5px 0 20px rgba(255, 215, 0, 0.3);
         }
 
-        .highlight::before {
-            content: '';
+        .star {
             position: absolute;
-            inset: -2px;
-            background: var(--gold-gradient);
-            border-radius: 18px;
-            z-index: -1;
-            animation: borderRotate 4s linear infinite;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            color: #ffd700;
+            animation: starPulse 2s infinite;
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.6));
         }
 
-        @keyframes cardGlow {
-            from {
-                box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);
+        @keyframes starPulse {
+            0% {
+                transform: scale(1) rotate(0deg);
             }
 
-            to {
-                box-shadow: 0 0 50px rgba(255, 215, 0, 0.3);
+            50% {
+                transform: scale(1.2) rotate(180deg);
+            }
+
+            100% {
+                transform: scale(1) rotate(360deg);
             }
         }
 
-        @keyframes borderRotate {
-            from {
-                filter: hue-rotate(0deg);
-            }
+        .highlight .league-name {
+            color: var(--text-primary);
+            background: none;
+            -webkit-background-clip: unset;
+            background-clip: unset;
+        }
 
-            to {
-                filter: hue-rotate(360deg);
-            }
+        .highlight .bar {
+            background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
+        }
+
+        .highlight .stat {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .highlight .stat:hover {
+            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .league-name {
@@ -253,33 +267,6 @@
             }
         }
 
-        .star {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 28px;
-            color: transparent;
-            background: var(--gold-gradient);
-            -webkit-background-clip: text;
-            background-clip: text;
-            animation: starPulse 2s infinite;
-            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
-        }
-
-        @keyframes starPulse {
-            0% {
-                transform: scale(1) rotate(0deg);
-            }
-
-            50% {
-                transform: scale(1.2) rotate(180deg);
-            }
-
-            100% {
-                transform: scale(1) rotate(360deg);
-            }
-        }
-
         h1 {
             text-align: center;
             font-size: 2.5rem;
@@ -320,31 +307,6 @@
             height: 3px;
             background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
             border-radius: 3px;
-        }
-
-        .highlight .league-name {
-            background: var(--gold-gradient);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            font-size: 1.3rem;
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-        }
-
-        .highlight .bar {
-            background: var(--gold-gradient);
-        }
-
-        .highlight .stat {
-            border-left: 3px solid transparent;
-            background:
-                linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
-                var(--gold-gradient) border-box;
-        }
-
-        .highlight .stat:hover {
-            transform: translateX(8px);
-            background: rgba(255, 215, 0, 0.05);
         }
 
         @media (max-width: 768px) {
