@@ -346,7 +346,7 @@
 
         function updateLiveGames() {
             console.log('Buscando jogos ao vivo...');
-            fetch('https://api.green365.com.br/api/events/inplay?sport_id=4&competition_id=')
+            fetch('https://api.green365.com.br/api/league/live?sport=fifa&leagueId=&page=1')
                 .then(response => {
                     console.log('Resposta recebida:', response.status);
                     if (!response.ok) {
@@ -357,7 +357,7 @@
                 .then(data => {
                     console.log('Dados recebidos:', data);
 
-                    if (!data || !data.data || !Array.isArray(data.data)) {
+                    if (!data || !Array.isArray(data.data)) {
                         throw new Error('Formato de dados inválido');
                     }
 
@@ -375,11 +375,21 @@
                     }
 
                     games.forEach(game => {
-                        const homePlayer = game.home ? extractPlayerName(game.home) : 'Jogador Casa';
-                        const awayPlayer = game.away ? extractPlayerName(game.away) : 'Jogador Visitante';
+                        const homePlayer = extractPlayerName(game.home || '');
+                        const awayPlayer = extractPlayerName(game.away || '');
 
                         const card = document.createElement('div');
                         card.className = 'live-card';
+
+                        // Extrair o placar atual
+                        const currentScore = game.score || '0-0';
+                        const [homeScore, awayScore] = currentScore.split('-').map(Number);
+
+                        // Determinar o status do jogo
+                        const matchStatus = game.status === 'LIVE' ?
+                            (game.minute ? `${game.minute}'` : 'Ao Vivo') :
+                            (game.status || 'Ao Vivo');
+
                         card.innerHTML = `
                             <div class="league-name">${game.leagueName || 'Liga Desconhecida'}</div>
                             <div class="match-info">
@@ -389,7 +399,9 @@
                                     <div class="team-name">${game.home_team_name || 'Time Casa'}</div>
                                     <div class="player-name">${homePlayer}</div>
                                 </div>
-                                <div class="score">${game.score || '0-0'}</div>
+                                <div class="score ${homeScore > awayScore ? 'home-win' : awayScore > homeScore ? 'away-win' : 'draw'}">
+                                    ${currentScore}
+                                </div>
                                 <div class="team">
                                     <img src="${game.awayImage || 'https://via.placeholder.com/70'}" alt="${game.away_team_name || 'Time Visitante'}"
                                          onerror="this.src='https://via.placeholder.com/70'">
@@ -398,20 +410,20 @@
                                 </div>
                             </div>
                             <div class="match-time">
-                                ${game.minute ? game.minute + "'" : 'Ao Vivo'}
+                                <span class="live-dot"></span>${matchStatus}
                             </div>
                             <div class="match-stats">
                                 <div class="stat-item">
-                                    <div class="stat-label">Posse de Bola</div>
-                                    <div class="stat-value">${game.stats?.possession || '50-50'}</div>
+                                    <div class="stat-label">Placar HT</div>
+                                    <div class="stat-value">${game.scoreHT || '0-0'}</div>
                                 </div>
                                 <div class="stat-item">
-                                    <div class="stat-label">Chutes ao Gol</div>
-                                    <div class="stat-value">${game.stats?.shotsOnTarget || '0-0'}</div>
+                                    <div class="stat-label">Gols 1° Tempo</div>
+                                    <div class="stat-value">${game.scoreHT ? game.scoreHT.split('-').reduce((a, b) => Number(a) + Number(b), 0) : '0'}</div>
                                 </div>
                                 <div class="stat-item">
-                                    <div class="stat-label">Escanteios</div>
-                                    <div class="stat-value">${game.stats?.corners || '0-0'}</div>
+                                    <div class="stat-label">Total de Gols</div>
+                                    <div class="stat-value">${currentScore.split('-').reduce((a, b) => Number(a) + Number(b), 0)}</div>
                                 </div>
                             </div>
                         `;
