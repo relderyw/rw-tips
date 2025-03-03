@@ -1061,16 +1061,14 @@
                     <div class="games-list">
                         ${recentGames.map(game => `
                             <div class="game-card">
+                                <div class="team">
+                                    <img src="${game.homeImage}" alt="${game.home}">
+                                    <span>${game.home.match(/\((.*?)\)/)?.[1] || game.home} vs ${game.away.match(/\((.*?)\)/)?.[1] || game.away}</span>
+                                    <img src="${game.awayImage}" alt="${game.away}">
+                                </div>
                                 <div class="game-info">
-                                    <div class="team-vs">
-                                        <img src="${game.homeImage}" alt="${game.home}">
-                                        <span>vs</span>
-                                        <img src="${game.awayImage}" alt="${game.away}">
-                                    </div>
-                                    <div class="score-info">
-                                        <span class="score">${game.scoreHT} (${game.score})</span>
-                                        <span class="date">${game.date}</span>
-                                    </div>
+                                    <p><span class="highlight">Placar: ${game.scoreHT} (${game.score})</span></p>
+                                    <p>Data: ${game.date}</p>
                                 </div>
                             </div>
                         `).join('')}
