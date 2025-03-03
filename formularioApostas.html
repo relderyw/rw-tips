@@ -347,11 +347,115 @@
       content: "←";
       font-weight: bold;
     }
+
+    /* Tela de carregamento */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(10, 10, 13, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      color: #a78bfa;
+      font-size: 1.5rem;
+    }
+
+    /* Tela de erro de autenticação */
+    .auth-error {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(to bottom, #0a0a0d, #101022);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .auth-error h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #a78bfa;
+    }
+
+    .auth-error button {
+      margin-top: 1.5rem;
+      padding: 0.75rem 1.5rem;
+      background-color: #8b5cf6;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .auth-error button:hover {
+      background-color: #7c3aed;
+    }
+
+    /* Estilo para apostas */
+    .aposta-item {
+      background-color: rgba(31, 41, 55, 0.7);
+      border: 1px solid #374151;
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .aposta-actions button {
+      background: none;
+      border: none;
+      color: #ef4444;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .aposta-actions button:hover {
+      color: #f87171;
+    }
+
+    .history-title {
+      font-size: 1.125rem;
+      font-weight: 500;
+      color: #a78bfa;
+      margin-bottom: 0.75rem;
+    }
+
+    .chart-container {
+      background-color: rgba(31, 41, 55, 0.5);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      height: 200px;
+    }
+
+    .chart-title {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #a78bfa;
+      margin-bottom: 0.5rem;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 1rem;
+      color: #9ca3af;
+    }
   </style>
 </head>
 
 <body>
-  <button class="back-button" onclick="window.location.href='visualization.html'"></button>
+  <!-- Botão voltar sem o redirecionamento automático -->
+  <button class="back-button" id="back-button"></button>
+  
   <div class="container">
     <div class="app-container">
       <!-- Cabeçalho -->
@@ -577,6 +681,31 @@
         hour: "2-digit",
         minute: "2-digit",
       });
+    }
+
+    // Função para calcular o valor da aposta
+    function calcularValorAposta(stake, odds, resultado) {
+      let valor = 0;
+      
+      switch (resultado) {
+        case "green":
+          valor = stake * (odds - 1);
+          break;
+        case "red":
+          valor = -stake;
+          break;
+        case "meio-green":
+          valor = (stake / 2) * (odds - 1);
+          break;
+        case "meio-red":
+          valor = -stake / 2;
+          break;
+        case "reembolso":
+          valor = 0;
+          break;
+      }
+      
+      return valor;
     }
 
     // Funções de navegação
@@ -1033,6 +1162,7 @@
       jogador2.setAttribute("list", "jogadores-lista");
     }
 
+    
     // Event Listeners
     document.addEventListener("DOMContentLoaded", async () => {
       // Verificar se os dados do usuário existem no localStorage
@@ -1043,6 +1173,11 @@
         window.location.replace('index.html');
         return;
       }
+
+      // Configurar o botão de voltar
+      document.getElementById('back-button').addEventListener('click', () => {
+        window.location.href = 'visualization.html';
+      });
 
       // Atualizar interface do usuário
       document.getElementById('user-email').textContent = currentUser;
@@ -1122,7 +1257,7 @@
         }
       });
 
-      // Cálculo dinâmico do resultado
+      // // Cálculo dinâmico do resultado
       ["stake", "odds", "resultado"].forEach(id => {
         document.getElementById(id).addEventListener("input", () => {
           const stake = parseFloat(document.getElementById("stake").value) || 0;
