@@ -14,7 +14,7 @@
     }
 
     body {
-      background: linear-gradient(to bottom, #0f172a, #1e1b4b);
+      background: #0a0a0d;
       color: #fff;
       min-height: 100vh;
       padding: 2rem 1rem;
@@ -26,7 +26,8 @@
     }
 
     .app-container {
-      background: linear-gradient(to bottom right, #1f2937, #111827);
+      background: linear-gradient(to bottom right, #1a1a2e, #0f0f1a);
+      position: relative;
       border-radius: 1rem;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
       padding: 1.5rem;
@@ -301,6 +302,57 @@
       width: 1rem;
       height: 1rem;
     }
+
+    /* Adicionar estilo para o botão voltar */
+    .back-button {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: linear-gradient(145deg, #bb86fc, #9c27b0);
+      color: #121212;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 
+        0 4px 10px rgba(0, 0, 0, 0.5),
+        0 0 10px rgba(187, 134, 252, 0.5);
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .back-button:hover {
+      background: linear-gradient(145deg, #9c27b0, #bb86fc);
+      transform: scale(1.1);
+      box-shadow: 
+        0 6px 12px rgba(0, 0, 0, 0.6),
+        0 0 15px rgba(187, 134, 252, 0.6);
+    }
+
+    /* Ajuste no estilo da lista de histórico */
+    .history-list {
+      background-color: rgba(26, 26, 46, 0.5);
+      border: 1px solid rgba(187, 134, 252, 0.2);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    /* Ajuste no estilo do gráfico */
+    .chart-container {
+      background-color: rgba(26, 26, 46, 0.5);
+      border: 1px solid rgba(187, 134, 252, 0.2);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      margin: 1.5rem 0;
+      height: 300px;
+    }
   </style>
 </head>
 <body>
@@ -308,6 +360,12 @@
     <div class="app-container">
       <!-- Cabeçalho -->
       <header class="header">
+        <button class="back-button" onclick="window.location.href='visualization.html'">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
         <h1 class="app-title">Aposta Moderna</h1>
         <div class="user-info">
           <div class="user-avatar" id="user-avatar"></div>
@@ -633,13 +691,9 @@
       if (!currentUser) return;
 
       const apostasRef = collection(db, "apostas");
-      const hoje = new Date();
-      hoje.setHours(0, 0, 0, 0);
-
       const q = query(
         apostasRef,
         where("userEmail", "==", currentUser),
-        where("timestamp", ">=", hoje),
         orderBy("timestamp", "desc")
       );
 
@@ -757,14 +811,10 @@
       if (!currentUser) return;
 
       const apostasRef = collection(db, "apostas");
-      const dataLimite = new Date();
-      dataLimite.setDate(dataLimite.getDate() - 7);
-
       const q = query(
         apostasRef,
         where("userEmail", "==", currentUser),
-        where("timestamp", ">=", dataLimite),
-        orderBy("timestamp", "asc")
+        orderBy("timestamp", "desc")
       );
 
       try {
@@ -792,7 +842,10 @@
         const data = new Date();
         data.setDate(data.getDate() - i);
         data.setHours(0, 0, 0, 0);
-        datas.push(data.toLocaleDateString("pt-BR"));
+        datas.push(data.toLocaleDateString("pt-BR", {
+          day: '2-digit',
+          month: '2-digit'
+        }));
         
         // Filtrar apostas do dia
         const apostasDoDia = apostas.filter(aposta => {
@@ -840,12 +893,25 @@
           plugins: {
             legend: {
               display: false
+            },
+            tooltip: {
+              backgroundColor: 'rgba(26, 26, 46, 0.9)',
+              titleColor: '#fff',
+              bodyColor: '#fff',
+              borderColor: 'rgba(187, 134, 252, 0.2)',
+              borderWidth: 1,
+              callbacks: {
+                label: function(context) {
+                  return formatarMoeda(context.raw);
+                }
+              }
             }
           },
           scales: {
             y: {
               grid: {
-                color: 'rgba(255, 255, 255, 0.1)'
+                color: 'rgba(187, 134, 252, 0.1)',
+                drawBorder: false
               },
               ticks: {
                 color: '#a78bfa',
@@ -861,6 +927,18 @@
               ticks: {
                 color: '#a78bfa'
               }
+            }
+          },
+          elements: {
+            line: {
+              tension: 0.4,
+              borderWidth: 2,
+              fill: true
+            },
+            point: {
+              radius: 4,
+              borderWidth: 2,
+              backgroundColor: '#1a1a2e'
             }
           }
         }
