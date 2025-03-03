@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -61,6 +62,7 @@
             from {
                 filter: drop-shadow(0 0 5px rgba(0, 255, 0, 0.7));
             }
+
             to {
                 filter: drop-shadow(0 0 20px rgba(0, 255, 0, 0.9));
             }
@@ -83,7 +85,8 @@
             gap: 30px;
             flex-wrap: wrap;
             justify-content: space-between;
-            flex-direction: row; /* Garante que playerA fique à esquerda e playerB à direita */
+            flex-direction: row;
+            /* Garante que playerA fique à esquerda e playerB à direita */
         }
 
         .player-section {
@@ -296,6 +299,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="logo-container">
         <img src="https://i.ibb.co/v6MhLNJX/11zon-cropped.png" alt="RW Tips Logo" class="logo">
@@ -316,8 +320,8 @@
     </div>
 
     <div class="container">
-        <div id="playerA" class="player-section"></div> 
-        <div id="playerB" class="player-section"></div> 
+        <div id="playerA" class="player-section"></div>
+        <div id="playerB" class="player-section"></div>
     </div>
 
     <div id="h2hGames" class="h2h-analysis">
@@ -329,6 +333,22 @@
         function goBack() {
             localStorage.setItem('needsUpdate', 'true');
             window.history.back();
+        }
+
+        function getTop3Metrics(stats) {
+            const totalGames = stats.totalGames;
+            const metrics = [
+                { name: 'Over 1.5 HT', value: (stats.over1_5HT / totalGames) * 100, raw: `${stats.over1_5HT}/${totalGames}` },
+                { name: 'Over 2.5 HT', value: (stats.over2_5HT / totalGames) * 100, raw: `${stats.over2_5HT}/${totalGames}` },
+                { name: 'Over 2.5 FT', value: (stats.over2_5FT / totalGames) * 100, raw: `${stats.over2_5FT}/${totalGames}` },
+                { name: 'Over 3.5 FT', value: (stats.over3_5FT / totalGames) * 100, raw: `${stats.over3_5FT}/${totalGames}` },
+                { name: 'Over 4.5 FT', value: (stats.over4_5FT / totalGames) * 100, raw: `${stats.over4_5FT}/${totalGames}` },
+                { name: 'BTTS HT', value: (stats.bttsHT / totalGames) * 100, raw: `${stats.bttsHT}/${totalGames}` },
+                { name: 'BTTS FT', value: (stats.bttsFT / totalGames) * 100, raw: `${stats.bttsFT}/${totalGames}` }
+            ];
+
+            // Ordenar por valor (porcentagem) em ordem decrescente
+            return metrics.sort((a, b) => b.value - a.value).slice(0, 3);
         }
 
         function processH2HStats(lastGames) {
@@ -379,14 +399,14 @@
         }
 
         function renderProbabilities(h2hStats, playerAName, playerBName) {
-        const container = document.getElementById('probabilityCards');
-        const totalGames = h2hStats.totalGames;
-        
-        const homeWinPercent = ((h2hStats.winHome / totalGames) * 100).toFixed(1);
-        const awayWinPercent = ((h2hStats.winAway / totalGames) * 100).toFixed(1);
-        const drawPercent = ((h2hStats.draw / totalGames) * 100).toFixed(1);
-        
-        const probabilityHTML = `
+            const container = document.getElementById('probabilityCards');
+            const totalGames = h2hStats.totalGames;
+
+            const homeWinPercent = ((h2hStats.winHome / totalGames) * 100).toFixed(1);
+            const awayWinPercent = ((h2hStats.winAway / totalGames) * 100).toFixed(1);
+            const drawPercent = ((h2hStats.draw / totalGames) * 100).toFixed(1);
+
+            const probabilityHTML = `
             <div class="probability-card">
                 <h4>Vitória ${playerAName}</h4>
                 <div class="probability-value">${homeWinPercent}%</div>
@@ -404,13 +424,13 @@
             </div>
         `;
 
-        container.innerHTML = probabilityHTML;
-    }
+            container.innerHTML = probabilityHTML;
+        }
 
         function renderH2HAnalysis(stats) {
             const container = document.getElementById('h2hStatsGrid');
             const totalGames = stats.totalGames;
-            
+
             const h2hStatsHTML = `
                 <div class="h2h-stat-card">
                     <h4>Over 1.5 HT</h4>
@@ -543,7 +563,7 @@
 
         function renderH2HGames(games) {
             const container = document.getElementById('h2hGamesList');
-            
+
             const gamesHTML = games.map(game => `
                 <div class="game-card">
                     <div class="team">
@@ -566,7 +586,7 @@
         const homeID = urlParams.get('homeID');
         const awayID = urlParams.get('awayID');
         const leagueID = urlParams.get('leagueID');
-       
+
         // Fetch e processamento dos dados
         let apiUrl;
         if (leagueID === '22614') {
@@ -576,25 +596,30 @@
         }
 
         fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-            const players = data.players;
-            const h2hStats = processH2HStats(data.mutualInfos.lastGames);
+            .then(response => response.json())
+            .then(data => {
+                const players = data.players;
+                const h2hStats = processH2HStats(data.mutualInfos.lastGames);
+                const top3Metrics = getTop3Metrics(h2hStats);
 
-            // Renderiza as métricas e jogos do playerA (Madisson) na seção playerA
-            renderPlayerSection(players.playerA, 'playerA');
+                // Adicionar as métricas ao localStorage para uso na tela de visualização
+                localStorage.setItem(`h2h_metrics_${homeID}_${awayID}`, JSON.stringify(top3Metrics));
 
-            // Renderiza as métricas e jogos do playerB (Zangief) na seção playerB
-            renderPlayerSection(players.playerB, 'playerB');
+                // Renderiza as métricas e jogos do playerA (Madisson) na seção playerA
+                renderPlayerSection(players.playerA, 'playerA');
 
-            renderH2HAnalysis(h2hStats);
-            renderProbabilities(h2hStats, players.playerA.name, players.playerB.name);
-            renderH2HGames(data.mutualInfos.lastGames);
-        })
-        .catch(error => {
-            console.error('Erro ao carregar dados:', error);
-            alert('Erro ao carregar dados. Por favor, tente novamente.');
-        });
+                // Renderiza as métricas e jogos do playerB (Zangief) na seção playerB
+                renderPlayerSection(players.playerB, 'playerB');
+
+                renderH2HAnalysis(h2hStats);
+                renderProbabilities(h2hStats, players.playerA.name, players.playerB.name);
+                renderH2HGames(data.mutualInfos.lastGames);
+            })
+            .catch(error => {
+                console.error('Erro ao carregar dados:', error);
+                alert('Erro ao carregar dados. Por favor, tente novamente.');
+            });
     </script>
 </body>
+
 </html>
