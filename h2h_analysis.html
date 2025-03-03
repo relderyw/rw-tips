@@ -337,6 +337,145 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        .team {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .team img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .team span {
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .metrics-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(26, 26, 35, 0.5);
+        }
+
+        .metrics-section h3 {
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .metric-item {
+            background: rgba(32, 32, 44, 0.8);
+            padding: 12px;
+            border-radius: 10px;
+            transition: transform 0.2s;
+            border: 1px solid rgba(139, 92, 246, 0.1);
+        }
+
+        .metric-item h4 {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-item .highlight {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-purple);
+            margin: 5px 0;
+            background: linear-gradient(45deg, var(--accent-pink), var(--accent-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .metric-item p:not(.highlight) {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        .game-card {
+            max-width: 500px;
+            margin: 15px auto;
+            text-align: center;
+        }
+
+        .game-card p {
+            font-size: 0.85rem;
+            margin: 5px 0;
+            color: var(--text-secondary);
+        }
+
+        .game-card .highlight {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--accent-purple);
+        }
+
+        #h2hGames {
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        #h2hGames h3 {
+            text-align: center;
+            font-size: 1.3rem;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .h2h-stat-card h4 {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .h2h-stat-card p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .probability-card h4 {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .probability-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
     </style>
 </head>
 
