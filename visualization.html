@@ -6,28 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RW TIPS - Visualização de Jogos</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
         :root {
-            --primary-color: #00d4ff;
-            --secondary-color: #1f1f1f;
-            --background-dark: #121212;
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --background-dark: #0f0f13;
+            --card-bg: #1a1a23;
+            --card-hover: #22222c;
             --text-primary: #ffffff;
-            --text-secondary: #cccccc;
-            --card-hover: #2a2a2a;
-            --button-hover: #00aacc;
-            --neon-green: #00ff00;
+            --text-secondary: #a0a0a0;
+            --accent-color: #00ff88;
+            --danger-color: #ff5252;
+            --success-color: #00ff88;
+            --border-color: rgba(255, 255, 255, 0.05);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--background-dark);
+            background: linear-gradient(135deg, var(--background-dark) 0%, #16161f 100%);
             color: var(--text-primary);
             margin: 0;
             padding: 20px;
@@ -36,7 +39,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 0 20px;
         }
@@ -45,137 +48,98 @@
             text-align: center;
             margin: 20px 0;
             padding: 20px;
+            position: relative;
         }
 
         .logo {
-            width: 150px;
+            width: 120px;
             height: auto;
             margin-bottom: 15px;
-            animation: glow 2s ease-in-out infinite alternate;
+            filter: drop-shadow(0 0 10px rgba(108, 92, 231, 0.5));
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 15px rgba(108, 92, 231, 0.7));
         }
 
         .logo-text {
-            font-size: 2rem;
-            color: var(--neon-green);
-            text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
-            margin: 10px 0;
-            font-family: Arial, sans-serif;
+            font-size: 1.8rem;
+            background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
             letter-spacing: 2px;
-        }
-
-        @keyframes glow {
-            from {
-                filter: drop-shadow(0 0 5px rgba(0, 255, 0, 0.7));
-            }
-
-            to {
-                filter: drop-shadow(0 0 20px rgba(0, 255, 0, 0.9));
-            }
-        }
-
-        .live-button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            z-index: 1000;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .live-button:hover {
-            background-color: #45a049;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            background-color: red;
-            border-radius: 50%;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.5;
-            }
-
-            100% {
-                opacity: 1;
-            }
+            margin-top: 10px;
         }
 
         h1 {
             text-align: center;
-            color: var(--primary-color);
-            margin: 30px 0;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin: 30px 0;
+            background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
         }
 
         .button-container {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 30px;
-            padding: 0 10px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
         }
 
         .action-button {
-            flex: 1;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
             padding: 15px 25px;
-            border: none;
             border-radius: 12px;
-            font-size: 16px;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            background: linear-gradient(135deg, #00d4ff 0%, #00a6ff 100%);
-            color: #000;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+            letter-spacing: 1px;
             position: relative;
             overflow: hidden;
         }
 
         .action-button:hover {
-            background: linear-gradient(135deg, #00a6ff 0%, #0080ff 100%);
+            background: var(--card-hover);
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
+            border-color: var(--primary-color);
         }
 
-        .action-button:active {
-            transform: translateY(1px);
-            box-shadow: 0 2px 10px rgba(0, 212, 255, 0.3);
+        .action-button::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .action-button:hover::after {
+            transform: scaleX(1);
         }
 
         #filter {
             width: 100%;
             padding: 15px;
-            border: 2px solid var(--primary-color);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
-            font-size: 16px;
-            background-color: var(--secondary-color);
             color: var(--text-primary);
+            font-size: 0.9rem;
             margin-bottom: 25px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -183,41 +147,60 @@
 
         #filter:focus {
             outline: none;
-            border-color: var(--button-hover);
-            box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.1);
         }
 
         .card {
-            background-color: var(--secondary-color);
-            border-radius: 15px;
+            background: var(--card-bg);
+            border-radius: 16px;
             padding: 25px;
             margin: 20px 0;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
             transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 0;
         }
 
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
-            background-color: var(--card-hover);
+            border-color: var(--primary-color);
+        }
+
+        .card:hover::before {
+            opacity: 0.05;
         }
 
         .league-name {
-            font-weight: 700;
-            font-size: 1.2rem;
+            font-weight: 600;
+            font-size: 1.1rem;
             margin-bottom: 20px;
-            text-align: center;
             padding: 10px;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+            z-index: 1;
         }
 
         .teams {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 25px 0;
             gap: 20px;
+            position: relative;
+            z-index: 1;
         }
 
         .team {
@@ -226,19 +209,19 @@
         }
 
         .team img {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             margin-bottom: 10px;
-            border: 3px solid var(--primary-color);
-            padding: 3px;
-            background-color: var(--background-dark);
+            border: 2px solid var(--primary-color);
+            padding: 2px;
             transition: all 0.3s ease;
+            background: var(--card-bg);
         }
 
         .team:hover img {
             transform: scale(1.1);
-            border-color: var(--button-hover);
+            border-color: var(--accent-color);
         }
 
         .team span {
@@ -248,63 +231,40 @@
         }
 
         .team span:first-of-type {
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--accent-color);
         }
 
         .match-time {
             text-align: center;
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: var(--text-secondary);
-            margin: 15px 0;
-            padding: 10px;
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-        }
-
-        .h2h-button {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-            margin-top: 15px;
-            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-        }
-
-        .h2h-button:hover {
-            background: linear-gradient(135deg, #45a049 0%, #388e3c 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
-        }
-
-        .h2h-button:active {
-            transform: translateY(1px);
-            box-shadow: 0 2px 10px rgba(76, 175, 80, 0.3);
-        }
-
-        /* Estilos para as métricas */
-        .metrics-container {
             margin: 15px 0;
             padding: 10px;
             background: rgba(0, 0, 0, 0.2);
             border-radius: 8px;
+            backdrop-filter: blur(5px);
+            position: relative;
+            z-index: 1;
+        }
+
+        .metrics-container {
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            position: relative;
+            z-index: 1;
         }
 
         .metric-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 5px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .metric-item:last-child {
@@ -312,31 +272,105 @@
         }
 
         .metric-name {
-            color: var(--primary-color);
+            color: var(--text-primary);
             font-weight: 500;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .metric-value {
-            color: var(--neon-green);
-            font-weight: 700;
+            color: var(--accent-color);
+            font-weight: 600;
+            font-size: 0.9rem;
         }
 
         .metric-raw {
             color: var(--text-secondary);
-            font-size: 0.9em;
+            font-size: 0.8rem;
             margin-left: 8px;
         }
 
-        @media (max-width: 768px) {
-            .button-container {
-                flex-direction: column;
-                gap: 15px;
+        .h2h-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            color: var(--text-primary);
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .h2h-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        .live-button {
+            background: linear-gradient(45deg, #ff4757, #ff6b81);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            border: none;
+        }
+
+        .live-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background-color: white;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+                transform: scale(1);
             }
 
-            .action-button {
-                width: 100%;
-                padding: 12px 20px;
-                font-size: 14px;
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 10px;
+            }
+
+            .button-container {
+                grid-template-columns: 1fr;
             }
 
             .card {
@@ -344,20 +378,23 @@
             }
 
             .team img {
-                width: 60px;
-                height: 60px;
+                width: 50px;
+                height: 50px;
             }
 
             .team span {
                 font-size: 0.8rem;
             }
 
-            .logo {
-                width: 120px;
+            .metric-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
             }
 
-            .logo-text {
-                font-size: 1.5rem;
+            .live-button {
+                padding: 8px 15px;
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -423,15 +460,93 @@
             return leagueMappings[leagueName] || { name: leagueName, color: "#FFFFFF" };
         }
 
+        function processH2HStats(lastGames) {
+            let stats = {
+                totalGames: lastGames.length,
+                over1_5HT: 0,
+                over2_5HT: 0,
+                over2_5FT: 0,
+                over3_5FT: 0,
+                over4_5FT: 0,
+                bttsHT: 0,
+                bttsFT: 0,
+                totalGoalsHT: 0,
+                totalGoalsFT: 0,
+                winHome: 0,
+                winAway: 0,
+                draw: 0
+            };
+
+            lastGames.forEach(game => {
+                const [homeGoals, awayGoals] = game.score.split('-').map(Number);
+                const [homeHT, awayHT] = game.scoreHT.split('-').map(Number);
+
+                const totalGoalsHT = homeHT + awayHT;
+                const totalGoalsFT = homeGoals + awayGoals;
+
+                stats.totalGoalsHT += totalGoalsHT;
+                stats.totalGoalsFT += totalGoalsFT;
+
+                if (totalGoalsHT > 1) stats.over1_5HT++;
+                if (totalGoalsHT > 2) stats.over2_5HT++;
+                if (homeHT > 0 && awayHT > 0) stats.bttsHT++;
+
+                if (totalGoalsFT > 2) stats.over2_5FT++;
+                if (totalGoalsFT > 3) stats.over3_5FT++;
+                if (totalGoalsFT > 4) stats.over4_5FT++;
+                if (homeGoals > 0 && awayGoals > 0) stats.bttsFT++;
+
+                if (homeGoals > awayGoals) stats.winHome++;
+                else if (awayGoals > homeGoals) stats.winAway++;
+                else stats.draw++;
+            });
+
+            return stats;
+        }
+
+        function getTop3Metrics(stats) {
+            const totalGames = stats.totalGames;
+            const metrics = [
+                { name: 'Over 1.5 HT', value: (stats.over1_5HT / totalGames) * 100, raw: `${stats.over1_5HT}/${totalGames}` },
+                { name: 'Over 2.5 HT', value: (stats.over2_5HT / totalGames) * 100, raw: `${stats.over2_5HT}/${totalGames}` },
+                { name: 'Over 2.5 FT', value: (stats.over2_5FT / totalGames) * 100, raw: `${stats.over2_5FT}/${totalGames}` },
+                { name: 'Over 3.5 FT', value: (stats.over3_5FT / totalGames) * 100, raw: `${stats.over3_5FT}/${totalGames}` },
+                { name: 'Over 4.5 FT', value: (stats.over4_5FT / totalGames) * 100, raw: `${stats.over4_5FT}/${totalGames}` },
+                { name: 'BTTS HT', value: (stats.bttsHT / totalGames) * 100, raw: `${stats.bttsHT}/${totalGames}` },
+                { name: 'BTTS FT', value: (stats.bttsFT / totalGames) * 100, raw: `${stats.bttsFT}/${totalGames}` }
+            ];
+
+            return metrics.sort((a, b) => b.value - a.value).slice(0, 3);
+        }
+
+        async function fetchH2HMetrics(homeID, awayID, leagueID, homePlayer, awayPlayer) {
+            let apiUrl;
+            if (leagueID === '22614') {
+                apiUrl = `https://api.green365.com.br/api/e-soccer/event/stats?homeID=${homeID}&awayID=${awayID}&home=${encodeURIComponent(homePlayer.toLowerCase())}&away=${encodeURIComponent(awayPlayer.toLowerCase())}&homeTeam=&awayTeam=&league=${leagueID}&eventID=0&period=last_30`;
+            } else {
+                apiUrl = `https://api.green365.com.br/api/e-soccer/event/stats?homeID=${homeID}&awayID=${awayID}&home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&league=${leagueID}&eventID=0&period=last_30`;
+            }
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                const h2hStats = processH2HStats(data.mutualInfos.lastGames);
+                return getTop3Metrics(h2hStats);
+            } catch (error) {
+                console.error('Erro ao buscar métricas H2H:', error);
+                return null;
+            }
+        }
+
         function updateGames() {
             fetch('https://api.green365.com.br/api/league/upcoming?sport=fifa&leagueId=&page=1')
                 .then(response => response.json())
-                .then(data => {
+                .then(async data => {
                     const games = data.data;
                     const gamesContainer = document.getElementById('gamesContainer');
                     gamesContainer.innerHTML = '';
 
-                    games.forEach(game => {
+                    for (const game of games) {
                         const card = document.createElement('div');
                         card.className = 'card';
 
@@ -469,11 +584,11 @@
                         // Criar container para métricas
                         const metricsContainer = document.createElement('div');
                         metricsContainer.className = 'metrics-container';
+                        metricsContainer.innerHTML = '<div style="text-align: center; padding: 10px;">Carregando métricas...</div>';
 
-                        // Tentar recuperar métricas do localStorage
-                        const storedMetrics = localStorage.getItem(`h2h_metrics_${game.homeID}_${game.awayID}`);
-                        if (storedMetrics) {
-                            const metrics = JSON.parse(storedMetrics);
+                        // Buscar métricas H2H
+                        const metrics = await fetchH2HMetrics(game.homeID, game.awayID, game.leagueID, homePlayer, awayPlayer);
+                        if (metrics) {
                             metricsContainer.innerHTML = `
                                 <div class="metric-item">
                                     <span class="metric-name">🎯 ${metrics[0].name}</span>
@@ -497,17 +612,15 @@
                                     </span>
                                 </div>
                             `;
+                        } else {
+                            metricsContainer.innerHTML = '<div style="text-align: center; padding: 10px;">Sem dados H2H disponíveis</div>';
                         }
-
-                        const homeID = game.homeID;
-                        const awayID = game.awayID;
-                        const leagueID = game.leagueID;
 
                         const h2hButton = document.createElement('button');
                         h2hButton.className = 'h2h-button';
                         h2hButton.innerText = 'Ver H2H';
                         h2hButton.onclick = function () {
-                            window.location.href = `h2h_analysis.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${homeID}&awayID=${awayID}&leagueID=${leagueID}`;
+                            window.location.href = `h2h_analysis.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${game.homeID}&awayID=${game.awayID}&leagueID=${game.leagueID}`;
                         };
 
                         card.appendChild(leagueName);
@@ -516,7 +629,7 @@
                         card.appendChild(metricsContainer);
                         card.appendChild(h2hButton);
                         gamesContainer.appendChild(card);
-                    });
+                    }
 
                     // Aplica o filtro atual
                     const selectedLeague = document.getElementById('filter').value;
