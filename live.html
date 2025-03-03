@@ -346,7 +346,7 @@
 
         function updateLiveGames() {
             console.log('Buscando jogos ao vivo...');
-            fetch('https://api.green365.com.br/api/league/live?sport=fifa&leagueId=&page=1')
+            fetch('https://api.green365.com.br/api/events/inplay?sport_id=4&competition_id=')
                 .then(response => {
                     console.log('Resposta recebida:', response.status);
                     if (!response.ok) {
@@ -357,11 +357,11 @@
                 .then(data => {
                     console.log('Dados recebidos:', data);
 
-                    if (!data || !Array.isArray(data.data)) {
+                    if (!Array.isArray(data)) {
                         throw new Error('Formato de dados inválido');
                     }
 
-                    const games = data.data;
+                    const games = data;
                     const container = document.getElementById('liveGamesContainer');
                     container.innerHTML = '';
 
@@ -385,45 +385,42 @@
                         const currentScore = game.score || '0-0';
                         const [homeScore, awayScore] = currentScore.split('-').map(Number);
 
-                        // Determinar o status do jogo
-                        const matchStatus = game.status === 'LIVE' ?
-                            (game.minute ? `${game.minute}'` : 'Ao Vivo') :
-                            (game.status || 'Ao Vivo');
+                        // Extrair placar do primeiro tempo
+                        const htScore = game.scores && game.scores['1'] ?
+                            `${game.scores['1'].home}-${game.scores['1'].away}` : '0-0';
 
                         card.innerHTML = `
                             <div class="league-name">${game.leagueName || 'Liga Desconhecida'}</div>
                             <div class="match-info">
                                 <div class="team">
-                                    <img src="${game.homeImage || 'https://via.placeholder.com/70'}" alt="${game.home_team_name || 'Time Casa'}"
+                                    <img src="${game.homeImage || 'https://via.placeholder.com/70'}" alt="${game.home || 'Time Casa'}"
                                          onerror="this.src='https://via.placeholder.com/70'">
-                                    <div class="team-name">${game.home_team_name || 'Time Casa'}</div>
-                                    <div class="player-name">${homePlayer}</div>
+                                    <div class="team-name">${game.home || 'Time Casa'}</div>
                                 </div>
                                 <div class="score ${homeScore > awayScore ? 'home-win' : awayScore > homeScore ? 'away-win' : 'draw'}">
                                     ${currentScore}
                                 </div>
                                 <div class="team">
-                                    <img src="${game.awayImage || 'https://via.placeholder.com/70'}" alt="${game.away_team_name || 'Time Visitante'}"
+                                    <img src="${game.awayImage || 'https://via.placeholder.com/70'}" alt="${game.away || 'Time Visitante'}"
                                          onerror="this.src='https://via.placeholder.com/70'">
-                                    <div class="team-name">${game.away_team_name || 'Time Visitante'}</div>
-                                    <div class="player-name">${awayPlayer}</div>
+                                    <div class="team-name">${game.away || 'Time Visitante'}</div>
                                 </div>
                             </div>
                             <div class="match-time">
-                                <span class="live-dot"></span>${matchStatus}
+                                <span class="live-dot"></span>${game.minutes}'${game.seconds}"
                             </div>
                             <div class="match-stats">
                                 <div class="stat-item">
                                     <div class="stat-label">Placar HT</div>
-                                    <div class="stat-value">${game.scoreHT || '0-0'}</div>
+                                    <div class="stat-value">${htScore}</div>
                                 </div>
                                 <div class="stat-item">
-                                    <div class="stat-label">Gols 1° Tempo</div>
-                                    <div class="stat-value">${game.scoreHT ? game.scoreHT.split('-').reduce((a, b) => Number(a) + Number(b), 0) : '0'}</div>
+                                    <div class="stat-label">Ataques</div>
+                                    <div class="stat-value">${game.stats?.attacks ? game.stats.attacks.join('-') : '0-0'}</div>
                                 </div>
                                 <div class="stat-item">
-                                    <div class="stat-label">Total de Gols</div>
-                                    <div class="stat-value">${currentScore.split('-').reduce((a, b) => Number(a) + Number(b), 0)}</div>
+                                    <div class="stat-label">Escanteios</div>
+                                    <div class="stat-value">${game.stats?.corners ? game.stats.corners.join('-') : '0-0'}</div>
                                 </div>
                             </div>
                         `;
