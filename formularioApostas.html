@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aposta Moderna</title>
+  <title>Gerenciamento</title>
   <style>
     /* Estilos gerais */
     * {
@@ -923,18 +923,13 @@
 
     // Função para mapear liga da API para o select
     function mapearLiga(ligaNome) {
-      const mapeamento = {
-        '6 mins': 'Battle 6 min',
-        '8 mins H2H': 'Battle 8 min (H2H)',
-        '8 mins': 'Battle 8 min',
-        '10 mins': 'Adriact 10 min',
-        '12 mins': 'GT 12 min'
-      };
-
-      for (const [key, value] of Object.entries(mapeamento)) {
-        if (ligaNome.includes(key)) return value;
-      }
-      return ligaNome;
+      // Primeiro verificar H2H para não conflitar com Battle 8 min normal
+      if (ligaNome.includes("8 mins") && ligaNome.includes("H2H")) return "Battle 8 min (H2H)";
+      if (ligaNome.includes("6 mins")) return "Battle 6 min";
+      if (ligaNome.includes("8 mins")) return "Battle 8 min";
+      if (ligaNome.includes("10 mins")) return "Adriact 10 min";
+      if (ligaNome.includes("12 mins")) return "GT 12 min";
+      return "Outro";
     }
 
     // Função para extrair nome do jogador
@@ -956,17 +951,21 @@
             const ligaOriginal = match.leagueName;
             const liga = mapearLiga(ligaOriginal);
 
+            // Inicializar o Set para a liga se não existir
             if (!jogadoresPorLiga[liga]) {
               jogadoresPorLiga[liga] = new Set();
             }
 
-            if (match.home) {
-              const jogador = extrairNomeJogador(match.home);
-              jogadoresPorLiga[liga].add(jogador);
-            }
-            if (match.away) {
-              const jogador = extrairNomeJogador(match.away);
-              jogadoresPorLiga[liga].add(jogador);
+            // Adicionar jogadores apenas se a liga for mapeada corretamente
+            if (liga !== "Outro") {
+              if (match.home) {
+                const jogador = extrairNomeJogador(match.home);
+                jogadoresPorLiga[liga].add(jogador);
+              }
+              if (match.away) {
+                const jogador = extrairNomeJogador(match.away);
+                jogadoresPorLiga[liga].add(jogador);
+              }
             }
           });
 
