@@ -410,46 +410,67 @@
             text-align: center;
             letter-spacing: 1px;
             font-weight: 700;
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
         .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 20px;
-            padding: 0 15px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
         }
 
         .metric-item {
             background: var(--glass-bg);
-            padding: 25px 15px;
+            padding: 20px 15px;
             border-radius: 12px;
             text-align: center;
             border: 1px solid var(--glass-border);
             transition: all 0.3s ease;
         }
 
+        .metric-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.1);
+        }
+
         .metric-item h4 {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--text-primary);
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             font-weight: 600;
         }
 
         .metric-item .highlight {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 700;
             background: linear-gradient(45deg, var(--accent-pink), var(--accent-purple));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            margin: 10px 0;
+            margin: 8px 0;
             display: block;
         }
 
         .metric-item p:not(.highlight) {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text-secondary);
-            margin-top: 8px;
+            margin-top: 5px;
+        }
+
+        .games-section {
+            margin-top: 30px;
+        }
+
+        .games-section h3 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: 1px;
+            font-weight: 600;
         }
 
         .team {
@@ -630,7 +651,7 @@
         }
 
         @media (max-width: 1200px) {
-            .metrics-container {
+            .container {
                 grid-template-columns: 1fr;
             }
         }
@@ -929,21 +950,23 @@
                         </div>
                     </div>
                 </div>
+                <div class="games-section">
+                    <h3>Últimos Jogos</h3>
+                    ${last10Games.map(game => `
+                        <div class="game-card">
+                            <div class="team">
+                                <img src="${game.homeImage}" alt="${game.home}">
+                                <span>${game.home} vs ${game.away}</span>
+                                <img src="${game.awayImage}" alt="${game.away}">
+                            </div>
+                            <p>Placar: <span class="highlight">${game.scoreHT}</span> (<span class="highlight">${game.score}</span>)</p>
+                            <p>Data: ${game.date}</p>
+                        </div>
+                    `).join('')}
+                </div>
             `;
 
-            const gamesHTML = last10Games.map(game => `
-                <div class="game-card">
-                    <div class="team">
-                        <img src="${game.homeImage}" alt="${game.home}">
-                        <span>${game.home} vs ${game.away}</span>
-                        <img src="${game.awayImage}" alt="${game.away}">
-                    </div>
-                    <p>Placar: <span class="highlight">${game.scoreHT}</span> (<span class="highlight">${game.score}</span>)</p>
-                    <p>Data: ${game.date}</p>
-                </div>
-            `).join('');
-
-            container.innerHTML = metricsHTML + `<h3>Últimos Jogos de ${player.name}</h3>${gamesHTML}`;
+            container.innerHTML = metricsHTML;
         }
 
         function renderH2HGames(games, playerAName, playerBName) {
