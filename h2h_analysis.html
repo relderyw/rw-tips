@@ -466,20 +466,41 @@
             padding: 25px;
             margin: 20px auto;
             max-width: 500px;
+            text-align: center;
         }
 
         .team {
-            padding: 20px;
-            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
         }
 
         .team img {
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
         }
 
         .team span {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
+            color: var(--text-primary);
+        }
+
+        .game-info {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .game-info p {
+            margin: 8px 0;
+        }
+
+        .game-info .highlight {
+            color: var(--text-primary);
+            font-weight: 600;
         }
 
         .player-games-container {
@@ -1006,11 +1027,13 @@
                         <div class="game-card">
                             <div class="team">
                                 <img src="${game.homeImage}" alt="${game.home}">
-                                <span>${game.home} vs ${game.away}</span>
+                                <span>${game.home.split('(')[0].trim()} vs ${game.away.split('(')[0].trim()}</span>
                                 <img src="${game.awayImage}" alt="${game.away}">
                             </div>
-                            <p>Placar: <span class="highlight">${game.scoreHT}</span> (<span class="highlight">${game.score}</span>)</p>
-                            <p>Data: ${game.date}</p>
+                            <div class="game-info">
+                                <p><span class="highlight">Placar: ${game.scoreHT} (${game.score})</span></p>
+                                <p>Data: ${game.date}</p>
+                            </div>
                         </div>
                     `).join('')}
                 </div>
