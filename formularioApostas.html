@@ -697,7 +697,7 @@ h3 {
     const apostasLista = document.getElementById("apostas-lista");
     apostasLista.innerHTML = '<div class="loading">Carregando apostas</div>';
 
-    // Removido o filtro de data para mostrar todas as apostas
+    // Query para buscar todas as apostas ordenadas por data
     const apostasRef = query(
       collection(db, "apostas"),
       orderBy("timestamp", "desc")
