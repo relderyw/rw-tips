@@ -344,6 +344,17 @@
             return match ? match[1] : text;
         }
 
+        function getLeagueDisplayName(leagueName) {
+            const leagueMappings = {
+                "Esoccer Battle - 8 mins play": { name: "Esoccer Battle - 8 mins play", color: "#FF4C4C" },
+                "Esoccer Battle Volta - 6 mins play": { name: "Esoccer Battle Volta - 6 mins play", color: "#FFD700" },
+                "Esoccer GT Leagues – 12 mins play": { name: "Esoccer GT Leagues – 12 mins play", color: "#32CD32" },
+                "Esoccer H2H GG League - 8 mins play": { name: "Esoccer H2H GG League - 8 mins play", color: "#8A2BE2" },
+                "Esoccer Adriatic League - 10 mins play": { name: "Esoccer Adriatic League - 10 mins play", color: "#1E90FF" }
+            };
+            return leagueMappings[leagueName] || { name: leagueName, color: "#FFFFFF" };
+        }
+
         function updateLiveGames() {
             console.log('Buscando jogos ao vivo...');
             fetch('https://api.green365.com.br/api/events/inplay?sport_id=4&competition_id=')
@@ -389,8 +400,11 @@
                         const htScore = game.scores && game.scores['1'] ?
                             `${game.scores['1'].home}-${game.scores['1'].away}` : '0-0';
 
+                        // Obter informações da liga com a cor correta
+                        const leagueInfo = getLeagueDisplayName(game.leagueName);
+
                         card.innerHTML = `
-                            <div class="league-name">${game.leagueName || 'Liga Desconhecida'}</div>
+                            <div class="league-name" style="color: ${leagueInfo.color}">${leagueInfo.name}</div>
                             <div class="match-info">
                                 <div class="team">
                                     <img src="${game.homeImage || 'https://via.placeholder.com/70'}" alt="${game.home || 'Time Casa'}"
@@ -423,6 +437,9 @@
                                     <div class="stat-value">${game.stats?.corners ? game.stats.corners.join('-') : '0-0'}</div>
                                 </div>
                             </div>
+                            <button onclick="window.location.href='h2h_analysis.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${game.homeID}&awayID=${game.awayID}&leagueID=${game.leagueID}'" class="h2h-button">
+                                Ver H2H
+                            </button>
                         `;
 
                         container.appendChild(card);
