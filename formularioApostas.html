@@ -524,6 +524,7 @@
       orderBy,
       getDocs,
       setDoc,
+      limit,
     } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -667,14 +668,23 @@
       if (!currentUser || !nome) return;
 
       try {
-        await addDoc(collection(db, "mercados"), {
-          nome,
-          userEmail: currentUser,
-          timestamp: serverTimestamp(),
-        });
+        // Verificar se o usuário é admin ou dono do mercado
+        const mercadosRef = collection(db, "mercados");
+        const q = query(mercadosRef, where("userEmail", "==", currentUser), limit(1));
+        const snapshot = await getDocs(q);
 
-        document.getElementById("novo-mercado").value = "";
-        await carregarMercados();
+        if (!snapshot.empty || currentUserKey === 'admin') {
+          await addDoc(collection(db, "mercados"), {
+            nome,
+            userEmail: currentUser,
+            timestamp: serverTimestamp(),
+          });
+
+          document.getElementById("novo-mercado").value = "";
+          await carregarMercados();
+        } else {
+          alert("Apenas o dono dos mercados ou administrador pode adicionar novos mercados.");
+        }
       } catch (error) {
         console.error("Erro ao adicionar mercado:", error);
         alert("Erro ao adicionar mercado: " + error.message);
