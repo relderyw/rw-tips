@@ -827,15 +827,24 @@
       if (!currentUser) return;
 
       const mercadosRef = collection(db, "mercados");
-      // Buscar mercados do admin e do usuário atual
-      const q = query(mercadosRef,
-        where("userEmail", "in", ["admin@rwtips.com", currentUser])
-      );
-
       try {
-        const querySnapshot = await getDocs(q);
+        // Primeiro buscar todos os mercados do admin
+        const adminQuery = query(mercadosRef, where("userEmail", "==", "admin@rwtips.com"));
+        const adminSnapshot = await getDocs(adminQuery);
+
+        // Depois buscar os mercados do usuário atual
+        const userQuery = query(mercadosRef, where("userEmail", "==", currentUser));
+        const userSnapshot = await getDocs(userQuery);
+
         const mercados = [];
-        querySnapshot.forEach((doc) => {
+
+        // Adicionar mercados do admin
+        adminSnapshot.forEach((doc) => {
+          mercados.push({ id: doc.id, ...doc.data() });
+        });
+
+        // Adicionar mercados do usuário
+        userSnapshot.forEach((doc) => {
           mercados.push({ id: doc.id, ...doc.data() });
         });
 
