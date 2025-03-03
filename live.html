@@ -165,8 +165,6 @@
 
         .live-card:hover {
             transform: translateY(-5px);
-            border-color: var(--live-color);
-            box-shadow: 0 10px 20px rgba(255, 71, 87, 0.1);
         }
 
         .league-name {
@@ -175,7 +173,47 @@
             margin-bottom: 20px;
             padding: 10px;
             border-bottom: 1px solid var(--border-color);
-            color: var(--live-color);
+        }
+
+        /* Adicionar classes específicas para cada liga */
+        .league-battle {
+            --league-color: #FF4C4C;
+        }
+
+        .league-volta {
+            --league-color: #FFD700;
+        }
+
+        .league-gt {
+            --league-color: #32CD32;
+        }
+
+        .league-h2h {
+            --league-color: #8A2BE2;
+        }
+
+        .league-adriatic {
+            --league-color: #1E90FF;
+        }
+
+        .live-card[data-league="Esoccer Battle - 8 mins play"] {
+            border-color: #FF4C4C;
+        }
+
+        .live-card[data-league="Esoccer Battle Volta - 6 mins play"] {
+            border-color: #FFD700;
+        }
+
+        .live-card[data-league="Esoccer GT Leagues – 12 mins play"] {
+            border-color: #32CD32;
+        }
+
+        .live-card[data-league="Esoccer H2H GG League - 8 mins play"] {
+            border-color: #8A2BE2;
+        }
+
+        .live-card[data-league="Esoccer Adriatic League - 10 mins play"] {
+            border-color: #1E90FF;
         }
 
         .match-info {
@@ -244,13 +282,15 @@
             padding: 15px;
             background: rgba(0, 0, 0, 0.2);
             border-radius: 12px;
+            backdrop-filter: blur(5px);
         }
 
         .stat-item {
             text-align: center;
             padding: 10px;
             border-radius: 8px;
-            background: rgba(255, 71, 87, 0.05);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid;
         }
 
         .stat-label {
@@ -284,6 +324,48 @@
         .back-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4);
+        }
+
+        .h2h-button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            color: var(--text-primary);
+            background: transparent;
+            border: 2px solid;
+        }
+
+        .h2h-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.2),
+                    transparent);
+            transition: 0.5s;
+        }
+
+        .h2h-button:hover::before {
+            left: 100%;
+        }
+
+        .h2h-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
         @media (max-width: 768px) {
@@ -388,9 +470,11 @@
                     games.forEach(game => {
                         const homePlayer = extractPlayerName(game.home || '');
                         const awayPlayer = extractPlayerName(game.away || '');
+                        const leagueInfo = getLeagueDisplayName(game.leagueName);
 
                         const card = document.createElement('div');
                         card.className = 'live-card';
+                        card.setAttribute('data-league', game.leagueName);
 
                         // Extrair o placar atual
                         const currentScore = game.score || '0-0';
@@ -399,9 +483,6 @@
                         // Extrair placar do primeiro tempo
                         const htScore = game.scores && game.scores['1'] ?
                             `${game.scores['1'].home}-${game.scores['1'].away}` : '0-0';
-
-                        // Obter informações da liga com a cor correta
-                        const leagueInfo = getLeagueDisplayName(game.leagueName);
 
                         card.innerHTML = `
                             <div class="league-name" style="color: ${leagueInfo.color}">${leagueInfo.name}</div>
@@ -424,20 +505,22 @@
                                 <span class="live-dot"></span>${game.minutes}'${game.seconds}"
                             </div>
                             <div class="match-stats">
-                                <div class="stat-item">
+                                <div class="stat-item" style="border-color: ${leagueInfo.color}">
                                     <div class="stat-label">Placar HT</div>
-                                    <div class="stat-value">${htScore}</div>
+                                    <div class="stat-value" style="color: ${leagueInfo.color}">${htScore}</div>
                                 </div>
-                                <div class="stat-item">
+                                <div class="stat-item" style="border-color: ${leagueInfo.color}">
                                     <div class="stat-label">Ataques</div>
-                                    <div class="stat-value">${game.stats?.attacks ? game.stats.attacks.join('-') : '0-0'}</div>
+                                    <div class="stat-value" style="color: ${leagueInfo.color}">${game.stats?.attacks ? game.stats.attacks.join('-') : '0-0'}</div>
                                 </div>
-                                <div class="stat-item">
+                                <div class="stat-item" style="border-color: ${leagueInfo.color}">
                                     <div class="stat-label">Escanteios</div>
-                                    <div class="stat-value">${game.stats?.corners ? game.stats.corners.join('-') : '0-0'}</div>
+                                    <div class="stat-value" style="color: ${leagueInfo.color}">${game.stats?.corners ? game.stats.corners.join('-') : '0-0'}</div>
                                 </div>
                             </div>
-                            <button onclick="window.location.href='h2h_analysis.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${game.homeID}&awayID=${game.awayID}&leagueID=${game.leagueID}'" class="h2h-button">
+                            <button onclick="window.location.href='h2h_analysis.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${game.homeID}&awayID=${game.awayID}&leagueID=${game.leagueID}'" 
+                                    class="h2h-button" 
+                                    style="border-color: ${leagueInfo.color}; color: ${leagueInfo.color}">
                                 Ver H2H
                             </button>
                         `;
