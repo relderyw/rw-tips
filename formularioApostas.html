@@ -453,13 +453,18 @@
 </head>
 
 <body>
-  <!-- Adicionar div de autenticação após o body -->
+  <!-- Modificar a div de autenticação -->
   <div id="auth-screen" style="display: none;" class="auth-error">
     <h2>Autenticação Necessária</h2>
     <div class="form-group">
       <input type="email" id="auth-email" placeholder="Seu e-mail" class="form-input">
+      <input type="password" id="auth-password" placeholder="Sua senha" class="form-input">
     </div>
-    <button id="auth-button">Entrar</button>
+    <button id="auth-button">
+      <span id="auth-text">Entrar</span>
+      <div id="auth-loader" style="display: none;">Carregando...</div>
+    </button>
+    <div id="auth-error" style="color: #ef4444; margin-top: 10px;"></div>
   </div>
 
   <!-- Botão voltar sem o redirecionamento automático -->
@@ -624,6 +629,7 @@
   <!-- Seu script atual aqui -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
     import {
       getFirestore,
       collection,
@@ -651,6 +657,7 @@
     };
 
     const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
     const db = getFirestore(app);
 
     // Variáveis globais
@@ -739,28 +746,23 @@
     // Funções de autenticação
     async function checkUserLogin() {
       try {
-        currentUser = localStorage.getItem('currentUser');
-        currentUserKey = localStorage.getItem('currentUserKey');
+        // Verificar se o usuário está logado no Firebase Auth
+        const user = auth.currentUser;
 
-        // Se não houver usuário no localStorage, mostrar tela de autenticação
-        if (!currentUser || !currentUserKey) {
-          showAuthScreen();
-          return false;
-        }
-
-        // Verificar se o usuário existe no Firebase
-        const usersRef = collection(db, "users");
-        const q = query(usersRef, where("email", "==", currentUser));
-        const querySnapshot = await getDocs(q);
-
-        if (querySnapshot.empty) {
-          showAuthScreen();
-          return false;
+        if (!user) {
+          // Se não estiver logado, verificar sessionStorage
+          if (sessionStorage.getItem('loggedIn') !== 'true') {
+            showAuthScreen();
+            return false;
+          }
         }
 
         // Se chegou aqui, o usuário está autenticado
         hideAuthScreen();
         document.querySelector('.container').style.display = 'block';
+
+        // Atualizar interface com dados do usuário
+        currentUser = user?.email || localStorage.getItem('currentUser');
         document.getElementById('user-email').textContent = currentUser;
         document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
 
@@ -782,26 +784,41 @@
       document.querySelector('.container').style.display = 'block';
     }
 
-    async function handleAuth(email) {
+    function showError(message) {
+      const errorElement = document.getElementById('auth-error');
+      errorElement.textContent = message;
+      errorElement.style.display = 'block';
+    }
+
+    async function handleAuth(email, password) {
+      const authText = document.getElementById('auth-text');
+      const authLoader = document.getElementById('auth-loader');
+      const authButton = document.getElementById('auth-button');
+
       try {
-        const usersRef = collection(db, "users");
-        const q = query(usersRef, where("email", "==", email));
-        const querySnapshot = await getDocs(q);
+        // Mostrar loader
+        authText.style.display = 'none';
+        authLoader.style.display = 'block';
+        authButton.disabled = true;
 
-        if (!querySnapshot.empty) {
-          const userDoc = querySnapshot.docs[0];
-          const userData = userDoc.data();
+        // Tentar login
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
 
-          localStorage.setItem('currentUser', email);
-          localStorage.setItem('currentUserKey', userData.key || '');
+        // Salvar estado de login
+        sessionStorage.setItem('loggedIn', 'true');
+        localStorage.setItem('currentUser', user.email);
 
-          location.reload();
-        } else {
-          alert('Usuário não encontrado. Por favor, verifique o e-mail informado.');
-        }
+        // Recarregar a página
+        location.reload();
       } catch (error) {
         console.error("Erro na autenticação:", error);
-        alert('Erro ao autenticar. Por favor, tente novamente.');
+        showError('E-mail ou senha inválidos');
+
+        // Restaurar botão
+        authText.style.display = 'block';
+        authLoader.style.display = 'none';
+        authButton.disabled = false;
       }
     }
 
@@ -1219,11 +1236,14 @@
         // Adicionar evento para o botão de autenticação
         document.getElementById('auth-button').addEventListener('click', async () => {
           const email = document.getElementById('auth-email').value.trim();
-          if (email) {
-            await handleAuth(email);
-          } else {
-            alert('Por favor, insira seu e-mail.');
+          const password = document.getElementById('auth-password').value;
+
+          if (!email || !password) {
+            showError('Por favor, preencha todos os campos');
+            return;
           }
+
+          await handleAuth(email, password);
         });
         return;
       }
