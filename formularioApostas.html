@@ -448,32 +448,7 @@ h3 {
   font-size: 18px;
 }
 
-/* Estilos para o gerenciamento de mercados */
-.mercado-container {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.btn-icon {
-  background: linear-gradient(145deg, #bb86fc, #9c27b0);
-  border: none;
-  border-radius: 50%;
-  width: 35px;
-  height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 10px rgba(187, 134, 252, 0.3);
-}
-
-.btn-icon:hover {
-  transform: scale(1.1) rotate(45deg);
-  box-shadow: 0 0 15px rgba(187, 134, 252, 0.5);
-}
-
+/* Estilo do modal de login */
 .modal {
   display: none;
   position: fixed;
@@ -489,21 +464,23 @@ h3 {
 
 .modal-content {
   background: linear-gradient(145deg, #151522, #0c0c14);
-  padding: 30px;
   border-radius: 15px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 
+  box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.7),
-    0 0 15px rgba(187, 134, 252, 0.2);
+    0 0 15px rgba(187, 134, 252, 0.2),
+    0 0 30px rgba(187, 134, 252, 0.1);
+  padding: 30px;
+  width: 100%;
+  max-width: 350px;
   border: 1px solid rgba(187, 134, 252, 0.1);
+  text-align: center;
   animation: modalFadeIn 0.3s ease;
 }
 
 @keyframes modalFadeIn {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-50px);
   }
   to {
     opacity: 1;
@@ -511,69 +488,75 @@ h3 {
   }
 }
 
-.mercados-form {
-  display: flex;
-  gap: 10px;
+.modal h2 {
+  color: #bb86fc;
   margin-bottom: 20px;
+  text-shadow: 0 0 10px rgba(187, 134, 252, 0.5);
 }
 
-.mercados-form input {
-  flex: 1;
+.modal input {
+  margin-bottom: 15px;
 }
 
-.mercados-lista {
-  max-height: 300px;
-  overflow-y: auto;
-  margin-bottom: 20px;
-  border: 1px solid rgba(187, 134, 252, 0.2);
-  border-radius: 8px;
-  padding: 10px;
-}
-
-.mercado-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  border-bottom: 1px solid rgba(187, 134, 252, 0.1);
-  transition: all 0.3s ease;
-}
-
-.mercado-item:hover {
-  background-color: rgba(187, 134, 252, 0.1);
-}
-
-.mercado-item:last-child {
-  border-bottom: none;
-}
-
-.mercado-acoes {
-  display: flex;
-  gap: 8px;
-}
-
-.btn-editar,
-.btn-excluir {
+.modal button {
+  background: linear-gradient(145deg, #bb86fc, #9c27b0);
+  color: #121212;
   border: none;
-  border-radius: 4px;
-  padding: 5px 10px;
+  border-radius: 8px;
+  padding: 12px 20px;
+  width: 100%;
+  font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
+  margin-top: 10px;
+  box-shadow: 0 0 10px rgba(187, 134, 252, 0.3);
 }
 
-.btn-editar {
-  background: linear-gradient(145deg, #03dac6, #018786);
+.modal button:hover {
+  background: linear-gradient(145deg, #9c27b0, #bb86fc);
+  transform: scale(1.03);
+  box-shadow: 0 0 15px rgba(187, 134, 252, 0.5);
+}
+
+/* Informações do usuário logado */
+.user-info {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 14px;
+  color: #bb86fc;
+  display: flex;
+  align-items: center;
+}
+
+.user-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #bb86fc, #9c27b0);
+  margin-right: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
   color: #121212;
+  box-shadow: 0 0 10px rgba(187, 134, 252, 0.5);
 }
 
-.btn-excluir {
-  background: linear-gradient(145deg, #cf6679, #ff4060);
-  color: #121212;
+.user-logout {
+  background: none;
+  border: none;
+  color: #cf6679;
+  cursor: pointer;
+  margin-left: 8px;
+  font-size: 12px;
+  opacity: 0.8;
+  transition: all 0.3s ease;
 }
 
-.btn-editar:hover,
-.btn-excluir:hover {
-  transform: scale(1.05);
+.user-logout:hover {
+  opacity: 1;
+  text-decoration: underline;
 }
 
 </style>
@@ -581,16 +564,25 @@ h3 {
 
 <body>
 
+<!-- Modal de Login -->
+<div class="modal" id="login-modal">
+  <div class="modal-content">
+    <h2>Acesso ao Sistema</h2>
+    <input type="text" id="username" placeholder="Nome de usuário" />
+    <input type="password" id="user-key" placeholder="Chave de acesso" />
+    <button id="login-btn">Entrar</button>
+  </div>
+</div>
+
 <div class="container">
 
 <!-- Botão de Voltar -->
-
 <button class="back-button" id="voltar-btn"></button>
 
 <!-- Informações do usuário logado -->
 <div class="user-info" id="user-info">
   <div class="user-avatar" id="user-avatar"></div>
-  <span id="user-email"></span>
+  <span id="user-name"></span>
   <button class="user-logout" id="logout-btn">Sair</button>
 </div>
 
@@ -615,13 +607,28 @@ h3 {
   <input type="text" id="jogador2" placeholder="Nome do Jogador 2" />
 
   <label for="mercado">Mercado:</label>
-  <div class="mercado-container">
-    <select id="mercado">
-      <option value="Outro">Selecione ou adicione um mercado</option>
-    </select>
-    <button id="gerenciar-mercados" class="btn-icon">
-      ⚙️
-    </button>
+  <select id="mercado">
+    <option value="Vitória">Vitória</option>
+    <option value="Empate">Empate</option>
+    <option value="Handicap +1.5">Handicap +1.5</option>
+    <option value="Handicap -1.5">Handicap -1.5</option>
+    <option value="Over 2.5">Over 2.5</option>
+    <option value="Under 2.5">Under 2.5</option>
+    <option value="Ambos marcam">Ambos marcam</option>
+    <option value="Não ambos marcam">Não ambos marcam</option>
+    <option value="1° Tempo - Vitória">1° Tempo - Vitória</option>
+    <option value="2° Tempo - Vitória">2° Tempo - Vitória</option>
+    <option value="Escanteios Over 8.5">Escanteios Over 8.5</option>
+    <option value="Escanteios Under 8.5">Escanteios Under 8.5</option>
+    <option value="Cartões Over 3.5">Cartões Over 3.5</option>
+    <option value="Cartões Under 3.5">Cartões Under 3.5</option>
+    <option value="Outro">Outro</option>
+  </select>
+
+  <!-- Campo adicional para mercado personalizado, exibido apenas quando "Outro" é selecionado -->
+  <div id="outro-mercado-container" style="display: none;">
+    <label for="outro-mercado">Especifique o mercado:</label>
+    <input type="text" id="outro-mercado" placeholder="Digite o mercado personalizado" />
   </div>
 
   <label for="stake">Stake (R$):</label>
@@ -671,21 +678,6 @@ h3 {
   <div class="apostas-lista" id="apostas-lista">
     <div class="loading">Carregando apostas</div>
   </div>
-
-  <!-- Modal para gerenciar mercados -->
-  <div id="modal-mercados" class="modal">
-    <div class="modal-content">
-      <h2>Gerenciar Mercados</h2>
-      <div class="mercados-form">
-        <input type="text" id="novo-mercado" placeholder="Nome do mercado" />
-        <button id="adicionar-mercado" class="btn-primary">Adicionar</button>
-      </div>
-      <div class="mercados-lista" id="mercados-lista">
-        <!-- Lista de mercados será preenchida dinamicamente -->
-      </div>
-      <button id="fechar-modal" class="btn-secondary">Fechar</button>
-    </div>
-  </div>
 </div>
 
 <!-- Importar Chart.js -->
@@ -706,12 +698,7 @@ h3 {
     where,
     orderBy,
     getDocs,
-    updateDoc,
   } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
-  import {
-    getAuth,
-    onAuthStateChanged
-  } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyALiAKWq7Z6B9ut6KCHt9L4g8Vt8VHF6iM",
@@ -725,21 +712,10 @@ h3 {
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
-  const auth = getAuth(app);
 
-  let userEmail = null;
-
-  // Verificar estado de autenticação
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      userEmail = user.email;
-      document.getElementById("user-email").textContent = `Usuário: ${userEmail}`;
-      carregarApostas();
-    } else {
-      // Redirecionar para a página de login se não estiver autenticado
-      window.location.href = "index.html";
-    }
-  });
+  // Variáveis para gerenciar o usuário atual
+  let currentUser = null;
+  let currentUserKey = null;
 
   // Definindo funções no escopo global
   window.removerAposta = async function (id) {
@@ -764,407 +740,50 @@ h3 {
     }).format(valor);
   }
 
-  // Função para calcular o valor final dinamicamente
-  function calcularValor() {
-    const stakeEl = document.getElementById("stake");
-    const oddsEl = document.getElementById("odds");
+  // Função para verificar se usuário está logado
+  function checkUserLogin() {
+    currentUser = localStorage.getItem('currentUser');
+    currentUserKey = localStorage.getItem('currentUserKey');
+    
+    if (!currentUser || !currentUserKey) {
+      // Exibir modal de login
+      document.getElementById('login-modal').style.display = 'flex';
+      return false;
+    } else {
+      // Atualizar informações do usuário na interface
+      document.getElementById('user-name').textContent = currentUser;
+      document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
+      return true;
+    }
+  }
 
-    if (!stakeEl.value || !oddsEl.value) {
-      document.getElementById("resultado-final").innerHTML =
-        `R$ Valor: <span>Preencha Stake e Odds</span>`;
+  // Função para login
+  function login() {
+    const username = document.getElementById('username').value.trim();
+    const userKey = document.getElementById('user-key').value.trim();
+    
+    if (!username || !userKey) {
+      alert("Por favor, preencha todos os campos de login.");
       return;
     }
-
-    const stake = parseFloat(
-      stakeEl.value.replace("R$", "").replace(",", "."),
-    );
-    const odds = parseFloat(oddsEl.value.replace(",", "."));
-    const resultado = document.getElementById("resultado").value;
-
-    let valorFinal = 0;
-
-    if (isNaN(stake) || isNaN(odds)) {
-      document.getElementById("resultado-final").innerHTML =
-        `R$ Valor: <span>Valores inválidos</span>`;
-      return;
-    }
-
-    switch (resultado) {
-      case "green":
-        valorFinal = stake * (odds - 1); // Green: Lucro = Stake * (Odds - 1)
-        break;
-      case "red":
-        valorFinal = -stake; // Red: Perde todo o stake
-        break;
-      case "meio-green":
-        valorFinal = (stake / 2) * (odds - 1); // Meio Green: Lucro metade do stake
-        break;
-      case "meio-red":
-        valorFinal = -stake / 2; // Meio Red: Perde metade do stake
-        break;
-      case "reembolso":
-        valorFinal = 0; // Reembolso: Retorna R$ 0,00
-        break;
-    }
-
-    document.getElementById("resultado-final").innerHTML =
-      `R$ Valor: <span>${formatarMoeda(valorFinal)}</span>`;
+    
+    // Salvar no localStorage
+    localStorage.setItem('currentUser', username);
+    localStorage.setItem('currentUserKey', userKey);
+    
+    // Fechar modal e atualizar interface
+    document.getElementById('login-modal').style.display = 'none';
+    document.getElementById('user-name').textContent = username;
+    document.getElementById('user-avatar').textContent = username.charAt(0).toUpperCase();
+    
+    // Atualizar variáveis
+    currentUser = username;
+    currentUserKey = userKey;
+    
+    // Recarregar dados
+    carregarApostas();
   }
-
-  // Função para exibir a data e hora atual
-  function atualizarDataHora() {
-    const agora = new Date();
-    const options = { dateStyle: "short", timeStyle: "medium" };
-    document.getElementById("data-hora").value = agora.toLocaleString(
-      "pt-BR",
-      options,
-    );
-  }
-
-  // Função para limpar os campos do formulário
-  function limparCampos() {
-    document.getElementById("jogador1").value = "";
-    document.getElementById("jogador2").value = "";
-    document.getElementById("mercado").value = "";
-    document.getElementById("stake").value = "";
-    document.getElementById("odds").value = "";
-    document.getElementById("resultado").value = "green";
-    atualizarDataHora();
-    calcularValor();
-  }
-
-  // Função para obter o tipo de status baseado no resultado
-  function getStatusClass(resultado) {
-    switch (resultado) {
-      case "green":
-        return "status-green";
-      case "red":
-        return "status-red";
-      case "meio-green":
-        return "status-meio-green";
-      case "meio-red":
-        return "status-meio-red";
-      case "reembolso":
-        return "status-reembolso";
-      default:
-        return "";
-    }
-  }
-
-  // Função para obter o texto do status
-  function getStatusText(resultado) {
-    switch (resultado) {
-      case "green":
-        return "Green";
-      case "red":
-        return "Red";
-      case "meio-green":
-        return "½ Green";
-      case "meio-red":
-        return "½ Red";
-      case "reembolso":
-        return "Reembolso";
-      default:
-        return "";
-    }
-  }
-
-  // Função para criar o gráfico de apostas por dia
-  async function criarGrafico() {
-    if (!userEmail) {
-      return;
-    }
-
-    const ctx = document.createElement("canvas");
-    document.getElementById("grafico").innerHTML = "";
-    document.getElementById("grafico").appendChild(ctx);
-
-    // Obter os últimos 7 dias
-    const datas = [];
-    for (let i = 6; i >= 0; i--) {
-      const data = new Date();
-      data.setDate(data.getDate() - i);
-      datas.push(data);
-    }
-
-    // Buscar todas as apostas do usuário
-    const apostasQuery = query(
-      collection(db, "apostas"),
-      where("userEmail", "==", userEmail),
-      orderBy("timestamp", "asc")
-    );
-
-    const snapshot = await getDocs(apostasQuery);
-    const todasApostas = [];
-
-    snapshot.forEach((doc) => {
-      const data = doc.data();
-      todasApostas.push({
-        ...data,
-        id: doc.id,
-        timestamp: data.timestamp?.toDate() || new Date(),
-      });
-    });
-
-    // Calcular saldos diários
-    const saldosDiarios = datas.map((data) => {
-      const dataStr = data.toLocaleDateString("pt-BR");
-      const inicioDoDia = new Date(data.setHours(0, 0, 0, 0));
-      const fimDoDia = new Date(data.setHours(23, 59, 59, 999));
-
-      // Filtrar apostas para este dia
-      const apostasDoDia = todasApostas.filter((aposta) => {
-        return (
-          aposta.timestamp >= inicioDoDia && aposta.timestamp <= fimDoDia
-        );
-      });
-
-      // Calcular saldo para o dia
-      let saldoDoDia = 0;
-
-      apostasDoDia.forEach((aposta) => {
-        const stake = parseFloat(
-          aposta.stake.replace(/[^\d.,]/g, "").replace(",", "."),
-        );
-        const odds = parseFloat(aposta.odds.replace(",", "."));
-
-        switch (aposta.resultado) {
-          case "green":
-            saldoDoDia += stake * (odds - 1);
-            break;
-          case "red":
-            saldoDoDia -= stake;
-            break;
-          case "meio-green":
-            saldoDoDia += (stake / 2) * (odds - 1);
-            break;
-          case "meio-red":
-            saldoDoDia -= stake / 2;
-            break;
-        }
-      });
-
-      return {
-        data: dataStr,
-        saldo: saldoDoDia,
-      };
-    });
-
-    // Preparar dados para o gráfico
-    const labels = saldosDiarios.map((item) => item.data);
-    const dados = saldosDiarios.map((item) => item.saldo);
-
-    // Criar gráfico
-    new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            label: "Saldo Diário",
-            data: dados,
-            borderColor: "#bb86fc",
-            backgroundColor: "rgba(187, 134, 252, 0.1)",
-            borderWidth: 3,
-            pointBackgroundColor: "#03dac6",
-            pointRadius: 5,
-            pointHoverRadius: 7,
-            tension: 0.2,
-            fill: true,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            labels: {
-              color: "#e0e0e0",
-            },
-          },
-          tooltip: {
-            backgroundColor: "rgba(30, 30, 30, 0.9)",
-            titleColor: "#bb86fc",
-            bodyColor: "#e0e0e0",
-            callbacks: {
-              label: function (context) {
-                return "Saldo: " + formatarMoeda(context.raw);
-              },
-            },
-          },
-        },
-        scales: {
-          y: {
-            grid: {
-              color: "rgba(255, 255, 255, 0.1)",
-            },
-            ticks: {
-              color: "#e0e0e0",
-              callback: function (value) {
-                return formatarMoeda(value);
-              },
-            },
-          },
-          x: {
-            grid: {
-              color: "rgba(255, 255, 255, 0.1)",
-            },
-            ticks: {
-              color: "#e0e0e0",
-            },
-          },
-        },
-      },
-    });
-  }
-
-  // Função para carregar as apostas do Firestore
-  function carregarApostas() {
-    const apostasLista = document.getElementById("apostas-lista");
-
-    if (!userEmail) {
-      return;
-    }
-
-    apostasLista.innerHTML = '<div class="loading">Carregando apostas</div>';
-
-    const hoje = new Date();
-    const inicioDoDia = new Date(hoje.setHours(0, 0, 0, 0));
-    const fimDoDia = new Date(hoje.setHours(23, 59, 59, 999));
-
-    const apostasRef = query(
-      collection(db, "apostas"),
-      where("userEmail", "==", userEmail),
-      where("timestamp", ">", inicioDoDia),
-      where("timestamp", "<", fimDoDia),
-      orderBy("timestamp", "desc")
-    );
-
-    onSnapshot(apostasRef, (snapshot) => {
-      let ganhoTotal = 0;
-      let perdaTotal = 0;
-      let todasApostas = [];
-
-      if (snapshot.empty) {
-        apostasLista.innerHTML =
-          '<div style="text-align: center; padding: 15px; color: #888;">Nenhuma aposta registrada hoje</div>';
-        document.getElementById("grafico").innerHTML =
-          '<div style="text-align: center; padding: 15px; color: #888;">Sem dados para exibir</div>';
-        return;
-      }
-
-      apostasLista.innerHTML = "";
-
-      snapshot.forEach((doc) => {
-        const aposta = doc.data();
-        todasApostas.push({ ...aposta, id: doc.id });
-
-        const apostaItem = document.createElement("div");
-        apostaItem.classList.add("aposta-item");
-
-        const stake = parseFloat(
-          aposta.stake.replace(/[^\d.,]/g, "").replace(",", "."),
-        );
-        const odds = parseFloat(aposta.odds.replace(",", "."));
-        let valorFinal = 0;
-
-        // Calcular ganhos/perdas
-        switch (aposta.resultado) {
-          case "green":
-            valorFinal = stake * (odds - 1);
-            ganhoTotal += valorFinal;
-            break;
-          case "red":
-            valorFinal = -stake;
-            perdaTotal += stake;
-            break;
-          case "meio-green":
-            valorFinal = (stake / 2) * (odds - 1);
-            ganhoTotal += valorFinal;
-            break;
-          case "meio-red":
-            valorFinal = -stake / 2;
-            perdaTotal += stake / 2;
-            break;
-        }
-
-        const statusClass = getStatusClass(aposta.resultado);
-        const statusText = getStatusText(aposta.resultado);
-        const valorFinalText =
-          valorFinal === 0 ? "" : ` (${formatarMoeda(valorFinal)})`;
-
-        apostaItem.innerHTML = `
-        <div class="aposta-info">
-          <strong>${aposta.liga}</strong> · <span class="${statusClass}">${statusText}${valorFinalText}</span><br>
-          ${aposta.jogador1} vs ${aposta.jogador2}<br>
-          <small>${aposta.mercado} · Stake: ${formatarMoeda(stake)} · Odds: ${odds}</small>
-        </div>
-        <div class="aposta-actions">
-          <button onclick="removerAposta('${doc.id}')">Remover</button>
-        </div>
-      `;
-
-        apostasLista.appendChild(apostaItem);
-      });
-
-      // Atualizar resumo
-      document.getElementById("ganho-total").innerHTML =
-        `Ganho Total<strong>${formatarMoeda(ganhoTotal)}</strong>`;
-      document.getElementById("perda-total").innerHTML =
-        `Perda Total<strong>${formatarMoeda(perdaTotal)}</strong>`;
-      document.getElementById("saldo-total").innerHTML =
-        `Saldo Total<strong>${formatarMoeda(ganhoTotal - perdaTotal)}</strong>`;
-
-      // Criar gráfico por dia
-      criarGrafico();
-    });
-  }
-
-  // Função para salvar os dados no Firestore
-  document.getElementById("salvar-dados").addEventListener("click", async () => {
-    if (!userEmail) {
-      alert("Você precisa estar logado para registrar apostas!");
-      return;
-    }
-
-    const dataHora = document.getElementById("data-hora").value;
-    const liga = document.getElementById("liga").value;
-    const jogador1 = document.getElementById("jogador1").value;
-    const jogador2 = document.getElementById("jogador2").value;
-    const mercado = document.getElementById("mercado").value;
-    const stake = document.getElementById("stake").value;
-    const odds = document.getElementById("odds").value;
-    const resultado = document.getElementById("resultado").value;
-
-    if (!jogador1 || !jogador2 || !stake || !odds) {
-      alert("Preencha todos os campos obrigatórios!");
-      return;
-    }
-
-    try {
-      await addDoc(collection(db, "apostas"), {
-        userEmail,
-        dataHora,
-        liga,
-        jogador1,
-        jogador2,
-        mercado,
-        stake: stake.includes("R$") ? stake : `R$ ${stake}`,
-        odds,
-        resultado,
-        timestamp: serverTimestamp(),
-      });
-
-      alert("Aposta registrada com sucesso!");
-      limparCampos();
-    } catch (error) {
-      console.error("Erro ao salvar os dados: ", error);
-      alert("Ocorreu um erro ao salvar os dados: " + error.message);
-    }
-  });
-
-  // Adicionar evento para atualizar apostas quando o ID do usuário mudar
+// Event listeners
   document
     .getElementById("voltar-btn")
     .addEventListener("click", window.voltar);
@@ -1280,116 +899,11 @@ h3 {
     document.getElementById("liga").addEventListener("change", atualizarDatalistsJogadores);
   }
 
-  // Adicionar coleção para mercados
-  const mercadosRef = collection(db, "mercados");
-
-  // Função para carregar mercados
-  async function carregarMercados() {
-    const mercadosSelect = document.getElementById("mercado");
-    const userEmail = auth.currentUser?.email;
-
-    if (!userEmail) return;
-
-    const q = query(
-      mercadosRef,
-      where("userEmail", "==", userEmail),
-      orderBy("nome")
-    );
-
-    onSnapshot(q, (snapshot) => {
-      // Manter apenas a opção "Outro"
-      mercadosSelect.innerHTML = '<option value="Outro">Selecione ou adicione um mercado</option>';
-      
-      snapshot.forEach((doc) => {
-        const mercado = doc.data();
-        const option = document.createElement("option");
-        option.value = mercado.nome;
-        option.textContent = mercado.nome;
-        mercadosSelect.appendChild(option);
-      });
-    });
-  }
-
-  // Função para adicionar mercado
-  async function adicionarMercado(nome) {
-    const userEmail = auth.currentUser?.email;
-    if (!userEmail || !nome.trim()) return;
-
-    try {
-      await addDoc(mercadosRef, {
-        nome: nome.trim(),
-        userEmail,
-        timestamp: serverTimestamp()
-      });
-      document.getElementById("novo-mercado").value = "";
-    } catch (error) {
-      console.error("Erro ao adicionar mercado:", error);
-      alert("Erro ao adicionar mercado");
-    }
-  }
-
-  // Função para editar mercado
-  async function editarMercado(id, novoNome) {
-    try {
-      await updateDoc(doc(mercadosRef, id), {
-        nome: novoNome.trim()
-      });
-    } catch (error) {
-      console.error("Erro ao editar mercado:", error);
-      alert("Erro ao editar mercado");
-    }
-  }
-
-  // Função para excluir mercado
-  async function excluirMercado(id) {
-    try {
-      await deleteDoc(doc(mercadosRef, id));
-    } catch (error) {
-      console.error("Erro ao excluir mercado:", error);
-      alert("Erro ao excluir mercado");
-    }
-  }
-
-  // Função para renderizar lista de mercados no modal
-  function renderizarListaMercados(snapshot) {
-    const lista = document.getElementById("mercados-lista");
-    lista.innerHTML = "";
-
-    snapshot.forEach((doc) => {
-      const mercado = doc.data();
-      const div = document.createElement("div");
-      div.className = "mercado-item";
-      div.innerHTML = `
-        <span>${mercado.nome}</span>
-        <div class="mercado-acoes">
-          <button class="btn-editar" onclick="editarMercado('${doc.id}')">✏️</button>
-          <button class="btn-excluir" onclick="excluirMercado('${doc.id}')">🗑️</button>
-        </div>
-      `;
-      lista.appendChild(div);
-    });
-  }
-
-  // Event Listeners para o modal de mercados
-  document.getElementById("gerenciar-mercados").addEventListener("click", () => {
-    document.getElementById("modal-mercados").style.display = "flex";
-  });
-
-  document.getElementById("fechar-modal").addEventListener("click", () => {
-    document.getElementById("modal-mercados").style.display = "none";
-  });
-
-  document.getElementById("adicionar-mercado").addEventListener("click", () => {
-    const nome = document.getElementById("novo-mercado").value;
-    adicionarMercado(nome);
-  });
-
   // Modificar o window.onload para incluir as novas funções
   window.onload = () => {
     atualizarDataHora();
     calcularValor();
     carregarApostas();
-    carregarMercados();
     configurarCamposJogadores();
     buscarDadosAPI();
   };
@@ -1398,4 +912,3 @@ h3 {
 </body>
 
 </html>
-
