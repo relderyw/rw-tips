@@ -461,6 +461,10 @@ h3 {
 
   <h1>Aposta Moderna</h1>
 
+  <div id="user-info" style="text-align: right; margin-bottom: 20px; color: #bb86fc;">
+    <span id="user-email"></span>
+  </div>
+
   <label for="data-hora">Data e Hora da Aposta:</label>
   <input type="text" id="data-hora" readonly />
 
@@ -480,7 +484,18 @@ h3 {
   <input type="text" id="jogador2" placeholder="Nome do Jogador 2" />
 
   <label for="mercado">Mercado:</label>
-  <input type="text" id="mercado" placeholder="Ex: Vitória, Empate" />
+  <select id="mercado">
+    <option value="Vitória">Vitória</option>
+    <option value="Empate">Empate</option>
+    <option value="Handicap">Handicap</option>
+    <option value="Over">Over</option>
+    <option value="Under">Under</option>
+    <option value="Ambos Marcam">Ambos Marcam</option>
+    <option value="Placar Exato">Placar Exato</option>
+    <option value="Primeiro a Marcar">Primeiro a Marcar</option>
+    <option value="Último a Marcar">Último a Marcar</option>
+    <option value="Margem de Vitória">Margem de Vitória</option>
+  </select>
 
   <label for="stake">Stake (R$):</label>
   <input type="text" id="stake" placeholder="Ex: 100,00" />
@@ -550,6 +565,10 @@ h3 {
     orderBy,
     getDocs,
   } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+  import {
+    getAuth,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyALiAKWq7Z6B9ut6KCHt9L4g8Vt8VHF6iM",
@@ -563,6 +582,21 @@ h3 {
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  let userEmail = null;
+
+  // Verificar estado de autenticação
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      userEmail = user.email;
+      document.getElementById("user-email").textContent = `Usuário: ${userEmail}`;
+      carregarApostas();
+    } else {
+      // Redirecionar para a página de login se não estiver autenticado
+      window.location.href = "index.html";
+    }
+  });
 
   // Definindo funções no escopo global
   window.removerAposta = async function (id) {
@@ -694,6 +728,10 @@ h3 {
 
   // Função para criar o gráfico de apostas por dia
   async function criarGrafico() {
+    if (!userEmail) {
+      return;
+    }
+
     const ctx = document.createElement("canvas");
     document.getElementById("grafico").innerHTML = "";
     document.getElementById("grafico").appendChild(ctx);
@@ -706,10 +744,11 @@ h3 {
       datas.push(data);
     }
 
-    // Buscar todas as apostas
+    // Buscar todas as apostas do usuário
     const apostasQuery = query(
       collection(db, "apostas"),
-      orderBy("timestamp", "asc"),
+      where("userEmail", "==", userEmail),
+      orderBy("timestamp", "asc")
     );
 
     const snapshot = await getDocs(apostasQuery);
@@ -840,8 +879,12 @@ h3 {
   // Função para carregar as apostas do Firestore
   function carregarApostas() {
     const apostasLista = document.getElementById("apostas-lista");
-    apostasLista.innerHTML =
-      '<div class="loading">Carregando apostas</div>';
+
+    if (!userEmail) {
+      return;
+    }
+
+    apostasLista.innerHTML = '<div class="loading">Carregando apostas</div>';
 
     const hoje = new Date();
     const inicioDoDia = new Date(hoje.setHours(0, 0, 0, 0));
@@ -849,9 +892,10 @@ h3 {
 
     const apostasRef = query(
       collection(db, "apostas"),
+      where("userEmail", "==", userEmail),
       where("timestamp", ">", inicioDoDia),
       where("timestamp", "<", fimDoDia),
-      orderBy("timestamp", "desc"),
+      orderBy("timestamp", "desc")
     );
 
     onSnapshot(apostasRef, (snapshot) => {
@@ -935,46 +979,49 @@ h3 {
   }
 
   // Função para salvar os dados no Firestore
-  document
-    .getElementById("salvar-dados")
-    .addEventListener("click", async () => {
-      const dataHora = document.getElementById("data-hora").value;
-      const liga = document.getElementById("liga").value;
-      const jogador1 = document.getElementById("jogador1").value;
-      const jogador2 = document.getElementById("jogador2").value;
-      const mercado = document.getElementById("mercado").value;
-      const stake = document.getElementById("stake").value;
-      const odds = document.getElementById("odds").value;
-      const resultado = document.getElementById("resultado").value;
+  document.getElementById("salvar-dados").addEventListener("click", async () => {
+    if (!userEmail) {
+      alert("Você precisa estar logado para registrar apostas!");
+      return;
+    }
 
-      // Validar campos obrigatórios
-      if (!jogador1 || !jogador2 || !stake || !odds) {
-        alert("Preencha todos os campos obrigatórios!");
-        return;
-      }
+    const dataHora = document.getElementById("data-hora").value;
+    const liga = document.getElementById("liga").value;
+    const jogador1 = document.getElementById("jogador1").value;
+    const jogador2 = document.getElementById("jogador2").value;
+    const mercado = document.getElementById("mercado").value;
+    const stake = document.getElementById("stake").value;
+    const odds = document.getElementById("odds").value;
+    const resultado = document.getElementById("resultado").value;
 
-      try {
-        await addDoc(collection(db, "apostas"), {
-          dataHora,
-          liga,
-          jogador1,
-          jogador2,
-          mercado: mercado || "Vitória",
-          stake: stake.includes("R$") ? stake : `R$ ${stake}`,
-          odds,
-          resultado,
-          timestamp: serverTimestamp(),
-        });
+    if (!jogador1 || !jogador2 || !stake || !odds) {
+      alert("Preencha todos os campos obrigatórios!");
+      return;
+    }
 
-        alert("Aposta registrada com sucesso!");
-        limparCampos(); // Limpa os campos após salvar
-      } catch (error) {
-        console.error("Erro ao salvar os dados: ", error);
-        alert("Ocorreu um erro ao salvar os dados: " + error.message);
-      }
-    });
+    try {
+      await addDoc(collection(db, "apostas"), {
+        userEmail,
+        dataHora,
+        liga,
+        jogador1,
+        jogador2,
+        mercado,
+        stake: stake.includes("R$") ? stake : `R$ ${stake}`,
+        odds,
+        resultado,
+        timestamp: serverTimestamp(),
+      });
 
-  // Event listeners
+      alert("Aposta registrada com sucesso!");
+      limparCampos();
+    } catch (error) {
+      console.error("Erro ao salvar os dados: ", error);
+      alert("Ocorreu um erro ao salvar os dados: " + error.message);
+    }
+  });
+
+  // Adicionar evento para atualizar apostas quando o ID do usuário mudar
   document
     .getElementById("voltar-btn")
     .addEventListener("click", window.voltar);
@@ -1094,7 +1141,6 @@ h3 {
   window.onload = () => {
     atualizarDataHora();
     calcularValor();
-    carregarApostas();
     configurarCamposJogadores();
     buscarDadosAPI();
   };
