@@ -455,7 +455,7 @@
 <body>
   <!-- Botão voltar sem o redirecionamento automático -->
   <button class="back-button" id="back-button"></button>
-  
+
   <div class="container">
     <div class="app-container">
       <!-- Cabeçalho -->
@@ -686,7 +686,7 @@
     // Função para calcular o valor da aposta
     function calcularValorAposta(stake, odds, resultado) {
       let valor = 0;
-      
+
       switch (resultado) {
         case "green":
           valor = stake * (odds - 1);
@@ -704,7 +704,7 @@
           valor = 0;
           break;
       }
-      
+
       return valor;
     }
 
@@ -728,34 +728,40 @@
     }
 
     // Funções de autenticação
-    function checkUserLogin() {
-      currentUser = localStorage.getItem('currentUser');
-      currentUserKey = localStorage.getItem('currentUserKey');
+    async function checkUserLogin() {
+      try {
+        currentUser = localStorage.getItem('currentUser');
+        currentUserKey = localStorage.getItem('currentUserKey');
 
-      if (!currentUser || !currentUserKey) {
+        // Verificar se existe usuário no localStorage
+        if (!currentUser || !currentUserKey) {
+          window.location.replace('index.html');
+          return false;
+        }
+
+        // Verificar se o usuário existe no Firebase
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("email", "==", currentUser));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+          // Se o usuário não existe no banco, limpar localStorage e redirecionar
+          localStorage.removeItem('currentUser');
+          localStorage.removeItem('currentUserKey');
+          window.location.replace('index.html');
+          return false;
+        }
+
+        // Atualizar interface do usuário
+        document.getElementById('user-email').textContent = currentUser;
+        document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
+
+        return true;
+      } catch (error) {
+        console.error("Erro na verificação de login:", error);
         window.location.replace('index.html');
         return false;
       }
-
-      // Atualizar interface do usuário
-      document.getElementById('user-email').textContent = currentUser;
-      document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
-
-      // Verificar se é admin ou dono dos mercados para mostrar/ocultar o formulário de adicionar mercados
-      const marketForm = document.getElementById("market-form");
-      if (marketForm) {
-        const mercadosRef = collection(db, "mercados");
-        const q = query(mercadosRef, where("userEmail", "==", currentUser), limit(1));
-        getDocs(q).then((snapshot) => {
-          if (!snapshot.empty || currentUserKey === 'admin') {
-            marketForm.style.display = "flex";
-          } else {
-            marketForm.style.display = "none";
-          }
-        });
-      }
-
-      return true;
     }
 
     // Funções de mercados
@@ -1162,15 +1168,11 @@
       jogador2.setAttribute("list", "jogadores-lista");
     }
 
-    
+
     // Event Listeners
     document.addEventListener("DOMContentLoaded", async () => {
-      // Verificar se os dados do usuário existem no localStorage
-      currentUser = localStorage.getItem('currentUser');
-      currentUserKey = localStorage.getItem('currentUserKey');
-
-      if (!currentUser || !currentUserKey) {
-        window.location.replace('index.html');
+      // Verificar autenticação
+      if (!await checkUserLogin()) {
         return;
       }
 
