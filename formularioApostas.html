@@ -15,10 +15,16 @@
     }
 
     body {
-      background: linear-gradient(to bottom, #0f172a, #1e1b4b);
-      color: #fff;
+      background-color: #0a0a0d;
+      color: #e0e0e0;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       min-height: 100vh;
-      padding: 2rem 1rem;
+      overflow-x: hidden;
+      background-image: linear-gradient(to bottom, #0a0a0d, #101022);
     }
 
     .container {
@@ -304,10 +310,48 @@
       width: 1rem;
       height: 1rem;
     }
+
+    /* Botão Voltar */
+    .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: linear-gradient(145deg, #bb86fc, #9c27b0);
+      color: #121212;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.5),
+        0 0 10px rgba(187, 134, 252, 0.5);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .back-button:hover {
+      background: linear-gradient(145deg, #9c27b0, #bb86fc);
+      transform: scale(1.1);
+      box-shadow:
+        0 6px 12px rgba(0, 0, 0, 0.6),
+        0 0 15px rgba(187, 134, 252, 0.6);
+    }
+
+    /* Ícone de Voltar */
+    .back-button::before {
+      content: "←";
+      font-weight: bold;
+    }
   </style>
 </head>
 
 <body>
+  <button class="back-button" onclick="window.location.href='visualization.html'"></button>
   <div class="container">
     <div class="app-container">
       <!-- Cabeçalho -->
@@ -632,19 +676,15 @@
       }
     }
 
-    // Funções de apostas
+    // Função para carregar as apostas (ajustada para mostrar todas)
     async function carregarApostas() {
       if (!currentUser) return;
 
       const apostasRef = collection(db, "apostas");
-      const hoje = new Date();
-      hoje.setHours(0, 0, 0, 0);
-
       const q = query(
         apostasRef,
         where("userEmail", "==", currentUser),
-        where("timestamp", ">=", hoje),
-        orderBy("timestamp", "desc")
+        orderBy("timestamp", "desc")  // Removido filtro de data
       );
 
       try {
@@ -656,7 +696,7 @@
 
         renderizarApostas(apostas);
         atualizarResumo(apostas);
-        await criarGrafico();
+        await criarGrafico(apostas);
       } catch (error) {
         console.error("Erro ao carregar apostas:", error);
       }
@@ -742,11 +782,27 @@
       let perdaTotal = 0;
 
       apostas.forEach(aposta => {
-        const valor = calcularValorAposta(aposta.stake, aposta.odds, aposta.resultado);
-        if (valor > 0) {
-          ganhoTotal += valor;
-        } else {
-          perdaTotal += Math.abs(valor);
+        const stake = parseFloat(aposta.stake.toString().replace(/[^\d.,]/g, "").replace(",", "."));
+        const odds = parseFloat(aposta.odds.toString().replace(",", "."));
+        let valorFinal = 0;
+
+        switch (aposta.resultado) {
+          case "green":
+            valorFinal = stake * (odds - 1);
+            ganhoTotal += valorFinal;
+            break;
+          case "red":
+            valorFinal = -stake;
+            perdaTotal += stake;
+            break;
+          case "meio-green":
+            valorFinal = (stake / 2) * (odds - 1);
+            ganhoTotal += valorFinal;
+            break;
+          case "meio-red":
+            valorFinal = -stake / 2;
+            perdaTotal += stake / 2;
+            break;
         }
       });
 
@@ -757,15 +813,14 @@
       document.getElementById("saldo-total").textContent = formatarMoeda(saldoTotal);
     }
 
-    async function criarGrafico() {
+    async function criarGrafico(apostas) {
       if (!currentUser) return;
 
-      const apostasRef = collection(db, "apostas");
       const dataLimite = new Date();
       dataLimite.setDate(dataLimite.getDate() - 7);
 
       const q = query(
-        apostasRef,
+        collection(db, "apostas"),
         where("userEmail", "==", currentUser),
         where("timestamp", ">=", dataLimite),
         orderBy("timestamp", "asc")
@@ -773,12 +828,6 @@
 
       try {
         const querySnapshot = await getDocs(q);
-        const apostas = [];
-        querySnapshot.forEach((doc) => {
-          apostas.push({ id: doc.id, ...doc.data() });
-        });
-
-        // Preparar dados para o gráfico
         const dados = processarDadosGrafico(apostas);
         renderizarGrafico(dados);
       } catch (error) {
@@ -830,7 +879,6 @@
     function renderizarGrafico(dados) {
       const ctx = document.getElementById('grafico');
 
-      // Destruir gráfico anterior se existir
       if (chart) {
         chart.destroy();
       }
@@ -844,6 +892,20 @@
           plugins: {
             legend: {
               display: false
+            },
+            tooltip: {
+              backgroundColor: '#1f2937',
+              titleColor: '#a78bfa',
+              bodyColor: '#fff',
+              borderColor: '#374151',
+              borderWidth: 1,
+              padding: 10,
+              displayColors: false,
+              callbacks: {
+                label: function (context) {
+                  return formatarMoeda(context.parsed.y);
+                }
+              }
             }
           },
           scales: {
@@ -871,6 +933,60 @@
       });
     }
 
+    // Função para buscar jogadores da API
+    async function buscarDadosAPI() {
+      try {
+        const response = await fetch('https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=1');
+        const data = await response.json();
+
+        if (data && data.data) {
+          const jogadoresPorLiga = {};
+
+          data.data.forEach(match => {
+            const liga = match.leagueName;
+
+            if (!jogadoresPorLiga[liga]) {
+              jogadoresPorLiga[liga] = new Set();
+            }
+
+            if (match.home) jogadoresPorLiga[liga].add(match.home);
+            if (match.away) jogadoresPorLiga[liga].add(match.away);
+          });
+
+          // Criar datalists para autocomplete
+          Object.keys(jogadoresPorLiga).forEach(liga => {
+            const datalist = document.createElement('datalist');
+            datalist.id = `jogadores-${liga.replace(/\s+/g, '-').toLowerCase()}`;
+
+            Array.from(jogadoresPorLiga[liga]).forEach(jogador => {
+              const option = document.createElement('option');
+              option.value = jogador;
+              datalist.appendChild(option);
+            });
+
+            document.body.appendChild(datalist);
+          });
+
+          // Atualizar inputs de jogadores
+          const liga = document.getElementById('liga');
+          const jogador1 = document.getElementById('jogador1');
+          const jogador2 = document.getElementById('jogador2');
+
+          jogador1.setAttribute('list', `jogadores-${liga.value.replace(/\s+/g, '-').toLowerCase()}`);
+          jogador2.setAttribute('list', `jogadores-${liga.value.replace(/\s+/g, '-').toLowerCase()}`);
+
+          // Adicionar evento para atualizar datalist quando mudar a liga
+          liga.addEventListener('change', () => {
+            const datalistId = `jogadores-${liga.value.replace(/\s+/g, '-').toLowerCase()}`;
+            jogador1.setAttribute('list', datalistId);
+            jogador2.setAttribute('list', datalistId);
+          });
+        }
+      } catch (error) {
+        console.error("Erro ao buscar dados da API:", error);
+      }
+    }
+
     // Event Listeners
     document.addEventListener("DOMContentLoaded", async () => {
       if (!checkUserLogin()) return;
@@ -878,6 +994,7 @@
       setupTabs();
       await carregarMercados();
       await carregarApostas();
+      await buscarDadosAPI();
 
       // Form de apostas
       document.getElementById("bet-form").addEventListener("submit", async (e) => {
