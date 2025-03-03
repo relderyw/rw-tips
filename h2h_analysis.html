@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RW TIPS - Análise H2H</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -22,6 +23,18 @@
             --neon-green: #00ff88;
             --glass-bg: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.05);
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            --subtle-glow: 0 0 15px rgba(139, 92, 246, 0.15);
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+            --border-radius-sm: 10px;
+            --border-radius-md: 15px;
+            --border-radius-lg: 20px;
+            --transition-fast: 0.2s ease;
+            --transition-medium: 0.3s ease;
         }
 
         * {
@@ -596,30 +609,47 @@
 <body>
     <div class="logo-container">
         <img src="https://i.ibb.co/v6MhLNJX/11zon-cropped.png" alt="RW Tips Logo" class="logo">
-        <h2 class="logo-text">👑 ��𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
+        <h2 class="logo-text">👑 RW TIPS 🎮</h2>
     </div>
 
-    <h1>Análise H2H</h1>
+    <div class="page-header">
+        <h1 class="page-title">Análise Head to Head</h1>
+        <p class="page-subtitle">Estatísticas detalhadas de confrontos diretos e desempenho individual dos jogadores</p>
+    </div>
+
     <button class="back-button" onclick="goBack()">Voltar</button>
 
-    <div class="probability-section">
-        <h3>Probabilidades H2H</h3>
-        <div class="probability-cards" id="probabilityCards"></div>
+    <div class="tab-navigation" id="tabNavigation">
+        <button class="tab-button active" data-tab="overview">Visão Geral</button>
+        <button class="tab-button" data-tab="player-stats">Jogadores</button>
+        <button class="tab-button" data-tab="h2h-history">Histórico</button>
     </div>
 
-    <div class="h2h-analysis">
-        <h3>Análise de Confrontos Diretos</h3>
-        <div class="h2h-stats-grid" id="h2hStatsGrid"></div>
+    <div id="overview" class="tab-content active">
+        <div class="probability-section">
+            <div class="confronto-resumo">
+                <div id="probabilityCards"></div>
+            </div>
+        </div>
+
+        <div class="h2h-analysis">
+            <div class="section-title">Análise de Confrontos Diretos</div>
+            <div id="h2hStatsGrid"></div>
+        </div>
     </div>
 
-    <div class="container">
-        <div id="playerA" class="player-section"></div>
-        <div id="playerB" class="player-section"></div>
+    <div id="player-stats" class="tab-content">
+        <div class="grid-container grid-2-columns">
+            <div id="playerA" class="player-section"></div>
+            <div id="playerB" class="player-section"></div>
+        </div>
     </div>
 
-    <div id="h2hGames" class="h2h-analysis">
-        <h3>Histórico de Confrontos</h3>
-        <div id="h2hGamesList"></div>
+    <div id="h2h-history" class="tab-content">
+        <div id="h2hGames" class="h2h-analysis">
+            <div class="section-title">Histórico de Confrontos</div>
+            <div id="h2hGamesList"></div>
+        </div>
     </div>
 
     <script>
@@ -969,6 +999,26 @@
                 console.error('Erro ao carregar dados:', error);
                 alert('Erro ao carregar dados. Por favor, tente novamente.');
             });
+
+        // Adicionar funcionalidade das tabs
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabs = document.querySelectorAll('.tab-button');
+            const contents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const target = tab.dataset.tab;
+
+                    // Remove active class from all tabs and contents
+                    tabs.forEach(t => t.classList.remove('active'));
+                    contents.forEach(c => c.classList.remove('active'));
+
+                    // Add active class to clicked tab and corresponding content
+                    tab.classList.add('active');
+                    document.getElementById(target).classList.add('active');
+                });
+            });
+        });
     </script>
 </body>
 
