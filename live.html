@@ -1,43 +1,47 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RW TIPS - Jogos Ao Vivo</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
         :root {
-            --primary-color: #00d4ff;
-            --secondary-color: #1f1f1f;
-            --background-dark: #121212;
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --background-dark: #0f0f13;
+            --card-bg: #1a1a23;
+            --card-hover: #22222c;
             --text-primary: #ffffff;
-            --text-secondary: #cccccc;
-            --card-hover: #2a2a2a;
-            --button-hover: #00aacc;
-            --neon-green: #00ff00;
+            --text-secondary: #a0a0a0;
+            --accent-color: #00ff88;
+            --danger-color: #ff5252;
+            --success-color: #00ff88;
+            --border-color: rgba(255, 255, 255, 0.05);
+            --live-color: #ff4757;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--background-dark);
+            background: linear-gradient(135deg, var(--background-dark) 0%, #16161f 100%);
             color: var(--text-primary);
-            margin: 0;
-            padding: 20px;
             min-height: 100vh;
             line-height: 1.6;
+            padding: 20px;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 20px;
         }
 
         .logo-container {
@@ -47,282 +51,399 @@
         }
 
         .logo {
-            width: 150px;
+            width: 120px;
             height: auto;
             margin-bottom: 15px;
-            animation: glow 2s ease-in-out infinite alternate;
+            filter: drop-shadow(0 0 10px rgba(108, 92, 231, 0.5));
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 15px rgba(108, 92, 231, 0.7));
         }
 
         .logo-text {
-            font-size: 2rem;
-            color: var(--neon-green);
-            text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
-            margin: 10px 0;
-            font-family: Arial, sans-serif;
+            font-size: 1.8rem;
+            background: linear-gradient(45deg, #00ff88, #00ffaa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
             letter-spacing: 2px;
+            margin-top: 10px;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5),
+                0 0 20px rgba(0, 255, 136, 0.3),
+                0 0 30px rgba(0, 255, 136, 0.2);
+            animation: neonPulse 1.5s ease-in-out infinite alternate;
         }
 
-        .match-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 20px;
+        @keyframes neonPulse {
+            from {
+                text-shadow: 0 0 10px rgba(0, 255, 136, 0.5),
+                    0 0 20px rgba(0, 255, 136, 0.3),
+                    0 0 30px rgba(0, 255, 136, 0.2);
+            }
+
+            to {
+                text-shadow: 0 0 15px rgba(0, 255, 136, 0.7),
+                    0 0 25px rgba(0, 255, 136, 0.5),
+                    0 0 35px rgba(0, 255, 136, 0.3);
+            }
         }
 
-        .match-card {
-            background-color: var(--secondary-color);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
+        h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 30px 0;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
-        .match-card:hover {
+        .live-title {
+            background: linear-gradient(45deg, var(--live-color), #ff6b81);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: livePulse 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes livePulse {
+            from {
+                text-shadow: 0 0 10px rgba(255, 71, 87, 0.5),
+                    0 0 20px rgba(255, 71, 87, 0.3),
+                    0 0 30px rgba(255, 71, 87, 0.2);
+            }
+
+            to {
+                text-shadow: 0 0 15px rgba(255, 71, 87, 0.7),
+                    0 0 25px rgba(255, 71, 87, 0.5),
+                    0 0 35px rgba(255, 71, 87, 0.3);
+            }
+        }
+
+        .live-dot {
+            width: 12px;
+            height: 12px;
+            background-color: var(--live-color);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+            animation: liveDotPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes liveDotPulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .live-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .live-card:hover {
             transform: translateY(-5px);
+            border-color: var(--live-color);
+            box-shadow: 0 10px 20px rgba(255, 71, 87, 0.1);
         }
 
         .league-name {
-            color: #888;
-            font-size: 0.9em;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--live-color);
         }
 
-        .team-info {
+        .match-info {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            margin: 10px 0;
-            gap: 10px;
+            gap: 20px;
         }
 
-        .team-info img {
-            width: 40px;
-            height: 40px;
+        .team {
+            text-align: center;
+            flex: 1;
+        }
+
+        .team img {
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
-            object-fit: contain;
+            margin-bottom: 10px;
+            border: 2px solid var(--live-color);
+            padding: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .team:hover img {
+            transform: scale(1.1);
+            border-color: var(--accent-color);
         }
 
         .score {
-            font-size: 24px;
-            font-weight: bold;
-            color: #4CAF50;
-            text-align: center;
-            margin: 15px 0;
-            padding: 10px;
-            background-color: rgba(0,0,0,0.2);
-            border-radius: 8px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--live-color);
+            text-shadow: 0 0 10px rgba(255, 71, 87, 0.3);
+            animation: scoreUpdate 0.5s ease-in-out;
+        }
+
+        @keyframes scoreUpdate {
+            0% {
+                transform: scale(1.2);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         .match-time {
-            color: #ff4444;
             text-align: center;
-            font-weight: bold;
-            margin-top: 10px;
-            animation: blink 1s infinite;
+            font-size: 0.9rem;
+            color: var(--live-color);
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(255, 71, 87, 0.1);
+            border-radius: 8px;
+            backdrop-filter: blur(5px);
         }
 
-        .stats {
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(255,255,255,0.1);
+        .match-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
         }
 
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            margin: 5px 0;
-            font-size: 0.9em;
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255, 71, 87, 0.05);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--live-color);
         }
 
         .back-button {
-            background-color: var(--primary-color);
-            color: black;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
             position: fixed;
-            top: 20px;
-            left: 20px;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
             text-decoration: none;
+            font-weight: 600;
             transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
         }
 
         .back-button:hover {
-            background-color: var(--button-hover);
             transform: translateY(-2px);
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .h2h-button {
-            flex: 1;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            background: linear-gradient(135deg, #00d4ff 0%, #00a6ff 100%);
-            color: #000;
-        }
-
-        .h2h-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-
-        @keyframes blink {
-            50% { opacity: 0.5; }
-        }
-
-        @keyframes glow {
-            from {
-                filter: drop-shadow(0 0 5px rgba(0, 255, 0, 0.7));
-            }
-            to {
-                filter: drop-shadow(0 0 20px rgba(0, 255, 0, 0.9));
-            }
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4);
         }
 
         @media (max-width: 768px) {
-            .match-container {
+            .container {
+                padding: 10px;
+            }
+
+            .match-info {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .score {
+                font-size: 2rem;
+                padding: 10px 0;
+            }
+
+            .team img {
+                width: 50px;
+                height: 50px;
+            }
+
+            .match-stats {
                 grid-template-columns: 1fr;
             }
 
-            .logo {
-                width: 120px;
+            .back-button {
+                bottom: 20px;
+                right: 20px;
+                padding: 12px 25px;
             }
-
-            .logo-text {
-                font-size: 1.5rem;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
-        }
-
-        .error {
-            color: #ff4444;
-            text-align: center;
-            padding: 20px;
-            background-color: var(--secondary-color);
-            border-radius: 10px;
-            margin: 20px auto;
-            max-width: 600px;
         }
     </style>
 </head>
-<body>
-    <a href="visualization.html" class="back-button">← Voltar</a>
 
+<body>
     <div class="container">
         <div class="logo-container">
             <img src="https://i.ibb.co/v6MhLNJX/11zon-cropped.png" alt="RW Tips Logo" class="logo">
             <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
         </div>
 
-        <div class="match-container" id="matches"></div>
+        <h1 class="live-title"><span class="live-dot"></span>Jogos Ao Vivo</h1>
+
+        <div id="liveGamesContainer"></div>
     </div>
 
+    <button onclick="window.location.href='visualization.html'" class="back-button">Voltar</button>
+
     <script>
-        async function fetchMatches() {
-            try {
-                const response = await fetch('https://api.green365.com.br/api/events/inplay?sport_id=4&competition_id=');
-                if (!response.ok) {
-                    throw new Error('Erro ao carregar dados');
-                }
-                const data = await response.json();
-                displayMatches(data);
-            } catch (error) {
-                console.error('Erro ao buscar dados:', error);
-                document.getElementById('matches').innerHTML = '<div class="error">Erro ao carregar jogos ao vivo. Tente novamente mais tarde.</div>';
-            }
+        // Verificar login
+        if (!sessionStorage.getItem('loggedIn')) {
+            window.location.href = 'index.html';
         }
 
-        function displayMatches(matches) {
-            const container = document.getElementById('matches');
-            
-            if (!matches || matches.length === 0) {
-                container.innerHTML = '<div class="error">Nenhum jogo ao vivo no momento.</div>';
-                return;
-            }
-
-            container.innerHTML = '';
-
-            matches.forEach(match => {
-                const homePlayer = match.home.match(/\(([^)]+)\)/) ? match.home.match(/\(([^)]+)\)/)[1] : match.home;
-                const awayPlayer = match.away.match(/\(([^)]+)\)/) ? match.away.match(/\(([^)]+)\)/)[1] : match.away;
-
-                const matchElement = document.createElement('div');
-                matchElement.className = 'match-card';
-                matchElement.innerHTML = `
-                    <div class="league-name">${match.leagueName}</div>
-                    <div class="team-info">
-                        <img src="${match.homeImage}" alt="${match.home}" onerror="this.src='favicon.png'">
-                        <span>${match.home}</span>
-                    </div>
-                    <div class="score">${match.score}</div>
-                    <div class="team-info">
-                        <img src="${match.awayImage}" alt="${match.away}" onerror="this.src='favicon.png'">
-                        <span>${match.away}</span>
-                    </div>
-                    <div class="match-time">${match.minutes}'${match.seconds}"</div>
-                    <div class="stats">
-                        <div class="stat-row">
-                            <span>Ataques: ${match.stats?.attacks?.[0] || 0} - ${match.stats?.attacks?.[1] || 0}</span>
-                        </div>
-                        <div class="stat-row">
-                            <span>Ataques Perigosos: ${match.stats?.dangerous_attacks?.[0] || 0} - ${match.stats?.dangerous_attacks?.[1] || 0}</span>
-                        </div>
-                        <div class="stat-row">
-                            <span>Chutes ao Gol: ${match.stats?.on_target?.[0] || 0} - ${match.stats?.on_target?.[1] || 0}</span>
-                        </div>
-                        <div class="stat-row">
-                            <span>Escanteios: ${match.stats?.corners?.[0] || 0} - ${match.stats?.corners?.[1] || 0}</span>
-                        </div>
-                    </div>
-                    <div class="button-group">
-                        <button class="h2h-button" onclick="window.location.href='h2h_analysis.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${match.homeID}&awayID=${match.awayID}&leagueID=${match.leagueID}'">
-                            Ver H2H
-                        </button>
-                    </div>
-                `;
-                container.appendChild(matchElement);
-            });
+        function extractPlayerName(text) {
+            const match = text.match(/\(([^)]+)\)/);
+            return match ? match[1] : text;
         }
 
-        // Atualiza a cada 30 segundos
-        fetchMatches();
-        setInterval(fetchMatches, 30000);
+        function updateLiveGames() {
+            console.log('Buscando jogos ao vivo...');
+            fetch('https://api.green365.com.br/api/events/live?sport_id=4&competition_id=&page=1')
+                .then(response => {
+                    console.log('Resposta recebida:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Dados recebidos:', data);
 
-        // Atualiza quando a página se torna visível
-        document.addEventListener('visibilitychange', function() {
+                    if (!data || !data.data || !Array.isArray(data.data)) {
+                        throw new Error('Formato de dados inválido');
+                    }
+
+                    const games = data.data;
+                    const container = document.getElementById('liveGamesContainer');
+                    container.innerHTML = '';
+
+                    if (games.length === 0) {
+                        container.innerHTML = `
+                            <div style="text-align: center; padding: 20px; color: var(--text-secondary);">
+                                Nenhum jogo ao vivo no momento
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    games.forEach(game => {
+                        const homePlayer = game.home ? extractPlayerName(game.home) : 'Jogador Casa';
+                        const awayPlayer = game.away ? extractPlayerName(game.away) : 'Jogador Visitante';
+
+                        const card = document.createElement('div');
+                        card.className = 'live-card';
+                        card.innerHTML = `
+                            <div class="league-name">${game.leagueName || 'Liga Desconhecida'}</div>
+                            <div class="match-info">
+                                <div class="team">
+                                    <img src="${game.homeImage || 'https://via.placeholder.com/70'}" alt="${game.home_team_name || 'Time Casa'}"
+                                         onerror="this.src='https://via.placeholder.com/70'">
+                                    <div class="team-name">${game.home_team_name || 'Time Casa'}</div>
+                                    <div class="player-name">${homePlayer}</div>
+                                </div>
+                                <div class="score">${game.score || '0-0'}</div>
+                                <div class="team">
+                                    <img src="${game.awayImage || 'https://via.placeholder.com/70'}" alt="${game.away_team_name || 'Time Visitante'}"
+                                         onerror="this.src='https://via.placeholder.com/70'">
+                                    <div class="team-name">${game.away_team_name || 'Time Visitante'}</div>
+                                    <div class="player-name">${awayPlayer}</div>
+                                </div>
+                            </div>
+                            <div class="match-time">
+                                ${game.minute ? game.minute + "'" : 'Ao Vivo'}
+                            </div>
+                            <div class="match-stats">
+                                <div class="stat-item">
+                                    <div class="stat-label">Posse de Bola</div>
+                                    <div class="stat-value">${game.stats?.possession || '50-50'}</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Chutes ao Gol</div>
+                                    <div class="stat-value">${game.stats?.shotsOnTarget || '0-0'}</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Escanteios</div>
+                                    <div class="stat-value">${game.stats?.corners || '0-0'}</div>
+                                </div>
+                            </div>
+                        `;
+
+                        container.appendChild(card);
+                    });
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar jogos ao vivo:', error);
+                    const container = document.getElementById('liveGamesContainer');
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 20px; color: var(--danger-color);">
+                            Erro ao carregar jogos ao vivo. Por favor, tente novamente.<br>
+                            <small style="display: block; margin-top: 10px; color: var(--text-secondary);">
+                                ${error.message}
+                            </small>
+                        </div>
+                    `;
+                });
+        }
+
+        // Inicialização e atualizações
+        updateLiveGames();
+        setInterval(updateLiveGames, 10000); // Atualiza a cada 10 segundos
+
+        // Atualização em eventos de visibilidade
+        document.addEventListener('visibilitychange', function () {
             if (document.visibilityState === 'visible') {
-                fetchMatches();
-            }
-        });
-
-        // Atualiza quando a página recebe foco
-        window.addEventListener('focus', fetchMatches);
-
-        // Atualiza quando volta da navegação
-        window.addEventListener('pageshow', function(event) {
-            if (event.persisted) {
-                fetchMatches();
+                updateLiveGames();
             }
         });
     </script>
 </body>
+
 </html>
