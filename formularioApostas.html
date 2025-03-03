@@ -448,6 +448,134 @@ h3 {
   font-size: 18px;
 }
 
+/* Estilos para o gerenciamento de mercados */
+.mercado-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn-icon {
+  background: linear-gradient(145deg, #bb86fc, #9c27b0);
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(187, 134, 252, 0.3);
+}
+
+.btn-icon:hover {
+  transform: scale(1.1) rotate(45deg);
+  box-shadow: 0 0 15px rgba(187, 134, 252, 0.5);
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: linear-gradient(145deg, #151522, #0c0c14);
+  padding: 30px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.7),
+    0 0 15px rgba(187, 134, 252, 0.2);
+  border: 1px solid rgba(187, 134, 252, 0.1);
+  animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mercados-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.mercados-form input {
+  flex: 1;
+}
+
+.mercados-lista {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+  border: 1px solid rgba(187, 134, 252, 0.2);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.mercado-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid rgba(187, 134, 252, 0.1);
+  transition: all 0.3s ease;
+}
+
+.mercado-item:hover {
+  background-color: rgba(187, 134, 252, 0.1);
+}
+
+.mercado-item:last-child {
+  border-bottom: none;
+}
+
+.mercado-acoes {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-editar,
+.btn-excluir {
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-editar {
+  background: linear-gradient(145deg, #03dac6, #018786);
+  color: #121212;
+}
+
+.btn-excluir {
+  background: linear-gradient(145deg, #cf6679, #ff4060);
+  color: #121212;
+}
+
+.btn-editar:hover,
+.btn-excluir:hover {
+  transform: scale(1.05);
+}
+
 </style>
 </head>
 
@@ -459,11 +587,14 @@ h3 {
 
 <button class="back-button" id="voltar-btn"></button>
 
-  <h1>Aposta Moderna</h1>
+<!-- Informações do usuário logado -->
+<div class="user-info" id="user-info">
+  <div class="user-avatar" id="user-avatar"></div>
+  <span id="user-email"></span>
+  <button class="user-logout" id="logout-btn">Sair</button>
+</div>
 
-  <div id="user-info" style="text-align: right; margin-bottom: 20px; color: #bb86fc;">
-    <span id="user-email"></span>
-  </div>
+  <h1>Aposta Moderna</h1>
 
   <label for="data-hora">Data e Hora da Aposta:</label>
   <input type="text" id="data-hora" readonly />
@@ -484,18 +615,14 @@ h3 {
   <input type="text" id="jogador2" placeholder="Nome do Jogador 2" />
 
   <label for="mercado">Mercado:</label>
-  <select id="mercado">
-    <option value="Vitória">Vitória</option>
-    <option value="Empate">Empate</option>
-    <option value="Handicap">Handicap</option>
-    <option value="Over">Over</option>
-    <option value="Under">Under</option>
-    <option value="Ambos Marcam">Ambos Marcam</option>
-    <option value="Placar Exato">Placar Exato</option>
-    <option value="Primeiro a Marcar">Primeiro a Marcar</option>
-    <option value="Último a Marcar">Último a Marcar</option>
-    <option value="Margem de Vitória">Margem de Vitória</option>
-  </select>
+  <div class="mercado-container">
+    <select id="mercado">
+      <option value="Outro">Selecione ou adicione um mercado</option>
+    </select>
+    <button id="gerenciar-mercados" class="btn-icon">
+      ⚙️
+    </button>
+  </div>
 
   <label for="stake">Stake (R$):</label>
   <input type="text" id="stake" placeholder="Ex: 100,00" />
@@ -544,6 +671,21 @@ h3 {
   <div class="apostas-lista" id="apostas-lista">
     <div class="loading">Carregando apostas</div>
   </div>
+
+  <!-- Modal para gerenciar mercados -->
+  <div id="modal-mercados" class="modal">
+    <div class="modal-content">
+      <h2>Gerenciar Mercados</h2>
+      <div class="mercados-form">
+        <input type="text" id="novo-mercado" placeholder="Nome do mercado" />
+        <button id="adicionar-mercado" class="btn-primary">Adicionar</button>
+      </div>
+      <div class="mercados-lista" id="mercados-lista">
+        <!-- Lista de mercados será preenchida dinamicamente -->
+      </div>
+      <button id="fechar-modal" class="btn-secondary">Fechar</button>
+    </div>
+  </div>
 </div>
 
 <!-- Importar Chart.js -->
@@ -564,6 +706,7 @@ h3 {
     where,
     orderBy,
     getDocs,
+    updateDoc,
   } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
   import {
     getAuth,
@@ -1137,10 +1280,116 @@ h3 {
     document.getElementById("liga").addEventListener("change", atualizarDatalistsJogadores);
   }
 
+  // Adicionar coleção para mercados
+  const mercadosRef = collection(db, "mercados");
+
+  // Função para carregar mercados
+  async function carregarMercados() {
+    const mercadosSelect = document.getElementById("mercado");
+    const userEmail = auth.currentUser?.email;
+
+    if (!userEmail) return;
+
+    const q = query(
+      mercadosRef,
+      where("userEmail", "==", userEmail),
+      orderBy("nome")
+    );
+
+    onSnapshot(q, (snapshot) => {
+      // Manter apenas a opção "Outro"
+      mercadosSelect.innerHTML = '<option value="Outro">Selecione ou adicione um mercado</option>';
+      
+      snapshot.forEach((doc) => {
+        const mercado = doc.data();
+        const option = document.createElement("option");
+        option.value = mercado.nome;
+        option.textContent = mercado.nome;
+        mercadosSelect.appendChild(option);
+      });
+    });
+  }
+
+  // Função para adicionar mercado
+  async function adicionarMercado(nome) {
+    const userEmail = auth.currentUser?.email;
+    if (!userEmail || !nome.trim()) return;
+
+    try {
+      await addDoc(mercadosRef, {
+        nome: nome.trim(),
+        userEmail,
+        timestamp: serverTimestamp()
+      });
+      document.getElementById("novo-mercado").value = "";
+    } catch (error) {
+      console.error("Erro ao adicionar mercado:", error);
+      alert("Erro ao adicionar mercado");
+    }
+  }
+
+  // Função para editar mercado
+  async function editarMercado(id, novoNome) {
+    try {
+      await updateDoc(doc(mercadosRef, id), {
+        nome: novoNome.trim()
+      });
+    } catch (error) {
+      console.error("Erro ao editar mercado:", error);
+      alert("Erro ao editar mercado");
+    }
+  }
+
+  // Função para excluir mercado
+  async function excluirMercado(id) {
+    try {
+      await deleteDoc(doc(mercadosRef, id));
+    } catch (error) {
+      console.error("Erro ao excluir mercado:", error);
+      alert("Erro ao excluir mercado");
+    }
+  }
+
+  // Função para renderizar lista de mercados no modal
+  function renderizarListaMercados(snapshot) {
+    const lista = document.getElementById("mercados-lista");
+    lista.innerHTML = "";
+
+    snapshot.forEach((doc) => {
+      const mercado = doc.data();
+      const div = document.createElement("div");
+      div.className = "mercado-item";
+      div.innerHTML = `
+        <span>${mercado.nome}</span>
+        <div class="mercado-acoes">
+          <button class="btn-editar" onclick="editarMercado('${doc.id}')">✏️</button>
+          <button class="btn-excluir" onclick="excluirMercado('${doc.id}')">🗑️</button>
+        </div>
+      `;
+      lista.appendChild(div);
+    });
+  }
+
+  // Event Listeners para o modal de mercados
+  document.getElementById("gerenciar-mercados").addEventListener("click", () => {
+    document.getElementById("modal-mercados").style.display = "flex";
+  });
+
+  document.getElementById("fechar-modal").addEventListener("click", () => {
+    document.getElementById("modal-mercados").style.display = "none";
+  });
+
+  document.getElementById("adicionar-mercado").addEventListener("click", () => {
+    const nome = document.getElementById("novo-mercado").value;
+    adicionarMercado(nome);
+  });
+
   // Modificar o window.onload para incluir as novas funções
   window.onload = () => {
     atualizarDataHora();
     calcularValor();
+    carregarApostas();
+    carregarMercados();
     configurarCamposJogadores();
     buscarDadosAPI();
   };
