@@ -1027,7 +1027,7 @@
                         <div class="game-card">
                             <div class="team">
                                 <img src="${game.homeImage}" alt="${game.home}">
-                                <span>${game.home.split('(')[0].trim()} vs ${game.away.split('(')[0].trim()}</span>
+                                <span>${game.home.match(/\((.*?)\)/)?.[1] || game.home} vs ${game.away.match(/\((.*?)\)/)?.[1] || game.away}</span>
                                 <img src="${game.awayImage}" alt="${game.away}">
                             </div>
                             <div class="game-info">
