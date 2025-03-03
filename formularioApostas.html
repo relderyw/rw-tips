@@ -604,13 +604,28 @@
       currentUserKey = localStorage.getItem('currentUserKey');
 
       if (!currentUser || !currentUserKey) {
-        window.location.href = 'index.html';
+        window.location.replace('index.html');
         return false;
       }
 
       // Atualizar interface do usuário
       document.getElementById('user-email').textContent = currentUser;
       document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
+
+      // Verificar se é admin ou dono dos mercados para mostrar/ocultar o formulário de adicionar mercados
+      const marketForm = document.getElementById("market-form");
+      if (marketForm) {
+        const mercadosRef = collection(db, "mercados");
+        const q = query(mercadosRef, where("userEmail", "==", currentUser), limit(1));
+        getDocs(q).then((snapshot) => {
+          if (!snapshot.empty || currentUserKey === 'admin') {
+            marketForm.style.display = "flex";
+          } else {
+            marketForm.style.display = "none";
+          }
+        });
+      }
+
       return true;
     }
 
