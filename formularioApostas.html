@@ -828,30 +828,16 @@
 
       const mercadosRef = collection(db, "mercados");
       try {
-        // Primeiro buscar todos os mercados do admin
-        const adminQuery = query(mercadosRef, where("userEmail", "==", "admin@rwtips.com"));
-        const adminSnapshot = await getDocs(adminQuery);
-
-        // Depois buscar os mercados do usuário atual
-        const userQuery = query(mercadosRef, where("userEmail", "==", currentUser));
-        const userSnapshot = await getDocs(userQuery);
+        // Buscar todos os mercados, ordenados por nome
+        const q = query(mercadosRef, orderBy("nome"));
+        const querySnapshot = await getDocs(q);
 
         const mercados = [];
-
-        // Adicionar mercados do admin
-        adminSnapshot.forEach((doc) => {
+        querySnapshot.forEach((doc) => {
           mercados.push({ id: doc.id, ...doc.data() });
         });
 
-        // Adicionar mercados do usuário
-        userSnapshot.forEach((doc) => {
-          mercados.push({ id: doc.id, ...doc.data() });
-        });
-
-        // Ordenar mercados alfabeticamente
-        mercados.sort((a, b) => a.nome.localeCompare(b.nome));
-
-        // Atualizar select de mercados
+        // Atualizar select de mercados (todos os mercados disponíveis)
         const selectMercado = document.getElementById("mercado");
         selectMercado.innerHTML = "";
         mercados.forEach((mercado) => {
@@ -861,11 +847,16 @@
           selectMercado.appendChild(option);
         });
 
-        // Atualizar lista de mercados
+        // Filtrar apenas os mercados do usuário atual para a lista de gerenciamento
+        const mercadosDoUsuario = mercados.filter(mercado =>
+          mercado.userEmail === currentUser || mercado.userEmail === "admin@rwtips.com"
+        );
+
+        // Atualizar lista de mercados (apenas os do usuário e admin)
         const mercadosLista = document.getElementById("mercados-lista");
-        mercadosLista.innerHTML = mercados.length === 0
+        mercadosLista.innerHTML = mercadosDoUsuario.length === 0
           ? '<div class="history-empty">Nenhum mercado cadastrado</div>'
-          : mercados.map(mercado => `
+          : mercadosDoUsuario.map(mercado => `
               <div class="market-item">
                 <span>${mercado.nome}</span>
                 ${mercado.userEmail === currentUser ? `
