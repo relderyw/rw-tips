@@ -196,29 +196,25 @@
 
         <div class="filters">
             <select id="leagueFilter">
-                <option value="">Todas as Ligas</option>
+                <option value="">Selecione uma Liga</option>
                 <option value="Esoccer Battle - 8 mins play">Esoccer Battle - 8 mins</option>
                 <option value="Esoccer Battle Volta - 6 mins play">Esoccer Battle Volta - 6 mins</option>
                 <option value="Esoccer GT Leagues – 12 mins play">Esoccer GT Leagues – 12 mins</option>
                 <option value="Esoccer H2H GG League - 8 mins play">Esoccer H2H GG League - 8 mins</option>
                 <option value="Esoccer Adriatic League - 10 mins play">Esoccer Adriatic League - 10 mins</option>
             </select>
-            
-            <div class="players-comparison">
-                <select id="player1Filter">
-                    <option value="">Selecione Jogador 1</option>
-                </select>
-                <span class="vs-text">VS</span>
-                <select id="player2Filter">
-                    <option value="">Selecione Jogador 2</option>
-                </select>
-            </div>
+            <select id="player1Filter">
+                <option value="">Jogador 1</option>
+            </select>
+            <select id="player2Filter">
+                <option value="">Jogador 2</option>
+            </select>
         </div>
 
         <div id="playerAnalysisContainer"></div>
     </div>
 
-    <button onclick="window.location.href='visualization.html'" class="back-button">Voltar</button>
+    <button onclick="window.location.href='results.html'" class="back-button">Voltar</button>
 
     <script>
         // Verificar login
@@ -231,7 +227,7 @@
             return match ? match[1] : text;
         }
 
-        function calculatePlayerStats(playerResults) {
+        function aggregatePlayerStats(playerResults) {
             const stats = {
                 totalMatches: playerResults.length,
                 wins: 0,
@@ -239,33 +235,39 @@
                 losses: 0,
                 goalsScored: 0,
                 goalsReceived: 0,
-                winRate: 0,
-                avgGoalsScored: 0,
-                avgGoalsReceived: 0
+                avgGoalsPerMatch: 0,
+                avgGoalsHT: 0,
+                leagues: new Set()
             };
 
             playerResults.forEach(result => {
-                const [homeScore, awayScore] = result.score.split('-').map(Number);
-                const isHome = result.home.includes(playerResults[0].home);
+                stats.leagues.add(result.leagueName);
 
-                if (isHome) {
+                const [homeScore, awayScore] = result.score.split('-').map(Number);
+                const [homeHTScore, awayHTScore] = (result.scoreHT || '0-0').split('-').map(Number);
+
+                if (result.home.includes(playerResults[0].home)) {
                     stats.goalsScored += homeScore;
                     stats.goalsReceived += awayScore;
+                    stats.avgGoalsHT += homeHTScore;
+
                     if (homeScore > awayScore) stats.wins++;
                     else if (homeScore < awayScore) stats.losses++;
                     else stats.draws++;
                 } else {
                     stats.goalsScored += awayScore;
                     stats.goalsReceived += homeScore;
+                    stats.avgGoalsHT += awayHTScore;
+
                     if (awayScore > homeScore) stats.wins++;
                     else if (awayScore < homeScore) stats.losses++;
                     else stats.draws++;
                 }
             });
 
-            stats.winRate = (stats.wins / stats.totalMatches) * 100;
-            stats.avgGoalsScored = stats.goalsScored / stats.totalMatches;
-            stats.avgGoalsReceived = stats.goalsReceived / stats.totalMatches;
+            stats.avgGoalsPerMatch = (stats.goalsScored / stats.totalMatches).toFixed(2);
+            stats.avgGoalsHT = (stats.avgGoalsHT / stats.totalMatches).toFixed(2);
+            stats.leagues = Array.from(stats.leagues);
 
             return stats;
         }
@@ -275,7 +277,7 @@
             return response.json();
         }
 
-        async function updatePlayersList(selectedLeague) {
+        async function updatePlayerAnalysis() {
             try {
                 const [data1, data2, data3] = await Promise.all([
                     fetchData('https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=1'),
@@ -284,112 +286,136 @@
                 ]);
 
                 const allResults = [...data1.data, ...data2.data, ...data3.data];
-                const players = new Set();
+                const leagueFilter = document.getElementById('leagueFilter');
+                const player1Filter = document.getElementById('player1Filter');
+                const player2Filter = document.getElementById('player2Filter');
+                const selectedLeague = leagueFilter.value;
 
-                // Filtrar jogadores pela liga selecionada
+                // Filtra os jogadores com base na liga selecionada
+                const players = new Set();
                 allResults.forEach(result => {
-                    if (!selectedLeague || result.leagueName === selectedLeague) {
+                    if (selectedLeague === '' || result.leagueName === selectedLeague) {
                         players.add(extractPlayerName(result.home));
                         players.add(extractPlayerName(result.away));
                     }
                 });
 
-                // Atualizar ambos os selects de jogadores
-                const playersArray = Array.from(players).sort();
-                const player1Select = document.getElementById('player1Filter');
-                const player2Select = document.getElementById('player2Filter');
+                // Atualiza os filtros de jogadores
+                player1Filter.innerHTML = '<option value="">Jogador 1</option>';
+                player2Filter.innerHTML = '<option value="">Jogador 2</option>';
+                players.forEach(player => {
+                    const option1 = document.createElement('option');
+                    option1.value = player;
+                    option1.textContent = player;
+                    player1Filter.appendChild(option1);
 
-                player1Select.innerHTML = '<option value="">Selecione Jogador 1</option>';
-                player2Select.innerHTML = '<option value="">Selecione Jogador 2</option>';
-
-                playersArray.forEach(player => {
-                    player1Select.add(new Option(player, player));
-                    player2Select.add(new Option(player, player));
+                    const option2 = document.createElement('option');
+                    option2.value = player;
+                    option2.textContent = player;
+                    player2Filter.appendChild(option2);
                 });
+
+                const playerAnalysisContainer = document.getElementById('playerAnalysisContainer');
+                const selectedPlayer1 = player1Filter.value;
+                const selectedPlayer2 = player2Filter.value;
+
+                playerAnalysisContainer.innerHTML = '';
+
+                if (selectedPlayer1 && selectedPlayer2) {
+                    // Filtra os resultados para os jogadores selecionados
+                    const player1Results = allResults.filter(result => 
+                        (result.home.includes(selectedPlayer1) || result.away.includes(selectedPlayer1));
+                    const player2Results = allResults.filter(result => 
+                        (result.home.includes(selectedPlayer2) || result.away.includes(selectedPlayer2));
+
+                    const player1Stats = aggregatePlayerStats(player1Results);
+                    const player2Stats = aggregatePlayerStats(player2Results);
+
+                    // Calcula as porcentagens de vitória, empate e derrota
+                    const player1WinPercentage = ((player1Stats.wins / player1Stats.totalMatches) * 100).toFixed(2);
+                    const player2WinPercentage = ((player2Stats.wins / player2Stats.totalMatches) * 100).toFixed(2);
+
+                    const player1DrawPercentage = ((player1Stats.draws / player1Stats.totalMatches) * 100).toFixed(2);
+                    const player2DrawPercentage = ((player2Stats.draws / player2Stats.totalMatches) * 100).toFixed(2);
+
+                    const player1LossPercentage = ((player1Stats.losses / player1Stats.totalMatches) * 100).toFixed(2);
+                    const player2LossPercentage = ((player2Stats.losses / player2Stats.totalMatches) * 100).toFixed(2);
+
+                    // Exibe as métricas dos dois jogadores
+                    playerAnalysisContainer.innerHTML = `
+                        <div class="player-analysis-card">
+                            <div class="player-header">
+                                <div class="player-name">${selectedPlayer1}</div>
+                                <div class="player-name">${selectedPlayer2}</div>
+                            </div>
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <div class="stat-value">${player1WinPercentage}%</div>
+                                    <div class="stat-label">Vitórias</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value">${player2WinPercentage}%</div>
+                                    <div class="stat-label">Vitórias</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value">${player1DrawPercentage}%</div>
+                                    <div class="stat-label">Empates</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value">${player2DrawPercentage}%</div>
+                                    <div class="stat-label">Empates</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value">${player1LossPercentage}%</div>
+                                    <div class="stat-label">Derrotas</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value">${player2LossPercentage}%</div>
+                                    <div class="stat-label">Derrotas</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
             } catch (error) {
-                console.error('Erro ao buscar jogadores:', error);
-            }
-        }
-
-        async function comparePlayersAndShowStats() {
-            const player1 = document.getElementById('player1Filter').value;
-            const player2 = document.getElementById('player2Filter').value;
-            const selectedLeague = document.getElementById('leagueFilter').value;
-
-            if (!player1 || !player2) return;
-
-            try {
-                const [data1, data2, data3] = await Promise.all([
-                    fetchData('https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=1'),
-                    fetchData('https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=2'),
-                    fetchData('https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=3')
-                ]);
-
-                const allResults = [...data1.data, ...data2.data, ...data3.data]
-                    .filter(result => !selectedLeague || result.leagueName === selectedLeague);
-
-                const player1Results = allResults.filter(result => 
-                    result.home.includes(player1) || result.away.includes(player1));
-                const player2Results = allResults.filter(result => 
-                    result.home.includes(player2) || result.away.includes(player2));
-
-                const stats1 = calculatePlayerStats(player1Results);
-                const stats2 = calculatePlayerStats(player2Results);
-
-                // Calcular probabilidades
-                const totalWinRate = stats1.winRate + stats2.winRate;
-                const player1Probability = (stats1.winRate / totalWinRate * 100).toFixed(1);
-                const player2Probability = (stats2.winRate / totalWinRate * 100).toFixed(1);
-
-                const container = document.getElementById('playerAnalysisContainer');
-                container.innerHTML = `
-                    <div class="comparison-container">
-                        <div class="player-card ${Number(player1Probability) > Number(player2Probability) ? 'favorite' : ''}">
-                            <h3>${player1}</h3>
-                            <div class="stats">
-                                <p>Vitórias: ${stats1.wins} (${stats1.winRate.toFixed(1)}%)</p>
-                                <p>Empates: ${stats1.draws}</p>
-                                <p>Derrotas: ${stats1.losses}</p>
-                                <p>Média Gols Marcados: ${stats1.avgGoalsScored.toFixed(2)}</p>
-                                <p>Média Gols Sofridos: ${stats1.avgGoalsReceived.toFixed(2)}</p>
-                                <div class="probability">
-                                    <h4>Probabilidade de Vitória</h4>
-                                    <div class="probability-value">${player1Probability}%</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="vs-indicator">VS</div>
-                        <div class="player-card ${Number(player2Probability) > Number(player1Probability) ? 'favorite' : ''}">
-                            <h3>${player2}</h3>
-                            <div class="stats">
-                                <p>Vitórias: ${stats2.wins} (${stats2.winRate.toFixed(1)}%)</p>
-                                <p>Empates: ${stats2.draws}</p>
-                                <p>Derrotas: ${stats2.losses}</p>
-                                <p>Média Gols Marcados: ${stats2.avgGoalsScored.toFixed(2)}</p>
-                                <p>Média Gols Sofridos: ${stats2.avgGoalsReceived.toFixed(2)}</p>
-                                <div class="probability">
-                                    <h4>Probabilidade de Vitória</h4>
-                                    <div class="probability-value">${player2Probability}%</div>
-                                </div>
-                            </div>
-                        </div>
+                console.error('Erro ao buscar análise de jogadores:', error);
+                const playerAnalysisContainer = document.getElementById('playerAnalysisContainer');
+                playerAnalysisContainer.innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: var(--danger-color);">
+                        Erro ao carregar análise de jogadores. Por favor, tente novamente.<br>
+                        <small style="display: block; margin-top: 10px; color: var(--text-secondary);">
+                            ${error.message}
+                        </small>
                     </div>
                 `;
-            } catch (error) {
-                console.error('Erro ao comparar jogadores:', error);
             }
         }
 
-        // Event Listeners
-        document.getElementById('leagueFilter').addEventListener('change', function() {
-            updatePlayersList(this.value);
+        // Event Listeners for Filters
+        document.getElementById('leagueFilter').addEventListener('change', updatePlayerAnalysis);
+        document.getElementById('player1Filter').addEventListener('change', updatePlayerAnalysis);
+        document.getElementById('player2Filter').addEventListener('change', updatePlayerAnalysis);
+
+        // Initial Load
+        updatePlayerAnalysis();
+
+        // Periodic Updates
+        setInterval(updatePlayerAnalysis, 15000);
+
+        // Update on visibility change
+        document.addEventListener('visibilitychange', function () {
+            if (document.visibilityState === 'visible') {
+                updatePlayerAnalysis();
+            }
         });
 
-        document.getElementById('player1Filter').addEventListener('change', comparePlayersAndShowStats);
-        document.getElementById('player2Filter').addEventListener('change', comparePlayersAndShowStats);
-
-        // Inicialização
-        updatePlayersList('');
+        window.addEventListener('focus', updatePlayerAnalysis);
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted) {
+                updatePlayerAnalysis();
+            }
+        });
     </script>
 </body>
 </html>
+
