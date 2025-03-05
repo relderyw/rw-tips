@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RW TIPS - Análise de Jogadores</title>
+    <style>
+        /* Reuse existing styles with some modifications */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --background-dark: #0f0f13;
+            --card-bg: #1a1a23;
+            --card-hover: #22222c;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent-color: #00ff88;
+            --danger-color: #ff5252;
+            --success-color: #00ff88;
+            --border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--background-dark) 0%, #16161f 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+        }
+
+        .logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 10px rgba(108, 92, 231, 0.5));
+            transition: all 0.3s ease;
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            background: linear-gradient(45deg, #00ff88, #00ffaa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        select {
+            width: 100%;
+            padding: 15px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .player-analysis-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .player-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-card {
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .chart-container {
+            margin-top: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-secondary);
+        }
+
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+        }
+
+        .back-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-container">
+            <img src="https://i.ibb.co/v6MhLNJX/11zon-cropped.png" alt="RW Tips Logo" class="logo">
+            <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
+        </div>
+
+        <h1 style="text-align: center; margin-bottom: 30px; background: linear-gradient(45deg, var(--accent-color), var(--primary-color)); -webkit-background-clip: text; background-clip: text; color: transparent;">Análise Detalhada de Jogadores</h1>
+
+        <div class="filters">
+            <select id="playerFilter">
+                <option value="">Todos os Jogadores</option>
+                <!-- Players will be dynamically populated -->
+            </select>
+            <select id="leagueFilter">
+                <option value="">Todas as Ligas</option>
+                <option value="Esoccer Battle - 8 mins play">Esoccer Battle - 8 mins</option>
+                <option value="Esoccer Battle Volta - 6 mins play">Esoccer Battle Volta - 6 mins</option>
+                <option value="Esoccer GT Leagues – 12 mins play">Esoccer GT Leagues – 12 mins</option>
+                <option value="Esoccer H2H GG League - 8 mins play">Esoccer H2H GG League - 8 mins</option>
+                <option value="Esoccer Adriatic League - 10 mins play">Esoccer Adriatic League - 10 mins</option>
+            </select>
+        </div>
+
+        <div id="playerAnalysisContainer"></div>
+    </div>
+
+    <button onclick="window.location.href='results.html'" class="back-button">Voltar</button>
+
+    <script>
+        // Verificar login
+        if (!sessionStorage.getItem('loggedIn')) {
+            window.location.href = 'index.html';
+        }
+
+        function extractPlayerName(text) {
+            const match = text.match(/\(([^)]+)\)/);
+            return match ? match[1] : text;
+        }
+
+        function aggregatePlayerStats(playerResults) {
+            const stats = {
+                totalMatches: playerResults.length,
+                wins: 0,
+                draws: 0,
+                losses: 0,
+                goalsScored: 0,
+                goalsReceived: 0,
+                avgGoalsPerMatch: 0,
+                avgGoalsHT: 0,
+                leagues: new Set()
+            };
+
+            playerResults.forEach(result => {
+                stats.leagues.add(result.leagueName);
+
+                const [homeScore, awayScore] = result.score.split('-').map(Number);
+                const [homeHTScore, awayHTScore] = (result.scoreHT || '0-0').split('-').map(Number);
+
+                if (result.home.includes(playerResults[0].home)) {
+                    stats.goalsScored += homeScore;
+                    stats.goalsReceived += awayScore;
+                    stats.avgGoalsHT += homeHTScore;
+
+                    if (homeScore > awayScore) stats.wins++;
+                    else if (homeScore < awayScore) stats.losses++;
+                    else stats.draws++;
+                } else {
+                    stats.goalsScored += awayScore;
+                    stats.goalsReceived += homeScore;
+                    stats.avgGoalsHT += awayHTScore;
+
+                    if (awayScore > homeScore) stats.wins++;
+                    else if (awayScore < homeScore) stats.losses++;
+                    else stats.draws++;
+                }
+            });
+
+            stats.avgGoalsPerMatch = (stats.goalsScored / stats.totalMatches).toFixed(2);
+            stats.avgGoalsHT = (stats.avgGoalsHT / stats.totalMatches).toFixed(2);
+            stats.leagues = Array.from(stats.leagues);
+
+            return stats;
+        }
+
+        async function fetchData(url) {
+            const response = await fetch(url);
+            return response.json();
+        }
+
+        async function updatePlayerAnalysis() {
+            try {
+                const [data1, data2, data3] = await Promise.all([
+                    fetchData('https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=1'),
+                    fetchData('https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=2'),
+                    fetchData('https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=3')
+                ]);
+
+                const allResults = [...data1.data, ...data2.data, ...data3.data];
+                const playerFilter = document.getElementById('playerFilter');
+                const players = new Set();
+
+                // Populate players dropdown
+                allResults.forEach(result => {
+                    players.add(extractPlayerName(result.home));
+                    players.add(extractPlayerName(result.away));
+                });
+
+                playerFilter.innerHTML = '<option value="">Todos os Jogadores</option>';
+                players.forEach(player => {
+                    const option = document.createElement('option');
+                    option.value = player;
+                    option.textContent = player;
+                    playerFilter.appendChild(option);
+                });
+
+                const playerAnalysisContainer = document.getElementById('playerAnalysisContainer');
+                const selectedPlayer = document.getElementById('playerFilter').value;
+                const selectedLeague = document.getElementById('leagueFilter').value;
+
+                playerAnalysisContainer.innerHTML = '';
+
+                // Group results by player
+                const playerGroups = {};
+                allResults.forEach(result => {
+                    const homePlayer = extractPlayerName(result.home);
+                    const awayPlayer = extractPlayerName(result.away);
+
+                    if (selectedPlayer === '' || selectedPlayer === homePlayer || selectedPlayer === awayPlayer) {
+                        if (selectedLeague === '' || result.leagueName === selectedLeague) {
+                            if (result.home.includes(homePlayer)) {
+                                playerGroups[homePlayer] = playerGroups[homePlayer] || [];
+                                playerGroups[homePlayer].push(result);
+                            }
+                            if (result.away.includes(awayPlayer)) {
+                                playerGroups[awayPlayer] = playerGroups[awayPlayer] || [];
+                                playerGroups[awayPlayer].push(result);
+                            }
+                        }
+                    }
+                });
+
+                // Create analysis cards for each player
+                Object.keys(playerGroups).forEach(player => {
+                    const playerResults = playerGroups[player];
+                    const stats = aggregatePlayerStats(playerResults);
+
+                    const card = document.createElement('div');
+                    card.className = 'player-analysis-card';
+                    card.innerHTML = `
+                        <div class="player-header">
+                            <div class="player-name">${player}</div>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value">${stats.totalMatches}</div>
+                                <div class="stat-label">Total de Jogos</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${stats.wins}</div>
+                                <div class="stat-label">Vitórias</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${stats.draws}</div>
+                                <div class="stat-label">Empates</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${stats.losses}</div>
+                                <div class="stat-label">Derrotas</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${stats.goalsScored}</div>
+                                <div class="stat-label">Gols Marcados</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${stats.goalsReceived}</div>
+                                <div class="stat-label">Gols Sofridos</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${stats.avgGoalsPerMatch}</div>
+                                <div class="stat-label">Média de Gols por Jogo</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${stats.avgGoalsHT}</div>
+                                <div class="stat-label">Média de Gols no 1º Tempo</div>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <div class="stat-label">Ligas</div>
+                            <div class="legend">
+                                ${stats.leagues.map(league => `
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background-color: ${getLeagueColor(league)}"></div>
+                                        ${league}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+
+                    playerAnalysisContainer.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Erro ao buscar análise de jogadores:', error);
+                const playerAnalysisContainer = document.getElementById('playerAnalysisContainer');
+                playerAnalysisContainer.innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: var(--danger-color);">
+                        Erro ao carregar análise de jogadores. Por favor, tente novamente.<br>
+                        <small style="display: block; margin-top: 10px; color: var(--text-secondary);">
+                            ${error.message}
+                        </small>
+                    </div>
+                `;
+            }
+        }
+
+        function getLeagueColor(leagueName) {
+            const leagueMappings = {
+                "Esoccer Battle - 8 mins play": "#FF4C4C",
+                "Esoccer Battle Volta - 6 mins play": "#FFD700",
+                "Esoccer GT Leagues – 12 mins play": "#32CD32",
+                "Esoccer H2H GG League - 8 mins play": "#8A2BE2",
+                "Esoccer Adriatic League - 10 mins play": "#1E90FF"
+            };
+            return leagueMappings[leagueName] || "#FFFFFF";
+        }
+
+        // Event Listeners for Filters
+        document.getElementById('playerFilter').addEventListener('change', updatePlayerAnalysis);
+        document.getElementById('leagueFilter').addEventListener('change', updatePlayerAnalysis);
+
+        // Initial Load
+        updatePlayerAnalysis();
+
+        // Periodic Updates
+        setInterval(updatePlayerAnalysis, 15000);
+
+        // Update on visibility change
+        document.addEventListener('visibilitychange', function () {
+            if (document.visibilityState === 'visible') {
+                updatePlayerAnalysis();
+            }
+        });
+
+        window.addEventListener('focus', updatePlayerAnalysis);
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted) {
+                updatePlayerAnalysis();
+            }
+        });
+    </script>
+</body>
+</html>
