@@ -384,28 +384,80 @@
             return stats;
         }
 
-        // Event Listeners
+        async function updatePlayersList() {
+            try {
+                const [data1, data2, data3] = await Promise.all([
+                    fetchData('https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=1'),
+                    fetchData('https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=2'),
+                    fetchData('https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=3')
+                ]);
+
+                const allResults = [...data1.data, ...data2.data, ...data3.data];
+                const selectedLeague = document.getElementById('leagueFilter').value;
+
+                // Conjunto para armazenar jogadores únicos
+                const uniquePlayers = new Set();
+
+                // Filtrar jogos pela liga selecionada e coletar jogadores
+                allResults.forEach(match => {
+                    if (selectedLeague === '' || match.leagueName === selectedLeague) {
+                        const homePlayer = extractPlayerName(match.home);
+                        const awayPlayer = extractPlayerName(match.away);
+                        uniquePlayers.add(homePlayer);
+                        uniquePlayers.add(awayPlayer);
+                    }
+                });
+
+                // Converter Set para Array e ordenar alfabeticamente
+                const playersList = Array.from(uniquePlayers).sort();
+
+                // Atualizar os dropdowns de jogadores
+                const player1Filter = document.getElementById('player1Filter');
+                const player2Filter = document.getElementById('player2Filter');
+
+                // Salvar seleções atuais
+                const currentPlayer1 = player1Filter.value;
+                const currentPlayer2 = player2Filter.value;
+
+                // Limpar e recriar as opções
+                player1Filter.innerHTML = '<option value="">Jogador 1</option>';
+                player2Filter.innerHTML = '<option value="">Jogador 2</option>';
+
+                playersList.forEach(player => {
+                    player1Filter.innerHTML += `<option value="${player}">${player}</option>`;
+                    player2Filter.innerHTML += `<option value="${player}">${player}</option>`;
+                });
+
+                // Restaurar seleções anteriores se ainda existirem na nova lista
+                if (playersList.includes(currentPlayer1)) player1Filter.value = currentPlayer1;
+                if (playersList.includes(currentPlayer2)) player2Filter.value = currentPlayer2;
+
+            } catch (error) {
+                console.error('Erro ao carregar lista de jogadores:', error);
+            }
+        }
+
+        // Adicionar event listener para o filtro de liga
+        document.getElementById('leagueFilter').addEventListener('change', () => {
+            updatePlayersList();
+            updatePlayerAnalysis();
+        });
+
+        // Inicializar a página
         document.addEventListener('DOMContentLoaded', () => {
-            const leagueFilter = document.getElementById('leagueFilter');
+            updatePlayersList();
+            
             const player1Filter = document.getElementById('player1Filter');
             const player2Filter = document.getElementById('player2Filter');
 
-            // Atualizar análise quando os filtros mudarem
-            leagueFilter.addEventListener('change', updatePlayerAnalysis);
             player1Filter.addEventListener('change', updatePlayerAnalysis);
             player2Filter.addEventListener('change', updatePlayerAnalysis);
-
-            // Carregar lista de jogadores inicial
-            updatePlayersList();
         });
 
-        setInterval(updatePlayerAnalysis, 30000);
+        // Atualizar dados a cada 30 segundos
+        setInterval(updatePlayersList, 30000);
     </script>
 </body>
-
-
-
-
 
 
 
