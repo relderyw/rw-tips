@@ -99,15 +99,37 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 15px;
+            padding: 20px;
         }
 
         .player-name {
             font-size: 1.5rem;
             font-weight: 700;
             color: var(--accent-color);
+        }
+
+        .favorite {
+            border: 2px solid var(--accent-color);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+        }
+
+        .player-name.favorite {
+            color: var(--accent-color);
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .vs-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-secondary);
+        }
+
+        .probability-card {
+            background: linear-gradient(145deg, var(--card-bg), var(--card-hover));
+        }
+
+        .probability-card.favorite {
+            background: linear-gradient(145deg, var(--card-bg), var(--accent-color));
         }
 
         .stats-grid {
