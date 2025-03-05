@@ -436,8 +436,15 @@
             <button id="viewResultsButton" class="action-button">Ver Últimos Resultados</button>
             <button id="viewStatisticsButton" class="action-button">Ver Estatísticas das Ligas</button>
             <button id="registerBetButton" class="action-button">Registrar Aposta</button>
+            <button id="viewPlayersButton" class="action-button">Análise de Jogadores</button>
         </div>
 
+        <script>
+            // Adicione este event listener junto com os outros existentes
+            document.getElementById('viewPlayersButton').addEventListener('click', function () {
+                window.location.href = 'players.html';
+            });
+        </script>
 
         <select id="filter">
             <option value="">Todas as Ligas</option>
@@ -679,6 +686,10 @@
 
         document.getElementById('registerBetButton').addEventListener('click', function () {
             window.location.href = 'formularioApostas.html';
+        });
+
+        document.getElementById('viewPlayersButton').addEventListener('click', function () {
+            window.location.href = 'players.html';
         });
 
         document.getElementById('filter').addEventListener('change', function () {
