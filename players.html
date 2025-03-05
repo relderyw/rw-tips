@@ -268,7 +268,9 @@
                 const [homeScore, awayScore] = result.score.split('-').map(Number);
                 const [homeHTScore, awayHTScore] = (result.scoreHT || '0-0').split('-').map(Number);
 
-                if (result.home.includes(playerResults[0].home)) {
+                const isHome = result.home.includes(playerResults[0].home);
+
+                if (isHome) {
                     stats.goalsScored += homeScore;
                     stats.goalsReceived += awayScore;
                     stats.avgGoalsHT += homeHTScore;
@@ -317,83 +319,131 @@
                 const players = new Set();
                 allResults.forEach(result => {
                     if (selectedLeague === '' || result.leagueName === selectedLeague) {
-                        players.add(extractPlayerName(result.home));
-                        players.add(extractPlayerName(result.away));
+                        const homePlayer = extractPlayerName(result.home);
+                        const awayPlayer = extractPlayerName(result.away);
+                        if (homePlayer) players.add(homePlayer);
+                        if (awayPlayer) players.add(awayPlayer);
                     }
                 });
 
-                // Atualiza os filtros de jogadores
+                // Converter Set para Array e ordenar alfabeticamente
+                const sortedPlayers = Array.from(players).sort((a, b) => a.localeCompare(b));
+
+                // Atualizar os selects de jogadores
                 player1Filter.innerHTML = '<option value="">Jogador 1</option>';
                 player2Filter.innerHTML = '<option value="">Jogador 2</option>';
-                players.forEach(player => {
-                    const option1 = document.createElement('option');
-                    option1.value = player;
-                    option1.textContent = player;
-                    player1Filter.appendChild(option1);
 
-                    const option2 = document.createElement('option');
-                    option2.value = player;
-                    option2.textContent = player;
-                    player2Filter.appendChild(option2);
+                sortedPlayers.forEach(player => {
+                    player1Filter.innerHTML += `<option value="${player}">${player}</option>`;
+                    player2Filter.innerHTML += `<option value="${player}">${player}</option>`;
                 });
 
-                const playerAnalysisContainer = document.getElementById('playerAnalysisContainer');
                 const selectedPlayer1 = player1Filter.value;
                 const selectedPlayer2 = player2Filter.value;
 
+                const playerAnalysisContainer = document.getElementById('playerAnalysisContainer');
                 playerAnalysisContainer.innerHTML = '';
 
                 if (selectedPlayer1 && selectedPlayer2) {
-                    // Filtra os resultados para os jogadores selecionados
+                    // Filtrar resultados para os jogadores selecionados
                     const player1Results = allResults.filter(result => 
-                        (result.home.includes(selectedPlayer1) || result.away.includes(selectedPlayer1));
+                        (result.home.includes(selectedPlayer1) || result.away.includes(selectedPlayer1)) &&
+                        (!selectedLeague || result.leagueName === selectedLeague)
+                    );
                     const player2Results = allResults.filter(result => 
-                        (result.home.includes(selectedPlayer2) || result.away.includes(selectedPlayer2));
+                        (result.home.includes(selectedPlayer2) || result.away.includes(selectedPlayer2)) &&
+                        (!selectedLeague || result.leagueName === selectedLeague)
+                    );
 
                     const player1Stats = aggregatePlayerStats(player1Results);
                     const player2Stats = aggregatePlayerStats(player2Results);
 
-                    // Calcula as porcentagens de vitória, empate e derrota
-                    const player1WinPercentage = ((player1Stats.wins / player1Stats.totalMatches) * 100).toFixed(2);
-                    const player2WinPercentage = ((player2Stats.wins / player2Stats.totalMatches) * 100).toFixed(2);
+                    // Calcular porcentagens
+                    const calculatePercentages = (stats) => ({
+                        winPercent: ((stats.wins / stats.totalMatches) * 100).toFixed(1),
+                        drawPercent: ((stats.draws / stats.totalMatches) * 100).toFixed(1),
+                        lossPercent: ((stats.losses / stats.totalMatches) * 100).toFixed(1)
+                    });
 
-                    const player1DrawPercentage = ((player1Stats.draws / player1Stats.totalMatches) * 100).toFixed(2);
-                    const player2DrawPercentage = ((player2Stats.draws / player2Stats.totalMatches) * 100).toFixed(2);
+                    const player1Percentages = calculatePercentages(player1Stats);
+                    const player2Percentages = calculatePercentages(player2Stats);
 
-                    const player1LossPercentage = ((player1Stats.losses / player1Stats.totalMatches) * 100).toFixed(2);
-                    const player2LossPercentage = ((player2Stats.losses / player2Stats.totalMatches) * 100).toFixed(2);
-
-                    // Exibe as métricas dos dois jogadores
+                    // Criar HTML para exibição dos resultados
                     playerAnalysisContainer.innerHTML = `
-                        <div class="player-analysis-card">
-                            <div class="player-header">
-                                <div class="player-name">${selectedPlayer1}</div>
-                                <div class="player-name">${selectedPlayer2}</div>
+                        <div class="player-comparison">
+                            <div class="player-card">
+                                <h3>${selectedPlayer1}</h3>
+                                <div class="stats-grid">
+                                    <div class="stat-item">
+                                        <span class="stat-label">Total de Jogos</span>
+                                        <span class="stat-value">${player1Stats.totalMatches}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Vitórias</span>
+                                        <span class="stat-value">${player1Stats.wins} (${player1Percentages.winPercent}%)</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Empates</span>
+                                        <span class="stat-value">${player1Stats.draws} (${player1Percentages.drawPercent}%)</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Derrotas</span>
+                                        <span class="stat-value">${player1Stats.losses} (${player1Percentages.lossPercent}%)</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Gols Marcados</span>
+                                        <span class="stat-value">${player1Stats.goalsScored}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Gols Sofridos</span>
+                                        <span class="stat-value">${player1Stats.goalsReceived}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Média de Gols</span>
+                                        <span class="stat-value">${player1Stats.avgGoalsPerMatch}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Média 1º Tempo</span>
+                                        <span class="stat-value">${player1Stats.avgGoalsHT}</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="stats-grid">
-                                <div class="stat-card">
-                                    <div class="stat-value">${player1WinPercentage}%</div>
-                                    <div class="stat-label">Vitórias</div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-value">${player2WinPercentage}%</div>
-                                    <div class="stat-label">Vitórias</div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-value">${player1DrawPercentage}%</div>
-                                    <div class="stat-label">Empates</div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-value">${player2DrawPercentage}%</div>
-                                    <div class="stat-label">Empates</div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-value">${player1LossPercentage}%</div>
-                                    <div class="stat-label">Derrotas</div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-value">${player2LossPercentage}%</div>
-                                    <div class="stat-label">Derrotas</div>
+
+                            <div class="player-card">
+                                <h3>${selectedPlayer2}</h3>
+                                <div class="stats-grid">
+                                    <div class="stat-item">
+                                        <span class="stat-label">Total de Jogos</span>
+                                        <span class="stat-value">${player2Stats.totalMatches}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Vitórias</span>
+                                        <span class="stat-value">${player2Stats.wins} (${player2Percentages.winPercent}%)</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Empates</span>
+                                        <span class="stat-value">${player2Stats.draws} (${player2Percentages.drawPercent}%)</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Derrotas</span>
+                                        <span class="stat-value">${player2Stats.losses} (${player2Percentages.lossPercent}%)</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Gols Marcados</span>
+                                        <span class="stat-value">${player2Stats.goalsScored}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Gols Sofridos</span>
+                                        <span class="stat-value">${player2Stats.goalsReceived}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Média de Gols</span>
+                                        <span class="stat-value">${player2Stats.avgGoalsPerMatch}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Média 1º Tempo</span>
+                                        <span class="stat-value">${player2Stats.avgGoalsHT}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -413,30 +463,22 @@
             }
         }
 
-        // Event Listeners for Filters
-        document.getElementById('leagueFilter').addEventListener('change', updatePlayerAnalysis);
-        document.getElementById('player1Filter').addEventListener('change', updatePlayerAnalysis);
-        document.getElementById('player2Filter').addEventListener('change', updatePlayerAnalysis);
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            const leagueFilter = document.getElementById('leagueFilter');
+            const player1Filter = document.getElementById('player1Filter');
+            const player2Filter = document.getElementById('player2Filter');
 
-        // Initial Load
-        updatePlayerAnalysis();
+            leagueFilter.addEventListener('change', updatePlayerAnalysis);
+            player1Filter.addEventListener('change', updatePlayerAnalysis);
+            player2Filter.addEventListener('change', updatePlayerAnalysis);
 
-        // Periodic Updates
+            // Carregar dados iniciais
+            updatePlayerAnalysis();
+        });
+
+        // Atualização automática
         setInterval(updatePlayerAnalysis, 15000);
-
-        // Update on visibility change
-        document.addEventListener('visibilitychange', function () {
-            if (document.visibilityState === 'visible') {
-                updatePlayerAnalysis();
-            }
-        });
-
-        window.addEventListener('focus', updatePlayerAnalysis);
-        window.addEventListener('pageshow', function (event) {
-            if (event.persisted) {
-                updatePlayerAnalysis();
-            }
-        });
     </script>
 </body>
 </html>
