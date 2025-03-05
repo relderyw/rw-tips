@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -114,7 +115,7 @@
         }
 
         .stat-card {
-            background: rgba(0,0,0,0.2);
+            background: rgba(0, 0, 0, 0.2);
             border-radius: 10px;
             padding: 15px;
             text-align: center;
@@ -155,6 +156,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="logo-container">
@@ -162,18 +164,19 @@
             <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
         </div>
 
-        <h1 style="text-align: center; margin-bottom: 30px; background: linear-gradient(45deg, var(--accent-color), var(--primary-color)); -webkit-background-clip: text; background-clip: text; color: transparent;">
+        <h1
+            style="text-align: center; margin-bottom: 30px; background: linear-gradient(45deg, var(--accent-color), var(--primary-color)); -webkit-background-clip: text; background-clip: text; color: transparent;">
             Análise Detalhada de Jogadores
         </h1>
 
         <div class="filters">
             <select id="leagueFilter">
                 <option value="">Todas as Ligas</option>
-                <option value="Esoccer Battle - 8 mins play">Battle 8 min</option>
-                <option value="Esoccer Battle Volta - 6 mins play">Battle 6 min</option>
-                <option value="Esoccer GT Leagues – 12 mins play">GT 12 min</option>
-                <option value="Esoccer H2H GG League - 8 mins play">Battle 8 min (H2H)</option>
-                <option value="Esoccer Adriatic League - 10 mins play">Adriact 10 min</option>
+                <option value="Esoccer Battle - 8 mins play">Esoccer Battle - 8 mins</option>
+                <option value="Esoccer Battle Volta - 6 mins play">Esoccer Battle Volta - 6 mins</option>
+                <option value="Esoccer GT Leagues – 12 mins play">Esoccer GT Leagues – 12 mins</option>
+                <option value="Esoccer H2H GG League - 8 mins play">Esoccer H2H GG League - 8 mins</option>
+                <option value="Esoccer Adriatic League - 10 mins play">Esoccer Adriatic League - 10 mins</option>
             </select>
             <select id="player1Filter">
                 <option value="">Jogador 1</option>
@@ -221,7 +224,7 @@
                         const home = extractPlayerName(result.home);
                         const away = extractPlayerName(result.away);
                         return (selectedLeague === '' || result.leagueName === selectedLeague) &&
-                               (home === selectedPlayer1 || away === selectedPlayer1);
+                            (home === selectedPlayer1 || away === selectedPlayer1);
                     });
 
                     // Análise do Jogador 2
@@ -229,7 +232,7 @@
                         const home = extractPlayerName(result.home);
                         const away = extractPlayerName(result.away);
                         return (selectedLeague === '' || result.leagueName === selectedLeague) &&
-                               (home === selectedPlayer2 || away === selectedPlayer2);
+                            (home === selectedPlayer2 || away === selectedPlayer2);
                     });
 
                     // Confrontos diretos
@@ -237,7 +240,7 @@
                         const home = extractPlayerName(result.home);
                         const away = extractPlayerName(result.away);
                         return (selectedLeague === '' || result.leagueName === selectedLeague) &&
-                               ((home === selectedPlayer1 && away === selectedPlayer2) ||
+                            ((home === selectedPlayer1 && away === selectedPlayer2) ||
                                 (home === selectedPlayer2 && away === selectedPlayer1));
                     });
 
@@ -399,4 +402,17 @@
         setInterval(updatePlayerAnalysis, 30000);
     </script>
 </body>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
