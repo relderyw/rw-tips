@@ -436,6 +436,24 @@
             };
             return leagueMappings[leagueName] || { name: leagueName, color: "#FFFFFF" };
         }
+        function shouldDisplayGame(game) {
+            const leagueName = game.leagueName;
+            const gameMinutes = parseInt(game.minutes, 10);
+
+            // Verifica o tempo máximo da liga
+            if (leagueName.includes("6 mins play") && gameMinutes >= 6) {
+                return false;
+            } else if (leagueName.includes("8 mins play") && gameMinutes >= 8) {
+                return false;
+            } else if (leagueName.includes("10 mins play") && gameMinutes >= 10) {
+                return false;
+            } else if (leagueName.includes("12 mins play") && gameMinutes >= 12) {
+                return false;
+            }
+
+            // Se não atingiu o tempo máximo, exibe o jogo
+            return true;
+        }
 
         function updateLiveGames() {
             console.log('Buscando jogos ao vivo...');
@@ -460,14 +478,19 @@
 
                     if (games.length === 0) {
                         container.innerHTML = `
-                            <div style="text-align: center; padding: 20px; color: var(--text-secondary);">
-                                Nenhum jogo ao vivo no momento
-                            </div>
-                        `;
+                    <div style="text-align: center; padding: 20px; color: var(--text-secondary);">
+                        Nenhum jogo ao vivo no momento
+                    </div>
+                `;
                         return;
                     }
 
                     games.forEach(game => {
+                        // Verifica se o jogo deve ser exibido
+                        if (!shouldDisplayGame(game)) {
+                            return; // Ignora o jogo se não deve ser exibido
+                        }
+
                         const homePlayer = extractPlayerName(game.home || '');
                         const awayPlayer = extractPlayerName(game.away || '');
                         const leagueInfo = getLeagueDisplayName(game.leagueName);
@@ -485,45 +508,45 @@
                             `${game.scores['1'].home}-${game.scores['1'].away}` : '0-0';
 
                         card.innerHTML = `
-                            <div class="league-name" style="color: ${leagueInfo.color}">${leagueInfo.name}</div>
-                            <div class="match-info">
-                                <div class="team">
-                                    <img src="${game.homeImage || 'https://via.placeholder.com/70'}" alt="${game.home || 'Time Casa'}"
-                                         onerror="this.src='https://via.placeholder.com/70'">
-                                    <div class="team-name">${game.home || 'Time Casa'}</div>
-                                </div>
-                                <div class="score ${homeScore > awayScore ? 'home-win' : awayScore > homeScore ? 'away-win' : 'draw'}">
-                                    ${currentScore}
-                                </div>
-                                <div class="team">
-                                    <img src="${game.awayImage || 'https://via.placeholder.com/70'}" alt="${game.away || 'Time Visitante'}"
-                                         onerror="this.src='https://via.placeholder.com/70'">
-                                    <div class="team-name">${game.away || 'Time Visitante'}</div>
-                                </div>
-                            </div>
-                            <div class="match-time">
-                                <span class="live-dot"></span>${game.minutes}'${game.seconds}"
-                            </div>
-                            <div class="match-stats">
-                                <div class="stat-item" style="border-color: ${leagueInfo.color}">
-                                    <div class="stat-label">Placar HT</div>
-                                    <div class="stat-value" style="color: ${leagueInfo.color}">${htScore}</div>
-                                </div>
-                                <div class="stat-item" style="border-color: ${leagueInfo.color}">
-                                    <div class="stat-label">Ataques</div>
-                                    <div class="stat-value" style="color: ${leagueInfo.color}">${game.stats?.attacks ? game.stats.attacks.join('-') : '0-0'}</div>
-                                </div>
-                                <div class="stat-item" style="border-color: ${leagueInfo.color}">
-                                    <div class="stat-label">Escanteios</div>
-                                    <div class="stat-value" style="color: ${leagueInfo.color}">${game.stats?.corners ? game.stats.corners.join('-') : '0-0'}</div>
-                                </div>
-                            </div>
-                            <button onclick="window.location.href='h2h_analysis.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${game.homeID}&awayID=${game.awayID}&leagueID=${game.leagueID}'" 
-                                    class="h2h-button" 
-                                    style="border-color: ${leagueInfo.color}; color: ${leagueInfo.color}">
-                                Ver H2H
-                            </button>
-                        `;
+                    <div class="league-name" style="color: ${leagueInfo.color}">${leagueInfo.name}</div>
+                    <div class="match-info">
+                        <div class="team">
+                            <img src="${game.homeImage || 'https://via.placeholder.com/70'}" alt="${game.home || 'Time Casa'}"
+                                 onerror="this.src='https://via.placeholder.com/70'">
+                            <div class="team-name">${game.home || 'Time Casa'}</div>
+                        </div>
+                        <div class="score ${homeScore > awayScore ? 'home-win' : awayScore > homeScore ? 'away-win' : 'draw'}">
+                            ${currentScore}
+                        </div>
+                        <div class="team">
+                            <img src="${game.awayImage || 'https://via.placeholder.com/70'}" alt="${game.away || 'Time Visitante'}"
+                                 onerror="this.src='https://via.placeholder.com/70'">
+                            <div class="team-name">${game.away || 'Time Visitante'}</div>
+                        </div>
+                    </div>
+                    <div class="match-time">
+                        <span class="live-dot"></span>${game.minutes}'${game.seconds}"
+                    </div>
+                    <div class="match-stats">
+                        <div class="stat-item" style="border-color: ${leagueInfo.color}">
+                            <div class="stat-label">Placar HT</div>
+                            <div class="stat-value" style="color: ${leagueInfo.color}">${htScore}</div>
+                        </div>
+                        <div class="stat-item" style="border-color: ${leagueInfo.color}">
+                            <div class="stat-label">Ataques</div>
+                            <div class="stat-value" style="color: ${leagueInfo.color}">${game.stats?.attacks ? game.stats.attacks.join('-') : '0-0'}</div>
+                        </div>
+                        <div class="stat-item" style="border-color: ${leagueInfo.color}">
+                            <div class="stat-label">Escanteios</div>
+                            <div class="stat-value" style="color: ${leagueInfo.color}">${game.stats?.corners ? game.stats.corners.join('-') : '0-0'}</div>
+                        </div>
+                    </div>
+                    <button onclick="window.location.href='h2h_analysis.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${game.homeID}&awayID=${game.awayID}&leagueID=${game.leagueID}'" 
+                            class="h2h-button" 
+                            style="border-color: ${leagueInfo.color}; color: ${leagueInfo.color}">
+                        Ver H2H
+                    </button>
+                `;
 
                         container.appendChild(card);
                     });
@@ -532,16 +555,15 @@
                     console.error('Erro ao buscar jogos ao vivo:', error);
                     const container = document.getElementById('liveGamesContainer');
                     container.innerHTML = `
-                        <div style="text-align: center; padding: 20px; color: var(--danger-color);">
-                            Erro ao carregar jogos ao vivo. Por favor, tente novamente.<br>
-                            <small style="display: block; margin-top: 10px; color: var(--text-secondary);">
-                                ${error.message}
-                            </small>
-                        </div>
-                    `;
+                <div style="text-align: center; padding: 20px; color: var(--danger-color);">
+                    Erro ao carregar jogos ao vivo. Por favor, tente novamente.<br>
+                    <small style="display: block; margin-top: 10px; color: var(--text-secondary);">
+                        ${error.message}
+                    </small>
+                </div>
+            `;
                 });
         }
-
         // Inicialização e atualizações
         updateLiveGames();
         setInterval(updateLiveGames, 10000); // Atualiza a cada 10 segundos
@@ -556,11 +578,3 @@
 </body>
 
 </html>
-
-
-
-
-
-
-
-
