@@ -923,19 +923,9 @@
             window.history.back();
         }
 
-        function getTop3Metrics(stats) {
-            const totalGames = stats.totalGames;
-            const metrics = [
-                { name: 'Over 1.5 HT', value: (stats.over1_5HT / totalGames) * 100, raw: `${stats.over1_5HT}/${totalGames}` },
-                { name: 'Over 2.5 HT', value: (stats.over2_5HT / totalGames) * 100, raw: `${stats.over2_5HT}/${totalGames}` },
-                { name: 'Over 2.5 FT', value: (stats.over2_5FT / totalGames) * 100, raw: `${stats.over2_5FT}/${totalGames}` },
-                { name: 'Over 3.5 FT', value: (stats.over3_5FT / totalGames) * 100, raw: `${stats.over3_5FT}/${totalGames}` },
-                { name: 'Over 4.5 FT', value: (stats.over4_5FT / totalGames) * 100, raw: `${stats.over4_5FT}/${totalGames}` },
-                { name: 'BTTS HT', value: (stats.bttsHT / totalGames) * 100, raw: `${stats.bttsHT}/${totalGames}` },
-                { name: 'BTTS FT', value: (stats.bttsFT / totalGames) * 100, raw: `${stats.bttsFT}/${totalGames}` }
-            ];
-
-            return metrics.sort((a, b) => b.value - a.value).slice(0, 3);
+        function safePercent(value, total) {
+            if (!total || isNaN(total) || total === 0) return '0.0';
+            return ((value / total) * 100).toFixed(1);
         }
 
         function processH2HStats(lastGames) {
@@ -974,40 +964,35 @@
                 stats.totalGoalsHT += totalGoalsHT;
                 stats.totalGoalsFT += totalGoalsFT;
 
+                // Update home/away counters
                 if (game.isHome) {
                     stats.homeGames++;
-                    // Home HT stats
                     if (totalGoalsHT > 0) stats.over0_5HT.home++;
                     if (totalGoalsHT > 1) stats.over1_5HT.home++;
                     if (totalGoalsHT > 2) stats.over2_5HT.home++;
-                    // Home FT stats
                     if (totalGoalsFT > 0) stats.over0_5FT.home++;
                     if (totalGoalsFT > 1) stats.over1_5FT.home++;
                     if (totalGoalsFT > 2) stats.over2_5FT.home++;
                 } else {
                     stats.awayGames++;
-                    // Away HT stats
                     if (totalGoalsHT > 0) stats.over0_5HT.away++;
                     if (totalGoalsHT > 1) stats.over1_5HT.away++;
                     if (totalGoalsHT > 2) stats.over2_5HT.away++;
-                    // Away FT stats
                     if (totalGoalsFT > 0) stats.over0_5FT.away++;
                     if (totalGoalsFT > 1) stats.over1_5FT.away++;
                     if (totalGoalsFT > 2) stats.over2_5FT.away++;
                 }
 
-                // Half Time Stats
+                // Update general stats
                 if (totalGoalsHT > 1) stats.over1_5HT++;
                 if (totalGoalsHT > 2) stats.over2_5HT++;
                 if (homeHT > 0 && awayHT > 0) stats.bttsHT++;
 
-                // Full Time Stats
                 if (totalGoalsFT > 2) stats.over2_5FT++;
                 if (totalGoalsFT > 3) stats.over3_5FT++;
                 if (totalGoalsFT > 4) stats.over4_5FT++;
                 if (homeGoals > 0 && awayGoals > 0) stats.bttsFT++;
 
-                // Match Result
                 if (homeGoals > awayGoals) stats.winHome++;
                 else if (awayGoals > homeGoals) stats.winAway++;
                 else stats.draw++;
@@ -1016,43 +1001,70 @@
             return stats;
         }
 
-        function renderProbabilities(h2hStats, playerAName, playerBName) {
-            const container = document.getElementById('probabilityCards');
-            const totalGames = h2hStats.totalGames;
+        function renderH2HAnalysis(stats) {
+            const container = document.getElementById('h2hStatsGrid');
 
-            const homeWinPercent = ((h2hStats.winHome / totalGames) * 100).toFixed(1);
-            const awayWinPercent = ((h2hStats.winAway / totalGames) * 100).toFixed(1);
-            const drawPercent = ((h2hStats.draw / totalGames) * 100).toFixed(1);
+            const h2hStatsHTML = `
+            <div class="metrics-container">
+                <!-- ... other metrics sections remain the same ... -->
 
-            const probabilityHTML = `
-                <div class="confronto-resumo">
-                    <div class="confronto-stats">
-                        <div class="stat-block">
-                            <div class="stat-value home">${h2hStats.winHome}</div>
-                            <div class="stat-label">${playerAName}</div>
-                            <div class="stat-detail">${homeWinPercent}%</div>
+                <!-- Casa vs Fora comparison section -->
+                <div class="metrics-column">
+                    <h3>Over HT - Casa vs Fora</h3>
+                    <div class="stats-grid">
+                        <div class="h2h-stat-card">
+                            <h4>Over 0.5 HT</h4>
+                            <div class="h2h-stat-value">
+                                ${safePercent(stats.over0_5HT.home, stats.homeGames)}% vs ${safePercent(stats.over0_5HT.away, stats.awayGames)}%
+                            </div>
+                            <p>Casa: ${stats.over0_5HT.home}/${stats.homeGames} | Fora: ${stats.over0_5HT.away}/${stats.awayGames}</p>
                         </div>
-                        <div class="stat-block">
-                            <div class="stat-value draw">${h2hStats.draw}</div>
-                            <div class="stat-label">Empates</div>
-                            <div class="stat-detail">${drawPercent}%</div>
+                        <div class="h2h-stat-card">
+                            <h4>Over 1.5 HT</h4>
+                            <div class="h2h-stat-value">
+                                ${safePercent(stats.over1_5HT.home, stats.homeGames)}% vs ${safePercent(stats.over1_5HT.away, stats.awayGames)}%
+                            </div>
+                            <p>Casa: ${stats.over1_5HT.home}/${stats.homeGames} | Fora: ${stats.over1_5HT.away}/${stats.awayGames}</p>
                         </div>
-                        <div class="stat-block">
-                            <div class="stat-value away">${h2hStats.winAway}</div>
-                            <div class="stat-label">${playerBName}</div>
-                            <div class="stat-detail">${awayWinPercent}%</div>
-                        </div>
-                    </div>
-                    <div class="game-history-container">
-                        <div class="game-history-title">Últimos 10 Confrontos</div>
-                        <div class="game-history">
-                            ${generateGameHistory(h2hStats.lastGames, 10)}
+                        <div class="h2h-stat-card">
+                            <h4>Over 2.5 HT</h4>
+                            <div class="h2h-stat-value">
+                                ${safePercent(stats.over2_5HT.home, stats.homeGames)}% vs ${safePercent(stats.over2_5HT.away, stats.awayGames)}%
+                            </div>
+                            <p>Casa: ${stats.over2_5HT.home}/${stats.homeGames} | Fora: ${stats.over2_5HT.away}/${stats.awayGames}</p>
                         </div>
                     </div>
                 </div>
-            `;
+                <div class="metrics-column">
+                    <h3>Over FT - Casa vs Fora</h3>
+                    <div class="stats-grid">
+                        <div class="h2h-stat-card">
+                            <h4>Over 0.5 FT</h4>
+                            <div class="h2h-stat-value">
+                                ${safePercent(stats.over0_5FT.home, stats.homeGames)}% vs ${safePercent(stats.over0_5FT.away, stats.awayGames)}%
+                            </div>
+                            <p>Casa: ${stats.over0_5FT.home}/${stats.homeGames} | Fora: ${stats.over0_5FT.away}/${stats.awayGames}</p>
+                        </div>
+                        <div class="h2h-stat-card">
+                            <h4>Over 1.5 FT</h4>
+                            <div class="h2h-stat-value">
+                                ${safePercent(stats.over1_5FT.home, stats.homeGames)}% vs ${safePercent(stats.over1_5FT.away, stats.awayGames)}%
+                            </div>
+                            <p>Casa: ${stats.over1_5FT.home}/${stats.homeGames} | Fora: ${stats.over1_5FT.away}/${stats.awayGames}</p>
+                        </div>
+                        <div class="h2h-stat-card">
+                            <h4>Over 2.5 FT</h4>
+                            <div class="h2h-stat-value">
+                                ${safePercent(stats.over2_5FT.home, stats.homeGames)}% vs ${safePercent(stats.over2_5FT.away, stats.awayGames)}%
+                            </div>
+                            <p>Casa: ${stats.over2_5FT.home}/${stats.homeGames} | Fora: ${stats.over2_5FT.away}/${stats.awayGames}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
 
-            container.innerHTML = probabilityHTML;
+            container.innerHTML = h2hStatsHTML;
         }
 
         function generateGameHistory(games, limit) {
