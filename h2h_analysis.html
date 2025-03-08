@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RW TIPS - Análise H2H</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -845,7 +846,8 @@
                         <span class="comparison-vs">vs</span>
                         <span class="comparison-away">${safePercent(stats.over0_5HT.away, stats.awayGames)}%</span>
                     </div>
-                    <p class="comparison-details">Casa: ${stats.over0_5HT.home}/${stats.homeGames} | Fora: ${stats.over0_5HT.away}/${stats.awayGames}</p>
+                    <p class="comparison-details">Casa: ${stats.over0_5HT.home}/${stats.homeGames} | Fora:
+                        ${stats.over0_5HT.away}/${stats.awayGames}</p>
                 </div>
 
                 <div class="comparison-card">
@@ -855,7 +857,8 @@
                         <span class="comparison-vs">vs</span>
                         <span class="comparison-away">${safePercent(stats.over1_5HT.away, stats.awayGames)}%</span>
                     </div>
-                    <p class="comparison-details">Casa: ${stats.over1_5HT.home}/${stats.homeGames} | Fora: ${stats.over1_5HT.away}/${stats.awayGames}</p>
+                    <p class="comparison-details">Casa: ${stats.over1_5HT.home}/${stats.homeGames} | Fora:
+                        ${stats.over1_5HT.away}/${stats.awayGames}</p>
                 </div>
 
                 <div class="comparison-card">
@@ -865,7 +868,8 @@
                         <span class="comparison-vs">vs</span>
                         <span class="comparison-away">${safePercent(stats.over2_5HT.away, stats.awayGames)}%</span>
                     </div>
-                    <p class="comparison-details">Casa: ${stats.over2_5HT.home}/${stats.homeGames} | Fora: ${stats.over2_5HT.away}/${stats.awayGames}</p>
+                    <p class="comparison-details">Casa: ${stats.over2_5HT.home}/${stats.homeGames} | Fora:
+                        ${stats.over2_5HT.away}/${stats.awayGames}</p>
                 </div>
 
                 <!-- Full Time Comparisons -->
@@ -876,7 +880,8 @@
                         <span class="comparison-vs">vs</span>
                         <span class="comparison-away">${safePercent(stats.over0_5FT.away, stats.awayGames)}%</span>
                     </div>
-                    <p class="comparison-details">Casa: ${stats.over0_5FT.home}/${stats.homeGames} | Fora: ${stats.over0_5FT.away}/${stats.awayGames}</p>
+                    <p class="comparison-details">Casa: ${stats.over0_5FT.home}/${stats.homeGames} | Fora:
+                        ${stats.over0_5FT.away}/${stats.awayGames}</p>
                 </div>
 
                 <div class="comparison-card">
@@ -886,7 +891,8 @@
                         <span class="comparison-vs">vs</span>
                         <span class="comparison-away">${safePercent(stats.over1_5FT.away, stats.awayGames)}%</span>
                     </div>
-                    <p class="comparison-details">Casa: ${stats.over1_5FT.home}/${stats.homeGames} | Fora: ${stats.over1_5FT.away}/${stats.awayGames}</p>
+                    <p class="comparison-details">Casa: ${stats.over1_5FT.home}/${stats.homeGames} | Fora:
+                        ${stats.over1_5FT.away}/${stats.awayGames}</p>
                 </div>
 
                 <div class="comparison-card">
@@ -896,7 +902,8 @@
                         <span class="comparison-vs">vs</span>
                         <span class="comparison-away">${safePercent(stats.over2_5FT.away, stats.awayGames)}%</span>
                     </div>
-                    <p class="comparison-details">Casa: ${stats.over2_5FT.home}/${stats.homeGames} | Fora: ${stats.over2_5FT.away}/${stats.awayGames}</p>
+                    <p class="comparison-details">Casa: ${stats.over2_5FT.home}/${stats.homeGames} | Fora:
+                        ${stats.over2_5FT.away}/${stats.awayGames}</p>
                 </div>
             </div>
         </div>
@@ -1005,61 +1012,65 @@
             const totalGames = stats.totalGames;
 
             const h2hStatsHTML = `
-                <div class="metrics-container">
-                    <div class="metrics-column">
-                        <h3>Estatísticas HT</h3>
-                        <div class="stats-grid">
-                            <div class="h2h-stat-card">
-                                <h4>Over 1.5 HT</h4>
-                                <div class="h2h-stat-value">${safePercent(stats.over1_5HT, totalGames)}%</div>
-                                <p>Em ${stats.over1_5HT} de ${totalGames} jogos</p>
-                            </div>
-                            <div class="h2h-stat-card">
-                                <h4>Over 2.5 HT</h4>
-                                <div class="h2h-stat-value">${safePercent(stats.over2_5HT, totalGames)}%</div>
-                                <p>Em ${stats.over2_5HT} de ${totalGames} jogos</p>
-                            </div>
-                            <div class="h2h-stat-card">
-                                <h4>BTTS HT</h4>
-                                <div class="h2h-stat-value">${safePercent(stats.bttsHT, totalGames)}%</div>
-                                <p>Em ${stats.bttsHT} de ${totalGames} jogos</p>
-                            </div>
-                            <div class="h2h-stat-card">
-                                <h4>Média Gols HT</h4>
-                                <div class="h2h-stat-value">${(stats.totalGoalsHT / totalGames).toFixed(2)}</div>
-                                <p>Total: ${stats.totalGoalsHT} gols</p>
-                            </div>
-                        </div>
+        <div class="metrics-container">
+            <div class="metrics-column">
+                <h3>Estatísticas HT</h3>
+                <div class="stats-grid">
+                    <div class="h2h-stat-card">
+                        <h4>Over 1.5 HT</h4>
+                        <div class="h2h-stat-value">${safePercent(stats.over1_5HT, totalGames)}%</div>
+                        <p>Em ${stats.over1_5HT} de ${totalGames} jogos</p>
                     </div>
-                    <div class="metrics-column">
-                        <h3>Estatísticas FT</h3>
-                        <div class="stats-grid">
-                            <div class="h2h-stat-card">
-                                <h4>Over 2.5 FT</h4>
-                                <div class="h2h-stat-value">${safePercent(stats.over2_5FT, totalGames)}%</div>
-                                <p>Em ${stats.over2_5FT} de ${totalGames} jogos</p>
-                            </div>
-                            <div class="h2h-stat-card">
-                                <h4>Over 3.5 FT</h4>
-                                <div class="h2h-stat-value">${safePercent(stats.over3_5FT, totalGames)}%</div>
-                                <p>Em ${stats.over3_5FT} de ${totalGames} jogos</p>
-                            </div>
-                            <div class="h2h-stat-card">
-                                <h4>BTTS FT</h4>
-                                <div class="h2h-stat-value">${safePercent(stats.bttsFT, totalGames)}%</div>
-                                <p>Em ${stats.bttsFT} de ${totalGames} jogos</p>
-                            </div>
-                            <div class="h2h-stat-card">
-                                <h4>Média Gols FT</h4>
-                                <div class="h2h-stat-value">${(stats.totalGoalsFT / totalGames).toFixed(2)}</div>
-                                <p>Total: ${stats.totalGoalsFT} gols</p>
-                            </div>
-                        </div>
+                    <div class="h2h-stat-card">
+                        <h4>Over 2.5 HT</h4>
+                        <div class="h2h-stat-value">${safePercent(stats.over2_5HT, totalGames)}%</div>
+                        <p>Em ${stats.over2_5HT} de ${totalGames} jogos</p>
+                    </div>
+                    <div class="h2h-stat-card">
+                        <h4>BTTS HT</h4>
+                        <div class="h2h-stat-value">${safePercent(stats.bttsHT, totalGames)}%</div>
+                        <p>Em ${stats.bttsHT} de ${totalGames} jogos</p>
+                    </div>
+                    <div class="h2h-stat-card">
+                        <h4>Média Gols HT</h4>
+                        <div class="h2h-stat-value">${(stats.totalGoalsHT / totalGames).toFixed(2)}</div>
+                        <p>Total: ${stats.totalGoalsHT} gols</p>
                     </div>
                 </div>
-            `;
+            </div>
+            <div class="metrics-column">
+                <h3>Estatísticas FT</h3>
+                <div class="stats-grid">
+                    <div class="h2h-stat-card">
+                        <h4>Over 2.5 FT</h4>
+                        <div class="h2h-stat-value">${safePercent(stats.over2_5FT, totalGames)}%</div>
+                        <p>Em ${stats.over2_5FT} de ${totalGames} jogos</p>
+                    </div>
+                    <div class="h2h-stat-card">
+                        <h4>Over 3.5 FT</h4>
+                        <div class="h2h-stat-value">${safePercent(stats.over3_5FT, totalGames)}%</div>
+                        <p>Em ${stats.over3_5FT} de ${totalGames} jogos</p>
+                    </div>
+                    <div class="h2h-stat-card">
+                        <h4>BTTS FT</h4>
+                        <div class="h2h-stat-value">${safePercent(stats.bttsFT, totalGames)}%</div>
+                        <p>Em ${stats.bttsFT} de ${totalGames} jogos</p>
+                    </div>
+                    <div class="h2h-stat-card">
+                        <h4>Média Gols FT</h4>
+                        <div class="h2h-stat-value">${(stats.totalGoalsFT / totalGames).toFixed(2)}</div>
+                        <p>Total: ${stats.totalGoalsFT} gols</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
 
             container.innerHTML = h2hStatsHTML;
+
+            // Adiciona o container de comparação
+            const comparisonContainer = renderComparison(stats);
+            container.appendChild(comparisonContainer);
         }
 
         function renderProbabilities(h2hStats, playerAName, playerBName) {
