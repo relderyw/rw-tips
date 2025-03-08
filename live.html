@@ -4,110 +4,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RW TIPS - Jogos Ao Vivo</title>
+    <title>Jogos Ao Vivo - RW Tips</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
         :root {
             --primary-color: #6c5ce7;
-            --secondary-color: #a29bfe;
-            --background-dark: #0f0f13;
-            --card-bg: #1a1a23;
-            --card-hover: #22222c;
+            --accent-color: #a29bfe;
+            --background-color: #0f0f1a;
+            --card-bg: rgba(16, 16, 28, 0.8);
             --text-primary: #ffffff;
             --text-secondary: #a0a0a0;
-            --accent-color: #00ff88;
-            --danger-color: #ff5252;
-            --success-color: #00ff88;
-            --border-color: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(255, 255, 255, 0.1);
             --live-color: #ff4757;
+            --danger-color: #ff6b81;
+            --success-color: #2ecc71;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
         }
 
         body {
-            background: linear-gradient(135deg, var(--background-dark) 0%, #16161f 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
             color: var(--text-primary);
-            min-height: 100vh;
             line-height: 1.6;
-            padding: 20px;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            position: relative;
+            z-index: 1;
         }
 
         .logo-container {
             text-align: center;
-            margin: 20px 0;
-            padding: 20px;
+            margin-bottom: 30px;
         }
 
         .logo {
             width: 120px;
             height: auto;
-            margin-bottom: 15px;
-            filter: drop-shadow(0 0 10px rgba(108, 92, 231, 0.5));
-            transition: all 0.3s ease;
-        }
-
-        .logo:hover {
-            transform: scale(1.05);
-            filter: drop-shadow(0 0 15px rgba(108, 92, 231, 0.7));
+            margin-bottom: 10px;
         }
 
         .logo-text {
-            font-size: 1.8rem;
-            background: linear-gradient(45deg, #00ff88, #00ffaa);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            font-weight: 700;
-            letter-spacing: 2px;
-            margin-top: 10px;
-            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5),
-                0 0 20px rgba(0, 255, 136, 0.3),
-                0 0 30px rgba(0, 255, 136, 0.2);
-            animation: neonPulse 1.5s ease-in-out infinite alternate;
-        }
-
-        @keyframes neonPulse {
-            from {
-                text-shadow: 0 0 10px rgba(0, 255, 136, 0.5),
-                    0 0 20px rgba(0, 255, 136, 0.3),
-                    0 0 30px rgba(0, 255, 136, 0.2);
-            }
-
-            to {
-                text-shadow: 0 0 15px rgba(0, 255, 136, 0.7),
-                    0 0 25px rgba(0, 255, 136, 0.5),
-                    0 0 35px rgba(0, 255, 136, 0.3);
-            }
-        }
-
-        h1 {
-            text-align: center;
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin: 30px 0;
-            position: relative;
-            display: inline-block;
-            left: 50%;
-            transform: translateX(-50%);
+            font-size: 2rem;
+            color: var(--text-primary);
+            text-shadow: 0 0 10px rgba(108, 92, 231, 0.5);
         }
 
         .live-title {
-            background: linear-gradient(45deg, var(--live-color), #ff6b81);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            font-size: 1.8rem;
+            color: var(--live-color);
+            margin-bottom: 30px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             animation: livePulse 1.5s ease-in-out infinite alternate;
         }
 
@@ -117,7 +78,6 @@
                     0 0 20px rgba(255, 71, 87, 0.3),
                     0 0 30px rgba(255, 71, 87, 0.2);
             }
-
             to {
                 text-shadow: 0 0 15px rgba(255, 71, 87, 0.7),
                     0 0 25px rgba(255, 71, 87, 0.5),
@@ -140,12 +100,10 @@
                 transform: scale(1);
                 opacity: 1;
             }
-
             50% {
                 transform: scale(1.2);
                 opacity: 0.7;
             }
-
             100% {
                 transform: scale(1);
                 opacity: 1;
@@ -163,8 +121,17 @@
             overflow: hidden;
         }
 
+        .live-card[data-status="starting-soon"] {
+            background: linear-gradient(to right, var(--card-bg), rgba(0, 255, 136, 0.1));
+        }
+
+        .live-card[data-status="recently-started"] {
+            background: linear-gradient(to right, var(--card-bg), rgba(255, 71, 87, 0.1));
+        }
+
         .live-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
         .league-name {
@@ -173,47 +140,6 @@
             margin-bottom: 20px;
             padding: 10px;
             border-bottom: 1px solid var(--border-color);
-        }
-
-        /* Adicionar classes específicas para cada liga */
-        .league-battle {
-            --league-color: #FF4C4C;
-        }
-
-        .league-volta {
-            --league-color: #FFD700;
-        }
-
-        .league-gt {
-            --league-color: #32CD32;
-        }
-
-        .league-h2h {
-            --league-color: #8A2BE2;
-        }
-
-        .league-adriatic {
-            --league-color: #1E90FF;
-        }
-
-        .live-card[data-league="Esoccer Battle - 8 mins play"] {
-            border-color: #FF4C4C;
-        }
-
-        .live-card[data-league="Esoccer Battle Volta - 6 mins play"] {
-            border-color: #FFD700;
-        }
-
-        .live-card[data-league="Esoccer GT Leagues – 12 mins play"] {
-            border-color: #32CD32;
-        }
-
-        .live-card[data-league="Esoccer H2H GG League - 8 mins play"] {
-            border-color: #8A2BE2;
-        }
-
-        .live-card[data-league="Esoccer Adriatic League - 10 mins play"] {
-            border-color: #1E90FF;
         }
 
         .match-info {
@@ -243,6 +169,13 @@
             border-color: var(--accent-color);
         }
 
+        .team-name {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-top: 5px;
+            word-wrap: break-word;
+        }
+
         .score {
             font-size: 2.5rem;
             font-weight: 700;
@@ -251,12 +184,23 @@
             animation: scoreUpdate 0.5s ease-in-out;
         }
 
+        .score.home-win {
+            color: var(--success-color);
+        }
+
+        .score.away-win {
+            color: var(--danger-color);
+        }
+
+        .score.draw {
+            color: var(--accent-color);
+        }
+
         @keyframes scoreUpdate {
             0% {
                 transform: scale(1.2);
                 opacity: 0.5;
             }
-
             100% {
                 transform: scale(1);
                 opacity: 1;
@@ -290,7 +234,7 @@
             padding: 10px;
             border-radius: 8px;
             background: rgba(255, 255, 255, 0.03);
-            border: 1px solid;
+            border: 1px solid var(--border-color);
         }
 
         .stat-label {
@@ -302,7 +246,6 @@
         .stat-value {
             font-size: 1.2rem;
             font-weight: 600;
-            color: var(--live-color);
         }
 
         .back-button {
@@ -319,6 +262,7 @@
             border: none;
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+            z-index: 100;
         }
 
         .back-button:hover {
@@ -342,7 +286,7 @@
             overflow: hidden;
             color: var(--text-primary);
             background: transparent;
-            border: 2px solid;
+            border: 2px solid var(--border-color);
         }
 
         .h2h-button::before {
@@ -375,12 +319,11 @@
 
             .match-info {
                 flex-direction: column;
-                text-align: center;
+                gap: 15px;
             }
 
             .score {
                 font-size: 2rem;
-                padding: 10px 0;
             }
 
             .team img {
@@ -397,6 +340,20 @@
                 right: 20px;
                 padding: 12px 25px;
             }
+
+            .h2h-button {
+                font-size: 0.8rem;
+                padding: 12px;
+            }
+        }
+
+        .error-message {
+            text-align: center;
+            color: var(--danger-color);
+            padding: 20px;
+            background: rgba(255, 71, 87, 0.1);
+            border-radius: 12px;
+            margin: 20px 0;
         }
     </style>
 </head>
@@ -409,7 +366,6 @@
         </div>
 
         <h1 class="live-title"><span class="live-dot"></span>Jogos Ao Vivo</h1>
-
         <div id="liveGamesContainer"></div>
     </div>
 
@@ -437,6 +393,10 @@
             return leagueMappings[leagueName] || { name: leagueName, color: "#FFFFFF" };
         }
 
+        function formatTime(minutes, seconds) {
+            return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
         function updateLiveGames() {
             console.log('Buscando jogos ao vivo...');
             fetch('https://api.green365.com.br/api/events/inplay?sport_id=4&competition_id=')
@@ -454,7 +414,13 @@
                         throw new Error('Formato de dados inválido');
                     }
 
-                    const games = data;
+                    // Ordenar os jogos por tempo de jogo
+                    const games = data.sort((a, b) => {
+                        const minutesA = parseInt(a.minutes) || 0;
+                        const minutesB = parseInt(b.minutes) || 0;
+                        return minutesA - minutesB;
+                    });
+
                     const container = document.getElementById('liveGamesContainer');
                     container.innerHTML = '';
 
@@ -471,51 +437,62 @@
                         const homePlayer = extractPlayerName(game.home || '');
                         const awayPlayer = extractPlayerName(game.away || '');
                         const leagueInfo = getLeagueDisplayName(game.leagueName);
+                        const minutes = parseInt(game.minutes) || 0;
+                        const seconds = parseInt(game.seconds) || 0;
 
                         const card = document.createElement('div');
                         card.className = 'live-card';
                         card.setAttribute('data-league', game.leagueName);
 
+                        // Adicionar status visual baseado no tempo de jogo
+                        if (minutes === 0) {
+                            card.setAttribute('data-status', 'starting-soon');
+                        } else if (minutes <= 5) {
+                            card.setAttribute('data-status', 'recently-started');
+                        }
+
                         // Extrair o placar atual
                         const currentScore = game.score || '0-0';
                         const [homeScore, awayScore] = currentScore.split('-').map(Number);
-
-                        // Extrair placar do primeiro tempo
-                        const htScore = game.scores && game.scores['1'] ?
-                            `${game.scores['1'].home}-${game.scores['1'].away}` : '0-0';
 
                         card.innerHTML = `
                             <div class="league-name" style="color: ${leagueInfo.color}">${leagueInfo.name}</div>
                             <div class="match-info">
                                 <div class="team">
-                                    <img src="${game.homeImage || 'https://via.placeholder.com/70'}" alt="${game.home || 'Time Casa'}"
+                                    <img src="${game.homeImage || 'https://via.placeholder.com/70'}" alt="${homePlayer}"
                                          onerror="this.src='https://via.placeholder.com/70'">
-                                    <div class="team-name">${game.home || 'Time Casa'}</div>
+                                    <div class="team-name">${homePlayer}</div>
                                 </div>
                                 <div class="score ${homeScore > awayScore ? 'home-win' : awayScore > homeScore ? 'away-win' : 'draw'}">
                                     ${currentScore}
                                 </div>
                                 <div class="team">
-                                    <img src="${game.awayImage || 'https://via.placeholder.com/70'}" alt="${game.away || 'Time Visitante'}"
+                                    <img src="${game.awayImage || 'https://via.placeholder.com/70'}" alt="${awayPlayer}"
                                          onerror="this.src='https://via.placeholder.com/70'">
-                                    <div class="team-name">${game.away || 'Time Visitante'}</div>
+                                    <div class="team-name">${awayPlayer}</div>
                                 </div>
                             </div>
                             <div class="match-time">
-                                <span class="live-dot"></span>${game.minutes}'${game.seconds}"
+                                <span class="live-dot"></span>${formatTime(minutes, seconds)}
                             </div>
                             <div class="match-stats">
-                                <div class="stat-item" style="border-color: ${leagueInfo.color}">
-                                    <div class="stat-label">Placar HT</div>
-                                    <div class="stat-value" style="color: ${leagueInfo.color}">${htScore}</div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Posse de Bola</div>
+                                    <div class="stat-value" style="color: ${leagueInfo.color}">
+                                        ${game.stats?.possession ? game.stats.possession.join(' - ') : '0 - 0'}
+                                    </div>
                                 </div>
-                                <div class="stat-item" style="border-color: ${leagueInfo.color}">
-                                    <div class="stat-label">Ataques</div>
-                                    <div class="stat-value" style="color: ${leagueInfo.color}">${game.stats?.attacks ? game.stats.attacks.join('-') : '0-0'}</div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Chutes ao Gol</div>
+                                    <div class="stat-value" style="color: ${leagueInfo.color}">
+                                        ${game.stats?.shotsOnTarget ? game.stats.shotsOnTarget.join(' - ') : '0 - 0'}
+                                    </div>
                                 </div>
-                                <div class="stat-item" style="border-color: ${leagueInfo.color}">
+                                <div class="stat-item">
                                     <div class="stat-label">Escanteios</div>
-                                    <div class="stat-value" style="color: ${leagueInfo.color}">${game.stats?.corners ? game.stats.corners.join('-') : '0-0'}</div>
+                                    <div class="stat-value" style="color: ${leagueInfo.color}">
+                                        ${game.stats?.corners ? game.stats.corners.join(' - ') : '0 - 0'}
+                                    </div>
                                 </div>
                             </div>
                             <button onclick="window.location.href='h2h_analysis.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${game.homeID}&awayID=${game.awayID}&leagueID=${game.leagueID}'" 
@@ -532,7 +509,7 @@
                     console.error('Erro ao buscar jogos ao vivo:', error);
                     const container = document.getElementById('liveGamesContainer');
                     container.innerHTML = `
-                        <div style="text-align: center; padding: 20px; color: var(--danger-color);">
+                        <div class="error-message">
                             Erro ao carregar jogos ao vivo. Por favor, tente novamente.<br>
                             <small style="display: block; margin-top: 10px; color: var(--text-secondary);">
                                 ${error.message}
@@ -547,7 +524,7 @@
         setInterval(updateLiveGames, 10000); // Atualiza a cada 10 segundos
 
         // Atualização em eventos de visibilidade
-        document.addEventListener('visibilitychange', function () {
+        document.addEventListener('visibilitychange', function() {
             if (document.visibilityState === 'visible') {
                 updateLiveGames();
             }
