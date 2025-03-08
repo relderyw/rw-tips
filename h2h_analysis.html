@@ -5,8 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RW TIPS - Análise H2H</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -834,7 +833,7 @@
             <div id="h2hStatsGrid"></div>
         </div>
 
-        <!-- Nova seção para comparação Casa vs Fora -->
+        <!-- Novo container para as métricas de Over HT e FT -->
         <div class="comparison-container">
             <h2 class="comparison-title">Comparativo Casa vs Fora</h2>
             <div class="comparison-grid">
@@ -842,62 +841,62 @@
                 <div class="comparison-card">
                     <h3 class="comparison-label">Over 0.5 HT</h3>
                     <div class="comparison-value">
-                        <span class="comparison-home">75%</span>
+                        <span class="comparison-home">${safePercent(stats.over0_5HT.home, stats.homeGames)}%</span>
                         <span class="comparison-vs">vs</span>
-                        <span class="comparison-away">65%</span>
+                        <span class="comparison-away">${safePercent(stats.over0_5HT.away, stats.awayGames)}%</span>
                     </div>
-                    <p class="comparison-details">Casa: 15/20 | Fora: 13/20</p>
+                    <p class="comparison-details">Casa: ${stats.over0_5HT.home}/${stats.homeGames} | Fora: ${stats.over0_5HT.away}/${stats.awayGames}</p>
                 </div>
 
                 <div class="comparison-card">
                     <h3 class="comparison-label">Over 1.5 HT</h3>
                     <div class="comparison-value">
-                        <span class="comparison-home">60%</span>
+                        <span class="comparison-home">${safePercent(stats.over1_5HT.home, stats.homeGames)}%</span>
                         <span class="comparison-vs">vs</span>
-                        <span class="comparison-away">55%</span>
+                        <span class="comparison-away">${safePercent(stats.over1_5HT.away, stats.awayGames)}%</span>
                     </div>
-                    <p class="comparison-details">Casa: 12/20 | Fora: 11/20</p>
+                    <p class="comparison-details">Casa: ${stats.over1_5HT.home}/${stats.homeGames} | Fora: ${stats.over1_5HT.away}/${stats.awayGames}</p>
                 </div>
 
                 <div class="comparison-card">
                     <h3 class="comparison-label">Over 2.5 HT</h3>
                     <div class="comparison-value">
-                        <span class="comparison-home">35%</span>
+                        <span class="comparison-home">${safePercent(stats.over2_5HT.home, stats.homeGames)}%</span>
                         <span class="comparison-vs">vs</span>
-                        <span class="comparison-away">30%</span>
+                        <span class="comparison-away">${safePercent(stats.over2_5HT.away, stats.awayGames)}%</span>
                     </div>
-                    <p class="comparison-details">Casa: 7/20 | Fora: 6/20</p>
+                    <p class="comparison-details">Casa: ${stats.over2_5HT.home}/${stats.homeGames} | Fora: ${stats.over2_5HT.away}/${stats.awayGames}</p>
                 </div>
 
                 <!-- Full Time Comparisons -->
                 <div class="comparison-card">
                     <h3 class="comparison-label">Over 0.5 FT</h3>
                     <div class="comparison-value">
-                        <span class="comparison-home">90%</span>
+                        <span class="comparison-home">${safePercent(stats.over0_5FT.home, stats.homeGames)}%</span>
                         <span class="comparison-vs">vs</span>
-                        <span class="comparison-away">85%</span>
+                        <span class="comparison-away">${safePercent(stats.over0_5FT.away, stats.awayGames)}%</span>
                     </div>
-                    <p class="comparison-details">Casa: 18/20 | Fora: 17/20</p>
+                    <p class="comparison-details">Casa: ${stats.over0_5FT.home}/${stats.homeGames} | Fora: ${stats.over0_5FT.away}/${stats.awayGames}</p>
                 </div>
 
                 <div class="comparison-card">
                     <h3 class="comparison-label">Over 1.5 FT</h3>
                     <div class="comparison-value">
-                        <span class="comparison-home">75%</span>
+                        <span class="comparison-home">${safePercent(stats.over1_5FT.home, stats.homeGames)}%</span>
                         <span class="comparison-vs">vs</span>
-                        <span class="comparison-away">70%</span>
+                        <span class="comparison-away">${safePercent(stats.over1_5FT.away, stats.awayGames)}%</span>
                     </div>
-                    <p class="comparison-details">Casa: 15/20 | Fora: 14/20</p>
+                    <p class="comparison-details">Casa: ${stats.over1_5FT.home}/${stats.homeGames} | Fora: ${stats.over1_5FT.away}/${stats.awayGames}</p>
                 </div>
 
                 <div class="comparison-card">
                     <h3 class="comparison-label">Over 2.5 FT</h3>
                     <div class="comparison-value">
-                        <span class="comparison-home">55%</span>
+                        <span class="comparison-home">${safePercent(stats.over2_5FT.home, stats.homeGames)}%</span>
                         <span class="comparison-vs">vs</span>
-                        <span class="comparison-away">50%</span>
+                        <span class="comparison-away">${safePercent(stats.over2_5FT.away, stats.awayGames)}%</span>
                     </div>
-                    <p class="comparison-details">Casa: 11/20 | Fora: 10/20</p>
+                    <p class="comparison-details">Casa: ${stats.over2_5FT.home}/${stats.homeGames} | Fora: ${stats.over2_5FT.away}/${stats.awayGames}</p>
                 </div>
             </div>
         </div>
@@ -923,19 +922,9 @@
             window.history.back();
         }
 
-        function getTop3Metrics(stats) {
-            const totalGames = stats.totalGames;
-            const metrics = [
-                { name: 'Over 1.5 HT', value: (stats.over1_5HT / totalGames) * 100, raw: `${stats.over1_5HT}/${totalGames}` },
-                { name: 'Over 2.5 HT', value: (stats.over2_5HT / totalGames) * 100, raw: `${stats.over2_5HT}/${totalGames}` },
-                { name: 'Over 2.5 FT', value: (stats.over2_5FT / totalGames) * 100, raw: `${stats.over2_5FT}/${totalGames}` },
-                { name: 'Over 3.5 FT', value: (stats.over3_5FT / totalGames) * 100, raw: `${stats.over3_5FT}/${totalGames}` },
-                { name: 'Over 4.5 FT', value: (stats.over4_5FT / totalGames) * 100, raw: `${stats.over4_5FT}/${totalGames}` },
-                { name: 'BTTS HT', value: (stats.bttsHT / totalGames) * 100, raw: `${stats.bttsHT}/${totalGames}` },
-                { name: 'BTTS FT', value: (stats.bttsFT / totalGames) * 100, raw: `${stats.bttsFT}/${totalGames}` }
-            ];
-
-            return metrics.sort((a, b) => b.value - a.value).slice(0, 3);
+        function safePercent(value, total) {
+            if (!total || isNaN(total) || total === 0) return '0.0';
+            return ((value / total) * 100).toFixed(1);
         }
 
         function processH2HStats(lastGames) {
@@ -974,46 +963,103 @@
                 stats.totalGoalsHT += totalGoalsHT;
                 stats.totalGoalsFT += totalGoalsFT;
 
+                // Update home/away counters
                 if (game.isHome) {
                     stats.homeGames++;
-                    // Home HT stats
                     if (totalGoalsHT > 0) stats.over0_5HT.home++;
                     if (totalGoalsHT > 1) stats.over1_5HT.home++;
                     if (totalGoalsHT > 2) stats.over2_5HT.home++;
-                    // Home FT stats
                     if (totalGoalsFT > 0) stats.over0_5FT.home++;
                     if (totalGoalsFT > 1) stats.over1_5FT.home++;
                     if (totalGoalsFT > 2) stats.over2_5FT.home++;
                 } else {
                     stats.awayGames++;
-                    // Away HT stats
                     if (totalGoalsHT > 0) stats.over0_5HT.away++;
                     if (totalGoalsHT > 1) stats.over1_5HT.away++;
                     if (totalGoalsHT > 2) stats.over2_5HT.away++;
-                    // Away FT stats
                     if (totalGoalsFT > 0) stats.over0_5FT.away++;
                     if (totalGoalsFT > 1) stats.over1_5FT.away++;
                     if (totalGoalsFT > 2) stats.over2_5FT.away++;
                 }
 
-                // Half Time Stats
+                // Update general stats
                 if (totalGoalsHT > 1) stats.over1_5HT++;
                 if (totalGoalsHT > 2) stats.over2_5HT++;
                 if (homeHT > 0 && awayHT > 0) stats.bttsHT++;
 
-                // Full Time Stats
                 if (totalGoalsFT > 2) stats.over2_5FT++;
                 if (totalGoalsFT > 3) stats.over3_5FT++;
                 if (totalGoalsFT > 4) stats.over4_5FT++;
                 if (homeGoals > 0 && awayGoals > 0) stats.bttsFT++;
 
-                // Match Result
                 if (homeGoals > awayGoals) stats.winHome++;
                 else if (awayGoals > homeGoals) stats.winAway++;
                 else stats.draw++;
             });
 
             return stats;
+        }
+
+        function renderH2HAnalysis(stats) {
+            const container = document.getElementById('h2hStatsGrid');
+            const totalGames = stats.totalGames;
+
+            const h2hStatsHTML = `
+                <div class="metrics-container">
+                    <div class="metrics-column">
+                        <h3>Estatísticas HT</h3>
+                        <div class="stats-grid">
+                            <div class="h2h-stat-card">
+                                <h4>Over 1.5 HT</h4>
+                                <div class="h2h-stat-value">${safePercent(stats.over1_5HT, totalGames)}%</div>
+                                <p>Em ${stats.over1_5HT} de ${totalGames} jogos</p>
+                            </div>
+                            <div class="h2h-stat-card">
+                                <h4>Over 2.5 HT</h4>
+                                <div class="h2h-stat-value">${safePercent(stats.over2_5HT, totalGames)}%</div>
+                                <p>Em ${stats.over2_5HT} de ${totalGames} jogos</p>
+                            </div>
+                            <div class="h2h-stat-card">
+                                <h4>BTTS HT</h4>
+                                <div class="h2h-stat-value">${safePercent(stats.bttsHT, totalGames)}%</div>
+                                <p>Em ${stats.bttsHT} de ${totalGames} jogos</p>
+                            </div>
+                            <div class="h2h-stat-card">
+                                <h4>Média Gols HT</h4>
+                                <div class="h2h-stat-value">${(stats.totalGoalsHT / totalGames).toFixed(2)}</div>
+                                <p>Total: ${stats.totalGoalsHT} gols</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metrics-column">
+                        <h3>Estatísticas FT</h3>
+                        <div class="stats-grid">
+                            <div class="h2h-stat-card">
+                                <h4>Over 2.5 FT</h4>
+                                <div class="h2h-stat-value">${safePercent(stats.over2_5FT, totalGames)}%</div>
+                                <p>Em ${stats.over2_5FT} de ${totalGames} jogos</p>
+                            </div>
+                            <div class="h2h-stat-card">
+                                <h4>Over 3.5 FT</h4>
+                                <div class="h2h-stat-value">${safePercent(stats.over3_5FT, totalGames)}%</div>
+                                <p>Em ${stats.over3_5FT} de ${totalGames} jogos</p>
+                            </div>
+                            <div class="h2h-stat-card">
+                                <h4>BTTS FT</h4>
+                                <div class="h2h-stat-value">${safePercent(stats.bttsFT, totalGames)}%</div>
+                                <p>Em ${stats.bttsFT} de ${totalGames} jogos</p>
+                            </div>
+                            <div class="h2h-stat-card">
+                                <h4>Média Gols FT</h4>
+                                <div class="h2h-stat-value">${(stats.totalGoalsFT / totalGames).toFixed(2)}</div>
+                                <p>Total: ${stats.totalGoalsFT} gols</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = h2hStatsHTML;
         }
 
         function renderProbabilities(h2hStats, playerAName, playerBName) {
@@ -1069,148 +1115,6 @@
                 }
                 return `<div class="history-dot ${result}" title="${game.home} ${game.score} ${game.away}"></div>`;
             }).join('');
-        }
-
-        function renderH2HAnalysis(stats) {
-            const container = document.getElementById('h2hStatsGrid');
-            const totalGames = stats.totalGames;
-
-            const h2hStatsHTML = `
-                <div class="metrics-container">
-                    <div class="metrics-column">
-                        <h3>Estatísticas HT</h3>
-                        <div class="stats-grid">
-                            <div class="h2h-stat-card">
-                                <h4>Over 1.5 HT</h4>
-                                <div class="h2h-stat-value">${((stats.over1_5HT / totalGames) * 100).toFixed(1)}%</div>
-                                <p>Em ${stats.over1_5HT} de ${totalGames} jogos</p>
-                            </div>
-                            <div class="h2h-stat-card">
-                                <h4>Over 2.5 HT</h4>
-                                <div class="h2h-stat-value">${((stats.over2_5HT / totalGames) * 100).toFixed(1)}%</div>
-                                <p>Em ${stats.over2_5HT} de ${totalGames} jogos</p>
-                            </div>
-                            <div class="h2h-stat-card">
-                                <h4>BTTS HT</h4>
-                                <div class="h2h-stat-value">${((stats.bttsHT / totalGames) * 100).toFixed(1)}%</div>
-                                <p>Em ${stats.bttsHT} de ${totalGames} jogos</p>
-                            </div>
-                            <div class="h2h-stat-card">
-                                <h4>Média Gols HT</h4>
-                                <div class="h2h-stat-value">${(stats.totalGoalsHT / totalGames).toFixed(2)}</div>
-                                <p>Total: ${stats.totalGoalsHT} gols</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="metrics-column">
-                        <h3>Estatísticas FT</h3>
-                        <div class="stats-grid">
-                            <div class="h2h-stat-card">
-                                <h4>Over 2.5 FT</h4>
-                                <div class="h2h-stat-value">${((stats.over2_5FT / totalGames) * 100).toFixed(1)}%</div>
-                                <p>Em ${stats.over2_5FT} de ${totalGames} jogos</p>
-                            </div>
-                            <div class="h2h-stat-card">
-                                <h4>Over 3.5 FT</h4>
-                                <div class="h2h-stat-value">${((stats.over3_5FT / totalGames) * 100).toFixed(1)}%</div>
-                                <p>Em ${stats.over3_5FT} de ${totalGames} jogos</p>
-                            </div>
-                            <div class="h2h-stat-card">
-                                <h4>BTTS FT</h4>
-                                <div class="h2h-stat-value">${((stats.bttsFT / totalGames) * 100).toFixed(1)}%</div>
-                                <p>Em ${stats.bttsFT} de ${totalGames} jogos</p>
-                            </div>
-                            <div class="h2h-stat-card">
-                                <h4>Média Gols FT</h4>
-                                <div class="h2h-stat-value">${(stats.totalGoalsFT / totalGames).toFixed(2)}</div>
-                                <p>Total: ${stats.totalGoalsFT} gols</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Nova seção para comparação Casa vs Fora -->
-                <div class="metrics-container mt-8">
-                    <div class="metrics-column">
-                        <h3>Over HT - Casa vs Fora</h3>
-                        <div class="stats-grid">
-                            <div class="h2h-stat-card">
-                                <h4>Over 0.5 HT</h4>
-                                <div class="h2h-stat-value">
-                                    <div class="flex justify-between">
-                                        <span>${((stats.over0_5HT.home / stats.homeGames) * 100).toFixed(1)}%</span>
-                                        <span>vs</span>
-                                        <span>${((stats.over0_5HT.away / stats.awayGames) * 100).toFixed(1)}%</span>
-                                    </div>
-                                </div>
-                                <p>Casa: ${stats.over0_5HT.home}/${stats.homeGames} | Fora: ${stats.over0_5HT.away}/${stats.awayGames}</p>
-                            </div>
-                            <div class="h2h-stat-card">
-                                <h4>Over 1.5 HT</h4>
-                                <div class="h2h-stat-value">
-                                    <div class="flex justify-between">
-                                        <span>${((stats.over1_5HT.home / stats.homeGames) * 100).toFixed(1)}%</span>
-                                        <span>vs</span>
-                                        <span>${((stats.over1_5HT.away / stats.awayGames) * 100).toFixed(1)}%</span>
-                                    </div>
-                                </div>
-                                <p>Casa: ${stats.over1_5HT.home}/${stats.homeGames} | Fora: ${stats.over1_5HT.away}/${stats.awayGames}</p>
-                            </div>
-                            <div class="h2h-stat-card">
-                                <h4>Over 2.5 HT</h4>
-                                <div class="h2h-stat-value">
-                                    <div class="flex justify-between">
-                                        <span>${((stats.over2_5HT.home / stats.homeGames) * 100).toFixed(1)}%</span>
-                                        <span>vs</span>
-                                        <span>${((stats.over2_5HT.away / stats.awayGames) * 100).toFixed(1)}%</span>
-                                    </div>
-                                </div>
-                                <p>Casa: ${stats.over2_5HT.home}/${stats.homeGames} | Fora: ${stats.over2_5HT.away}/${stats.awayGames}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="metrics-column">
-                        <h3>Over FT - Casa vs Fora</h3>
-                        <div class="stats-grid">
-                            <div class="h2h-stat-card">
-                                <h4>Over 0.5 FT</h4>
-                                <div class="h2h-stat-value">
-                                    <div class="flex justify-between">
-                                        <span>${((stats.over0_5FT.home / stats.homeGames) * 100).toFixed(1)}%</span>
-                                        <span>vs</span>
-                                        <span>${((stats.over0_5FT.away / stats.awayGames) * 100).toFixed(1)}%</span>
-                                    </div>
-                                </div>
-                                <p>Casa: ${stats.over0_5FT.home}/${stats.homeGames} | Fora: ${stats.over0_5FT.away}/${stats.awayGames}</p>
-                            </div>
-                            <div class="h2h-stat-card">
-                                <h4>Over 1.5 FT</h4>
-                                <div class="h2h-stat-value">
-                                    <div class="flex justify-between">
-                                        <span>${((stats.over1_5FT.home / stats.homeGames) * 100).toFixed(1)}%</span>
-                                        <span>vs</span>
-                                        <span>${((stats.over1_5FT.away / stats.awayGames) * 100).toFixed(1)}%</span>
-                                    </div>
-                                </div>
-                                <p>Casa: ${stats.over1_5FT.home}/${stats.homeGames} | Fora: ${stats.over1_5FT.away}/${stats.awayGames}</p>
-                            </div>
-                            <div class="h2h-stat-card">
-                                <h4>Over 2.5 FT</h4>
-                                <div class="h2h-stat-value">
-                                    <div class="flex justify-between">
-                                        <span>${((stats.over2_5FT.home / stats.homeGames) * 100).toFixed(1)}%</span>
-                                        <span>vs</span>
-                                        <span>${((stats.over2_5FT.away / stats.awayGames) * 100).toFixed(1)}%</span>
-                                    </div>
-                                </div>
-                                <p>Casa: ${stats.over2_5FT.home}/${stats.homeGames} | Fora: ${stats.over2_5FT.away}/${stats.awayGames}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            container.innerHTML = h2hStatsHTML;
         }
 
         function renderPlayerSection(player, playerKey) {
@@ -1356,10 +1260,15 @@
                 const h2hStats = processH2HStats(data.mutualInfos.lastGames);
                 const top3Metrics = getTop3Metrics(h2hStats);
 
+                // Adicionar as métricas ao localStorage para uso na tela de visualização
                 localStorage.setItem(`h2h_metrics_${homeID}_${awayID}`, JSON.stringify(top3Metrics));
 
+                // Renderiza as métricas e jogos do playerA (Madisson) na seção playerA
                 renderPlayerSection(players.playerA, 'playerA');
+
+                // Renderiza as métricas e jogos do playerB (Zangief) na seção playerB
                 renderPlayerSection(players.playerB, 'playerB');
+
                 renderH2HAnalysis(h2hStats);
                 renderProbabilities(h2hStats, players.playerA.name, players.playerB.name);
                 renderH2HGames(data.mutualInfos.lastGames, players.playerA.name, players.playerB.name);
@@ -1369,17 +1278,22 @@
                 alert('Erro ao carregar dados. Por favor, tente novamente.');
             });
 
+        // Adicionar funcionalidade das tabs
         document.addEventListener('DOMContentLoaded', function () {
+            // Funcionalidade das tabs
             const tabs = document.querySelectorAll('.tab-button');
             const contents = document.querySelectorAll('.tab-content');
 
+            // Função para mostrar uma tab específica
             function showTab(tabId) {
+                // Remove active de todas as tabs e conteúdos
                 tabs.forEach(tab => tab.classList.remove('active'));
                 contents.forEach(content => {
                     content.classList.remove('active');
                     content.style.display = 'none';
                 });
 
+                // Adiciona active na tab selecionada e seu conteúdo
                 const selectedTab = document.querySelector(`[data-tab="${tabId}"]`);
                 const selectedContent = document.getElementById(tabId);
 
@@ -1390,6 +1304,7 @@
                 }
             }
 
+            // Adiciona evento de clique em cada tab
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     const tabId = tab.dataset.tab;
@@ -1397,6 +1312,7 @@
                 });
             });
 
+            // Mostra a primeira tab por padrão
             showTab('overview');
         });
     </script>
