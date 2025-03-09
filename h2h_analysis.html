@@ -1273,24 +1273,25 @@
             const recentGames = games.slice(0, limit).reverse();
             return recentGames.map(game => {
                 const [homeGoals, awayGoals] = game.score.split('-').map(Number);
-                const [homeHT, awayHT] = game.scoreHT.split('-').map(Number);
+
+                // Verifica se o time da casa é o primeiro jogador (homePlayer)
+                const isHomeFirst = game.home.toLowerCase().includes(homePlayer.toLowerCase());
+
                 let result;
                 if (homeGoals > awayGoals) {
-                    result = 'home';
+                    // Se o time da casa ganhou e é o primeiro jogador, ou se o time visitante ganhou e é o segundo jogador
+                    result = isHomeFirst ? 'home' : 'away';
                 } else if (awayGoals > homeGoals) {
-                    result = 'away';
+                    // Se o time visitante ganhou e é o primeiro jogador, ou se o time da casa ganhou e é o segundo jogador
+                    result = isHomeFirst ? 'away' : 'home';
                 } else {
                     result = 'draw';
                 }
 
-                // Formatando a data para exibição
-                const gameDate = new Date(game.date).toLocaleDateString('pt-BR');
-
-                // Criando o conteúdo do tooltip
                 const tooltipContent = `
             <div>
                 <strong>${game.home}</strong> vs <strong>${game.away}</strong><br>
-                HT: ${game.scoreHT} | FT: ${game.score}<br>
+                HT: ${game.scoreHT} | FT: ${game.score}
             </div>
         `;
 
