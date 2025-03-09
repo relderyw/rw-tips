@@ -640,17 +640,16 @@
             } else {
                 apiUrl = `https://api.green365.com.br/api/e-soccer/event/stats?homeID=${homeID}&awayID=${awayID}&home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&league=${leagueID}&eventID=0&period=last_30`;
             }
-
-            try {
-                const response = await fetch(apiUrl);
-                const data = await response.json();
-                const h2hStats = processH2HStats(data.mutualInfos.lastGames);
-                return getTop3Metrics(h2hStats);
-            } catch (error) {
-                console.error('Erro ao buscar métricas H2H:', error);
-                return null;
-            }
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            const h2hStats = processH2HStats(data.mutualInfos.lastGames);
+            return getTop3Metrics(h2hStats);
+        } catch (error) {
+            console.error('Erro ao buscar métricas H2H:', error);
+            return null;
         }
+    }
 
         function updateGames() {
             fetch('https://api.green365.com.br/api/league/upcoming?sport=fifa&leagueId=&page=1')
