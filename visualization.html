@@ -588,7 +588,7 @@
         function getTop3Metrics(stats, homePlayer, awayPlayer) {
             const totalGames = stats.totalGames;
 
-            // Métricas base
+            // Métricas base (mantendo a formatação original)
             const metrics = [
                 { name: 'Over 1.5 HT', value: (stats.over1_5HT / totalGames) * 100, raw: `${stats.over1_5HT}/${totalGames}`, icon: '⚽' },
                 { name: 'Over 2.5 HT', value: (stats.over2_5HT / totalGames) * 100, raw: `${stats.over2_5HT}/${totalGames}`, icon: '⚽' },
@@ -606,35 +606,37 @@
             // Encontra métricas com alta probabilidade (acima de 80%)
             const highProbMetrics = metrics.filter(metric => metric.value >= 80);
 
-            // Adiciona análise especial se as condições forem atendidas
+            let finalMetrics = [];
+
+            // Adiciona métricas regulares com alta probabilidade
+            finalMetrics.push(...metrics.filter(m => m.value >= 80));
+
+            // Adiciona análise especial dos jogadores
             if (highProbMetrics.length > 0) {
+                const bestMetric = highProbMetrics[0];
                 if (homeWinRate >= 35) {
-                    metrics.push({
-                        name: `${homePlayer}`,
+                    finalMetrics.push({
+                        name: homePlayer,
                         value: homeWinRate,
                         raw: `${stats.winHome}/${totalGames}`,
                         isSpecial: true,
                         icon: '👑',
-                        description: `Alta taxa de vitória com ${highProbMetrics.map(m => m.name).join(' & ')}`
+                        description: bestMetric.name
                     });
                 }
                 if (awayWinRate >= 35) {
-                    metrics.push({
-                        name: `${awayPlayer}`,
+                    finalMetrics.push({
+                        name: awayPlayer,
                         value: awayWinRate,
                         raw: `${stats.winAway}/${totalGames}`,
                         isSpecial: true,
                         icon: '👑',
-                        description: `Alta taxa de vitória com ${highProbMetrics.map(m => m.name).join(' & ')}`
+                        description: bestMetric.name
                     });
                 }
             }
 
-            // Ordena e pega as top métricas, garantindo que métricas especiais sejam incluídas
-            const regularMetrics = metrics.filter(m => !m.isSpecial && m.value >= 80).sort((a, b) => b.value - a.value);
-            const specialMetrics = metrics.filter(m => m.isSpecial);
-
-            return [...regularMetrics, ...specialMetrics];
+            return finalMetrics;
         }
         async function fetchH2HMetrics(homeID, awayID, leagueID, homePlayer, awayPlayer) {
             let apiUrl;
