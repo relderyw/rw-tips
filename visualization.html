@@ -588,7 +588,7 @@
         function getTop3Metrics(stats, homePlayer, awayPlayer) {
             const totalGames = stats.totalGames;
 
-            // Métricas base (mantendo a formatação original)
+            // Métricas base
             const metrics = [
                 { name: 'Over 1.5 HT', value: (stats.over1_5HT / totalGames) * 100, raw: `${stats.over1_5HT}/${totalGames}`, icon: '⚽' },
                 { name: 'Over 2.5 HT', value: (stats.over2_5HT / totalGames) * 100, raw: `${stats.over2_5HT}/${totalGames}`, icon: '⚽' },
@@ -616,7 +616,7 @@
                 const bestMetric = highProbMetrics[0];
                 if (homeWinRate >= 35) {
                     finalMetrics.push({
-                        name: homePlayer,
+                        name: homePlayer, // Usa o nome do Player 1
                         value: homeWinRate,
                         raw: `${stats.winHome}/${totalGames}`,
                         isSpecial: true,
@@ -626,7 +626,7 @@
                 }
                 if (awayWinRate >= 35) {
                     finalMetrics.push({
-                        name: awayPlayer,
+                        name: awayPlayer, // Usa o nome do Player 2
                         value: awayWinRate,
                         raw: `${stats.winAway}/${totalGames}`,
                         isSpecial: true,
