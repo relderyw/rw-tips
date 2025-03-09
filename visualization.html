@@ -613,7 +613,7 @@
                         raw: `${stats.winHome}/${totalGames}`,
                         isSpecial: true,
                         icon: '👑',
-                        description: `Alta taxa de vitória com ${highProbMetrics.map(m => m.name).join(' & ')}`
+                        description: `${highProbMetrics.map(m => m.name).join(' & ')}`
                     });
                 }
                 if (awayWinRate >= 35) {
@@ -623,7 +623,7 @@
                         raw: `${stats.winAway}/${totalGames}`,
                         isSpecial: true,
                         icon: '👑',
-                        description: `Alta taxa de vitória com ${highProbMetrics.map(m => m.name).join(' & ')}`
+                        description: `${highProbMetrics.map(m => m.name).join(' & ')}`
                     });
                 }
             }
