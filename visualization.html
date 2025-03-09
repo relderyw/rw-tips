@@ -585,7 +585,7 @@
             return stats;
         }
 
-        function getTop3Metrics(stats, homePlayer = 'Home Player', awayPlayer = 'Away Player') {
+        function getTop3Metrics(stats, homePlayer, awayPlayer) {
             const totalGames = stats.totalGames;
 
             // Métricas base (mantendo a formatação original)
@@ -594,9 +594,7 @@
                 { name: 'Over 2.5 HT', value: (stats.over2_5HT / totalGames) * 100, raw: `${stats.over2_5HT}/${totalGames}`, icon: '⚽' },
                 { name: 'Over 2.5 FT', value: (stats.over2_5FT / totalGames) * 100, raw: `${stats.over2_5FT}/${totalGames}`, icon: '⚽' },
                 { name: 'Over 3.5 FT', value: (stats.over3_5FT / totalGames) * 100, raw: `${stats.over3_5FT}/${totalGames}`, icon: '⚽' },
-                { name: 'Over 4.5 FT', value: (stats.over4_5FT / totalGames) * 100, raw: `${stats.over4_5FT}/${totalGames}`, icon: '⚽' },
-                { name: 'BTTS HT', value: (stats.bttsHT / totalGames) * 100, raw: `${stats.bttsHT}/${totalGames}`, icon: '🥅' },
-                { name: 'BTTS FT', value: (stats.bttsFT / totalGames) * 100, raw: `${stats.bttsFT}/${totalGames}`, icon: '🥅' }
+                { name: 'Over 4.5 FT', value: (stats.over4_5FT / totalGames) * 100, raw: `${stats.over4_5FT}/${totalGames}`, icon: '⚽' }
             ];
 
             // Calcula taxa de vitórias
@@ -605,10 +603,6 @@
 
             // Encontra métricas com alta probabilidade (acima de 80%)
             const highProbMetrics = metrics.filter(metric => metric.value >= 80);
-
-            const homePlayer = extractPlayerName(game.home);
-            const awayPlayer = extractPlayerName(game.away);
-
 
             let finalMetrics = [];
 
@@ -620,22 +614,20 @@
                 const bestMetric = highProbMetrics[0];
                 if (homeWinRate >= 35) {
                     finalMetrics.push({
-                        name: homePlayer,
+                        name: `${homePlayer} - ${bestMetric.name}`,  // Changed format here
                         value: homeWinRate,
                         raw: `${stats.winHome}/${totalGames}`,
                         isSpecial: true,
-                        icon: '👑',
-                        description: bestMetric.name
+                        icon: '👑'
                     });
                 }
                 if (awayWinRate >= 35) {
                     finalMetrics.push({
-                        name: awayPlayer,
+                        name: `${awayPlayer} - ${bestMetric.name}`,  // Changed format here
                         value: awayWinRate,
                         raw: `${stats.winAway}/${totalGames}`,
                         isSpecial: true,
-                        icon: '👑',
-                        description: bestMetric.name
+                        icon: '👑'
                     });
                 }
             }
