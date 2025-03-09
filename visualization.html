@@ -608,22 +608,22 @@
             if (highProbMetrics.length > 0) {
                 if (homeWinRate >= 35) {
                     metrics.push({
-                        name: `${homePlayer}`,
+                        name: homePlayer.trim(),  // Garante que o nome está limpo
                         value: homeWinRate,
                         raw: `${stats.winHome}/${totalGames}`,
                         isSpecial: true,
                         icon: '👑',
-                        description: `${highProbMetrics[0].name}`  // Mostra apenas a primeira métrica de alta probabilidade
+                        description: `${highProbMetrics[0].name}`
                     });
                 }
                 if (awayWinRate >= 35) {
                     metrics.push({
-                        name: `${awayPlayer}`,
+                        name: awayPlayer.trim(),  // Garante que o nome está limpo
                         value: awayWinRate,
                         raw: `${stats.winAway}/${totalGames}`,
                         isSpecial: true,
                         icon: '👑',
-                        description: `${highProbMetrics[0].name}`  // Mostra apenas a primeira métrica de alta probabilidade
+                        description: `${highProbMetrics[0].name}`
                     });
                 }
             }
@@ -705,17 +705,17 @@
                         const metrics = await fetchH2HMetrics(game.homeID, game.awayID, game.leagueID, homePlayer, awayPlayer);
                         if (metrics) {
                             metricsContainer.innerHTML = metrics.map(metric => `
-        <div class="metric-item ${metric.isSpecial ? 'special-metric' : ''}">
-            <span class="metric-name">
-                ${metric.icon} ${metric.name}
-                ${metric.isSpecial ? `<br><small class="metric-description">${metric.description}</small>` : ''}
-            </span>
-            <span class="metric-values">
-                <span class="metric-value">${metric.value.toFixed(1)}%</span>
-                <span class="metric-raw">(${metric.raw})</span>
-            </span>
-        </div>
-    `).join('');
+                                <div class="metric-item ${metric.isSpecial ? 'special-metric' : ''}">
+                                    <span class="metric-name">
+                                        ${metric.icon} ${metric.name || ''}
+                                        ${metric.isSpecial ? `<br><small class="metric-description">${metric.description}</small>` : ''}
+                                    </span>
+                                    <span class="metric-values">
+                                        <span class="metric-value">${metric.value.toFixed(1)}%</span>
+                                        <span class="metric-raw">(${metric.raw})</span>
+                                    </span>
+                                </div>
+                            `).join('');
                         } else {
                             metricsContainer.innerHTML = '<div style="text-align: center; padding: 10px;">Sem dados H2H disponíveis</div>';
                         }
