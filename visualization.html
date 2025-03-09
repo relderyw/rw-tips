@@ -310,6 +310,18 @@
             margin-left: 8px;
         }
 
+        .special-metric {
+            background: rgba(108, 92, 231, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            margin: 5px 0;
+        }
+
+        .special-metric small {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+
         .h2h-button {
             width: 100%;
             padding: 15px;
@@ -529,8 +541,10 @@
             return stats;
         }
 
-        function getTop3Metrics(stats) {
+        function getTop3Metrics(stats, homePlayer, awayPlayer) {
             const totalGames = stats.totalGames;
+
+            // Métricas base
             const metrics = [
                 { name: 'Over 1.5 HT', value: (stats.over1_5HT / totalGames) * 100, raw: `${stats.over1_5HT}/${totalGames}` },
                 { name: 'Over 2.5 HT', value: (stats.over2_5HT / totalGames) * 100, raw: `${stats.over2_5HT}/${totalGames}` },
@@ -541,9 +555,41 @@
                 { name: 'BTTS FT', value: (stats.bttsFT / totalGames) * 100, raw: `${stats.bttsFT}/${totalGames}` }
             ];
 
-            return metrics.sort((a, b) => b.value - a.value).slice(0, 3);
-        }
+            // Calcula taxa de vitórias
+            const homeWinRate = (stats.winHome / totalGames) * 100;
+            const awayWinRate = (stats.winAway / totalGames) * 100;
 
+            // Encontra métricas com alta probabilidade (acima de 80%)
+            const highProbMetrics = metrics.filter(metric => metric.value >= 80);
+
+            // Adiciona análise especial se as condições forem atendidas
+            if (highProbMetrics.length > 0) {
+                if (homeWinRate >= 35) {
+                    metrics.push({
+                        name: `${homePlayer} Alta Win%`,
+                        value: homeWinRate,
+                        raw: `${stats.winHome}/${totalGames}`,
+                        isSpecial: true,
+                        description: `${homePlayer} vence com ${highProbMetrics.map(m => m.name).join(' & ')}`
+                    });
+                }
+                if (awayWinRate >= 35) {
+                    metrics.push({
+                        name: `${awayPlayer} Alta Win%`,
+                        value: awayWinRate,
+                        raw: `${stats.winAway}/${totalGames}`,
+                        isSpecial: true,
+                        description: `${awayPlayer} vence com ${highProbMetrics.map(m => m.name).join(' & ')}`
+                    });
+                }
+            }
+
+            // Ordena e pega as top métricas, garantindo que métricas especiais sejam incluídas
+            const regularMetrics = metrics.filter(m => !m.isSpecial).sort((a, b) => b.value - a.value).slice(0, 3);
+            const specialMetrics = metrics.filter(m => m.isSpecial);
+
+            return [...regularMetrics, ...specialMetrics].slice(0, 3);
+        }
         async function fetchH2HMetrics(homeID, awayID, leagueID, homePlayer, awayPlayer) {
             let apiUrl;
             if (leagueID === '22614') {
@@ -614,29 +660,18 @@
                         // Buscar métricas H2H
                         const metrics = await fetchH2HMetrics(game.homeID, game.awayID, game.leagueID, homePlayer, awayPlayer);
                         if (metrics) {
-                            metricsContainer.innerHTML = `
-                                <div class="metric-item">
-                                    <span class="metric-name">🎯 ${metrics[0].name}</span>
-                                    <span>
-                                        <span class="metric-value">${metrics[0].value.toFixed(1)}%</span>
-                                        <span class="metric-raw">(${metrics[0].raw})</span>
-                                    </span>
-                                </div>
-                                <div class="metric-item">
-                                    <span class="metric-name">📈 ${metrics[1].name}</span>
-                                    <span>
-                                        <span class="metric-value">${metrics[1].value.toFixed(1)}%</span>
-                                        <span class="metric-raw">(${metrics[1].raw})</span>
-                                    </span>
-                                </div>
-                                <div class="metric-item">
-                                    <span class="metric-name">🎲 ${metrics[2].name}</span>
-                                    <span>
-                                        <span class="metric-value">${metrics[2].value.toFixed(1)}%</span>
-                                        <span class="metric-raw">(${metrics[2].raw})</span>
-                                    </span>
-                                </div>
-                            `;
+                            metricsContainer.innerHTML = metrics.map(metric => `
+        <div class="metric-item ${metric.isSpecial ? 'special-metric' : ''}">
+            <span class="metric-name">
+                ${metric.isSpecial ? '🏆' : '🎯'} ${metric.name}
+                ${metric.isSpecial ? `<br><small style="color: var(--accent-color)">${metric.description}</small>` : ''}
+            </span>
+            <span>
+                <span class="metric-value">${metric.value.toFixed(1)}%</span>
+                <span class="metric-raw">(${metric.raw})</span>
+            </span>
+        </div>
+    `).join('');
                         } else {
                             metricsContainer.innerHTML = '<div style="text-align: center; padding: 10px;">Sem dados H2H disponíveis</div>';
                         }
