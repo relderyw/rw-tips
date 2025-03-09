@@ -610,22 +610,22 @@
             if (highProbMetrics.length > 0) {
                 if (homeWinRate >= 35) {
                     metrics.push({
-                        name: homePlayer.trim(),  // Garante que o nome está limpo
+                        name: `${homePlayer}`,
                         value: homeWinRate,
                         raw: `${stats.winHome}/${totalGames}`,
                         isSpecial: true,
                         icon: '👑',
-                        description: `${highProbMetrics[0].name}`
+                        description: `Alta taxa de vitória com ${highProbMetrics.map(m => m.name).join(' & ')}`
                     });
                 }
                 if (awayWinRate >= 35) {
                     metrics.push({
-                        name: awayPlayer.trim(),  // Garante que o nome está limpo
+                        name: `${awayPlayer}`,
                         value: awayWinRate,
                         raw: `${stats.winAway}/${totalGames}`,
                         isSpecial: true,
                         icon: '👑',
-                        description: `${highProbMetrics[0].name}`
+                        description: `Alta taxa de vitória com ${highProbMetrics.map(m => m.name).join(' & ')}`
                     });
                 }
             }
