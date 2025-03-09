@@ -276,7 +276,49 @@
             position: relative;
             z-index: 1;
         }
+.metric-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 8px 0;
+    background: rgba(108, 92, 231, 0.05);
+    transition: all 0.3s ease;
+}
 
+.metric-item:hover {
+    background: rgba(108, 92, 231, 0.1);
+    transform: translateX(5px);
+}
+
+.special-metric {
+    background: linear-gradient(45deg, rgba(108, 92, 231, 0.1), rgba(0, 255, 136, 0.1));
+    border-left: 4px solid var(--accent-color);
+}
+
+.metric-description {
+    color: var(--accent-color);
+    font-size: 0.85em;
+    margin-top: 4px;
+    display: block;
+}
+
+.metric-values {
+    text-align: right;
+}
+
+.metric-value {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: var(--accent-color);
+}
+
+.metric-raw {
+    color: var(--text-secondary);
+    font-size: 0.85em;
+    margin-left: 8px;
+}
         .metric-item {
             display: flex;
             justify-content: space-between;
@@ -546,13 +588,13 @@
 
             // Métricas base
             const metrics = [
-                { name: 'Over 1.5 HT', value: (stats.over1_5HT / totalGames) * 100, raw: `${stats.over1_5HT}/${totalGames}` },
-                { name: 'Over 2.5 HT', value: (stats.over2_5HT / totalGames) * 100, raw: `${stats.over2_5HT}/${totalGames}` },
-                { name: 'Over 2.5 FT', value: (stats.over2_5FT / totalGames) * 100, raw: `${stats.over2_5FT}/${totalGames}` },
-                { name: 'Over 3.5 FT', value: (stats.over3_5FT / totalGames) * 100, raw: `${stats.over3_5FT}/${totalGames}` },
-                { name: 'Over 4.5 FT', value: (stats.over4_5FT / totalGames) * 100, raw: `${stats.over4_5FT}/${totalGames}` },
-                { name: 'BTTS HT', value: (stats.bttsHT / totalGames) * 100, raw: `${stats.bttsHT}/${totalGames}` },
-                { name: 'BTTS FT', value: (stats.bttsFT / totalGames) * 100, raw: `${stats.bttsFT}/${totalGames}` }
+                { name: 'Over 1.5 HT', value: (stats.over1_5HT / totalGames) * 100, raw: `${stats.over1_5HT}/${totalGames}`, icon: '⚽' },
+                { name: 'Over 2.5 HT', value: (stats.over2_5HT / totalGames) * 100, raw: `${stats.over2_5HT}/${totalGames}`, icon: '⚽' },
+                { name: 'Over 2.5 FT', value: (stats.over2_5FT / totalGames) * 100, raw: `${stats.over2_5FT}/${totalGames}`, icon: '⚽' },
+                { name: 'Over 3.5 FT', value: (stats.over3_5FT / totalGames) * 100, raw: `${stats.over3_5FT}/${totalGames}`, icon: '⚽' },
+                { name: 'Over 4.5 FT', value: (stats.over4_5FT / totalGames) * 100, raw: `${stats.over4_5FT}/${totalGames}`, icon: '⚽' },
+                { name: 'BTTS HT', value: (stats.bttsHT / totalGames) * 100, raw: `${stats.bttsHT}/${totalGames}`, icon: '🥅' },
+                { name: 'BTTS FT', value: (stats.bttsFT / totalGames) * 100, raw: `${stats.bttsFT}/${totalGames}`, icon: '🥅' }
             ];
 
             // Calcula taxa de vitórias
@@ -566,29 +608,31 @@
             if (highProbMetrics.length > 0) {
                 if (homeWinRate >= 35) {
                     metrics.push({
-                        name: `${homePlayer} Alta Win%`,
+                        name: `${homePlayer}`,
                         value: homeWinRate,
                         raw: `${stats.winHome}/${totalGames}`,
                         isSpecial: true,
-                        description: `${homePlayer} vence com ${highProbMetrics.map(m => m.name).join(' & ')}`
+                        icon: '👑',
+                        description: `Alta taxa de vitória com ${highProbMetrics.map(m => m.name).join(' & ')}`
                     });
                 }
                 if (awayWinRate >= 35) {
                     metrics.push({
-                        name: `${awayPlayer} Alta Win%`,
+                        name: `${awayPlayer}`,
                         value: awayWinRate,
                         raw: `${stats.winAway}/${totalGames}`,
                         isSpecial: true,
-                        description: `${awayPlayer} vence com ${highProbMetrics.map(m => m.name).join(' & ')}`
+                        icon: '👑',
+                        description: `Alta taxa de vitória com ${highProbMetrics.map(m => m.name).join(' & ')}`
                     });
                 }
             }
 
             // Ordena e pega as top métricas, garantindo que métricas especiais sejam incluídas
-            const regularMetrics = metrics.filter(m => !m.isSpecial).sort((a, b) => b.value - a.value).slice(0, 3);
+            const regularMetrics = metrics.filter(m => !m.isSpecial && m.value >= 80).sort((a, b) => b.value - a.value);
             const specialMetrics = metrics.filter(m => m.isSpecial);
-
-            return [...regularMetrics, ...specialMetrics].slice(0, 3);
+            
+            return [...regularMetrics, ...specialMetrics];
         }
         async function fetchH2HMetrics(homeID, awayID, leagueID, homePlayer, awayPlayer) {
             let apiUrl;
@@ -663,10 +707,10 @@
                             metricsContainer.innerHTML = metrics.map(metric => `
         <div class="metric-item ${metric.isSpecial ? 'special-metric' : ''}">
             <span class="metric-name">
-                ${metric.isSpecial ? '🏆' : '🎯'} ${metric.name}
-                ${metric.isSpecial ? `<br><small style="color: var(--accent-color)">${metric.description}</small>` : ''}
+                ${metric.icon} ${metric.name}
+                ${metric.isSpecial ? `<br><small class="metric-description">${metric.description}</small>` : ''}
             </span>
-            <span>
+            <span class="metric-values">
                 <span class="metric-value">${metric.value.toFixed(1)}%</span>
                 <span class="metric-raw">(${metric.raw})</span>
             </span>
