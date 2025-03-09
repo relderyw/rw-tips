@@ -613,7 +613,7 @@
                         raw: `${stats.winHome}/${totalGames}`,
                         isSpecial: true,
                         icon: '👑',
-                        description: `${highProbMetrics.map(m => m.name).join(' & ')}`
+                        description: `${highProbMetrics[0].name}`  // Mostra apenas a primeira métrica de alta probabilidade
                     });
                 }
                 if (awayWinRate >= 35) {
@@ -623,7 +623,7 @@
                         raw: `${stats.winAway}/${totalGames}`,
                         isSpecial: true,
                         icon: '👑',
-                        description: `${highProbMetrics.map(m => m.name).join(' & ')}`
+                        description: `${highProbMetrics[0].name}`  // Mostra apenas a primeira métrica de alta probabilidade
                     });
                 }
             }
