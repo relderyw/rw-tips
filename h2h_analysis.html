@@ -1102,15 +1102,35 @@
             const recentGames = games.slice(0, limit).reverse();
             return recentGames.map(game => {
                 const [homeGoals, awayGoals] = game.score.split('-').map(Number);
+                const [homeHT, awayHT] = game.scoreHT.split('-').map(Number);
+
+                // Verifica se o time da casa é o playerA (primeiro jogador)
+                const isHomePlayerA = game.home.toLowerCase().includes(homePlayer.toLowerCase());
+
                 let result;
                 if (homeGoals > awayGoals) {
-                    result = 'home';
+                    // Se o time da casa ganhou e é o playerA, então é 'home', senão é 'away'
+                    result = isHomePlayerA ? 'home' : 'away';
                 } else if (awayGoals > homeGoals) {
-                    result = 'away';
+                    // Se o time visitante ganhou e não é o playerA, então é 'home', senão é 'away'
+                    result = isHomePlayerA ? 'away' : 'home';
                 } else {
                     result = 'draw';
                 }
-                return `<div class="history-dot ${result}" title="${game.home} ${game.score} ${game.away}"></div>`;
+
+                // Tooltip simplificado sem a data
+                const tooltipContent = `
+            <div>
+                <strong>${game.home}</strong> vs <strong>${game.away}</strong><br>
+                HT: ${game.scoreHT} | FT: ${game.score}
+            </div>
+        `;
+
+                return `
+            <div class="history-dot ${result}">
+                <div class="game-tooltip">${tooltipContent}</div>
+            </div>
+        `;
             }).join('');
         }
 
