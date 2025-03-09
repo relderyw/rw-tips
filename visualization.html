@@ -585,10 +585,10 @@
             return stats;
         }
 
-        function getTop3Metrics(stats, homePlayer, awayPlayer) {
+        function getTop3Metrics(stats, homePlayer = 'Home Player', awayPlayer = 'Away Player') {
             const totalGames = stats.totalGames;
 
-            // Métricas base
+            // Métricas base (mantendo a formatação original)
             const metrics = [
                 { name: 'Over 1.5 HT', value: (stats.over1_5HT / totalGames) * 100, raw: `${stats.over1_5HT}/${totalGames}`, icon: '⚽' },
                 { name: 'Over 2.5 HT', value: (stats.over2_5HT / totalGames) * 100, raw: `${stats.over2_5HT}/${totalGames}`, icon: '⚽' },
@@ -616,7 +616,7 @@
                 const bestMetric = highProbMetrics[0];
                 if (homeWinRate >= 35) {
                     finalMetrics.push({
-                        name: homePlayer, // Usa o nome do Player 1
+                        name: homePlayer || 'Home Player',
                         value: homeWinRate,
                         raw: `${stats.winHome}/${totalGames}`,
                         isSpecial: true,
@@ -626,7 +626,7 @@
                 }
                 if (awayWinRate >= 35) {
                     finalMetrics.push({
-                        name: awayPlayer, // Usa o nome do Player 2
+                        name: awayPlayer || 'Away Player',
                         value: awayWinRate,
                         raw: `${stats.winAway}/${totalGames}`,
                         isSpecial: true,
@@ -638,6 +638,7 @@
 
             return finalMetrics;
         }
+
         async function fetchH2HMetrics(homeID, awayID, leagueID, homePlayer, awayPlayer) {
             let apiUrl;
             if (leagueID === '22614') {
