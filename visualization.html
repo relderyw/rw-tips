@@ -276,49 +276,51 @@
             position: relative;
             z-index: 1;
         }
-.metric-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px;
-    border-radius: 8px;
-    margin: 8px 0;
-    background: rgba(108, 92, 231, 0.05);
-    transition: all 0.3s ease;
-}
 
-.metric-item:hover {
-    background: rgba(108, 92, 231, 0.1);
-    transform: translateX(5px);
-}
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 8px 0;
+            background: rgba(108, 92, 231, 0.05);
+            transition: all 0.3s ease;
+        }
 
-.special-metric {
-    background: linear-gradient(45deg, rgba(108, 92, 231, 0.1), rgba(0, 255, 136, 0.1));
-    border-left: 4px solid var(--accent-color);
-}
+        .metric-item:hover {
+            background: rgba(108, 92, 231, 0.1);
+            transform: translateX(5px);
+        }
 
-.metric-description {
-    color: var(--accent-color);
-    font-size: 0.85em;
-    margin-top: 4px;
-    display: block;
-}
+        .special-metric {
+            background: linear-gradient(45deg, rgba(108, 92, 231, 0.1), rgba(0, 255, 136, 0.1));
+            border-left: 4px solid var(--accent-color);
+        }
 
-.metric-values {
-    text-align: right;
-}
+        .metric-description {
+            color: var(--accent-color);
+            font-size: 0.85em;
+            margin-top: 4px;
+            display: block;
+        }
 
-.metric-value {
-    font-size: 1.1em;
-    font-weight: 600;
-    color: var(--accent-color);
-}
+        .metric-values {
+            text-align: right;
+        }
 
-.metric-raw {
-    color: var(--text-secondary);
-    font-size: 0.85em;
-    margin-left: 8px;
-}
+        .metric-value {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .metric-raw {
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            margin-left: 8px;
+        }
+
         .metric-item {
             display: flex;
             justify-content: space-between;
@@ -602,8 +604,8 @@
             const awayWinRate = (stats.winAway / totalGames) * 100;
 
             // Encontra métricas com alta probabilidade (acima de 80%)
-            const highProbMetrics = metrics.filter(metric => metric.value >= 85);
-            
+            const highProbMetrics = metrics.filter(metric => metric.value >= 80);
+
             // Adiciona análise especial se as condições forem atendidas
             if (highProbMetrics.length > 0) {
                 if (homeWinRate >= 35) {
@@ -627,10 +629,11 @@
                     });
                 }
             }
-            // Retorna todas as métricas relevantes
+
+            // Ordena e pega as top métricas, garantindo que métricas especiais sejam incluídas
             const regularMetrics = metrics.filter(m => !m.isSpecial && m.value >= 80).sort((a, b) => b.value - a.value);
             const specialMetrics = metrics.filter(m => m.isSpecial);
-            
+
             return [...regularMetrics, ...specialMetrics];
         }
         async function fetchH2HMetrics(homeID, awayID, leagueID, homePlayer, awayPlayer) {
@@ -640,16 +643,17 @@
             } else {
                 apiUrl = `https://api.green365.com.br/api/e-soccer/event/stats?homeID=${homeID}&awayID=${awayID}&home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&league=${leagueID}&eventID=0&period=last_30`;
             }
-        try {
-            const response = await fetch(apiUrl);
-            const data = await response.json();
-            const h2hStats = processH2HStats(data.mutualInfos.lastGames);
-            return getTop3Metrics(h2hStats);
-        } catch (error) {
-            console.error('Erro ao buscar métricas H2H:', error);
-            return null;
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                const h2hStats = processH2HStats(data.mutualInfos.lastGames);
+                return getTop3Metrics(h2hStats);
+            } catch (error) {
+                console.error('Erro ao buscar métricas H2H:', error);
+                return null;
+            }
         }
-    }
 
         function updateGames() {
             fetch('https://api.green365.com.br/api/league/upcoming?sport=fifa&leagueId=&page=1')
@@ -703,17 +707,17 @@
                         const metrics = await fetchH2HMetrics(game.homeID, game.awayID, game.leagueID, homePlayer, awayPlayer);
                         if (metrics) {
                             metricsContainer.innerHTML = metrics.map(metric => `
-                                <div class="metric-item ${metric.isSpecial ? 'special-metric' : ''}">
-                                    <span class="metric-name">
-                                        ${metric.icon} ${metric.name || ''}
-                                        ${metric.isSpecial ? `<br><small class="metric-description">${metric.description}</small>` : ''}
-                                    </span>
-                                    <span class="metric-values">
-                                        <span class="metric-value">${metric.value.toFixed(1)}%</span>
-                                        <span class="metric-raw">(${metric.raw})</span>
-                                    </span>
-                                </div>
-                            `).join('');
+        <div class="metric-item ${metric.isSpecial ? 'special-metric' : ''}">
+            <span class="metric-name">
+                ${metric.icon} ${metric.name}
+                ${metric.isSpecial ? `<br><small class="metric-description">${metric.description}</small>` : ''}
+            </span>
+            <span class="metric-values">
+                <span class="metric-value">${metric.value.toFixed(1)}%</span>
+                <span class="metric-raw">(${metric.raw})</span>
+            </span>
+        </div>
+    `).join('');
                         } else {
                             metricsContainer.innerHTML = '<div style="text-align: center; padding: 10px;">Sem dados H2H disponíveis</div>';
                         }
