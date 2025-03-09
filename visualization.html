@@ -606,6 +606,10 @@
             // Encontra métricas com alta probabilidade (acima de 80%)
             const highProbMetrics = metrics.filter(metric => metric.value >= 80);
 
+            const homePlayer = extractPlayerName(game.home);
+            const awayPlayer = extractPlayerName(game.away);
+
+
             let finalMetrics = [];
 
             // Adiciona métricas regulares com alta probabilidade
@@ -616,7 +620,7 @@
                 const bestMetric = highProbMetrics[0];
                 if (homeWinRate >= 35) {
                     finalMetrics.push({
-                        name: homePlayer || 'Home Player',
+                        name: homePlayer,
                         value: homeWinRate,
                         raw: `${stats.winHome}/${totalGames}`,
                         isSpecial: true,
@@ -626,7 +630,7 @@
                 }
                 if (awayWinRate >= 35) {
                     finalMetrics.push({
-                        name: awayPlayer || 'Away Player',
+                        name: awayPlayer,
                         value: awayWinRate,
                         raw: `${stats.winAway}/${totalGames}`,
                         isSpecial: true,
