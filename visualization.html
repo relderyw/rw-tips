@@ -602,8 +602,8 @@
             const awayWinRate = (stats.winAway / totalGames) * 100;
 
             // Encontra métricas com alta probabilidade (acima de 80%)
-            const highProbMetrics = metrics.filter(metric => metric.value >= 80);
-
+            const highProbMetrics = metrics.filter(metric => metric.value >= 85);
+            
             // Adiciona análise especial se as condições forem atendidas
             if (highProbMetrics.length > 0) {
                 if (homeWinRate >= 35) {
@@ -627,8 +627,7 @@
                     });
                 }
             }
-
-            // Ordena e pega as top métricas, garantindo que métricas especiais sejam incluídas
+            // Retorna todas as métricas relevantes
             const regularMetrics = metrics.filter(m => !m.isSpecial && m.value >= 80).sort((a, b) => b.value - a.value);
             const specialMetrics = metrics.filter(m => m.isSpecial);
             
