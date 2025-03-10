@@ -449,77 +449,6 @@
       padding: 1rem;
       color: #9ca3af;
     }
-
-    /* Novos estilos para estatísticas */
-    .stats-container {
-      background: linear-gradient(to bottom right, #1f2937, #111827);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-
-    .stat-card {
-      background: rgba(31, 41, 55, 0.5);
-      border-radius: 10px;
-      padding: 15px;
-      text-align: center;
-    }
-
-    .stat-label {
-      color: #9ca3af;
-      font-size: 0.85rem;
-      margin-bottom: 8px;
-    }
-
-    .stat-value {
-      font-size: 1.2rem;
-      font-weight: 600;
-    }
-
-    .stat-value.positive {
-      color: #10b981;
-    }
-
-    .stat-value.negative {
-      color: #ef4444;
-    }
-
-    .chart-container {
-      background: rgba(31, 41, 55, 0.5);
-      border-radius: 12px;
-      padding: 20px;
-      height: 300px;
-      position: relative;
-    }
-
-    .roi-indicator {
-      position: absolute;
-      right: 10px;
-      top: 10px;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 600;
-    }
-
-    .roi-positive {
-      background: rgba(16, 185, 129, 0.2);
-      color: #10b981;
-      border: 1px solid rgba(16, 185, 129, 0.4);
-    }
-
-    .roi-negative {
-      background: rgba(239, 68, 68, 0.2);
-      color: #ef4444;
-      border: 1px solid rgba(239, 68, 68, 0.4);
-    }
   </style>
 </head>
 
@@ -643,37 +572,35 @@
 
       <!-- Conteúdo da aba de histórico -->
       <div class="tab-content" id="history-tab">
-        <div class="stats-container">
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-label">Apostas</div>
-              <div class="stat-value" id="total-apostas">0</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">Lucro/Prejuízo</div>
-              <div class="stat-value" id="lucro-value">R$ 0,00</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">ROI</div>
-              <div class="stat-value" id="roi-value">0%</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-label">Progressão</div>
-              <div class="stat-value" id="progression-value">0%</div>
-            </div>
+        <!-- Resumo -->
+        <div class="summary">
+          <div class="summary-item gain">
+            <div class="label">Ganho Total</div>
+            <div class="value" id="ganho-total">R$ 0,00</div>
           </div>
-
-          <div class="chart-container">
-            <div id="roi-indicator" class="roi-indicator">0%</div>
-            <div id="grafico"></div>
+          <div class="summary-item loss">
+            <div class="label">Perda Total</div>
+            <div class="value" id="perda-total">R$ 0,00</div>
+          </div>
+          <div class="summary-item balance">
+            <div class="label">Saldo Total</div>
+            <div class="value" id="saldo-total">R$ 0,00</div>
           </div>
         </div>
 
+        <!-- Gráfico -->
+        <div class="chart-container">
+          <h3 class="chart-title">Desempenho (7 dias)</h3>
+          <div id="grafico"></div>
+        </div>
+
+        <!-- Lista de apostas -->
         <h3 class="history-title">Histórico de Apostas</h3>
-        <div id="apostas-lista" class="history-list">
-          <!-- Lista de apostas será preenchida dinamicamente -->
+        <div class="history-list" id="apostas-lista">
+          <!-- Preenchido dinamicamente -->
         </div>
       </div>
+
       <!-- Conteúdo da aba de mercados -->
       <div class="tab-content" id="markets-tab">
         <h3 class="history-title">Gerenciar Mercados</h3>
@@ -991,88 +918,94 @@
 
     // Função para carregar as apostas
     function carregarApostas() {
-      if (!currentUser) {
-        console.log("Usuário não autenticado");
-        return;
-      }
-
       const apostasLista = document.getElementById("apostas-lista");
-      apostasLista.innerHTML = '<div class="loading">Carregando apostas...</div>';
+      apostasLista.innerHTML = '<div class="loading">Carregando apostas</div>';
 
-      try {
-        const apostasRef = query(
-          collection(db, "apostas"),
-          where("userEmail", "==", currentUser),
-          orderBy("timestamp", "desc")
-        );
+      // Filtrar apostas apenas do usuário atual
+      const apostasRef = query(
+        collection(db, "apostas"),
+        where("userEmail", "==", currentUser),
+        orderBy("timestamp", "desc")
+      );
 
-        const unsubscribe = onSnapshot(apostasRef, (snapshot) => {
-          let todasApostas = [];
+      onSnapshot(apostasRef, (snapshot) => {
+        let ganhoTotal = 0;
+        let perdaTotal = 0;
+        let todasApostas = [];
 
-          if (snapshot.empty) {
-            apostasLista.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Nenhuma aposta registrada</div>';
-            criarGrafico([]);
-            return;
+        if (snapshot.empty) {
+          apostasLista.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Nenhuma aposta registrada</div>';
+          document.getElementById("grafico").innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Sem dados para exibir</div>';
+
+          // Zerar totais quando não há apostas
+          document.getElementById("ganho-total").innerHTML = `Ganho Total<strong>${formatarMoeda(0)}</strong>`;
+          document.getElementById("perda-total").innerHTML = `Perda Total<strong>${formatarMoeda(0)}</strong>`;
+          document.getElementById("saldo-total").innerHTML = `Saldo Total<strong>${formatarMoeda(0)}</strong>`;
+          return;
+        }
+
+        apostasLista.innerHTML = "";
+
+        snapshot.forEach((doc) => {
+          const aposta = doc.data();
+          todasApostas.push({ ...aposta, id: doc.id });
+
+          const apostaItem = document.createElement("div");
+          apostaItem.classList.add("aposta-item");
+
+          const stake = parseFloat(aposta.stake.toString().replace(/[^\d.,]/g, "").replace(",", "."));
+          const odds = parseFloat(aposta.odds.toString().replace(",", "."));
+          let valorFinal = 0;
+
+          switch (aposta.resultado) {
+            case "green":
+              valorFinal = stake * (odds - 1);
+              ganhoTotal += valorFinal;
+              break;
+            case "red":
+              valorFinal = -stake;
+              perdaTotal += stake;
+              break;
+            case "meio-green":
+              valorFinal = (stake / 2) * (odds - 1);
+              ganhoTotal += valorFinal;
+              break;
+            case "meio-red":
+              valorFinal = -stake / 2;
+              perdaTotal += stake / 2;
+              break;
           }
 
-          // Processar apostas e criar HTML
-          const apostasHTML = [];
-          snapshot.forEach((doc) => {
-            const aposta = { ...doc.data(), id: doc.id };
-            todasApostas.push(aposta);
+          const statusClass = getStatusClass(aposta.resultado);
+          const statusText = getStatusText(aposta.resultado);
+          const valorFinalText = valorFinal === 0 ? "" : ` (${formatarMoeda(valorFinal)})`;
+          const dataFormatada = aposta.timestamp?.toDate().toLocaleString('pt-BR') || '';
 
-            // Calcular valor final da aposta
-            const stake = parseFloat(aposta.stake.toString().replace(/[^\d.,]/g, "").replace(",", "."));
-            const odds = parseFloat(aposta.odds.toString().replace(",", "."));
-            const valorFinal = calcularValorAposta(stake, odds, aposta.resultado);
+          apostaItem.innerHTML = `
+            <div class="aposta-info">
+              <strong>${aposta.liga}</strong> · <span class="${statusClass}">${statusText}${valorFinalText}</span><br>
+              ${aposta.jogador1} vs ${aposta.jogador2}<br>
+              <small>${aposta.mercado} · Stake: ${formatarMoeda(stake)} · Odds: ${odds}</small><br>
+              <small>${dataFormatada}</small>
+            </div>
+            <div class="aposta-actions">
+              <button onclick="removerAposta('${doc.id}')">Remover</button>
+            </div>
+          `;
 
-            // Criar HTML para cada aposta
-            apostasHTML.push(`
-                    <div class="aposta-item">
-                        <div class="aposta-info">
-                            <strong>${aposta.liga}</strong> - ${aposta.jogador1} vs ${aposta.jogador2}
-                            <br>
-                            <small>
-                                Mercado: ${aposta.mercado} | 
-                                Stake: ${formatarMoeda(stake)} | 
-                                Odds: ${odds}
-                            </small>
-                            <br>
-                            <small>
-                                Resultado: <span class="status-badge ${getStatusClass(aposta.resultado)}">
-                                    ${getStatusText(aposta.resultado)}
-                                </span>
-                                | Valor Final: ${formatarMoeda(valorFinal)}
-                            </small>
-                        </div>
-                        <div class="aposta-actions">
-                            <button onclick="removerAposta('${aposta.id}')" class="remove-bet" data-id="${aposta.id}">
-                                <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="3 6 5 6 21 6"></polyline>
-                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                `);
-          });
-
-          // Atualizar lista de apostas
-          apostasLista.innerHTML = apostasHTML.join("");
-
-          // Atualizar gráfico
-          criarGrafico(todasApostas);
-        }, (error) => {
-          console.error("Erro ao carregar apostas:", error);
-          apostasLista.innerHTML = '<div style="color: red; text-align: center;">Erro ao carregar apostas</div>';
+          apostasLista.appendChild(apostaItem);
         });
 
-        return unsubscribe;
-      } catch (error) {
-        console.error("Erro ao configurar listener:", error);
-        apostasLista.innerHTML = '<div style="color: red; text-align: center;">Erro ao configurar listener</div>';
-      }
+        // Atualizar resumo
+        document.getElementById("ganho-total").innerHTML = `Ganho Total<strong>${formatarMoeda(ganhoTotal)}</strong>`;
+        document.getElementById("perda-total").innerHTML = `Perda Total<strong>${formatarMoeda(perdaTotal)}</strong>`;
+        document.getElementById("saldo-total").innerHTML = `Saldo Total<strong>${formatarMoeda(ganhoTotal - perdaTotal)}</strong>`;
+
+        // Criar gráfico
+        criarGrafico(todasApostas);
+      });
     }
+
     function getStatusText(resultado) {
       const statusMap = {
         'green': 'Green',
@@ -1096,164 +1029,125 @@
     }
 
     async function criarGrafico(apostas) {
-      if (!apostas || apostas.length === 0) {
-        document.getElementById("grafico").innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Sem dados para exibir</div>';
-        return;
-      }
-
       const ctx = document.createElement("canvas");
       document.getElementById("grafico").innerHTML = "";
       document.getElementById("grafico").appendChild(ctx);
 
       // Obter os últimos 7 dias
-      const datas = Array.from({ length: 7 }, (_, i) => {
+      const datas = [];
+      for (let i = 6; i >= 0; i--) {
         const data = new Date();
-        data.setDate(data.getDate() - (6 - i));
-        return data;
-      });
+        data.setDate(data.getDate() - i);
+        datas.push(data);
+      }
 
-      // Calcular saldos diários e acumulados
-      let saldoAcumulado = 0;
-      const saldosDiarios = datas.map(data => {
+      // Calcular saldos diários
+      const saldosDiarios = datas.map((data) => {
         const dataStr = data.toLocaleDateString("pt-BR");
         const inicioDoDia = new Date(data.setHours(0, 0, 0, 0));
         const fimDoDia = new Date(data.setHours(23, 59, 59, 999));
 
-        const apostasDoDia = apostas.filter(aposta => {
-          const dataAposta = aposta.timestamp?.toDate();
-          return dataAposta && dataAposta >= inicioDoDia && dataAposta <= fimDoDia;
+        // Filtrar apostas para este dia
+        const apostasDoDia = apostas.filter((aposta) => {
+          const dataAposta = aposta.timestamp?.toDate() || new Date();
+          return dataAposta >= inicioDoDia && dataAposta <= fimDoDia;
         });
 
+        // Calcular saldo para o dia
         let saldoDoDia = 0;
-        apostasDoDia.forEach(aposta => {
+
+        apostasDoDia.forEach((aposta) => {
           const stake = parseFloat(aposta.stake.toString().replace(/[^\d.,]/g, "").replace(",", "."));
           const odds = parseFloat(aposta.odds.toString().replace(",", "."));
 
           switch (aposta.resultado) {
-            case "green": saldoDoDia += stake * (odds - 1); break;
-            case "red": saldoDoDia -= stake; break;
-            case "meio-green": saldoDoDia += (stake / 2) * (odds - 1); break;
-            case "meio-red": saldoDoDia -= stake / 2; break;
+            case "green":
+              saldoDoDia += stake * (odds - 1);
+              break;
+            case "red":
+              saldoDoDia -= stake;
+              break;
+            case "meio-green":
+              saldoDoDia += (stake / 2) * (odds - 1);
+              break;
+            case "meio-red":
+              saldoDoDia -= stake / 2;
+              break;
           }
         });
 
-        saldoAcumulado += saldoDoDia;
         return {
           data: dataStr,
-          saldoDiario: saldoDoDia,
-          saldoAcumulado: saldoAcumulado
+          saldo: saldoDoDia,
         };
       });
 
-      // Atualizar estatísticas
-      const totalApostas = apostas.length;
-      const ultimoSaldo = saldoAcumulado;
-      const totalStake = apostas.reduce((acc, aposta) =>
-        acc + parseFloat(aposta.stake.toString().replace(/[^\d.,]/g, "").replace(",", ".")), 0);
-      const roi = totalStake > 0 ? (ultimoSaldo / totalStake) * 100 : 0;
+      // Preparar dados para o gráfico
+      const labels = saldosDiarios.map((item) => item.data);
+      const dados = saldosDiarios.map((item) => item.saldo);
 
-      document.getElementById('total-apostas').textContent = totalApostas;
-      document.getElementById('lucro-value').textContent = formatarMoeda(ultimoSaldo);
-      document.getElementById('roi-value').textContent = `${roi.toFixed(2)}%`;
-      document.getElementById('progression-value').textContent = `${((ultimoSaldo / totalStake) * 100).toFixed(2)}%`;
-
-      // Atualizar indicador ROI
-      const roiIndicator = document.getElementById('roi-indicator');
-      roiIndicator.textContent = formatarMoeda(ultimoSaldo);
-      roiIndicator.className = `roi-indicator ${ultimoSaldo >= 0 ? 'roi-positive' : 'roi-negative'}`;
-
-      // Criar novo gráfico
-      if (window.myChart) {
-        window.myChart.destroy();
-      }
-
-      window.myChart = new Chart(ctx, {
+      // Criar gráfico
+      new Chart(ctx, {
         type: "line",
         data: {
-          labels: saldosDiarios.map(item => item.data),
+          labels: labels,
           datasets: [
             {
               label: "Saldo Diário",
-              data: saldosDiarios.map(item => item.saldoDiario),
+              data: dados,
               borderColor: "#bb86fc",
               backgroundColor: "rgba(187, 134, 252, 0.1)",
-              borderWidth: 2,
-              pointBackgroundColor: "#03dac6",
-              pointRadius: 4,
-              pointHoverRadius: 6,
-              tension: 0.3,
-              fill: true,
-              order: 2
-            },
-            {
-              label: "Saldo Acumulado",
-              data: saldosDiarios.map(item => item.saldoAcumulado),
-              borderColor: "#03dac6",
-              backgroundColor: "rgba(3, 218, 198, 0.1)",
               borderWidth: 3,
               pointBackgroundColor: "#03dac6",
-              pointRadius: 4,
-              pointHoverRadius: 6,
-              tension: 0.3,
+              pointRadius: 5,
+              pointHoverRadius: 7,
+              tension: 0.2,
               fill: true,
-              order: 1
-            }
-          ]
+            },
+          ],
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          interaction: {
-            intersect: false,
-            mode: 'index'
-          },
           plugins: {
             legend: {
               labels: {
                 color: "#e0e0e0",
-                usePointStyle: true,
-                padding: 20
-              }
+              },
             },
             tooltip: {
               backgroundColor: "rgba(30, 30, 30, 0.9)",
               titleColor: "#bb86fc",
               bodyColor: "#e0e0e0",
-              padding: 12,
               callbacks: {
                 label: function (context) {
-                  const label = context.dataset.label || '';
-                  const value = formatarMoeda(context.raw);
-                  return `${label}: ${value}`;
-                }
-              }
-            }
+                  return "Saldo: " + formatarMoeda(context.raw);
+                },
+              },
+            },
           },
           scales: {
             y: {
               grid: {
                 color: "rgba(255, 255, 255, 0.1)",
-                drawBorder: false
               },
               ticks: {
                 color: "#e0e0e0",
-                padding: 10,
                 callback: function (value) {
                   return formatarMoeda(value);
-                }
-              }
+                },
+              },
             },
             x: {
               grid: {
-                display: false
+                color: "rgba(255, 255, 255, 0.1)",
               },
               ticks: {
                 color: "#e0e0e0",
-                padding: 10
-              }
-            }
-          }
-        }
+              },
+            },
+          },
+        },
       });
     }
 
