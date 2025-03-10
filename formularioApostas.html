@@ -725,11 +725,10 @@
 
       const apostasRef = query(
         collection(db, "apostas"),
-        where("userEmail", "==", currentUser),
         orderBy("timestamp", "desc")
       );
 
-      const unsubscribe = onSnapshot(apostasRef, (snapshot) => {
+      onSnapshot(apostasRef, (snapshot) => {
         let ganhoTotal = 0;
         let perdaTotal = 0;
         let todasApostas = [];
@@ -1034,7 +1033,7 @@
       jogador2.setAttribute("list", "jogadores-lista");
     }
 
-
+    
     // Event Listeners
     document.addEventListener("DOMContentLoaded", async () => {
       // Verificar se os dados do usuário existem no localStorage
