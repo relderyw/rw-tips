@@ -449,6 +449,77 @@
       padding: 1rem;
       color: #9ca3af;
     }
+
+    /* Novos estilos para estatísticas */
+    .stats-container {
+      background: linear-gradient(to bottom right, #1f2937, #111827);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: rgba(31, 41, 55, 0.5);
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .stat-label {
+      color: #9ca3af;
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .stat-value.positive {
+      color: #10b981;
+    }
+
+    .stat-value.negative {
+      color: #ef4444;
+    }
+
+    .chart-container {
+      background: rgba(31, 41, 55, 0.5);
+      border-radius: 12px;
+      padding: 20px;
+      height: 300px;
+      position: relative;
+    }
+
+    .roi-indicator {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .roi-positive {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .roi-negative {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
   </style>
 </head>
 
@@ -1041,7 +1112,8 @@
         datas.push(data);
       }
 
-      // Calcular saldos diários
+      // Calcular saldos diários e acumulados
+      let saldoAcumulado = 0;
       const saldosDiarios = datas.map((data) => {
         const dataStr = data.toLocaleDateString("pt-BR");
         const inicioDoDia = new Date(data.setHours(0, 0, 0, 0));
@@ -1055,7 +1127,6 @@
 
         // Calcular saldo para o dia
         let saldoDoDia = 0;
-
         apostasDoDia.forEach((aposta) => {
           const stake = parseFloat(aposta.stake.toString().replace(/[^\d.,]/g, "").replace(",", "."));
           const odds = parseFloat(aposta.odds.toString().replace(",", "."));
@@ -1076,15 +1147,26 @@
           }
         });
 
+        saldoAcumulado += saldoDoDia;
         return {
           data: dataStr,
-          saldo: saldoDoDia,
+          saldoDiario: saldoDoDia,
+          saldoAcumulado: saldoAcumulado
         };
       });
 
       // Preparar dados para o gráfico
-      const labels = saldosDiarios.map((item) => item.data);
-      const dados = saldosDiarios.map((item) => item.saldo);
+      const labels = saldosDiarios.map(item => item.data);
+      const dadosDiarios = saldosDiarios.map(item => item.saldoDiario);
+      const dadosAcumulados = saldosDiarios.map(item => item.saldoAcumulado);
+
+      // Atualizar o indicador ROI
+      const roiIndicator = document.getElementById('roi-indicator');
+      if (roiIndicator) {
+        const ultimoSaldo = dadosAcumulados[dadosAcumulados.length - 1];
+        roiIndicator.textContent = formatarMoeda(ultimoSaldo);
+        roiIndicator.className = `roi-indicator ${ultimoSaldo >= 0 ? 'roi-positive' : 'roi-negative'}`;
+      }
 
       // Criar gráfico
       new Chart(ctx, {
@@ -1094,60 +1176,86 @@
           datasets: [
             {
               label: "Saldo Diário",
-              data: dados,
+              data: dadosDiarios,
               borderColor: "#bb86fc",
               backgroundColor: "rgba(187, 134, 252, 0.1)",
+              borderWidth: 2,
+              pointBackgroundColor: "#03dac6",
+              pointRadius: 4,
+              pointHoverRadius: 6,
+              tension: 0.3,
+              fill: true,
+              order: 2
+            },
+            {
+              label: "Saldo Acumulado",
+              data: dadosAcumulados,
+              borderColor: "#03dac6",
+              backgroundColor: "rgba(3, 218, 198, 0.1)",
               borderWidth: 3,
               pointBackgroundColor: "#03dac6",
-              pointRadius: 5,
-              pointHoverRadius: 7,
-              tension: 0.2,
+              pointRadius: 4,
+              pointHoverRadius: 6,
+              tension: 0.3,
               fill: true,
-            },
+              order: 1
+            }
           ],
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          interaction: {
+            intersect: false,
+            mode: 'index'
+          },
           plugins: {
             legend: {
               labels: {
                 color: "#e0e0e0",
-              },
+                usePointStyle: true,
+                padding: 20
+              }
             },
             tooltip: {
               backgroundColor: "rgba(30, 30, 30, 0.9)",
               titleColor: "#bb86fc",
               bodyColor: "#e0e0e0",
+              padding: 12,
               callbacks: {
                 label: function (context) {
-                  return "Saldo: " + formatarMoeda(context.raw);
-                },
-              },
-            },
+                  const label = context.dataset.label || '';
+                  const value = formatarMoeda(context.raw);
+                  return `${label}: ${value}`;
+                }
+              }
+            }
           },
           scales: {
             y: {
               grid: {
                 color: "rgba(255, 255, 255, 0.1)",
+                drawBorder: false
               },
               ticks: {
                 color: "#e0e0e0",
+                padding: 10,
                 callback: function (value) {
                   return formatarMoeda(value);
-                },
-              },
+                }
+              }
             },
             x: {
               grid: {
-                color: "rgba(255, 255, 255, 0.1)",
+                display: false
               },
               ticks: {
                 color: "#e0e0e0",
-              },
-            },
-          },
-        },
+                padding: 10
+              }
+            }
+          }
+        }
       });
     }
 
