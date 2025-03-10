@@ -1000,48 +1000,79 @@
       apostasLista.innerHTML = '<div class="loading">Carregando apostas...</div>';
 
       try {
-        // Criar query para apostas do usuário atual
         const apostasRef = query(
           collection(db, "apostas"),
           where("userEmail", "==", currentUser),
           orderBy("timestamp", "desc")
         );
 
-        // Usar onSnapshot para ouvir mudanças em tempo real
         const unsubscribe = onSnapshot(apostasRef, (snapshot) => {
           let todasApostas = [];
-          let ganhoTotal = 0;
-          let perdaTotal = 0;
 
           if (snapshot.empty) {
             apostasLista.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Nenhuma aposta registrada</div>';
-            criarGrafico([]); // Chamar com array vazio
+            criarGrafico([]);
             return;
           }
 
-          apostasLista.innerHTML = "";
-
+          // Processar apostas e criar HTML
+          const apostasHTML = [];
           snapshot.forEach((doc) => {
             const aposta = { ...doc.data(), id: doc.id };
             todasApostas.push(aposta);
-            // ... resto do código para processar cada aposta ...
+
+            // Calcular valor final da aposta
+            const stake = parseFloat(aposta.stake.toString().replace(/[^\d.,]/g, "").replace(",", "."));
+            const odds = parseFloat(aposta.odds.toString().replace(",", "."));
+            const valorFinal = calcularValorAposta(stake, odds, aposta.resultado);
+
+            // Criar HTML para cada aposta
+            apostasHTML.push(`
+                    <div class="aposta-item">
+                        <div class="aposta-info">
+                            <strong>${aposta.liga}</strong> - ${aposta.jogador1} vs ${aposta.jogador2}
+                            <br>
+                            <small>
+                                Mercado: ${aposta.mercado} | 
+                                Stake: ${formatarMoeda(stake)} | 
+                                Odds: ${odds}
+                            </small>
+                            <br>
+                            <small>
+                                Resultado: <span class="status-badge ${getStatusClass(aposta.resultado)}">
+                                    ${getStatusText(aposta.resultado)}
+                                </span>
+                                | Valor Final: ${formatarMoeda(valorFinal)}
+                            </small>
+                        </div>
+                        <div class="aposta-actions">
+                            <button onclick="removerAposta('${aposta.id}')" class="remove-bet" data-id="${aposta.id}">
+                                <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `);
           });
 
-          // Atualizar o gráfico com todas as apostas
+          // Atualizar lista de apostas
+          apostasLista.innerHTML = apostasHTML.join("");
+
+          // Atualizar gráfico
           criarGrafico(todasApostas);
         }, (error) => {
           console.error("Erro ao carregar apostas:", error);
           apostasLista.innerHTML = '<div style="color: red; text-align: center;">Erro ao carregar apostas</div>';
         });
 
-        // Retornar função de limpeza
         return unsubscribe;
       } catch (error) {
         console.error("Erro ao configurar listener:", error);
         apostasLista.innerHTML = '<div style="color: red; text-align: center;">Erro ao configurar listener</div>';
       }
     }
-
     function getStatusText(resultado) {
       const statusMap = {
         'green': 'Green',
