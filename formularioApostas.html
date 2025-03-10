@@ -739,6 +739,11 @@
           button.classList.add("active");
           const tabId = button.dataset.tab;
           document.getElementById(`${tabId}-tab`).classList.add("active");
+
+          // Carregar dados quando a aba de histórico for selecionada
+          if (tabId === 'history') {
+            carregarApostas();
+          }
         });
       });
     }
