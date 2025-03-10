@@ -754,7 +754,18 @@
           if (sessionStorage.getItem('loggedIn') !== 'true') {
             showAuthScreen();
             return false;
+          } else {
+            // Recuperar dados do localStorage se tiver sessão válida
+            currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+              showAuthScreen();
+              return false;
+            }
           }
+        } else {
+          // Se o usuário estiver logado via Firebase Auth
+          currentUser = user.email;
+          localStorage.setItem('currentUser', currentUser);
         }
 
         // Se chegou aqui, o usuário está autenticado
@@ -762,7 +773,6 @@
         document.querySelector('.container').style.display = 'block';
 
         // Atualizar interface com dados do usuário
-        currentUser = user?.email || localStorage.getItem('currentUser');
         document.getElementById('user-email').textContent = currentUser;
         document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
 
@@ -918,6 +928,11 @@
 
     // Função para carregar as apostas
     function carregarApostas() {
+      if (!currentUser) {
+        console.error("Nenhum usuário logado ao tentar carregar apostas");
+        return;
+      }
+
       const apostasLista = document.getElementById("apostas-lista");
       apostasLista.innerHTML = '<div class="loading">Carregando apostas</div>';
 
@@ -938,9 +953,9 @@
           document.getElementById("grafico").innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Sem dados para exibir</div>';
 
           // Zerar totais quando não há apostas
-          document.getElementById("ganho-total").innerHTML = `Ganho Total<strong>${formatarMoeda(0)}</strong>`;
-          document.getElementById("perda-total").innerHTML = `Perda Total<strong>${formatarMoeda(0)}</strong>`;
-          document.getElementById("saldo-total").innerHTML = `Saldo Total<strong>${formatarMoeda(0)}</strong>`;
+          document.getElementById("ganho-total").textContent = formatarMoeda(0);
+          document.getElementById("perda-total").textContent = formatarMoeda(0);
+          document.getElementById("saldo-total").textContent = formatarMoeda(0);
           return;
         }
 
@@ -982,24 +997,24 @@
           const dataFormatada = aposta.timestamp?.toDate().toLocaleString('pt-BR') || '';
 
           apostaItem.innerHTML = `
-            <div class="aposta-info">
-              <strong>${aposta.liga}</strong> · <span class="${statusClass}">${statusText}${valorFinalText}</span><br>
-              ${aposta.jogador1} vs ${aposta.jogador2}<br>
-              <small>${aposta.mercado} · Stake: ${formatarMoeda(stake)} · Odds: ${odds}</small><br>
-              <small>${dataFormatada}</small>
-            </div>
-            <div class="aposta-actions">
-              <button onclick="removerAposta('${doc.id}')">Remover</button>
-            </div>
-          `;
+        <div class="aposta-info">
+          <strong>${aposta.liga}</strong> · <span class="${statusClass}">${statusText}${valorFinalText}</span><br>
+          ${aposta.jogador1} vs ${aposta.jogador2}<br>
+          <small>${aposta.mercado} · Stake: ${formatarMoeda(stake)} · Odds: ${odds}</small><br>
+          <small>${dataFormatada}</small>
+        </div>
+        <div class="aposta-actions">
+          <button onclick="removerAposta('${doc.id}')">Remover</button>
+        </div>
+      `;
 
           apostasLista.appendChild(apostaItem);
         });
 
         // Atualizar resumo
-        document.getElementById("ganho-total").innerHTML = `Ganho Total<strong>${formatarMoeda(ganhoTotal)}</strong>`;
-        document.getElementById("perda-total").innerHTML = `Perda Total<strong>${formatarMoeda(perdaTotal)}</strong>`;
-        document.getElementById("saldo-total").innerHTML = `Saldo Total<strong>${formatarMoeda(ganhoTotal - perdaTotal)}</strong>`;
+        document.getElementById("ganho-total").textContent = formatarMoeda(ganhoTotal);
+        document.getElementById("perda-total").textContent = formatarMoeda(perdaTotal);
+        document.getElementById("saldo-total").textContent = formatarMoeda(ganhoTotal - perdaTotal);
 
         // Criar gráfico
         criarGrafico(todasApostas);
@@ -1029,9 +1044,16 @@
     }
 
     async function criarGrafico(apostas) {
+      if (!apostas || apostas.length === 0) {
+        document.getElementById("grafico").innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Sem dados para exibir</div>';
+        return;
+      }
+
+      const graficoContainer = document.getElementById("grafico");
+      graficoContainer.innerHTML = "";
+
       const ctx = document.createElement("canvas");
-      document.getElementById("grafico").innerHTML = "";
-      document.getElementById("grafico").appendChild(ctx);
+      graficoContainer.appendChild(ctx);
 
       // Obter os últimos 7 dias
       const datas = [];
@@ -1044,12 +1066,16 @@
       // Calcular saldos diários
       const saldosDiarios = datas.map((data) => {
         const dataStr = data.toLocaleDateString("pt-BR");
-        const inicioDoDia = new Date(data.setHours(0, 0, 0, 0));
-        const fimDoDia = new Date(data.setHours(23, 59, 59, 999));
+        const inicioDoDia = new Date(data);
+        inicioDoDia.setHours(0, 0, 0, 0);
+
+        const fimDoDia = new Date(data);
+        fimDoDia.setHours(23, 59, 59, 999);
 
         // Filtrar apostas para este dia
         const apostasDoDia = apostas.filter((aposta) => {
-          const dataAposta = aposta.timestamp?.toDate() || new Date();
+          if (!aposta.timestamp) return false;
+          const dataAposta = aposta.timestamp.toDate ? aposta.timestamp.toDate() : new Date(aposta.timestamp);
           return dataAposta >= inicioDoDia && dataAposta <= fimDoDia;
         });
 
@@ -1086,69 +1112,79 @@
       const labels = saldosDiarios.map((item) => item.data);
       const dados = saldosDiarios.map((item) => item.saldo);
 
-      // Criar gráfico
-      new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: "Saldo Diário",
-              data: dados,
-              borderColor: "#bb86fc",
-              backgroundColor: "rgba(187, 134, 252, 0.1)",
-              borderWidth: 3,
-              pointBackgroundColor: "#03dac6",
-              pointRadius: 5,
-              pointHoverRadius: 7,
-              tension: 0.2,
-              fill: true,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              labels: {
-                color: "#e0e0e0",
+      try {
+        // Destruir gráfico anterior se existir
+        if (chart) {
+          chart.destroy();
+        }
+
+        // Criar gráfico
+        chart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "Saldo Diário",
+                data: dados,
+                borderColor: "#bb86fc",
+                backgroundColor: "rgba(187, 134, 252, 0.1)",
+                borderWidth: 3,
+                pointBackgroundColor: "#03dac6",
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                tension: 0.2,
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: {
+                  color: "#e0e0e0",
+                },
+              },
+              tooltip: {
+                backgroundColor: "rgba(30, 30, 30, 0.9)",
+                titleColor: "#bb86fc",
+                bodyColor: "#e0e0e0",
+                callbacks: {
+                  label: function (context) {
+                    return "Saldo: " + formatarMoeda(context.raw);
+                  },
+                },
               },
             },
-            tooltip: {
-              backgroundColor: "rgba(30, 30, 30, 0.9)",
-              titleColor: "#bb86fc",
-              bodyColor: "#e0e0e0",
-              callbacks: {
-                label: function (context) {
-                  return "Saldo: " + formatarMoeda(context.raw);
+            scales: {
+              y: {
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+                ticks: {
+                  color: "#e0e0e0",
+                  callback: function (value) {
+                    return formatarMoeda(value);
+                  },
+                },
+              },
+              x: {
+                grid: {
+                  color: "rgba(255, 255, 255, 0.1)",
+                },
+                ticks: {
+                  color: "#e0e0e0",
                 },
               },
             },
           },
-          scales: {
-            y: {
-              grid: {
-                color: "rgba(255, 255, 255, 0.1)",
-              },
-              ticks: {
-                color: "#e0e0e0",
-                callback: function (value) {
-                  return formatarMoeda(value);
-                },
-              },
-            },
-            x: {
-              grid: {
-                color: "rgba(255, 255, 255, 0.1)",
-              },
-              ticks: {
-                color: "#e0e0e0",
-              },
-            },
-          },
-        },
-      });
+        });
+      } catch (error) {
+        console.error("Erro ao criar gráfico:", error);
+        graficoContainer.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Erro ao exibir gráfico</div>';
+      }
     }
 
     // Função para mapear liga da API para o select
@@ -1265,15 +1301,16 @@
         window.location.href = 'visualization.html';
       });
 
-      // Atualizar interface do usuário
-      document.getElementById('user-email').textContent = currentUser;
-      document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
-
       // Inicializar a página
       setupTabs();
+
+      // Essas funções precisam ser executadas APÓS a confirmação de login
       await carregarMercados();
-      await carregarApostas();
+      await carregarApostas();  // Esta função carrega o gráfico
       await buscarDadosAPI();
+
+      // Resto do código permanece o mesmo...
+
 
       // Adicionar evento para atualizar jogadores quando mudar a liga
       document.getElementById("liga").addEventListener("change", () => {
