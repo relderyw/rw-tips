@@ -1311,8 +1311,17 @@
 
       // Essas funções precisam ser executadas APÓS a confirmação de login
       await carregarMercados();
-      await carregarApostas();  // Esta função carrega o gráfico
+      await carregarApostas();  // Esta função carrega o gráfico e os dados salvos
       await buscarDadosAPI();
+
+      // Adicionar listener para atualização automática
+      onSnapshot(query(
+        collection(db, "apostas"),
+        where("userEmail", "==", currentUser),
+        orderBy("timestamp", "desc")
+      ), (snapshot) => {
+        carregarApostas();
+      });
 
       // Resto do código permanece o mesmo...
 
