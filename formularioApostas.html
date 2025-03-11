@@ -136,6 +136,7 @@
         opacity: 0;
         transform: translateY(20px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
@@ -1144,28 +1145,38 @@
               pointBackgroundColor: "#03dac6",
               pointRadius: 5,
               pointHoverRadius: 7,
-              tension: 0.4, // Curva mais suave
+              tension: 0.4,
               fill: true,
             },
           ],
         },
         options: {
           responsive: true,
-          maintainAspectRatio: false,
+          maintainAspectRatio: true,
+          aspectRatio: 2,
           animation: {
-            duration: 1000, // Animação ao carregar
+            duration: 1000,
             easing: 'easeInOutQuart',
           },
           plugins: {
             legend: {
-              display: false, // Oculta a legenda
+              display: false,
             },
             tooltip: {
-              backgroundColor: "rgba(30, 30, 30, 0.9)",
+              backgroundColor: "rgba(30, 30, 30, 0.95)",
               titleColor: "#bb86fc",
               bodyColor: "#e0e0e0",
               borderColor: "#bb86fc",
               borderWidth: 1,
+              padding: 12,
+              cornerRadius: 8,
+              titleFont: {
+                size: 14,
+                weight: 'bold'
+              },
+              bodyFont: {
+                size: 13
+              },
               callbacks: {
                 label: function (context) {
                   return "Saldo: " + formatarMoeda(context.raw);
@@ -1177,9 +1188,15 @@
             y: {
               grid: {
                 color: "rgba(255, 255, 255, 0.1)",
+                drawBorder: false,
+                zeroLineColor: "rgba(255, 255, 255, 0.2)"
               },
               ticks: {
                 color: "#e0e0e0",
+                padding: 10,
+                font: {
+                  size: 12
+                },
                 callback: function (value) {
                   return formatarMoeda(value);
                 },
@@ -1187,10 +1204,16 @@
             },
             x: {
               grid: {
-                color: "rgba(255, 255, 255, 0.1)",
+                display: false
               },
               ticks: {
                 color: "#e0e0e0",
+                padding: 8,
+                font: {
+                  size: 12
+                },
+                maxRotation: 45,
+                minRotation: 45
               },
             },
           },
@@ -1383,14 +1406,14 @@
       document.querySelectorAll('.period-button').forEach(button => {
         button.addEventListener('click', (e) => {
           if (!e.target.dataset.days) return; // Ignora o botão "Aplicar"
-          
+
           // Remove a classe active de todos os botões
-          document.querySelectorAll('.period-button').forEach(btn => 
+          document.querySelectorAll('.period-button').forEach(btn =>
             btn.classList.remove('active'));
-          
+
           // Adiciona a classe active ao botão clicado
           e.target.classList.add('active');
-          
+
           // Atualiza o gráfico
           criarGrafico(parseInt(e.target.dataset.days));
         });
@@ -1400,12 +1423,12 @@
       document.getElementById('apply-range').addEventListener('click', () => {
         const startDate = document.getElementById('start-date').value;
         const endDate = document.getElementById('end-date').value;
-        
+
         if (startDate && endDate) {
           // Remove active de todos os botões de período
-          document.querySelectorAll('.period-button').forEach(btn => 
+          document.querySelectorAll('.period-button').forEach(btn =>
             btn.classList.remove('active'));
-          
+
           criarGrafico(null, startDate, endDate);
         } else {
           alert('Por favor, selecione as datas inicial e final');
