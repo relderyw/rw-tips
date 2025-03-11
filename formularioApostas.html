@@ -774,6 +774,37 @@
       });
     }
 
+    function calcularValorFinal(stake, odds, resultado) {
+      if (!stake || !odds) return 0;
+
+      switch (resultado) {
+        case 'green':
+          return stake * (odds - 1);
+        case 'red':
+          return -stake;
+        case 'meio-green':
+          return (stake / 2) * (odds - 1);
+        case 'meio-red':
+          return -stake / 2;
+        case 'reembolso':
+          return 0;
+        default:
+          return 0;
+      }
+    }
+
+    function atualizarValorFinal() {
+      const stake = parseFloat(document.getElementById("stake").value.replace(',', '.')) || 0;
+      const odds = parseFloat(document.getElementById("odds").value.replace(',', '.')) || 0;
+      const resultado = document.getElementById("resultado").value;
+
+      const valorFinal = calcularValorFinal(stake, odds, resultado);
+
+      const elementoResultado = document.getElementById("resultado-final");
+      elementoResultado.textContent = formatarMoeda(valorFinal);
+      elementoResultado.className = 'value ' + (valorFinal >= 0 ? 'status-green' : 'status-red');
+    }
+
     // Funções de navegação
     function setupTabs() {
       const tabButtons = document.querySelectorAll(".tab-button");
@@ -1228,37 +1259,6 @@
       jogador2.setAttribute("list", "jogadores-lista");
     }
 
-    function calcularValorFinal(stake, odds, resultado) {
-      if (!stake || !odds) return 0;
-      
-      switch (resultado) {
-        case 'green':
-          return stake * (odds - 1);
-        case 'red':
-          return -stake;
-        case 'meio-green':
-          return (stake / 2) * (odds - 1);
-        case 'meio-red':
-          return -stake / 2;
-        case 'reembolso':
-          return 0;
-        default:
-          return 0;
-      }
-    }
-
-    function atualizarValorFinal() {
-      const stake = parseFloat(document.getElementById("stake").value.replace(',', '.')) || 0;
-      const odds = parseFloat(document.getElementById("odds").value.replace(',', '.')) || 0;
-      const resultado = document.getElementById("resultado").value;
-      
-      const valorFinal = calcularValorFinal(stake, odds, resultado);
-      
-      const elementoResultado = document.getElementById("resultado-final");
-      elementoResultado.textContent = formatarMoeda(valorFinal);
-      elementoResultado.className = 'value ' + (valorFinal >= 0 ? 'status-green' : 'status-red');
-    }
-
     // Event Listeners
     document.addEventListener("DOMContentLoaded", async () => {
       // Verificar se os dados do usuário existem no localStorage
@@ -1350,14 +1350,7 @@
 
       // Cálculo dinâmico do resultado
       ["stake", "odds", "resultado"].forEach(id => {
-        document.getElementById(id).addEventListener("input", () => {
-          const stake = parseFloat(document.getElementById("stake").value) || 0;
-          const odds = parseFloat(document.getElementById("odds").value) || 0;
-          const resultado = document.getElementById("resultado").value;
-
-          const valor = calcularValorAposta(stake, odds, resultado);
-          document.getElementById("resultado-final").textContent = formatarMoeda(valor);
-        });
+        document.getElementById(id).addEventListener("input", atualizarValorFinal);
       });
     });
   </script>
