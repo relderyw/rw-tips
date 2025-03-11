@@ -629,12 +629,11 @@
 
           <div class="form-group">
             <label for="resultado">Resultado</label>
-            <select id="resultado" required>
-              <option value="">Selecione o Resultado</option>
+            <select id="resultado">
               <option value="green">Green</option>
               <option value="red">Red</option>
-              <option value="meio-green">½ Green</option>
-              <option value="meio-red">½ Red</option>
+              <option value="meio-green">Meio Green</option>
+              <option value="meio-red">Meio Red</option>
               <option value="reembolso">Reembolso</option>
             </select>
           </div>
@@ -1200,24 +1199,7 @@
         console.error("Erro ao buscar dados da API:", error);
       }
     }
-    function calcularValorAposta(stake, odds, resultado) {
-      if (!stake || !odds) return 0;
 
-      switch (resultado) {
-        case "green":
-          return stake * (odds - 1);
-        case "red":
-          return -stake;
-        case "meio-green":
-          return (stake / 2) * (odds - 1);
-        case "meio-red":
-          return -stake / 2;
-        case "reembolso":
-          return 0;
-        default:
-          return 0;
-      }
-    }
     // Função para atualizar datalists dos jogadores
     function atualizarDatalistsJogadores() {
       const liga = document.getElementById("liga").value;
@@ -1336,8 +1318,6 @@
         }
       });
 
-
-
       // Cálculo dinâmico do resultado
       ["stake", "odds", "resultado"].forEach(id => {
         document.getElementById(id).addEventListener("input", () => {
@@ -1349,7 +1329,7 @@
           document.getElementById("resultado-final").textContent = formatarMoeda(valor);
         });
       });
-
+    });
   </script>
 </body>
 
