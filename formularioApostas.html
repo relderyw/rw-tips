@@ -6,32 +6,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gerenciamento</title>
   <style>
-    /* Reset e estilos base */
+    /* Estilos gerais */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     body {
-      background-color: #121212;
+      background-color: #0a0a0d;
       color: #e0e0e0;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       min-height: 100vh;
+      overflow-x: hidden;
+      background-image: linear-gradient(to bottom, #0a0a0d, #101022);
     }
 
-    /* Container principal */
     .container {
-      max-width: 100%;
-      padding: 0;
-      margin: 0;
-      background-color: #121212;
+      max-width: 480px;
+      margin: 0 auto;
     }
 
     .app-container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 16px;
+      background: linear-gradient(to bottom right, #1f2937, #111827);
+      border-radius: 1rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      padding: 1.5rem;
+      border: 1px solid rgba(139, 92, 246, 0.2);
     }
 
     /* Cabeçalho */
@@ -39,91 +45,71 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 0;
-      margin-bottom: 24px;
-      border-bottom: 1px solid #333;
+      margin-bottom: 1.5rem;
     }
 
     .app-title {
-      font-size: 24px;
-      font-weight: 700;
-      color: #bb86fc;
+      font-size: 1.5rem;
+      font-weight: bold;
+      background: linear-gradient(to right, #a78bfa, #818cf8);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
 
+    /* Informações do usuário */
     .user-info {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 0.5rem;
+      color: #a78bfa;
     }
 
     .user-avatar {
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
-      background-color: #bb86fc;
-      color: #000;
+      background: linear-gradient(145deg, #bb86fc, #9c27b0);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: bold;
+      color: #121212;
     }
 
-    /* Navegação por abas */
+    /* Navegação */
     .tabs {
       display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
-      background-color: #1e1e1e;
-      border-radius: 12px;
-      padding: 4px;
-      overflow-x: auto;
+      justify-content: space-around;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+      padding-bottom: 0.5rem;
     }
 
     .tab-button {
-      padding: 10px 16px;
-      border: none;
-      background: none;
-      color: #888;
-      border-radius: 8px;
-      cursor: pointer;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 8px;
-      flex: 1;
-      justify-content: center;
-      transition: all 0.2s ease;
-      font-weight: 500;
-      min-width: 120px;
+      background: none;
+      border: none;
+      color: #9ca3af;
+      padding: 0.5rem;
+      cursor: pointer;
+      transition: color 0.2s;
     }
 
     .tab-button.active {
-      background-color: #2c2c2c;
-      color: #bb86fc;
+      color: #a78bfa;
     }
 
-    .tab-button:hover:not(.active) {
-      background-color: #252525;
-      color: #a0a0a0;
-    }
-
-    .icon {
-      width: 18px;
-      height: 18px;
-    }
-
-    .icon-sm {
-      width: 16px;
-      height: 16px;
+    .tab-button span {
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
     }
 
     /* Conteúdo das abas */
     .tab-content {
       display: none;
-      background-color: #1e1e1e;
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 24px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
     }
 
     .tab-content.active {
@@ -132,415 +118,272 @@
 
     /* Formulário */
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 1rem;
     }
 
     label {
       display: block;
-      margin-bottom: 8px;
+      font-size: 0.875rem;
       font-weight: 500;
-      color: #b0b0b0;
+      color: #a78bfa;
+      margin-bottom: 0.25rem;
     }
 
     input,
     select {
       width: 100%;
-      padding: 12px 16px;
-      border: 1px solid #333;
-      border-radius: 8px;
-      background-color: #252525;
-      color: #e0e0e0;
-      font-size: 14px;
-      transition: border-color 0.2s;
+      background-color: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+      color: white;
+      font-size: 0.875rem;
     }
 
     input:focus,
     select:focus {
-      border-color: #bb86fc;
       outline: none;
+      border-color: #a78bfa;
+      box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
     }
 
-    input::placeholder {
-      color: #666;
+    /* Botões */
+    .submit-button {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: linear-gradient(to right, #8b5cf6, #6366f1);
+      color: white;
+      font-weight: 500;
+      border: none;
+      border-radius: 0.5rem;
+      margin-top: 1.5rem;
+      transition: all 0.3s;
+      cursor: pointer;
     }
 
+    .submit-button:hover {
+      background: linear-gradient(to right, #7c3aed, #4f46e5);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Resultado calculado */
     .calculated-result {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 24px 0;
-      padding: 16px;
-      background-color: #252525;
-      border-radius: 8px;
-      border-left: 4px solid #bb86fc;
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background-color: rgba(31, 41, 55, 0.5);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 0.5rem;
+      text-align: center;
     }
 
     .calculated-result p {
+      color: #a78bfa;
+      font-size: 1rem;
       font-weight: 500;
     }
 
     .calculated-result .value {
-      font-weight: 700;
-      font-size: 18px;
-      color: #bb86fc;
-    }
-
-    .submit-button {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 8px;
-      background-color: #bb86fc;
-      color: #000;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 0.2s;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .submit-button:hover {
-      background-color: #a370e0;
+      display: block;
+      margin-top: 0.5rem;
+      font-size: 1.5rem;
+      font-weight: bold;
+      background: linear-gradient(to right, #a78bfa, #818cf8);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
 
     /* Resumo */
     .summary {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
     }
 
     .summary-item {
-      padding: 16px;
-      border-radius: 8px;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
       text-align: center;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
     }
 
     .summary-item.gain {
-      background-color: rgba(39, 174, 96, 0.15);
-      border: 1px solid rgba(39, 174, 96, 0.3);
+      background: linear-gradient(to bottom right, rgba(16, 185, 129, 0.3), rgba(16, 185, 129, 0.2));
+      border: 1px solid rgba(16, 185, 129, 0.2);
     }
 
     .summary-item.loss {
-      background-color: rgba(231, 76, 60, 0.15);
-      border: 1px solid rgba(231, 76, 60, 0.3);
+      background: linear-gradient(to bottom right, rgba(239, 68, 68, 0.3), rgba(239, 68, 68, 0.2));
+      border: 1px solid rgba(239, 68, 68, 0.2);
     }
 
     .summary-item.balance {
-      background-color: rgba(187, 134, 252, 0.15);
-      border: 1px solid rgba(187, 134, 252, 0.3);
+      background: linear-gradient(to bottom right, rgba(139, 92, 246, 0.3), rgba(139, 92, 246, 0.2));
+      border: 1px solid rgba(139, 92, 246, 0.2);
     }
 
-    .summary-item .label {
-      font-size: 14px;
-      color: #b0b0b0;
-    }
-
-    .summary-item .value {
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .gain .value {
-      color: #27ae60;
-    }
-
-    .loss .value {
-      color: #e74c3c;
-    }
-
-    .balance .value {
-      color: #bb86fc;
-    }
-
-    /* Gráfico */
-    .chart-container {
-      background-color: #252525;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 24px;
-      height: 300px;
-    }
-
-    .chart-title {
-      margin-bottom: 16px;
-      color: #b0b0b0;
-      font-size: 16px;
-      font-weight: 500;
-    }
-
-    /* Lista de apostas */
-    .history-title {
-      margin: 24px 0 16px;
-      font-size: 18px;
+    /* Status badges */
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
       font-weight: 600;
-      color: #bb86fc;
-    }
-
-    .history-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .aposta-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px;
-      background-color: #252525;
-      border-radius: 8px;
-      border-left: 4px solid #333;
-    }
-
-    .aposta-info {
-      flex: 1;
-    }
-
-    .aposta-actions button {
-      background-color: #333;
-      color: #e0e0e0;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    .aposta-actions button:hover {
-      background-color: #444;
+      margin-left: 0.25rem;
     }
 
     .status-green {
-      color: #27ae60;
+      background-color: rgba(16, 185, 129, 0.2);
+      color: rgb(16, 185, 129);
+      border: 1px solid rgb(16, 185, 129);
     }
 
     .status-red {
-      color: #e74c3c;
+      background-color: rgba(239, 68, 68, 0.2);
+      color: rgb(239, 68, 68);
+      border: 1px solid rgb(239, 68, 68);
     }
 
     /* Mercados */
     .market-form {
       display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
+      margin-bottom: 1rem;
     }
 
     .market-input {
       flex: 1;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
     }
 
     .add-market-button {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 12px 16px;
-      background-color: #bb86fc;
-      color: #000;
+      background: linear-gradient(145deg, #bb86fc, #9c27b0);
+      color: white;
       border: none;
-      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      border-top-right-radius: 0.5rem;
+      border-bottom-right-radius: 0.5rem;
       cursor: pointer;
-      font-weight: 600;
-      transition: background-color 0.2s;
+      transition: all 0.3s;
     }
 
     .add-market-button:hover {
-      background-color: #a370e0;
+      background: linear-gradient(145deg, #9c27b0, #bb86fc);
+      transform: scale(1.02);
     }
 
+    /* Lista de mercados */
     .markets-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+      padding-right: 0.25rem;
     }
 
     .market-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 16px;
-      background-color: #252525;
-      border-radius: 8px;
+      background-color: rgba(31, 41, 55, 0.7);
+      border: 1px solid #374151;
+      border-radius: 0.5rem;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+      transition: all 0.3s;
     }
 
-    .remove-button {
-      background: none;
-      border: none;
-      color: #e74c3c;
-      cursor: pointer;
-      padding: 4px;
-      border-radius: 4px;
-      transition: background-color 0.2s;
+    .market-item:hover {
+      background-color: rgba(55, 65, 81, 0.5);
+      transform: translateX(5px);
     }
 
-    .remove-button:hover {
-      background-color: rgba(231, 76, 60, 0.1);
+    /* Ícones */
+    .icon {
+      width: 1.25rem;
+      height: 1.25rem;
+      fill: currentColor;
+    }
+
+    .icon-sm {
+      width: 1rem;
+      height: 1rem;
     }
 
     /* Botão Voltar */
     .back-button {
       position: fixed;
-      top: 16px;
-      left: 16px;
+      top: 20px;
+      left: 20px;
+      background: linear-gradient(145deg, #bb86fc, #9c27b0);
+      color: #121212;
+      border: none;
+      border-radius: 50%;
       width: 40px;
       height: 40px;
-      border-radius: 50%;
-      background-color: #252525;
-      border: none;
-      cursor: pointer;
+      font-size: 18px;
       display: flex;
-      align-items: center;
       justify-content: center;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      z-index: 10;
-    }
-
-    .back-button::before {
-      content: "";
-      display: block;
-      width: 12px;
-      height: 12px;
-      border-left: 2px solid #bb86fc;
-      border-bottom: 2px solid #bb86fc;
-      transform: rotate(45deg);
-      margin-right: -4px;
+      align-items: center;
+      cursor: pointer;
+      box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.5),
+        0 0 10px rgba(187, 134, 252, 0.5);
+      transition: all 0.3s ease;
+      z-index: 1000;
     }
 
     .back-button:hover {
-      background-color: #333;
+      background: linear-gradient(145deg, #9c27b0, #bb86fc);
+      transform: scale(1.1);
+      box-shadow:
+        0 6px 12px rgba(0, 0, 0, 0.6),
+        0 0 15px rgba(187, 134, 252, 0.6);
     }
 
-    /* Loading */
-    .loading {
-      text-align: center;
-      padding: 20px;
-      color: #888;
+    /* Ícone de Voltar */
+    .back-button::before {
+      content: "←";
+      font-weight: bold;
     }
 
-    /* Animação de pulse para indicar carregamento */
-    @keyframes pulse {
-      0% {
-        opacity: 0.6;
-      }
+    /* Adicione ou modifique estas classes no seu <style> */
 
-      50% {
-        opacity: 1;
-      }
-
-      100% {
-        opacity: 0.6;
-      }
+    .chart-container {
+      margin-bottom: 2rem; /* Adiciona espaço abaixo do gráfico */
+      padding-bottom: 1rem;
+      min-height: 300px; /* Garante altura mínima para o gráfico */
     }
 
-    .loading {
-      animation: pulse 1.5s infinite;
-    }
-
-    /* Responsividade */
-    @media (max-width: 768px) {
-      .app-container {
-        padding: 16px 12px;
-      }
-
-      .summary {
-        grid-template-columns: 1fr;
-      }
-
-      .tab-button {
-        padding: 8px 12px;
-        font-size: 14px;
-      }
-
-      .tab-content {
-        padding: 16px;
-      }
-
-      .aposta-item {
-        flex-direction: column;
-        gap: 12px;
-        align-items: flex-start;
-      }
-
-      .aposta-actions {
-        width: 100%;
-        display: flex;
-        justify-content: flex-end;
-      }
-    }
-
-    /* Estilos para notificações */
-    .notification {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      padding: 16px;
-      background-color: #252525;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      z-index: 1000;
-      max-width: 300px;
-      transform: translateY(20px);
-      opacity: 0;
-      transition: all 0.3s ease;
-    }
-
-    .notification.success {
-      border-left: 4px solid #27ae60;
-    }
-
-    .notification.error {
-      border-left: 4px solid #e74c3c;
-    }
-
-    .notification.show {
-      transform: translateY(0);
-      opacity: 1;
-    }
-
-    .notification-icon {
-      width: 24px;
-      height: 24px;
-    }
-
-    .notification-content {
-      flex: 1;
-    }
-
-    .notification-title {
+    .history-title {
+      margin-top: 3rem; /* Aumenta o espaço acima do título do histórico */
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
       font-weight: 600;
-      margin-bottom: 4px;
+      color: var(--text-primary);
     }
 
-    .notification-message {
-      font-size: 14px;
-      color: #b0b0b0;
+    .history-list {
+      margin-top: 1rem; /* Espaço adicional acima da lista */
+      max-height: 500px; /* Altura máxima para a lista com scroll */
+      overflow-y: auto;
+      padding-right: 0.5rem;
     }
 
-    /* Personalização do scrollbar */
-    ::-webkit-scrollbar {
+    /* Opcional: Estilizar a barra de rolagem */
+    .history-list::-webkit-scrollbar {
       width: 8px;
-      height: 8px;
     }
 
-    ::-webkit-scrollbar-track {
-      background: #1e1e1e;
+    .history-list::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 4px;
     }
 
-    ::-webkit-scrollbar-thumb {
-      background: #444;
+    .history-list::-webkit-scrollbar-thumb {
+      background: var(--accent-color);
       border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: #555;
     }
   </style>
 </head>
@@ -772,37 +615,6 @@
         hour: "2-digit",
         minute: "2-digit",
       });
-    }
-
-    function calcularValorFinal(stake, odds, resultado) {
-      if (!stake || !odds) return 0;
-
-      switch (resultado) {
-        case 'green':
-          return stake * (odds - 1);
-        case 'red':
-          return -stake;
-        case 'meio-green':
-          return (stake / 2) * (odds - 1);
-        case 'meio-red':
-          return -stake / 2;
-        case 'reembolso':
-          return 0;
-        default:
-          return 0;
-      }
-    }
-
-    function atualizarValorFinal() {
-      const stake = parseFloat(document.getElementById("stake").value.replace(',', '.')) || 0;
-      const odds = parseFloat(document.getElementById("odds").value.replace(',', '.')) || 0;
-      const resultado = document.getElementById("resultado").value;
-
-      const valorFinal = calcularValorFinal(stake, odds, resultado);
-
-      const elementoResultado = document.getElementById("resultado-final");
-      elementoResultado.textContent = formatarMoeda(valorFinal);
-      elementoResultado.className = 'value ' + (valorFinal >= 0 ? 'status-green' : 'status-red');
     }
 
     // Funções de navegação
@@ -1259,6 +1071,7 @@
       jogador2.setAttribute("list", "jogadores-lista");
     }
 
+
     // Event Listeners
     document.addEventListener("DOMContentLoaded", async () => {
       // Verificar se os dados do usuário existem no localStorage
@@ -1350,7 +1163,14 @@
 
       // Cálculo dinâmico do resultado
       ["stake", "odds", "resultado"].forEach(id => {
-        document.getElementById(id).addEventListener("input", atualizarValorFinal);
+        document.getElementById(id).addEventListener("input", () => {
+          const stake = parseFloat(document.getElementById("stake").value) || 0;
+          const odds = parseFloat(document.getElementById("odds").value) || 0;
+          const resultado = document.getElementById("resultado").value;
+
+          const valor = calcularValorAposta(stake, odds, resultado);
+          document.getElementById("resultado-final").textContent = formatarMoeda(valor);
+        });
       });
     });
   </script>
