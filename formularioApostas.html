@@ -262,10 +262,9 @@
       background-color: #252525;
       border-radius: 12px;
       padding: 20px;
-      margin-bottom: 3rem; /* Aumentado o espaço abaixo do gráfico */
-      padding-bottom: 2rem;
-      min-height: 300px; /* Garante altura mínima para o gráfico */
-      height: 300px;
+      margin-bottom: 3rem;
+      min-height: 400px; /* Aumentado a altura mínima */
+      height: 400px; /* Altura fixa maior */
     }
 
     .chart-title {
@@ -273,6 +272,53 @@
       color: #b0b0b0;
       font-size: 16px;
       font-weight: 500;
+    }
+
+    /* Estilo para o seletor de período */
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .period-selector {
+      display: flex;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 8px;
+      border-radius: 8px;
+    }
+
+    .period-button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      color: #b0b0b0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .period-button.active {
+      background: #bb86fc;
+      color: #1e1e1e;
+    }
+
+    /* Estilo para o seletor de datas personalizado */
+    .date-range-selector {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-left: 20px;
+    }
+
+    .date-input {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid #bb86fc;
+      border-radius: 6px;
+      color: #e0e0e0;
+      padding: 6px 12px;
     }
 
     /* Lista de apostas */
@@ -692,6 +738,21 @@
         <!-- Gráfico -->
         <div class="chart-container">
           <h3 class="chart-title">Desempenho (7 dias)</h3>
+          <div class="chart-header">
+            <div class="period-selector">
+              <button class="period-button active" data-days="7">7D</button>
+              <button class="period-button" data-days="15">15D</button>
+              <button class="period-button" data-days="30">30D</button>
+              <button class="period-button" data-days="45">45D</button>
+              <button class="period-button" data-days="60">60D</button>
+            </div>
+            <div class="date-range-selector">
+              <input type="date" class="date-input" id="start-date">
+              <span>até</span>
+              <input type="date" class="date-input" id="end-date">
+              <button class="period-button" id="apply-range">Aplicar</button>
+            </div>
+          </div>
           <div id="grafico"></div>
         </div>
 
@@ -1073,17 +1134,20 @@
       return statusMap[resultado] || 'status-green';
     }
 
-    async function criarGrafico(apostas) {
+    async function criarGrafico(apostas, dias = 7) {
       const ctx = document.createElement("canvas");
       document.getElementById("grafico").innerHTML = "";
       document.getElementById("grafico").appendChild(ctx);
 
-      // Obter os últimos 7 dias
+      // Obter a data atual e a data inicial baseada no número de dias
+      const dataFinal = new Date();
+      const dataInicial = new Date();
+      dataInicial.setDate(dataInicial.getDate() - (dias - 1));
+
+      // Gerar array de datas
       const datas = [];
-      for (let i = 6; i >= 0; i--) {
-        const data = new Date();
-        data.setDate(data.getDate() - i);
-        datas.push(data);
+      for (let d = new Date(dataInicial); d <= dataFinal; d.setDate(d.getDate() + 1)) {
+        datas.push(new Date(d));
       }
 
       // Calcular saldos diários
@@ -1375,6 +1439,34 @@
       // Cálculo dinâmico do resultado
       ["stake", "odds", "resultado"].forEach(id => {
         document.getElementById(id).addEventListener("input", atualizarValorFinal);
+      });
+
+      // Event listeners para os botões de período
+      document.querySelectorAll('.period-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+          if (!e.target.dataset.days) return; // Ignora o botão "Aplicar"
+          
+          // Remove a classe active de todos os botões
+          document.querySelectorAll('.period-button').forEach(btn => 
+            btn.classList.remove('active'));
+          
+          // Adiciona a classe active ao botão clicado
+          e.target.classList.add('active');
+          
+          // Atualiza o gráfico
+          criarGrafico(todasApostas, parseInt(e.target.dataset.days));
+        });
+      });
+
+      // Event listener para o seletor de datas personalizado
+      document.getElementById('apply-range').addEventListener('click', () => {
+        const startDate = new Date(document.getElementById('start-date').value);
+        const endDate = new Date(document.getElementById('end-date').value);
+        
+        if (startDate && endDate && startDate <= endDate) {
+          const dias = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+          criarGrafico(todasApostas, dias, startDate);
+        }
       });
     });
   </script>
