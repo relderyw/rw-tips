@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gerenciamento</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     /* Reset e estilos base */
     * {
@@ -15,516 +15,146 @@
       font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
+    /* Variáveis de design atualizadas */
+    :root {
+      --primary-color: #8B5CF6;
+      --secondary-color: #EC4899;
+      --background-dark: #0f0f13;
+      --card-bg: rgba(26, 26, 35, 0.8);
+      --card-hover: #22222c;
+      --text-primary: #ffffff;
+      --text-secondary: #b3b3b3;
+      --success-color: #00ff88;
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.05);
+      --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      --subtle-glow: 0 0 15px rgba(139, 92, 246, 0.15);
+      --border-radius: 12px;
+      --transition: all 0.3s ease;
+    }
+
+    /* Estilos base refinados */
     body {
-      background-color: #121212;
-      color: #e0e0e0;
-      min-height: 100vh;
+      background: radial-gradient(circle at top right, #1a1a2e, #0f0f13);
+      font-family: 'Inter', sans-serif;
+      color: var(--text-primary);
+      line-height: 1.6;
     }
 
-    /* Container principal */
-    .container {
-      max-width: 100%;
-      padding: 0;
-      margin: 0;
-      background-color: #121212;
-    }
-
+    /* Container principal com efeito glass */
     .app-container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 16px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--border-radius);
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(10px);
+      padding: 2rem;
+      margin: 2rem auto;
+      max-width: 1200px;
     }
 
-    /* Cabeçalho */
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 0;
-      margin-bottom: 24px;
-      border-bottom: 1px solid #333;
-    }
-
-    .app-title {
-      font-size: 24px;
-      font-weight: 700;
-      color: #bb86fc;
-    }
-
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .user-avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background-color: #bb86fc;
-      color: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-    }
-
-    /* Navegação por abas */
-    .tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
-      background-color: #1e1e1e;
-      border-radius: 12px;
-      padding: 4px;
-      overflow-x: auto;
-    }
-
-    .tab-button {
-      padding: 10px 16px;
-      border: none;
-      background: none;
-      color: #888;
-      border-radius: 8px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex: 1;
-      justify-content: center;
-      transition: all 0.2s ease;
-      font-weight: 500;
-      min-width: 120px;
-    }
-
-    .tab-button.active {
-      background-color: #2c2c2c;
-      color: #bb86fc;
-    }
-
-    .tab-button:hover:not(.active) {
-      background-color: #252525;
-      color: #a0a0a0;
-    }
-
-    .icon {
-      width: 18px;
-      height: 18px;
-    }
-
-    .icon-sm {
-      width: 16px;
-      height: 16px;
-    }
-
-    /* Conteúdo das abas */
-    .tab-content {
-      display: none;
-      background-color: #1e1e1e;
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 24px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    /* Formulário */
+    /* Estilização moderna para formulários */
     .form-group {
-      margin-bottom: 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      transition: var(--transition);
     }
 
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      color: #b0b0b0;
+    .form-group:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--subtle-glow);
     }
 
-    input,
-    select {
+    /* Inputs modernos */
+    input, select {
       width: 100%;
-      padding: 12px 16px;
-      border: 1px solid #333;
-      border-radius: 8px;
-      background-color: #252525;
-      color: #e0e0e0;
-      font-size: 14px;
-      transition: border-color 0.2s;
+      padding: 0.8rem 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--border-radius);
+      color: var(--text-primary);
+      font-size: 1rem;
+      transition: var(--transition);
     }
 
-    input:focus,
-    select:focus {
-      border-color: #bb86fc;
+    input:focus, select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
       outline: none;
     }
 
-    input::placeholder {
-      color: #666;
-    }
-
-    .calculated-result {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 24px 0;
-      padding: 16px;
-      background-color: #252525;
-      border-radius: 8px;
-      border-left: 4px solid #bb86fc;
-    }
-
-    .calculated-result p {
-      font-weight: 500;
-    }
-
-    .calculated-result .value {
-      font-weight: 700;
-      font-size: 18px;
-      color: #bb86fc;
-    }
-
-    .submit-button {
+    /* Tabela moderna */
+    .history-table {
       width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 8px;
-      background-color: #bb86fc;
-      color: #000;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 0.2s;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      border-collapse: separate;
+      border-spacing: 0 0.5rem;
+      margin: 1.5rem 0;
     }
 
-    .submit-button:hover {
-      background-color: #a370e0;
-    }
-
-    /* Resumo */
-    .summary {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .summary-item {
-      padding: 16px;
-      border-radius: 8px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .summary-item.gain {
-      background-color: rgba(39, 174, 96, 0.15);
-      border: 1px solid rgba(39, 174, 96, 0.3);
-    }
-
-    .summary-item.loss {
-      background-color: rgba(231, 76, 60, 0.15);
-      border: 1px solid rgba(231, 76, 60, 0.3);
-    }
-
-    .summary-item.balance {
-      background-color: rgba(187, 134, 252, 0.15);
-      border: 1px solid rgba(187, 134, 252, 0.3);
-    }
-
-    .summary-item .label {
-      font-size: 14px;
-      color: #b0b0b0;
-    }
-
-    .summary-item .value {
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .gain .value {
-      color: #27ae60;
-    }
-
-    .loss .value {
-      color: #e74c3c;
-    }
-
-    .balance .value {
-      color: #bb86fc;
-    }
-
-    /* Gráfico */
-    .chart-container {
-      background-color: #252525;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 3rem;
-      min-height: 400px; /* Aumentado a altura mínima */
-      height: 400px; /* Altura fixa maior */
-    }
-
-    .chart-title {
-      margin-bottom: 16px;
-      color: #b0b0b0;
-      font-size: 16px;
-      font-weight: 500;
-    }
-
-    /* Estilo para o seletor de período */
-    .chart-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .period-selector {
-      display: flex;
-      gap: 10px;
-      background: rgba(0, 0, 0, 0.2);
-      padding: 8px;
-      border-radius: 8px;
-    }
-
-    .period-button {
-      padding: 6px 12px;
-      border: none;
-      border-radius: 6px;
-      background: transparent;
-      color: #b0b0b0;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .period-button.active {
-      background: #bb86fc;
-      color: #1e1e1e;
-    }
-
-    /* Estilo para o seletor de datas personalizado */
-    .date-range-selector {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-left: 20px;
-    }
-
-    .date-input {
-      background: rgba(0, 0, 0, 0.2);
-      border: 1px solid #bb86fc;
-      border-radius: 6px;
-      color: #e0e0e0;
-      padding: 6px 12px;
-    }
-
-    /* Lista de apostas */
-    .history-title {
-      margin-top: 5rem; /* Aumentado significativamente o espaço acima do título */
-      margin-bottom: 1.5rem;
-      font-size: 1.5rem;
-      font-weight: 600;
+    .history-table th {
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
       color: var(--text-primary);
-      padding-top: 2rem; /* Adicionado padding extra no topo */
-      border-top: 1px solid rgba(255, 255, 255, 0.1); /* Opcional: adiciona uma linha divisória */
-    }
-
-    .history-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 1rem; /* Espaço adicional acima da lista */
-      max-height: 500px; /* Altura máxima para a lista com scroll */
-      overflow-y: auto;
-      padding-right: 0.5rem;
-    }
-
-    .aposta-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px;
-      background-color: #252525;
-      border-radius: 8px;
-      border-left: 4px solid #333;
-    }
-
-    .aposta-info {
-      flex: 1;
-    }
-
-    .aposta-actions button {
-      background-color: #333;
-      color: #e0e0e0;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    .aposta-actions button:hover {
-      background-color: #444;
-    }
-
-    .status-green {
-      color: #27ae60;
-    }
-
-    .status-red {
-      color: #e74c3c;
-    }
-
-    /* Mercados */
-    .market-form {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
-    .market-input {
-      flex: 1;
-    }
-
-    .add-market-button {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 16px;
-      background-color: #bb86fc;
-      color: #000;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
       font-weight: 600;
-      transition: background-color 0.2s;
+      padding: 1rem;
+      text-align: left;
     }
 
-    .add-market-button:hover {
-      background-color: #a370e0;
+    .history-table td {
+      background: var(--card-bg);
+      padding: 1rem;
+      border-top: 1px solid var(--glass-border);
+      transition: var(--transition);
     }
 
-    .markets-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+    .history-table tr:hover td {
+      background: var(--card-hover);
+      transform: scale(1.01);
     }
 
-    .market-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 16px;
-      background-color: #252525;
-      border-radius: 8px;
+    /* Gráfico moderno */
+    .chart-container {
+      background: var(--card-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      box-shadow: var(--card-shadow);
     }
 
-    .remove-button {
-      background: none;
+    /* Botões estilizados */
+    .action-button {
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      color: var(--text-primary);
       border: none;
-      color: #e74c3c;
+      border-radius: var(--border-radius);
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
       cursor: pointer;
-      padding: 4px;
-      border-radius: 4px;
-      transition: background-color 0.2s;
+      transition: var(--transition);
     }
 
-    .remove-button:hover {
-      background-color: rgba(231, 76, 60, 0.1);
-    }
-
-    /* Botão Voltar */
-    .back-button {
-      position: fixed;
-      top: 16px;
-      left: 16px;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background-color: #252525;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      z-index: 10;
-    }
-
-    .back-button::before {
-      content: "";
-      display: block;
-      width: 12px;
-      height: 12px;
-      border-left: 2px solid #bb86fc;
-      border-bottom: 2px solid #bb86fc;
-      transform: rotate(45deg);
-      margin-right: -4px;
-    }
-
-    .back-button:hover {
-      background-color: #333;
-    }
-
-    /* Loading */
-    .loading {
-      text-align: center;
-      padding: 20px;
-      color: #888;
-    }
-
-    /* Animação de pulse para indicar carregamento */
-    @keyframes pulse {
-      0% {
-        opacity: 0.6;
-      }
-
-      50% {
-        opacity: 1;
-      }
-
-      100% {
-        opacity: 0.6;
-      }
-    }
-
-    .loading {
-      animation: pulse 1.5s infinite;
+    .action-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(139, 92, 246, 0.3);
     }
 
     /* Responsividade */
     @media (max-width: 768px) {
       .app-container {
-        padding: 16px 12px;
+        padding: 1rem;
+        margin: 1rem;
       }
-
-      .summary {
-        grid-template-columns: 1fr;
+      
+      .form-group {
+        padding: 1rem;
       }
-
-      .tab-button {
-        padding: 8px 12px;
-        font-size: 14px;
-      }
-
-      .tab-content {
-        padding: 16px;
-      }
-
-      .aposta-item {
-        flex-direction: column;
-        gap: 12px;
-        align-items: flex-start;
-      }
-
-      .aposta-actions {
-        width: 100%;
-        display: flex;
-        justify-content: flex-end;
+      
+      .history-table {
+        display: block;
+        overflow-x: auto;
       }
     }
 
@@ -738,23 +368,17 @@
 
         <!-- Gráfico -->
         <div class="chart-container">
-          <h3 class="chart-title">Desempenho (7 dias)</h3>
-          <div class="chart-header">
-            <div class="period-selector">
-              <button class="period-button active" data-days="7">7D</button>
-              <button class="period-button" data-days="15">15D</button>
-              <button class="period-button" data-days="30">30D</button>
-              <button class="period-button" data-days="45">45D</button>
-              <button class="period-button" data-days="60">60D</button>
-            </div>
-            <div class="date-range-selector">
-              <input type="date" class="date-input" id="start-date">
-              <span>até</span>
-              <input type="date" class="date-input" id="end-date">
-              <button class="period-button" id="apply-range">Aplicar</button>
+          <canvas id="saldoChart" height="300"></canvas>
+          <div class="chart-controls">
+            <button class="period-button" data-days="7">7 dias</button>
+            <button class="period-button" data-days="30">30 dias</button>
+            <button class="period-button" data-days="90">90 dias</button>
+            <div class="date-range">
+              <input type="date" id="start-date">
+              <input type="date" id="end-date">
+              <button id="apply-range" class="action-button">Aplicar</button>
             </div>
           </div>
-          <div id="grafico"></div>
         </div>
 
         <!-- Lista de apostas -->
@@ -787,7 +411,7 @@
   </div>
 
   <!-- Importar Chart.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <!-- Seu script atual aqui -->
   <script type="module">
@@ -1139,102 +763,26 @@
       return statusMap[resultado] || 'status-green';
     }
 
-    async function criarGrafico(dias, dataInicial = null, dataFinal = null) {
-      const ctx = document.createElement("canvas");
-      document.getElementById("grafico").innerHTML = "";
-      document.getElementById("grafico").appendChild(ctx);
-
-      // Definir período
-      let startDate, endDate;
-      if (dataInicial && dataFinal) {
-        startDate = new Date(dataInicial);
-        startDate.setHours(0, 0, 0, 0);
-        endDate = new Date(dataFinal);
-        endDate.setHours(23, 59, 59, 999);
-      } else {
-        endDate = new Date();
-        endDate.setHours(23, 59, 59, 999);
-        startDate = new Date();
-        startDate.setDate(endDate.getDate() - (dias - 1));
-        startDate.setHours(0, 0, 0, 0);
-      }
-
-      // Gerar array de datas
-      const datas = [];
-      const currentDate = new Date(startDate);
-      while (currentDate <= endDate) {
-        datas.push(new Date(currentDate));
-        currentDate.setDate(currentDate.getDate() + 1);
-      }
-
-      // Calcular saldos diários
-      const saldosDiarios = datas.map((data) => {
-        const dataStr = data.toLocaleDateString("pt-BR");
-        const inicioDoDia = new Date(data);
-        inicioDoDia.setHours(0, 0, 0, 0);
-        const fimDoDia = new Date(data);
-        fimDoDia.setHours(23, 59, 59, 999);
-
-        // Filtrar apostas para este dia
-        const apostasDoDia = todasApostas.filter((aposta) => {
-          const dataAposta = aposta.timestamp?.toDate() || new Date();
-          return dataAposta >= inicioDoDia && dataAposta <= fimDoDia;
-        });
-
-        // Calcular saldo para o dia
-        let saldoDoDia = 0;
-        apostasDoDia.forEach((aposta) => {
-          const stake = parseFloat(aposta.stake.toString().replace(/[^\d.,]/g, "").replace(",", "."));
-          const odds = parseFloat(aposta.odds.toString().replace(",", "."));
-
-          switch (aposta.resultado) {
-            case "green":
-              saldoDoDia += stake * (odds - 1);
-              break;
-            case "red":
-              saldoDoDia -= stake;
-              break;
-            case "meio-green":
-              saldoDoDia += (stake / 2) * (odds - 1);
-              break;
-            case "meio-red":
-              saldoDoDia -= stake / 2;
-              break;
-            case "reembolso":
-              // Não altera o saldo
-              break;
-          }
-        });
-
-        return {
-          data: dataStr,
-          saldo: saldoDoDia,
-        };
-      });
-
-      // Preparar dados para o gráfico
-      const labels = saldosDiarios.map((item) => item.data);
-      const dados = saldosDiarios.map((item) => item.saldo);
-
-      // Criar gráfico
-      new Chart(ctx, {
-        type: "line",
+    async function criarGrafico(dias, startDate = null, endDate = null) {
+      const ctx = document.getElementById('saldoChart').getContext('2d');
+      
+      // Configurações do gráfico
+      const chartConfig = {
+        type: 'line',
         data: {
-          labels: labels,
-          datasets: [
-            {
-              label: "Saldo Diário",
-              data: dados,
-              borderColor: "#bb86fc",
-              backgroundColor: "rgba(187, 134, 252, 0.1)",
-              borderWidth: 3,
-              pointBackgroundColor: "#03dac6",
-              pointRadius: 5,
-              pointHoverRadius: 7,
-              tension: 0.2,
-              fill: true,
-            },
-          ],
+          labels: [], // Será preenchido com as datas
+          datasets: [{
+            label: 'Saldo',
+            data: [], // Será preenchido com os valores
+            fill: true,
+            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+            borderColor: 'rgba(139, 92, 246, 1)',
+            tension: 0.4,
+            pointBackgroundColor: '#EC4899',
+            pointBorderColor: '#fff',
+            pointRadius: 4,
+            pointHoverRadius: 6
+          }]
         },
         options: {
           responsive: true,
@@ -1242,43 +790,45 @@
           plugins: {
             legend: {
               labels: {
-                color: "#e0e0e0",
-              },
+                color: '#fff'
+              }
             },
             tooltip: {
-              backgroundColor: "rgba(30, 30, 30, 0.9)",
-              titleColor: "#bb86fc",
-              bodyColor: "#e0e0e0",
-              callbacks: {
-                label: function (context) {
-                  return "Saldo: " + formatarMoeda(context.raw);
-                },
-              },
-            },
+              backgroundColor: 'rgba(26, 26, 35, 0.9)',
+              titleColor: '#EC4899',
+              bodyColor: '#fff',
+              borderColor: 'rgba(255, 255, 255, 0.1)',
+              borderWidth: 1,
+              padding: 10,
+              displayColors: false
+            }
           },
           scales: {
-            y: {
-              grid: {
-                color: "rgba(255, 255, 255, 0.1)",
-              },
-              ticks: {
-                color: "#e0e0e0",
-                callback: function (value) {
-                  return formatarMoeda(value);
-                },
-              },
-            },
             x: {
               grid: {
-                color: "rgba(255, 255, 255, 0.1)",
+                color: 'rgba(255, 255, 255, 0.1)'
               },
               ticks: {
-                color: "#e0e0e0",
-              },
+                color: '#b3b3b3'
+              }
             },
-          },
-        },
-      });
+            y: {
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              },
+              ticks: {
+                color: '#b3b3b3'
+              }
+            }
+          }
+        }
+      };
+
+      // Criar novo gráfico
+      if (window.saldoChart) {
+        window.saldoChart.destroy();
+      }
+      window.saldoChart = new Chart(ctx, chartConfig);
     }
 
     // Função para mapear liga da API para o select
