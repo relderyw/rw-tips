@@ -1,362 +1,245 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gerenciamento</title>
-  <style>
-    /* Estilos gerais */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Apostas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #00dc82;
+            --dark-green: #003322;
+            --darker-green: #001a11;
+            --light-green: #00ff96;
+            --glass-bg: rgba(0, 220, 130, 0.05);
+            --glass-border: rgba(0, 220, 130, 0.1);
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --success: #00dc82;
+            --warning: #ff9800;
+            --danger: #ff4757;
+            --card-bg: rgba(0, 26, 17, 0.7);
+        }
 
-    body {
-      background-color: #0a0a0d;
-      color: #e0e0e0;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      overflow-x: hidden;
-      background-image: linear-gradient(to bottom, #0a0a0d, #101022);
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
 
-    .container {
-      max-width: 480px;
-      margin: 0 auto;
-    }
+        body {
+            background: radial-gradient(circle at top right, var(--dark-green), var(--darker-green));
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 2rem;
+            position: relative;
+            overflow-x: hidden;
+        }
 
-    .app-container {
-      background: linear-gradient(to bottom right, #1f2937, #111827);
-      border-radius: 1rem;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-      padding: 1.5rem;
-      border: 1px solid rgba(139, 92, 246, 0.2);
-    }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(0, 220, 130, 0.1), transparent 25%),
+                radial-gradient(circle at 80% 80%, rgba(0, 255, 150, 0.1), transparent 25%);
+            z-index: -1;
+            pointer-events: none;
+        }
 
-    /* Cabeçalho */
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-    }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
 
-    .app-title {
-      font-size: 1.5rem;
-      font-weight: bold;
-      background: linear-gradient(to right, #a78bfa, #818cf8);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
+        .app-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
 
-    /* Informações do usuário */
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: #a78bfa;
-    }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
 
-    .user-avatar {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background: linear-gradient(145deg, #bb86fc, #9c27b0);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      color: #121212;
-    }
+        .app-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--primary-green), var(--light-green));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
 
-    /* Navegação */
-    .tabs {
-      display: flex;
-      justify-content: space-around;
-      margin-bottom: 1.5rem;
-      border-bottom: 1px solid rgba(139, 92, 246, 0.3);
-      padding-bottom: 0.5rem;
-    }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.5rem 1rem;
+            background: var(--glass-bg);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+        }
 
-    .tab-button {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: none;
-      border: none;
-      color: #9ca3af;
-      padding: 0.5rem;
-      cursor: pointer;
-      transition: color 0.2s;
-    }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary-green), var(--light-green));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--darker-green);
+        }
 
-    .tab-button.active {
-      color: #a78bfa;
-    }
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 0.5rem;
+            background: var(--glass-bg);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+        }
 
-    .tab-button span {
-      font-size: 0.75rem;
-      margin-top: 0.25rem;
-    }
+        .tab-button {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
 
-    /* Conteúdo das abas */
-    .tab-content {
-      display: none;
-    }
+        .tab-button i {
+            font-size: 1.2rem;
+        }
 
-    .tab-content.active {
-      display: block;
-    }
+        .tab-button.active {
+            background: var(--primary-green);
+            color: var(--darker-green);
+        }
 
-    /* Formulário */
-    .form-group {
-      margin-bottom: 1rem;
-    }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
 
-    label {
-      display: block;
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #a78bfa;
-      margin-bottom: 0.25rem;
-    }
+        label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--primary-green);
+            margin-bottom: 0.5rem;
+        }
 
-    input,
-    select {
-      width: 100%;
-      background-color: #1f2937;
-      border: 1px solid #374151;
-      border-radius: 0.5rem;
-      padding: 0.5rem 1rem;
-      color: white;
-      font-size: 0.875rem;
-    }
+        input, select {
+            width: 100%;
+            padding: 1rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
 
-    input:focus,
-    select:focus {
-      outline: none;
-      border-color: #a78bfa;
-      box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
-    }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(0, 220, 130, 0.1);
+        }
 
-    /* Botões */
-    .submit-button {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      background: linear-gradient(to right, #8b5cf6, #6366f1);
-      color: white;
-      font-weight: 500;
-      border: none;
-      border-radius: 0.5rem;
-      margin-top: 1.5rem;
-      transition: all 0.3s;
-      cursor: pointer;
-    }
+        .submit-button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(45deg, var(--primary-green), var(--light-green));
+            color: var(--darker-green);
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
 
-    .submit-button:hover {
-      background: linear-gradient(to right, #7c3aed, #4f46e5);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 8px -1px rgba(0, 0, 0, 0.2);
-    }
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 220, 130, 0.2);
+        }
 
-    /* Resultado calculado */
-    .calculated-result {
-      margin-top: 1.5rem;
-      padding: 1rem;
-      background-color: rgba(31, 41, 55, 0.5);
-      border: 1px solid rgba(139, 92, 246, 0.2);
-      border-radius: 0.5rem;
-      text-align: center;
-    }
+        .calculated-result {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            text-align: center;
+        }
 
-    .calculated-result p {
-      color: #a78bfa;
-      font-size: 1rem;
-      font-weight: 500;
-    }
+        .calculated-result .value {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--primary-green), var(--light-green));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
 
-    .calculated-result .value {
-      display: block;
-      margin-top: 0.5rem;
-      font-size: 1.5rem;
-      font-weight: bold;
-      background: linear-gradient(to right, #a78bfa, #818cf8);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
+        .back-button {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary-green), var(--light-green));
+            border: none;
+            color: var(--darker-green);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 220, 130, 0.2);
+        }
 
-    /* Resumo */
-    .summary {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.5rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .summary-item {
-      padding: 0.75rem;
-      border-radius: 0.5rem;
-      text-align: center;
-    }
-
-    .summary-item.gain {
-      background: linear-gradient(to bottom right, rgba(16, 185, 129, 0.3), rgba(16, 185, 129, 0.2));
-      border: 1px solid rgba(16, 185, 129, 0.2);
-    }
-
-    .summary-item.loss {
-      background: linear-gradient(to bottom right, rgba(239, 68, 68, 0.3), rgba(239, 68, 68, 0.2));
-      border: 1px solid rgba(239, 68, 68, 0.2);
-    }
-
-    .summary-item.balance {
-      background: linear-gradient(to bottom right, rgba(139, 92, 246, 0.3), rgba(139, 92, 246, 0.2));
-      border: 1px solid rgba(139, 92, 246, 0.2);
-    }
-
-    /* Status badges */
-    .status-badge {
-      display: inline-block;
-      padding: 0.25rem 0.5rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      margin-left: 0.25rem;
-    }
-
-    .status-green {
-      background-color: rgba(16, 185, 129, 0.2);
-      color: rgb(16, 185, 129);
-      border: 1px solid rgb(16, 185, 129);
-    }
-
-    .status-red {
-      background-color: rgba(239, 68, 68, 0.2);
-      color: rgb(239, 68, 68);
-      border: 1px solid rgb(239, 68, 68);
-    }
-
-    /* Mercados */
-    .market-form {
-      display: flex;
-      margin-bottom: 1rem;
-    }
-
-    .market-input {
-      flex: 1;
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-    }
-
-    .add-market-button {
-      display: flex;
-      align-items: center;
-      background: linear-gradient(145deg, #bb86fc, #9c27b0);
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-top-right-radius: 0.5rem;
-      border-bottom-right-radius: 0.5rem;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .add-market-button:hover {
-      background: linear-gradient(145deg, #9c27b0, #bb86fc);
-      transform: scale(1.02);
-    }
-
-    /* Lista de mercados */
-    .markets-list {
-      max-height: 300px;
-      overflow-y: auto;
-      padding-right: 0.25rem;
-    }
-
-    .market-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: rgba(31, 41, 55, 0.7);
-      border: 1px solid #374151;
-      border-radius: 0.5rem;
-      padding: 0.75rem 1rem;
-      margin-bottom: 0.5rem;
-      transition: all 0.3s;
-    }
-
-    .market-item:hover {
-      background-color: rgba(55, 65, 81, 0.5);
-      transform: translateX(5px);
-    }
-
-    /* Ícones */
-    .icon {
-      width: 1.25rem;
-      height: 1.25rem;
-      fill: currentColor;
-    }
-
-    .icon-sm {
-      width: 1rem;
-      height: 1rem;
-    }
-
-    /* Botão Voltar */
-    .back-button {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      background: linear-gradient(145deg, #bb86fc, #9c27b0);
-      color: #121212;
-      border: none;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      font-size: 18px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      box-shadow:
-        0 4px 10px rgba(0, 0, 0, 0.5),
-        0 0 10px rgba(187, 134, 252, 0.5);
-      transition: all 0.3s ease;
-      z-index: 1000;
-    }
-
-    .back-button:hover {
-      background: linear-gradient(145deg, #9c27b0, #bb86fc);
-      transform: scale(1.1);
-      box-shadow:
-        0 6px 12px rgba(0, 0, 0, 0.6),
-        0 0 15px rgba(187, 134, 252, 0.6);
-    }
-
-    /* Ícone de Voltar */
-    .back-button::before {
-      content: "←";
-      font-weight: bold;
-    }
-  </style>
+        .back-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0, 220, 130, 0.3);
+        }
+    </style>
 </head>
-
 <body>
-  <button class="back-button" onclick="window.location.href='visualization.html'"></button>
+  <button class="back-button" onclick="window.location.href='visualization.html'">
+    <i class="ri-arrow-left-line"></i>
+  </button>
   <div class="container">
     <div class="app-container">
       <!-- Cabeçalho -->
       <header class="header">
-        <h1 class="app-title">Gerenciamento</h1>
+        <h1 class="app-title">Gerenciamento de Apostas</h1>
         <div class="user-info">
           <div class="user-avatar" id="user-avatar"></div>
           <span id="user-email"></span>
@@ -366,28 +249,16 @@
       <!-- Navegação por abas -->
       <div class="tabs">
         <button class="tab-button active" data-tab="form">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="8" x2="12" y2="16"></line>
-            <line x1="8" y1="12" x2="16" y2="12"></line>
-          </svg>
-          <span>Nova Aposta</span>
-        </button>
-        <button class="tab-button" data-tab="history">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="12 8 12 12 14 14"></polyline>
-            <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"></path>
-          </svg>
-          <span>Histórico</span>
+          <i class="ri-file-list-line"></i>
+          <span>Formulário</span>
         </button>
         <button class="tab-button" data-tab="markets">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
-            <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
-            <line x1="6" y1="6" x2="6" y2="6"></line>
-            <line x1="6" y1="18" x2="6" y2="18"></line>
-          </svg>
+          <i class="ri-store-line"></i>
           <span>Mercados</span>
+        </button>
+        <button class="tab-button" data-tab="history">
+          <i class="ri-history-line"></i>
+          <span>Histórico</span>
         </button>
       </div>
 
@@ -395,60 +266,72 @@
       <div class="tab-content active" id="form-tab">
         <form id="bet-form">
           <div class="form-group">
-            <label for="liga">Liga</label>
+            <label for="liga">
+              <i class="ri-trophy-line"></i> Liga
+            </label>
             <select id="liga">
               <option value="Battle 6 min">Battle 6 min</option>
               <option value="Battle 8 min">Battle 8 min</option>
               <option value="Battle 8 min (H2H)">Battle 8 min (H2H)</option>
               <option value="Adriact 10 min">Adriact 10 min</option>
-              <option value="GT 12 min">GT 12 min</option>
             </select>
           </div>
 
           <div class="form-group">
-            <label for="jogador1">Jogador 1</label>
-            <input type="text" id="jogador1" placeholder="Nome do Jogador 1" required>
+            <label for="jogador1">
+              <i class="ri-user-line"></i> Jogador 1
+            </label>
+            <input type="text" id="jogador1" required>
           </div>
 
           <div class="form-group">
-            <label for="jogador2">Jogador 2</label>
-            <input type="text" id="jogador2" placeholder="Nome do Jogador 2" required>
+            <label for="jogador2">
+              <i class="ri-user-line"></i> Jogador 2
+            </label>
+            <input type="text" id="jogador2" required>
           </div>
 
           <div class="form-group">
-            <label for="mercado">Mercado</label>
-            <select id="mercado" required>
-              <!-- Preenchido dinamicamente -->
-            </select>
+            <label for="mercado">
+              <i class="ri-exchange-line"></i> Mercado
+            </label>
+            <select id="mercado" required></select>
           </div>
 
           <div class="form-group">
-            <label for="stake">Stake (R$)</label>
-            <input type="text" id="stake" placeholder="Ex: 100" required>
+            <label for="stake">
+              <i class="ri-money-dollar-circle-line"></i> Stake
+            </label>
+            <input type="number" id="stake" step="0.01" required>
           </div>
 
           <div class="form-group">
-            <label for="odds">Odds</label>
-            <input type="text" id="odds" placeholder="Ex: 1.85" required>
+            <label for="odds">
+              <i class="ri-percent-line"></i> Odds
+            </label>
+            <input type="number" id="odds" step="0.01" required>
           </div>
 
           <div class="form-group">
-            <label for="resultado">Resultado</label>
-            <select id="resultado">
+            <label for="resultado">
+              <i class="ri-flag-line"></i> Resultado
+            </label>
+            <select id="resultado" required>
               <option value="green">Green</option>
               <option value="red">Red</option>
               <option value="meio-green">Meio Green</option>
               <option value="meio-red">Meio Red</option>
-              <option value="reembolso">Reembolso</option>
             </select>
           </div>
 
           <div class="calculated-result">
-            <p>Valor Final:</p>
+            <p>Resultado Final</p>
             <span class="value" id="resultado-final">Calculando...</span>
           </div>
 
-          <button type="submit" class="submit-button" id="salvar-dados">Salvar Aposta</button>
+          <button type="submit" class="submit-button">
+            <i class="ri-save-line"></i> Salvar Aposta
+          </button>
         </form>
       </div>
 
