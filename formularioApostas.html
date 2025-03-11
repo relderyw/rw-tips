@@ -14,6 +14,7 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
+    /* Melhorar a tipografia */
     body {
       background-color: #0a0a0d;
       color: #e0e0e0;
@@ -25,6 +26,7 @@
       min-height: 100vh;
       overflow-x: hidden;
       background-image: linear-gradient(to bottom, #0a0a0d, #101022);
+      font-family: 'Roboto', sans-serif;
     }
 
     .container {
@@ -55,6 +57,7 @@
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
+      font-family: 'Roboto Slab', serif;
     }
 
     /* Informações do usuário */
@@ -346,6 +349,13 @@
     .back-button::before {
       content: "←";
       font-weight: bold;
+    }
+
+    /* Adicionar transições suaves */
+    .tab-button,
+    .submit-button,
+    .add-market-button {
+      transition: all 0.3s ease;
     }
   </style>
 </head>
@@ -965,41 +975,15 @@
 
     // Função para buscar jogadores da API
     async function buscarDadosAPI() {
+      if (jogadoresCache[currentUser]) {
+        return jogadoresCache[currentUser];
+      }
+
       try {
         const response = await fetch('https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=1');
         const data = await response.json();
-
-        if (data && data.data) {
-          const jogadoresPorLiga = {};
-
-          data.data.forEach(match => {
-            const ligaOriginal = match.leagueName;
-            const liga = mapearLiga(ligaOriginal);
-
-            // Inicializar o Set para a liga se não existir
-            if (!jogadoresPorLiga[liga]) {
-              jogadoresPorLiga[liga] = new Set();
-            }
-
-            // Adicionar jogadores apenas se a liga for mapeada corretamente
-            if (liga !== "Outro") {
-              if (match.home) {
-                const jogador = extrairNomeJogador(match.home);
-                jogadoresPorLiga[liga].add(jogador);
-              }
-              if (match.away) {
-                const jogador = extrairNomeJogador(match.away);
-                jogadoresPorLiga[liga].add(jogador);
-              }
-            }
-          });
-
-          // Atualizar cache
-          jogadoresCache = jogadoresPorLiga;
-
-          // Criar e atualizar datalists
-          atualizarDatalistsJogadores();
-        }
+        jogadoresCache[currentUser] = data;
+        return data;
       } catch (error) {
         console.error("Erro ao buscar dados da API:", error);
       }
@@ -1033,7 +1017,7 @@
       jogador2.setAttribute("list", "jogadores-lista");
     }
 
-    
+
     // Event Listeners
     document.addEventListener("DOMContentLoaded", async () => {
       // Verificar se os dados do usuário existem no localStorage
