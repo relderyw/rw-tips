@@ -1,245 +1,694 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciamento de Apostas</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-green: #00dc82;
-            --dark-green: #003322;
-            --darker-green: #001a11;
-            --light-green: #00ff96;
-            --glass-bg: rgba(0, 220, 130, 0.05);
-            --glass-border: rgba(0, 220, 130, 0.1);
-            --text-primary: #e0e0e0;
-            --text-secondary: #a0a0a0;
-            --success: #00dc82;
-            --warning: #ff9800;
-            --danger: #ff4757;
-            --card-bg: rgba(0, 26, 17, 0.7);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciamento</title>
+  <style>
+    /* Importação de fontes personalizadas */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap');
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
+    /* Estilos gerais */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
 
-        body {
-            background: radial-gradient(circle at top right, var(--dark-green), var(--darker-green));
-            color: var(--text-primary);
-            min-height: 100vh;
-            padding: 2rem;
-            position: relative;
-            overflow-x: hidden;
-        }
+    :root {
+      --primary-dark: #0a1714;
+      --secondary-dark: #0f231e;
+      --accent-green: #19a580;
+      --bright-green: #00d4a0;
+      --dark-green: #106d5a;
+      --text-primary: #e4f0ec;
+      --text-secondary: #b0c5be;
+      --accent-glow: rgba(25, 165, 128, 0.5);
+    }
 
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 20%, rgba(0, 220, 130, 0.1), transparent 25%),
-                radial-gradient(circle at 80% 80%, rgba(0, 255, 150, 0.1), transparent 25%);
-            z-index: -1;
-            pointer-events: none;
-        }
+    body {
+      background-color: var(--primary-dark);
+      color: var(--text-primary);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image: linear-gradient(to bottom, var(--primary-dark), var(--secondary-dark));
+      position: relative;
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
+    body::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at top right, rgba(25, 165, 128, 0.05), transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
 
-        .app-container {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        }
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--glass-border);
-        }
+    .app-container {
+      background: linear-gradient(145deg, #0f231e, #091d18);
+      border-radius: 1.5rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6),
+        0 0 20px rgba(25, 165, 128, 0.1);
+      padding: 2rem;
+      border: 1px solid rgba(25, 165, 128, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
 
-        .app-title {
-            font-size: 2rem;
-            font-weight: 700;
-            background: linear-gradient(45deg, var(--primary-green), var(--light-green));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
+    .app-container::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at bottom left, rgba(25, 165, 128, 0.03), transparent 40%);
+      z-index: -1;
+    }
 
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.5rem 1rem;
-            background: var(--glass-bg);
-            border-radius: 12px;
-            border: 1px solid var(--glass-border);
-        }
+    /* Cabeçalho */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      position: relative;
+    }
 
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, var(--primary-green), var(--light-green));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: var(--darker-green);
-        }
+    .header::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--accent-green), transparent);
+    }
 
-        .tabs {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            padding: 0.5rem;
-            background: var(--glass-bg);
-            border-radius: 12px;
-            border: 1px solid var(--glass-border);
-        }
+    .app-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      background: linear-gradient(to right, var(--bright-green), var(--accent-green));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 15px rgba(25, 165, 128, 0.2);
+    }
 
-        .tab-button {
-            flex: 1;
-            padding: 1rem;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 500;
-        }
+    /* Informações do usuário */
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--text-secondary);
+    }
 
-        .tab-button i {
-            font-size: 1.2rem;
-        }
+    .user-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(145deg, var(--accent-green), var(--dark-green));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: var(--text-primary);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3),
+        0 0 10px rgba(25, 165, 128, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
 
-        .tab-button.active {
-            background: var(--primary-green);
-            color: var(--darker-green);
-        }
+    .user-avatar::after {
+      content: "";
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transform: rotate(45deg);
+      animation: shine 2.5s infinite;
+    }
 
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
+    @keyframes shine {
+      0% {
+        transform: translateX(-100%) rotate(45deg);
+      }
 
-        label {
-            display: block;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--primary-green);
-            margin-bottom: 0.5rem;
-        }
+      100% {
+        transform: translateX(100%) rotate(45deg);
+      }
+    }
 
-        input, select {
-            width: 100%;
-            padding: 1rem;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            color: var(--text-primary);
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
+    /* Navegação */
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 2rem;
+      padding: 0.5rem;
+      background: rgba(15, 35, 30, 0.5);
+      border-radius: 1rem;
+      position: relative;
+      border: 1px solid rgba(25, 165, 128, 0.1);
+    }
 
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--primary-green);
-            box-shadow: 0 0 0 3px rgba(0, 220, 130, 0.1);
-        }
+    .tab-button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+      z-index: 1;
+      border-radius: 0.75rem;
+    }
 
-        .submit-button {
-            width: 100%;
-            padding: 1rem;
-            background: linear-gradient(45deg, var(--primary-green), var(--light-green));
-            color: var(--darker-green);
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
+    .tab-button.active {
+      color: var(--text-primary);
+      background: rgba(25, 165, 128, 0.1);
+    }
 
-        .submit-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(0, 220, 130, 0.2);
-        }
+    .tab-button.active::before {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 3px;
+      background: var(--accent-green);
+      border-radius: 3px;
+    }
 
-        .calculated-result {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            text-align: center;
-        }
+    .tab-button span {
+      font-size: 0.75rem;
+      margin-top: 0.5rem;
+      font-weight: 500;
+    }
 
-        .calculated-result .value {
-            font-size: 2rem;
-            font-weight: 700;
-            background: linear-gradient(45deg, var(--primary-green), var(--light-green));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
+    .tab-button:hover {
+      color: var(--bright-green);
+      transform: translateY(-2px);
+    }
 
-        .back-button {
-            position: fixed;
-            top: 2rem;
-            left: 2rem;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, var(--primary-green), var(--light-green));
-            border: none;
-            color: var(--darker-green);
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0, 220, 130, 0.2);
-        }
+    /* Conteúdo das abas */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.5s ease-in-out;
+    }
 
-        .back-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 16px rgba(0, 220, 130, 0.3);
-        }
-    </style>
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Formulário */
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--accent-green);
+      margin-bottom: 0.5rem;
+      transition: all 0.3s;
+      position: relative;
+      padding-left: 0.5rem;
+    }
+
+    label::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 14px;
+      background: var(--accent-green);
+      border-radius: 3px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      background-color: rgba(9, 29, 24, 0.6);
+      border: 1px solid rgba(25, 165, 128, 0.2);
+      border-radius: 0.8rem;
+      padding: 0.75rem 1.25rem;
+      color: var(--text-primary);
+      font-size: 1rem;
+      transition: all 0.3s;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--accent-green);
+      box-shadow: 0 0 0 3px rgba(25, 165, 128, 0.15),
+        inset 0 2px 4px rgba(0, 0, 0, 0.1);
+      background-color: rgba(25, 165, 128, 0.05);
+    }
+
+    /* Efeito de foco no label */
+    input:focus+label,
+    select:focus+label {
+      color: var(--bright-green);
+      transform: translateY(-2px);
+    }
+
+    /* Botões */
+    .submit-button {
+      width: 100%;
+      padding: 0.85rem 1.5rem;
+      background: linear-gradient(45deg, var(--dark-green), var(--accent-green));
+      color: white;
+      font-weight: 600;
+      border: none;
+      border-radius: 0.8rem;
+      margin-top: 2rem;
+      transition: all 0.3s;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25),
+        0 0 10px rgba(25, 165, 128, 0.3);
+      position: relative;
+      overflow: hidden;
+      letter-spacing: 0.5px;
+    }
+
+    .submit-button::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transform: rotate(45deg);
+      animation: shimmer 2s infinite;
+      opacity: 0;
+    }
+
+    .submit-button:hover {
+      background: linear-gradient(45deg, var(--accent-green), var(--dark-green));
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3),
+        0 0 15px rgba(25, 165, 128, 0.4);
+    }
+
+    .submit-button:hover::after {
+      opacity: 1;
+    }
+
+    @keyframes shimmer {
+      0% {
+        transform: translateX(-100%) rotate(45deg);
+      }
+
+      100% {
+        transform: translateX(100%) rotate(45deg);
+      }
+    }
+
+    .submit-button:active {
+      transform: translateY(-1px);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Resultado calculado */
+    .calculated-result {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: linear-gradient(145deg, rgba(15, 35, 30, 0.7), rgba(9, 29, 24, 0.7));
+      border: 1px solid rgba(25, 165, 128, 0.2);
+      border-radius: 1rem;
+      text-align: center;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2),
+        0 0 15px rgba(25, 165, 128, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .calculated-result::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at top right, rgba(25, 165, 128, 0.1), transparent 70%);
+      pointer-events: none;
+    }
+
+    .calculated-result p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 0.75rem;
+    }
+
+    .calculated-result .value {
+      display: block;
+      margin-top: 0.75rem;
+      font-size: 2rem;
+      font-weight: 700;
+      font-family: 'Space Grotesk', sans-serif;
+      background: linear-gradient(to right, var(--bright-green), var(--accent-green));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 15px rgba(25, 165, 128, 0.3);
+      letter-spacing: -0.5px;
+    }
+
+    /* Resumo */
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+
+    .summary-item {
+      padding: 1rem;
+      border-radius: 1rem;
+      text-align: center;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .summary-item.gain {
+      background: linear-gradient(145deg, rgba(25, 165, 128, 0.2), rgba(16, 109, 90, 0.15));
+      border: 1px solid rgba(25, 165, 128, 0.2);
+    }
+
+    .summary-item.loss {
+      background: linear-gradient(145deg, rgba(220, 38, 38, 0.2), rgba(185, 28, 28, 0.15));
+      border: 1px solid rgba(220, 38, 38, 0.2);
+    }
+
+    .summary-item.balance {
+      background: linear-gradient(145deg, rgba(37, 99, 235, 0.2), rgba(29, 78, 216, 0.15));
+      border: 1px solid rgba(37, 99, 235, 0.2);
+    }
+
+    .summary-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Status badges */
+    .status-badge {
+      display: inline-block;
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-left: 0.5rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      letter-spacing: 0.5px;
+    }
+
+    .status-green {
+      background-color: rgba(25, 165, 128, 0.15);
+      color: #00d4a0;
+      border: 1px solid rgba(25, 165, 128, 0.3);
+    }
+
+    .status-red {
+      background-color: rgba(220, 38, 38, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(220, 38, 38, 0.3);
+    }
+
+    /* Mercados */
+    .market-form {
+      display: flex;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 0.8rem;
+      overflow: hidden;
+    }
+
+    .market-input {
+      flex: 1;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      border-right: none;
+    }
+
+    .add-market-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(145deg, var(--accent-green), var(--dark-green));
+      color: white;
+      border: none;
+      padding: 0.75rem 1.25rem;
+      border-top-right-radius: 0.8rem;
+      border-bottom-right-radius: 0.8rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 600;
+    }
+
+    .add-market-button:hover {
+      background: linear-gradient(145deg, var(--dark-green), var(--accent-green));
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(25, 165, 128, 0.5);
+    }
+
+    /* Lista de mercados */
+    .markets-list {
+      max-height: 300px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+      margin-top: 1rem;
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent-green) rgba(9, 29, 24, 0.6);
+    }
+
+    .markets-list::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .markets-list::-webkit-scrollbar-track {
+      background: rgba(9, 29, 24, 0.6);
+      border-radius: 10px;
+    }
+
+    .markets-list::-webkit-scrollbar-thumb {
+      background: var(--accent-green);
+      border-radius: 10px;
+    }
+
+    .market-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(145deg, rgba(15, 35, 30, 0.7), rgba(9, 29, 24, 0.7));
+      border: 1px solid rgba(25, 165, 128, 0.15);
+      border-radius: 0.8rem;
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .market-item::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 4px;
+      background: var(--accent-green);
+      border-radius: 2px;
+      opacity: 0;
+      transition: all 0.3s;
+    }
+
+    .market-item:hover {
+      background: linear-gradient(145deg, rgba(15, 35, 30, 0.9), rgba(9, 29, 24, 0.9));
+      transform: translateX(5px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .market-item:hover::before {
+      opacity: 1;
+    }
+
+    /* Ícones */
+    .icon {
+      width: 1.4rem;
+      height: 1.4rem;
+      fill: var(--accent-green);
+      transition: all 0.3s;
+    }
+
+    .icon-sm {
+      width: 1.1rem;
+      height: 1.1rem;
+    }
+
+    button:hover .icon {
+      transform: scale(1.1);
+      fill: var(--bright-green);
+    }
+
+    /* Botão Voltar */
+    .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: linear-gradient(145deg, var(--accent-green), var(--dark-green));
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      font-size: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.3),
+        0 0 15px rgba(25, 165, 128, 0.5);
+      transition: all 0.3s ease;
+      z-index: 1000;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .back-button::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at center, rgba(255, 255, 255, 0.2), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .back-button:hover {
+      background: linear-gradient(145deg, var(--dark-green), var(--accent-green));
+      transform: scale(1.1) rotate(-5deg);
+      box-shadow:
+        0 6px 12px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(25, 165, 128, 0.6);
+    }
+
+    .back-button:hover::after {
+      opacity: 1;
+    }
+
+    /* Ícone de Voltar */
+    .back-button::before {
+      content: "←";
+      font-weight: bold;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Elementos da interface com efeito glassmorphism */
+    .glass-card {
+      background: rgba(15, 35, 30, 0.4);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(25, 165, 128, 0.2);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Animações de carregamento */
+    .loader {
+      width: 30px;
+      height: 30px;
+      border: 3px solid rgba(25, 165, 128, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--accent-green);
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Media queries para responsividade */
+    @media (max-width: 480px) {
+      .app-container {
+        padding: 1.5rem;
+        border-radius: 1.25rem;
+      }
+
+      .summary {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .header {
+        margin-bottom: 1.5rem;
+      }
+
+      .app-title {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <button class="back-button" onclick="window.location.href='visualization.html'">
-    <i class="ri-arrow-left-line"></i>
-  </button>
+  <button class="back-button" onclick="window.location.href='visualization.html'"></button>
   <div class="container">
     <div class="app-container">
       <!-- Cabeçalho -->
       <header class="header">
-        <h1 class="app-title">Gerenciamento de Apostas</h1>
+        <h1 class="app-title">Gerenciamento</h1>
         <div class="user-info">
           <div class="user-avatar" id="user-avatar"></div>
           <span id="user-email"></span>
@@ -249,16 +698,28 @@
       <!-- Navegação por abas -->
       <div class="tabs">
         <button class="tab-button active" data-tab="form">
-          <i class="ri-file-list-line"></i>
-          <span>Formulário</span>
-        </button>
-        <button class="tab-button" data-tab="markets">
-          <i class="ri-store-line"></i>
-          <span>Mercados</span>
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="16"></line>
+            <line x1="8" y1="12" x2="16" y2="12"></line>
+          </svg>
+          <span>Nova Aposta</span>
         </button>
         <button class="tab-button" data-tab="history">
-          <i class="ri-history-line"></i>
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="12 8 12 12 14 14"></polyline>
+            <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5"></path>
+          </svg>
           <span>Histórico</span>
+        </button>
+        <button class="tab-button" data-tab="markets">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+            <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+            <line x1="6" y1="6" x2="6" y2="6"></line>
+            <line x1="6" y1="18" x2="6" y2="18"></line>
+          </svg>
+          <span>Mercados</span>
         </button>
       </div>
 
@@ -266,72 +727,60 @@
       <div class="tab-content active" id="form-tab">
         <form id="bet-form">
           <div class="form-group">
-            <label for="liga">
-              <i class="ri-trophy-line"></i> Liga
-            </label>
+            <label for="liga">Liga</label>
             <select id="liga">
               <option value="Battle 6 min">Battle 6 min</option>
               <option value="Battle 8 min">Battle 8 min</option>
               <option value="Battle 8 min (H2H)">Battle 8 min (H2H)</option>
               <option value="Adriact 10 min">Adriact 10 min</option>
+              <option value="GT 12 min">GT 12 min</option>
             </select>
           </div>
 
           <div class="form-group">
-            <label for="jogador1">
-              <i class="ri-user-line"></i> Jogador 1
-            </label>
-            <input type="text" id="jogador1" required>
+            <label for="jogador1">Jogador 1</label>
+            <input type="text" id="jogador1" placeholder="Nome do Jogador 1" required>
           </div>
 
           <div class="form-group">
-            <label for="jogador2">
-              <i class="ri-user-line"></i> Jogador 2
-            </label>
-            <input type="text" id="jogador2" required>
+            <label for="jogador2">Jogador 2</label>
+            <input type="text" id="jogador2" placeholder="Nome do Jogador 2" required>
           </div>
 
           <div class="form-group">
-            <label for="mercado">
-              <i class="ri-exchange-line"></i> Mercado
-            </label>
-            <select id="mercado" required></select>
+            <label for="mercado">Mercado</label>
+            <select id="mercado" required>
+              <!-- Preenchido dinamicamente -->
+            </select>
           </div>
 
           <div class="form-group">
-            <label for="stake">
-              <i class="ri-money-dollar-circle-line"></i> Stake
-            </label>
-            <input type="number" id="stake" step="0.01" required>
+            <label for="stake">Stake (R$)</label>
+            <input type="text" id="stake" placeholder="Ex: 100" required>
           </div>
 
           <div class="form-group">
-            <label for="odds">
-              <i class="ri-percent-line"></i> Odds
-            </label>
-            <input type="number" id="odds" step="0.01" required>
+            <label for="odds">Odds</label>
+            <input type="text" id="odds" placeholder="Ex: 1.85" required>
           </div>
 
           <div class="form-group">
-            <label for="resultado">
-              <i class="ri-flag-line"></i> Resultado
-            </label>
-            <select id="resultado" required>
+            <label for="resultado">Resultado</label>
+            <select id="resultado">
               <option value="green">Green</option>
               <option value="red">Red</option>
               <option value="meio-green">Meio Green</option>
               <option value="meio-red">Meio Red</option>
+              <option value="reembolso">Reembolso</option>
             </select>
           </div>
 
           <div class="calculated-result">
-            <p>Resultado Final</p>
+            <p>Valor Final:</p>
             <span class="value" id="resultado-final">Calculando...</span>
           </div>
 
-          <button type="submit" class="submit-button">
-            <i class="ri-save-line"></i> Salvar Aposta
-          </button>
+          <button type="submit" class="submit-button" id="salvar-dados">Salvar Aposta</button>
         </form>
       </div>
 
@@ -916,7 +1365,7 @@
       jogador2.setAttribute("list", "jogadores-lista");
     }
 
-    
+
     // Event Listeners
     document.addEventListener("DOMContentLoaded", async () => {
       // Verificar se os dados do usuário existem no localStorage
