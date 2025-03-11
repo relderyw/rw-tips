@@ -824,6 +824,7 @@
     let currentUser = null;
     let currentUserKey = null;
     let chart = null;
+    let todasApostas = [];
 
     // Definindo função removerAposta no escopo global
     window.removerAposta = async function (id) {
@@ -1040,9 +1041,9 @@
       );
 
       onSnapshot(apostasRef, (snapshot) => {
+        todasApostas = []; // Limpa o array
         let ganhoTotal = 0;
         let perdaTotal = 0;
-        let todasApostas = [];
 
         if (snapshot.empty) {
           apostasLista.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Nenhuma aposta registrada</div>';
@@ -1050,12 +1051,18 @@
           return;
         }
 
+        snapshot.forEach((doc) => {
+          const aposta = { id: doc.id, ...doc.data() };
+          todasApostas.push(aposta); // Armazena cada aposta no array global
+        });
+
+        // Criar gráfico inicial com 7 dias
+        criarGrafico(7);
+
         apostasLista.innerHTML = "";
 
         snapshot.forEach((doc) => {
           const aposta = doc.data();
-          todasApostas.push({ ...aposta, id: doc.id });
-
           const apostaItem = document.createElement("div");
           apostaItem.classList.add("aposta-item");
 
@@ -1106,9 +1113,6 @@
         document.getElementById("ganho-total").innerHTML = `Ganho Total<strong>${formatarMoeda(ganhoTotal)}</strong>`;
         document.getElementById("perda-total").innerHTML = `Perda Total<strong>${formatarMoeda(perdaTotal)}</strong>`;
         document.getElementById("saldo-total").innerHTML = `Saldo Total<strong>${formatarMoeda(ganhoTotal - perdaTotal)}</strong>`;
-
-        // Criar gráfico
-        criarGrafico(todasApostas);
       });
     }
 
@@ -1134,37 +1138,50 @@
       return statusMap[resultado] || 'status-green';
     }
 
-    async function criarGrafico(apostas, dias = 7) {
+    async function criarGrafico(dias, dataInicial = null, dataFinal = null) {
       const ctx = document.createElement("canvas");
       document.getElementById("grafico").innerHTML = "";
       document.getElementById("grafico").appendChild(ctx);
 
-      // Obter a data atual e a data inicial baseada no número de dias
-      const dataFinal = new Date();
-      const dataInicial = new Date();
-      dataInicial.setDate(dataInicial.getDate() - (dias - 1));
+      // Definir período
+      let startDate, endDate;
+      if (dataInicial && dataFinal) {
+        startDate = new Date(dataInicial);
+        startDate.setHours(0, 0, 0, 0);
+        endDate = new Date(dataFinal);
+        endDate.setHours(23, 59, 59, 999);
+      } else {
+        endDate = new Date();
+        endDate.setHours(23, 59, 59, 999);
+        startDate = new Date();
+        startDate.setDate(endDate.getDate() - (dias - 1));
+        startDate.setHours(0, 0, 0, 0);
+      }
 
       // Gerar array de datas
       const datas = [];
-      for (let d = new Date(dataInicial); d <= dataFinal; d.setDate(d.getDate() + 1)) {
-        datas.push(new Date(d));
+      const currentDate = new Date(startDate);
+      while (currentDate <= endDate) {
+        datas.push(new Date(currentDate));
+        currentDate.setDate(currentDate.getDate() + 1);
       }
 
       // Calcular saldos diários
       const saldosDiarios = datas.map((data) => {
         const dataStr = data.toLocaleDateString("pt-BR");
-        const inicioDoDia = new Date(data.setHours(0, 0, 0, 0));
-        const fimDoDia = new Date(data.setHours(23, 59, 59, 999));
+        const inicioDoDia = new Date(data);
+        inicioDoDia.setHours(0, 0, 0, 0);
+        const fimDoDia = new Date(data);
+        fimDoDia.setHours(23, 59, 59, 999);
 
         // Filtrar apostas para este dia
-        const apostasDoDia = apostas.filter((aposta) => {
+        const apostasDoDia = todasApostas.filter((aposta) => {
           const dataAposta = aposta.timestamp?.toDate() || new Date();
           return dataAposta >= inicioDoDia && dataAposta <= fimDoDia;
         });
 
         // Calcular saldo para o dia
         let saldoDoDia = 0;
-
         apostasDoDia.forEach((aposta) => {
           const stake = parseFloat(aposta.stake.toString().replace(/[^\d.,]/g, "").replace(",", "."));
           const odds = parseFloat(aposta.odds.toString().replace(",", "."));
@@ -1181,6 +1198,9 @@
               break;
             case "meio-red":
               saldoDoDia -= stake / 2;
+              break;
+            case "reembolso":
+              // Não altera o saldo
               break;
           }
         });
@@ -1454,18 +1474,23 @@
           e.target.classList.add('active');
           
           // Atualiza o gráfico
-          criarGrafico(todasApostas, parseInt(e.target.dataset.days));
+          criarGrafico(parseInt(e.target.dataset.days));
         });
       });
 
       // Event listener para o seletor de datas personalizado
       document.getElementById('apply-range').addEventListener('click', () => {
-        const startDate = new Date(document.getElementById('start-date').value);
-        const endDate = new Date(document.getElementById('end-date').value);
+        const startDate = document.getElementById('start-date').value;
+        const endDate = document.getElementById('end-date').value;
         
-        if (startDate && endDate && startDate <= endDate) {
-          const dias = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
-          criarGrafico(todasApostas, dias, startDate);
+        if (startDate && endDate) {
+          // Remove active de todos os botões de período
+          document.querySelectorAll('.period-button').forEach(btn => 
+            btn.classList.remove('active'));
+          
+          criarGrafico(null, startDate, endDate);
+        } else {
+          alert('Por favor, selecione as datas inicial e final');
         }
       });
     });
