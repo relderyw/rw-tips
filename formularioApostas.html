@@ -1841,7 +1841,7 @@
         document.getElementById(id).addEventListener("input", atualizarValorFinal);
       });
 
-      // Event listeners para os botões de período
+      // Event listeners para os botões de período e inputs de data
       document.querySelectorAll('.period-button').forEach(button => {
         button.addEventListener('click', (e) => {
           if (!e.target.dataset.days) return; // Ignora o botão "Aplicar"
@@ -1858,6 +1858,10 @@
         });
       });
 
+      // Add event listeners for date inputs
+      document.getElementById('start-date').addEventListener('change', handleDateChange);
+      document.getElementById('end-date').addEventListener('change', handleDateChange);
+
       function handleDateChange() {
         const startDate = document.getElementById('start-date').value;
         const endDate = document.getElementById('end-date').value;
@@ -1870,6 +1874,13 @@
           // Update chart title with custom date range
           const start = new Date(startDate);
           const end = new Date(endDate);
+
+          // Validate date range
+          if (end < start) {
+            alert('A data final não pode ser anterior à data inicial');
+            return;
+          }
+
           document.getElementById('chart-period-title').textContent =
             `Desempenho (${start.toLocaleDateString()} - ${end.toLocaleDateString()})`;
 
