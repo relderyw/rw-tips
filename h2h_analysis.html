@@ -308,73 +308,51 @@
         .h2h-analysis {
             background: var(--glass-bg);
             border-radius: 20px;
-            padding: 40px;
-            margin: 40px auto;
+            padding: clamp(20px, 4vw, 40px);
+            margin: 20px auto;
             backdrop-filter: blur(10px);
             border: 1px solid var(--glass-border);
             max-width: 1400px;
             position: relative;
             overflow: hidden;
-        }
-
-        .h2h-analysis::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(45deg,
-                    rgba(139, 92, 246, 0.1),
-                    rgba(236, 72, 153, 0.1));
-            mask: linear-gradient(#fff 0 0) content-box,
-                linear-gradient(#fff 0 0);
-            mask-composite: xor;
-            padding: 1px;
-            border-radius: 20px;
-        }
-
-        .metrics-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 40px;
-            margin: 0 auto;
-            max-width: 1400px;
-            padding: 20px;
-        }
-
-        .metrics-column {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 20px;
-            padding: 40px;
-            position: relative;
-        }
-
-        .metrics-column h3 {
-            font-size: 1.8rem;
-            color: var(--text-primary);
-            margin-bottom: 35px;
-            text-align: center;
-            letter-spacing: 1px;
-            font-weight: 700;
-            background: linear-gradient(45deg, var(--accent-purple), var(--accent-pink));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            width: 100%;
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: clamp(15px, 3vw, 30px);
+            width: 100%;
         }
 
         .h2h-stat-card {
             background: var(--glass-bg);
-            padding: 30px;
+            padding: clamp(15px, 3vw, 30px);
             border-radius: 15px;
             text-align: center;
             border: 1px solid var(--glass-border);
             transition: all 0.3s ease;
+            width: 100%;
         }
 
+        .h2h-stat-value {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+        }
+
+        @media (max-width: 768px) {
+            .h2h-analysis {
+                padding: 15px;
+                margin: 10px;
+            }
+            
+            .h2h-stat-card h4 {
+                font-size: 1.2rem;
+            }
+            
+            .h2h-stat-card p {
+                font-size: 1rem;
+            }
+        }
         .h2h-stat-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 30px rgba(139, 92, 246, 0.1);
