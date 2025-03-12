@@ -473,12 +473,11 @@
     .date-range-selector {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.5rem;
       background: rgba(15, 23, 42, 0.5);
-      padding: 0.75rem 1rem;
+      padding: 0.5rem 1rem;
       border-radius: var(--radius-sm);
       border: 1px solid rgba(99, 102, 241, 0.1);
-      flex-wrap: wrap;
     }
 
     .chart-container {
@@ -521,6 +520,7 @@
       color: var(--color-text-primary);
       padding: 0.5rem;
       font-size: 0.875rem;
+      width: 130px;
     }
 
     #apply-range {
@@ -1073,10 +1073,9 @@
               <button class="period-button" data-days="60" onclick="updateChartPeriod(60)">60D</button>
             </div>
             <div class="date-range-selector">
-              <input type="date" class="date-input" id="start-date">
+              <input type="date" class="date-input" id="start-date" onchange="handleDateChange()">
               <span>até</span>
-              <input type="date" class="date-input" id="end-date">
-              <button class="period-button" id="apply-range">Aplicar</button>
+              <input type="date" class="date-input" id="end-date" onchange="handleDateChange()">
             </div>
           </div>
           <div id="grafico"></div>
@@ -1859,13 +1858,12 @@
         });
       });
 
-      // Event listener para o seletor de datas personalizado
-      document.getElementById('apply-range').addEventListener('click', () => {
+      function handleDateChange() {
         const startDate = document.getElementById('start-date').value;
         const endDate = document.getElementById('end-date').value;
 
         if (startDate && endDate) {
-          // Remove active de todos os botões de período
+          // Remove active from all period buttons
           document.querySelectorAll('.period-button').forEach(btn =>
             btn.classList.remove('active'));
 
@@ -1876,10 +1874,8 @@
             `Desempenho (${start.toLocaleDateString()} - ${end.toLocaleDateString()})`;
 
           criarGrafico(null, startDate, endDate);
-        } else {
-          alert('Por favor, selecione as datas inicial e final');
         }
-      });
+      }
     });
   </script>
 </body>
