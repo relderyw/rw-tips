@@ -477,6 +477,7 @@
       padding: 0.5rem 1rem;
       border-radius: var(--radius-sm);
       border: 1px solid rgba(99, 102, 241, 0.1);
+      flex-wrap: wrap;
     }
 
     .chart-container {
@@ -533,6 +534,7 @@
       font-weight: 500;
       transition: var(--transition);
       font-size: 0.875rem;
+      white-space: nowrap;
     }
 
     #apply-range:hover {
@@ -1460,7 +1462,23 @@
       return statusMap[resultado] || 'status-green';
     }
 
-    async function criarGrafico(dias, dataInicial = null, dataFinal = null) {
+    async function updateChartPeriod(days) {
+      // Update period buttons
+      document.querySelectorAll('.period-button').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.days == days) {
+          btn.classList.add('active');
+        }
+      });
+
+      // Update chart title
+      document.getElementById('chart-period-title').textContent = `Desempenho (${days} dias)`;
+
+      // Create chart
+      criarGrafico(days);
+    }
+
+    function criarGrafico(dias, dataInicial = null, dataFinal = null) {
       const ctx = document.createElement("canvas");
       document.getElementById("grafico").innerHTML = "";
       document.getElementById("grafico").appendChild(ctx);
