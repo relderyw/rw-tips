@@ -473,6 +473,7 @@
       padding: 0.75rem 1rem;
       border-radius: var(--radius-sm);
       border: 1px solid rgba(99, 102, 241, 0.1);
+      flex-wrap: wrap;
     }
 
     .chart-container {
@@ -530,6 +531,7 @@
       transition: var(--transition);
       font-size: 0.875rem;
       white-space: nowrap;
+      margin-left: auto;
     }
 
     #apply-range:hover {
@@ -1466,8 +1468,14 @@
         }
       });
 
-      // Update chart title
-      document.getElementById('chart-period-title').textContent = `Desempenho (${days} dias)`;
+      // Update chart title with dynamic period
+      const periodText = days === 7 ? '7 dias' :
+        days === 15 ? '15 dias' :
+          days === 30 ? '30 dias' :
+            days === 45 ? '45 dias' :
+              days === 60 ? '60 dias' : `${days} dias`;
+
+      document.getElementById('chart-period-title').textContent = `Desempenho (${periodText})`;
 
       // Create chart
       criarGrafico(days);
