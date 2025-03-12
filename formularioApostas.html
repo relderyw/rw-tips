@@ -1082,11 +1082,11 @@
           <h3 class="chart-title" id="chart-period-title">Desempenho (7 dias)</h3>
           <div class="chart-header">
             <div class="period-selector">
-              <button class="period-button active" data-days="7" onclick="updateChartPeriod(7)">7D</button>
-              <button class="period-button" data-days="15" onclick="updateChartPeriod(15)">15D</button>
-              <button class="period-button" data-days="30" onclick="updateChartPeriod(30)">30D</button>
-              <button class="period-button" data-days="45" onclick="updateChartPeriod(45)">45D</button>
-              <button class="period-button" data-days="60" onclick="updateChartPeriod(60)">60D</button>
+              <button class="period-button active" data-days="7">7D</button>
+              <button class="period-button" data-days="15">15D</button>
+              <button class="period-button" data-days="30">30D</button>
+              <button class="period-button" data-days="45">45D</button>
+              <button class="period-button" data-days="60">60D</button>
             </div>
             <div class="date-range-selector">
               <input type="date" class="date-input" id="start-date" onchange="handleDateChange()">
@@ -1859,17 +1859,9 @@
       // Event listeners para os botões de período e inputs de data
       document.querySelectorAll('.period-button').forEach(button => {
         button.addEventListener('click', (e) => {
-          if (!e.target.dataset.days) return; // Ignora o botão "Aplicar"
-
-          // Remove a classe active de todos os botões
-          document.querySelectorAll('.period-button').forEach(btn =>
-            btn.classList.remove('active'));
-
-          // Adiciona a classe active ao botão clicado
-          e.target.classList.add('active');
-
-          // Atualiza o gráfico
-          criarGrafico(parseInt(e.target.dataset.days));
+          if (!e.target.dataset.days) return;
+          const days = parseInt(e.target.dataset.days);
+          updateChartPeriod(days);
         });
       });
 
