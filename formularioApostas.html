@@ -523,6 +523,22 @@
       width: 130px;
     }
 
+    .clear-date-button {
+      background: transparent;
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      color: var(--color-text-tertiary);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: var(--transition);
+    }
+
+    .clear-date-button:hover {
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--color-text-primary);
+    }
+
     #apply-range {
       display: inline-flex;
       align-items: center;
@@ -1076,6 +1092,7 @@
               <input type="date" class="date-input" id="start-date" onchange="handleDateChange()">
               <span>até</span>
               <input type="date" class="date-input" id="end-date" onchange="handleDateChange()">
+              <button type="button" id="clear-date-range" class="clear-date-button">Limpar</button>
             </div>
           </div>
           <div id="grafico"></div>
@@ -1861,6 +1878,24 @@
       // Add event listeners for date inputs
       document.getElementById('start-date').addEventListener('change', handleDateChange);
       document.getElementById('end-date').addEventListener('change', handleDateChange);
+
+      document.getElementById('clear-date-range').addEventListener('click', () => {
+        // Clear date inputs
+        document.getElementById('start-date').value = '';
+        document.getElementById('end-date').value = '';
+
+        // Set 7 days as active period
+        document.querySelectorAll('.period-button').forEach(btn => {
+          btn.classList.remove('active');
+          if (btn.dataset.days === '7') {
+            btn.classList.add('active');
+          }
+        });
+
+        // Update chart title and recreate chart for 7 days
+        document.getElementById('chart-period-title').textContent = 'Desempenho (7 dias)';
+        criarGrafico(7);
+      });
 
       function handleDateChange() {
         const startDate = document.getElementById('start-date').value;
