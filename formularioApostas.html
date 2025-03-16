@@ -25,7 +25,15 @@
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
-    // Using existing Firestore instance from module imports instead
+    const db = firebase.firestore();
+
+    // Auth state observer
+    auth.onAuthStateChanged((user) => {
+      if (!user) {
+        sessionStorage.removeItem('loggedIn');
+        window.location.replace('index.html');
+      }
+    });
 
     // Firestore collection references
     const { collection, query, where, getDocs, addDoc, deleteDoc, doc, serverTimestamp, limit } = firebase.firestore;
@@ -847,41 +855,48 @@
     // Funções de autenticação
     async function checkUserLogin() {
       // Verificar se o usuário está logado no Firebase
-      const isLoggedIn = sessionStorage.getItem('loggedIn') === 'true';
-
-      if (!isLoggedIn) {
-        window.location.replace('index.html');
-        return false;
-      }
-
-      currentUser = localStorage.getItem('currentUser');
-      currentUserKey = localStorage.getItem('currentUserKey');
-
-      if (!currentUser || !currentUserKey) {
+      const user = auth.currentUser;
+      if (!user) {
         sessionStorage.removeItem('loggedIn');
         window.location.replace('index.html');
         return false;
       }
 
-      // Atualizar interface do usuário
-      document.getElementById('user-email').textContent = currentUser;
-      document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
+      try {
+        const doc = await db.collection('users').doc(user.uid).get();
+        if (!doc.exists) {
+          sessionStorage.removeItem('loggedIn');
+          window.location.replace('index.html');
+          return false;
+        }
 
-      // Verificar se é admin ou dono dos mercados para mostrar/ocultar o formulário de adicionar mercados
-      const marketForm = document.getElementById("market-form");
-      if (marketForm) {
-        const mercadosRef = collection(db, "mercados");
-        const q = query(mercadosRef, where("userEmail", "==", currentUser), limit(1));
-        getDocs(q).then((snapshot) => {
-          if (!snapshot.empty || currentUserKey === 'admin') {
-            marketForm.style.display = "flex";
-          } else {
-            marketForm.style.display = "none";
-          }
-        });
+        const userData = doc.data();
+        const currentDate = new Date();
+        const expirationDate = userData.expirationDate.toDate();
+
+        if (currentDate > expirationDate) {
+          await auth.signOut();
+          sessionStorage.removeItem('loggedIn');
+          window.location.replace('index.html');
+          return false;
+        }
+
+        currentUser = localStorage.getItem('currentUser');
+        currentUserKey = localStorage.getItem('currentUserKey');
+
+        if (!currentUser || !currentUserKey) {
+          sessionStorage.removeItem('loggedIn');
+          window.location.replace('index.html');
+          return false;
+        }
+
+        return true;
+      } catch (error) {
+        console.error('Error checking user login:', error);
+        sessionStorage.removeItem('loggedIn');
+        window.location.replace('index.html');
+        return false;
       }
-
-      return true;
     }
 
     // Funções de mercados
