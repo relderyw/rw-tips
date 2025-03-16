@@ -872,6 +872,36 @@
       });
     }
     return true;
+    // Check user login and return true if valid
+    if (!currentUser || !currentUserKey) {
+      window.location.replace('index.html');
+      return false;
+    }
+
+    // Update UI with user info
+    document.getElementById('user-email').textContent = currentUser;
+    document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
+
+    // Check if admin or market owner to show/hide market form
+    const marketForm = document.getElementById("market-form");
+    if (marketForm) {
+      const mercadosRef = collection(db, "mercados");
+      const q = query(mercadosRef, where("userEmail", "==", currentUser), limit(1));
+      getDocs(q).then((snapshot) => {
+        if (!snapshot.empty || currentUserKey === 'admin') {
+          marketForm.style.display = "flex";
+        } else {
+          marketForm.style.display = "none";
+        }
+      });
+    }
+    return true;
+    // Check user login and return true if valid
+    if (!currentUser ||!currentUserKey) {
+      window.location.replace('index.html');
+      return false;
+    }
+  
 
     // Funções de mercados
     async function carregarMercados() {
