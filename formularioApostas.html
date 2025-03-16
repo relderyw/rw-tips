@@ -1796,136 +1796,135 @@
       } catch (error) {
         console.error("Erro ao carregar a página:", error);
       }
+    });
+    
+    // Adicionar evento para atualizar jogadores quando mudar a liga
+    document.getElementById("liga").addEventListener("change", () => {
+      atualizarDatalistsJogadores();
+    });
 
+    // Form de apostas
+    document.getElementById("bet-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-      // Adicionar evento para atualizar jogadores quando mudar a liga
-      document.getElementById("liga").addEventListener("change", () => {
-        atualizarDatalistsJogadores();
-      });
+      const formData = {
+        liga: document.getElementById("liga").value,
+        jogador1: document.getElementById("jogador1").value,
+        jogador2: document.getElementById("jogador2").value,
+        mercado: document.getElementById("mercado").value,
+        stake: parseFloat(document.getElementById("stake").value),
+        odds: parseFloat(document.getElementById("odds").value),
+        resultado: document.getElementById("resultado").value,
+        userEmail: currentUser,
+        timestamp: serverTimestamp()
+      };
 
-      // Form de apostas
-      document.getElementById("bet-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
+      try {
+        await addDoc(collection(db, "apostas"), formData);
 
-        const formData = {
-          liga: document.getElementById("liga").value,
-          jogador1: document.getElementById("jogador1").value,
-          jogador2: document.getElementById("jogador2").value,
-          mercado: document.getElementById("mercado").value,
-          stake: parseFloat(document.getElementById("stake").value),
-          odds: parseFloat(document.getElementById("odds").value),
-          resultado: document.getElementById("resultado").value,
-          userEmail: currentUser,
-          timestamp: serverTimestamp()
-        };
+        // Limpar formulário
+        e.target.reset();
+        document.getElementById("resultado-final").textContent = "Calculando...";
 
-        try {
-          await addDoc(collection(db, "apostas"), formData);
+        await carregarApostas();
+      } catch (error) {
+        console.error("Erro ao salvar aposta:", error);
+        alert("Erro ao salvar aposta: " + error.message);
+      }
+    });
 
-          // Limpar formulário
-          e.target.reset();
-          document.getElementById("resultado-final").textContent = "Calculando...";
+    // Form de mercados
+    document.getElementById("market-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const novoMercado = document.getElementById("novo-mercado").value.trim();
+      if (novoMercado) {
+        await adicionarMercado(novoMercado);
+      }
+    });
 
-          await carregarApostas();
-        } catch (error) {
-          console.error("Erro ao salvar aposta:", error);
-          alert("Erro ao salvar aposta: " + error.message);
-        }
-      });
+    // Remover mercado
+    document.addEventListener("click", async (e) => {
+      if (e.target.closest(".remove-button:not(.remove-bet)")) {
+        const button = e.target.closest(".remove-button");
+        await removerMercado(button.dataset.id);
+      }
+    });
 
-      // Form de mercados
-      document.getElementById("market-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const novoMercado = document.getElementById("novo-mercado").value.trim();
-        if (novoMercado) {
-          await adicionarMercado(novoMercado);
-        }
-      });
-
-      // Remover mercado
-      document.addEventListener("click", async (e) => {
-        if (e.target.closest(".remove-button:not(.remove-bet)")) {
-          const button = e.target.closest(".remove-button");
-          await removerMercado(button.dataset.id);
-        }
-      });
-
-      // Remover aposta
-      document.addEventListener("click", async (e) => {
-        if (e.target.closest(".remove-bet")) {
-          const button = e.target.closest(".remove-bet");
-          if (confirm("Tem certeza que deseja remover esta aposta?")) {
-            try {
-              await deleteDoc(doc(db, "apostas", button.dataset.id));
-              await carregarApostas();
-            } catch (error) {
-              console.error("Erro ao remover aposta:", error);
-              alert("Erro ao remover aposta: " + error.message);
-            }
+    // Remover aposta
+    document.addEventListener("click", async (e) => {
+      if (e.target.closest(".remove-bet")) {
+        const button = e.target.closest(".remove-bet");
+        if (confirm("Tem certeza que deseja remover esta aposta?")) {
+          try {
+            await deleteDoc(doc(db, "apostas", button.dataset.id));
+            await carregarApostas();
+          } catch (error) {
+            console.error("Erro ao remover aposta:", error);
+            alert("Erro ao remover aposta: " + error.message);
           }
         }
+      }
+    });
+
+    // Cálculo dinâmico do resultado
+    ["stake", "odds", "resultado"].forEach(id => {
+      document.getElementById(id).addEventListener("input", atualizarValorFinal);
+    });
+
+    // Event listeners para os botões de período e inputs de data
+    document.querySelectorAll('.period-button').forEach(button => {
+      button.addEventListener('click', (e) => {
+        if (!e.target.dataset.days) return;
+        const days = parseInt(e.target.dataset.days);
+        updateChartPeriod(days);
       });
+    });
 
-      // Cálculo dinâmico do resultado
-      ["stake", "odds", "resultado"].forEach(id => {
-        document.getElementById(id).addEventListener("input", atualizarValorFinal);
-      });
+    // Add event listeners for date inputs
+    document.getElementById('start-date').addEventListener('change', handleDateChange);
+    document.getElementById('end-date').addEventListener('change', handleDateChange);
 
-      // Event listeners para os botões de período e inputs de data
-      document.querySelectorAll('.period-button').forEach(button => {
-        button.addEventListener('click', (e) => {
-          if (!e.target.dataset.days) return;
-          const days = parseInt(e.target.dataset.days);
-          updateChartPeriod(days);
-        });
-      });
+    document.getElementById('clear-date-range').addEventListener('click', () => {
+      // Clear date inputs
+      document.getElementById('start-date').value = '';
+      document.getElementById('end-date').value = '';
 
-      // Add event listeners for date inputs
-      document.getElementById('start-date').addEventListener('change', handleDateChange);
-      document.getElementById('end-date').addEventListener('change', handleDateChange);
-
-      document.getElementById('clear-date-range').addEventListener('click', () => {
-        // Clear date inputs
-        document.getElementById('start-date').value = '';
-        document.getElementById('end-date').value = '';
-
-        // Set 7 days as active period
-        document.querySelectorAll('.period-button').forEach(btn => {
-          btn.classList.remove('active');
-          if (btn.dataset.days === '7') {
-            btn.classList.add('active');
-          }
-        });
-
-        // Update chart title and recreate chart for 7 days
-        document.getElementById('chart-period-title').textContent = 'Desempenho (7 dias)';
-        criarGrafico(7);
-      });
-
-      function handleDateChange() {
-        const startDate = document.getElementById('start-date').value;
-        const endDate = document.getElementById('end-date').value;
-
-        if (startDate && endDate) {
-          // Remove active from all period buttons
-          document.querySelectorAll('.period-button').forEach(btn =>
-            btn.classList.remove('active'));
-
-          // Update chart title with custom date range
-          const start = new Date(startDate);
-          const end = new Date(endDate);
-
-          // Validate date range
-          if (end < start) {
-            alert('A data final não pode ser anterior à data inicial');
-            return;
-          }
-
-          document.getElementById('chart-period-title').textContent =
-            `Desempenho (${start.toLocaleDateString()} - ${end.toLocaleDateString()})`;
-
-          criarGrafico(null, startDate, endDate);
+      // Set 7 days as active period
+      document.querySelectorAll('.period-button').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.days === '7') {
+          btn.classList.add('active');
         }
+      });
+
+      // Update chart title and recreate chart for 7 days
+      document.getElementById('chart-period-title').textContent = 'Desempenho (7 dias)';
+      criarGrafico(7);
+    });
+
+    function handleDateChange() {
+      const startDate = document.getElementById('start-date').value;
+      const endDate = document.getElementById('end-date').value;
+
+      if (startDate && endDate) {
+        // Remove active from all period buttons
+        document.querySelectorAll('.period-button').forEach(btn =>
+          btn.classList.remove('active'));
+
+        // Update chart title with custom date range
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        // Validate date range
+        if (end < start) {
+          alert('A data final não pode ser anterior à data inicial');
+          return;
+        }
+
+        document.getElementById('chart-period-title').textContent =
+          `Desempenho (${start.toLocaleDateString()} - ${end.toLocaleDateString()})`;
+
+        criarGrafico(null, startDate, endDate);
       }
     });
   </script>
