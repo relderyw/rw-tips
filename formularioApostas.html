@@ -1294,7 +1294,11 @@
     }
 
     // Event Listeners
-    document.addEventListener("DOMContentLoaded", async () => {
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!checkUserLogin()) {
+        return;
+      }
+
       // Verificar se os dados do usuário existem no localStorage
       currentUser = localStorage.getItem('currentUser');
       currentUserKey = localStorage.getItem('currentUserKey');
