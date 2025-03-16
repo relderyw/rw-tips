@@ -630,11 +630,11 @@
 
 <body>
   <button class="back-button" onclick="window.location.href='visualization.html'"></button>
-  <!-- Modal de Login -->
+  <!-- Login Modal -->
   <div id="login-modal" class="login-modal">
     <div class="login-form">
       <h2>Login</h2>
-      <form onsubmit="handleLogin(event)">
+      <form id="login-form" onsubmit="handleLogin(event)">
         <div class="form-group">
           <label for="login-email">Email</label>
           <input type="email" id="login-email" required>
@@ -645,9 +645,9 @@
         </div>
         <button type="submit" id="login-button" class="login-button">
           <span id="login-button-text">ENTRAR</span>
-          <div class="loader" id="login-loader"></div>
+          <div class="loader" id="login-loader" style="display: none;"></div>
         </button>
-        <div class="error-message" id="login-error"></div>
+        <div class="error-message" id="login-error" style="display: none;"></div>
       </form>
     </div>
   </div>
