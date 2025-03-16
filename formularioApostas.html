@@ -6,28 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gerenciamento</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Firebase SDK -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-app-compat.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-auth-compat.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-firestore-compat.min.js"></script>
-  <script>
-    // Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyALiAKWq7Z6B9ut6KCHt9L4g8Vt8VHF6iM",
-      authDomain: "rw-tips.firebaseapp.com",
-      projectId: "rw-tips",
-      storageBucket: "rw-tips.appspot.com",
-      messagingSenderId: "806941219354",
-      appId: "1:806941219354:web:6f904532b6884251444fa3",
-      measurementId: "G-64HF8TWQV4"
-    };
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-  </script>
-
   <style>
     /* Reset e estilos base */
     * {
@@ -41,104 +19,6 @@
       background: linear-gradient(135deg, #121212, #1e1e1e);
       color: #e0e0e0;
       min-height: 100vh;
-    }
-
-    /* Login Modal */
-    .login-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .login-modal.show {
-      display: flex;
-    }
-
-    .login-form {
-      background: #1e1e1e;
-      padding: 2rem;
-      border-radius: 8px;
-      width: 100%;
-      max-width: 400px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .login-form h2 {
-      margin-bottom: 1.5rem;
-      color: #fff;
-      text-align: center;
-    }
-
-    .form-group {
-      margin-bottom: 1rem;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 0.5rem;
-      color: #e0e0e0;
-    }
-
-    .form-group input {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #333;
-      border-radius: 4px;
-      background: #2d2d2d;
-      color: #fff;
-      font-size: 1rem;
-    }
-
-    .login-button {
-      width: 100%;
-      padding: 0.75rem;
-      background: #2196f3;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    .login-button:hover {
-      background: #1976d2;
-    }
-
-    .login-button:disabled {
-      background: #666;
-      cursor: not-allowed;
-    }
-
-    .error-message {
-      color: #ff5252;
-      margin-top: 1rem;
-      text-align: center;
-      display: none;
-    }
-
-    .loader {
-      display: none;
-      width: 20px;
-      height: 20px;
-      border: 2px solid #fff;
-      border-radius: 50%;
-      border-top-color: transparent;
-      animation: spin 1s linear infinite;
-      margin: 0 auto;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
     }
 
     /* Container principal */
@@ -256,7 +136,6 @@
         opacity: 0;
         transform: translateY(20px);
       }
-
       to {
         opacity: 1;
         transform: translateY(0);
@@ -646,28 +525,6 @@
 </head>
 
 <body>
-  <!-- Login Modal -->
-  <div class="login-modal" id="login-modal">
-    <div class="login-form">
-      <h2>Login</h2>
-      <form id="login-form">
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" required>
-        </div>
-        <div class="form-group">
-          <label for="password">Senha</label>
-          <input type="password" id="password" required>
-        </div>
-        <button type="submit" class="login-button" id="login-button">
-          <span id="login-text">ENTRAR</span>
-          <div class="loader" id="login-loader"></div>
-        </button>
-        <div class="error-message" id="login-error"></div>
-      </form>
-    </div>
-  </div>
-
   <button class="back-button" onclick="window.location.href='visualization.html'"></button>
   <div class="container">
     <div class="app-container">
@@ -964,7 +821,6 @@
 
     // Funções de autenticação
     function checkUserLogin() {
-      // Get user data from localStorage
       currentUser = localStorage.getItem('currentUser');
       currentUserKey = localStorage.getItem('currentUserKey');
 
@@ -973,44 +829,22 @@
         return false;
       }
 
-      // Verify user in Firestore and check password expiration
-      const userQuery = query(collection(db, 'users'), where('email', '==', currentUser));
-      getDocs(userQuery).then((querySnapshot) => {
-        if (!querySnapshot.empty) {
-          const userData = querySnapshot.docs[0].data();
-          const currentDate = new Date();
-          const expirationDate = userData.expirationDate.toDate();
-
-          if (currentDate > expirationDate) {
-            // Password expired
-            auth.signOut().then(() => {
-              localStorage.removeItem('currentUser');
-              localStorage.removeItem('currentUserKey');
-              window.location.replace('index.html');
-            });
-            return false;
-          }
-        } else {
-          // User not found in Firestore
-          localStorage.removeItem('currentUser');
-          localStorage.removeItem('currentUserKey');
-          window.location.replace('index.html');
-          return false;
-        }
-      }).catch((error) => {
-        console.error('Error checking user:', error);
-        window.location.replace('index.html');
-        return false;
-      });
-
-      // Update user interface
+      // Atualizar interface do usuário
       document.getElementById('user-email').textContent = currentUser;
       document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
 
-      // Check if admin or market owner to show/hide market form
+      // Verificar se é admin ou dono dos mercados para mostrar/ocultar o formulário de adicionar mercados
       const marketForm = document.getElementById("market-form");
       if (marketForm) {
-        marketForm.style.display = "flex";
+        const mercadosRef = collection(db, "mercados");
+        const q = query(mercadosRef, where("userEmail", "==", currentUser), limit(1));
+        getDocs(q).then((snapshot) => {
+          if (!snapshot.empty || currentUserKey === 'admin') {
+            marketForm.style.display = "flex";
+          } else {
+            marketForm.style.display = "none";
+          }
+        });
       }
 
       return true;
@@ -1021,14 +855,49 @@
       if (!currentUser) return;
 
       const mercadosRef = collection(db, "mercados");
-      const q = query(mercadosRef, where("userEmail", "==", currentUser), limit(1));
-      getDocs(q).then((snapshot) => {
-        if (!snapshot.empty || currentUserKey === 'admin') {
-          marketForm.style.display = "flex";
-        } else {
-          marketForm.style.display = "none";
-        }
-      });
+      const q = query(mercadosRef, where("userEmail", "==", currentUser));
+
+      try {
+        const querySnapshot = await getDocs(q);
+        const mercados = [];
+        querySnapshot.forEach((doc) => {
+          mercados.push({ id: doc.id, ...doc.data() });
+        });
+
+        // Ordenar mercados alfabeticamente
+        mercados.sort((a, b) => a.nome.localeCompare(b.nome));
+
+        // Atualizar select de mercados
+        const selectMercado = document.getElementById("mercado");
+        selectMercado.innerHTML = "";
+        mercados.forEach((mercado) => {
+          const option = document.createElement("option");
+          option.value = mercado.nome;
+          option.textContent = mercado.nome;
+          selectMercado.appendChild(option);
+        });
+
+        // Atualizar lista de mercados
+        const mercadosLista = document.getElementById("mercados-lista");
+        mercadosLista.innerHTML = mercados.length === 0
+          ? '<div class="history-empty">Nenhum mercado cadastrado</div>'
+          : mercados.map(mercado => `
+              <div class="market-item">
+                <span>${mercado.nome}</span>
+                <button class="remove-button" data-id="${mercado.id}">
+                  <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                  </svg>
+                </button>
+              </div>
+            `).join("");
+
+      } catch (error) {
+        console.error("Erro ao carregar mercados:", error);
+      }
     }
 
     async function adicionarMercado(nome) {
@@ -1416,16 +1285,6 @@
       jogador2.setAttribute("list", "jogadores-lista");
     }
 
-    function mostrarLoginModal() {
-      const loginModal = document.getElementById('login-modal');
-      loginModal.classList.add('show');
-    }
-
-    function esconderLoginModal() {
-      const loginModal = document.getElementById('login-modal');
-      loginModal.classList.remove('show');
-    }
-
     // Event Listeners
     document.addEventListener("DOMContentLoaded", async () => {
       // Verificar se os dados do usuário existem no localStorage
@@ -1524,14 +1383,14 @@
       document.querySelectorAll('.period-button').forEach(button => {
         button.addEventListener('click', (e) => {
           if (!e.target.dataset.days) return; // Ignora o botão "Aplicar"
-
+          
           // Remove a classe active de todos os botões
-          document.querySelectorAll('.period-button').forEach(btn =>
+          document.querySelectorAll('.period-button').forEach(btn => 
             btn.classList.remove('active'));
-
+          
           // Adiciona a classe active ao botão clicado
           e.target.classList.add('active');
-
+          
           // Atualiza o gráfico
           criarGrafico(parseInt(e.target.dataset.days));
         });
@@ -1541,12 +1400,12 @@
       document.getElementById('apply-range').addEventListener('click', () => {
         const startDate = document.getElementById('start-date').value;
         const endDate = document.getElementById('end-date').value;
-
+        
         if (startDate && endDate) {
           // Remove active de todos os botões de período
-          document.querySelectorAll('.period-button').forEach(btn =>
+          document.querySelectorAll('.period-button').forEach(btn => 
             btn.classList.remove('active'));
-
+          
           criarGrafico(null, startDate, endDate);
         } else {
           alert('Por favor, selecione as datas inicial e final');
@@ -1554,29 +1413,6 @@
       });
     });
   </script>
-</body>
-
-</html>
-
-<!-- Login Modal -->
-<div id="login-modal" class="login-modal">
-  <form class="login-form" onsubmit="handleLogin(event)">
-    <h2>Login</h2>
-    <div class="form-group">
-      <label for="login-email">Email</label>
-      <input type="email" id="login-email" required>
-    </div>
-    <div class="form-group">
-      <label for="login-password">Senha</label>
-      <input type="password" id="login-password" required>
-    </div>
-    <button type="submit" id="login-button" class="login-button">
-      <span id="login-button-text">Entrar</span>
-      <div id="login-loader" class="loader"></div>
-    </button>
-    <div id="login-error" class="error-message"></div>
-  </form>
-</div>
 </body>
 
 </html>
