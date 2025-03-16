@@ -871,13 +871,11 @@
                                     });
                                 } else {
                                     // Senha válida, armazenar informações do usuário e redirecionar
-                                    localStorage.setItem('currentUser', JSON.stringify(userData));
-                                    localStorage.setItem('currentUserKey', user.uid);
+                                    localStorage.setItem('currentUser', userData.email); // Armazenar apenas o email
+                                    localStorage.setItem('currentUserKey', user.uid);   // Armazenar o UID do usuário
                                     sessionStorage.setItem('loggedIn', 'true');
                                     window.location.href = 'visualization.html'
-                                    localStorage.setItem('currentUser', userEmail);
-                                    localStorage.setItem('currentUserKey', userKey);
-                                }
+                                }      // Redirecionar apenas uma vez
                             } else {
                                 // Usuário não encontrado no Firestore
                                 auth.signOut().then(() => {
