@@ -1766,24 +1766,35 @@
 
     // Event Listeners
     document.addEventListener("DOMContentLoaded", async () => {
-      // Verificar se os dados do usuário existem no localStorage
-      currentUser = localStorage.getItem('currentUser');
-      currentUserKey = localStorage.getItem('currentUserKey');
+      try {
+        // Verificar se os dados do usuário existem no localStorage
+        currentUser = localStorage.getItem('currentUser');
+        currentUserKey = localStorage.getItem('currentUserKey');
 
-      if (!currentUser || !currentUserKey) {
-        window.location.replace('index.html');
-        return;
+        console.log("Usuário logado:", currentUser);
+        console.log("Chave do usuário:", currentUserKey);
+
+        if (!currentUser || !currentUserKey) {
+          console.log("Usuário não logado. Redirecionando para index.html...");
+          window.location.replace('index.html');
+          return;
+        }
+
+        console.log("Usuário logado com sucesso. Carregando página...");
+
+        // Atualizar interface do usuário
+        document.getElementById('user-email').textContent = currentUser;
+        document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
+
+        // Inicializar a página
+        setupTabs();
+        await carregarMercados();
+        await carregarApostas();
+        await buscarDadosAPI();
+      } catch (error) {
+        console.error("Erro ao carregar a página:", error);
       }
 
-      // Atualizar interface do usuário
-      document.getElementById('user-email').textContent = currentUser;
-      document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
-
-      // Inicializar a página
-      setupTabs();
-      await carregarMercados();
-      await carregarApostas();
-      await buscarDadosAPI();
 
       // Adicionar evento para atualizar jogadores quando mudar a liga
       document.getElementById("liga").addEventListener("change", () => {
