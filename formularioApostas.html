@@ -6,6 +6,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gerenciamento</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyALiAKWq7Z6B9ut6KCHt9L4g8Vt8VHF6iM",
+      authDomain: "rw-tips.firebaseapp.com",
+      projectId: "rw-tips",
+      storageBucket: "rw-tips.appspot.com",
+      messagingSenderId: "806941219354",
+      appId: "1:806941219354:web:6f904532b6884251444fa3",
+      measurementId: "G-64HF8TWQV4"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+// Using existing Firestore instance from module imports instead
+
+    // Firestore collection references
+    const { collection, query, where, getDocs, addDoc, deleteDoc, doc, serverTimestamp, limit } = firebase.firestore;
+  </script>
   <style>
     /* Reset e estilos base */
     * {
@@ -1314,9 +1338,21 @@
 
       // Inicializar a página
       setupTabs();
-      await carregarMercados();
-      await carregarApostas();
-      await buscarDadosAPI();
+carregarMercados().then(() => {
+  // Markets loaded successfully
+}).catch(error => {
+  console.error('Error loading markets:', error);
+});
+carregarApostas().then(() => {
+  // Apostas loaded successfully
+}).catch(error => {
+  console.error('Error loading apostas:', error);
+});
+buscarDadosAPI().then(() => {
+  // API data loaded successfully
+}).catch(error => {
+  console.error('Error loading API data:', error);
+});
 
       // Adicionar evento para atualizar jogadores quando mudar a liga
       document.getElementById("liga").addEventListener("change", () => {
