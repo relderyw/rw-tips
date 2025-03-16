@@ -873,8 +873,10 @@
                                     // Senha válida, armazenar informações do usuário e redirecionar
                                     localStorage.setItem('currentUser', JSON.stringify(userData));
                                     localStorage.setItem('currentUserKey', user.uid);
+                                    localStorage.setItem('currentUser', userEmail);
+                                    localStorage.setItem('currentUserKey', userKey);
                                     sessionStorage.setItem('loggedIn', 'true');
-                                    window.location.href = 'formularioApostas.html';
+                                    window.location.href = 'visualization.html'
                                 }
                             } else {
                                 // Usuário não encontrado no Firestore
