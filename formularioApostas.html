@@ -10,6 +10,23 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-app-compat.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-auth-compat.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-firestore-compat.min.js"></script>
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyALiAKWq7Z6B9ut6KCHt9L4g8Vt8VHF6iM",
+      authDomain: "rw-tips.firebaseapp.com",
+      projectId: "rw-tips",
+      storageBucket: "rw-tips.appspot.com",
+      messagingSenderId: "806941219354",
+      appId: "1:806941219354:web:6f904532b6884251444fa3",
+      measurementId: "G-64HF8TWQV4"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+  </script>
 
   <style>
     /* Reset e estilos base */
@@ -947,15 +964,50 @@
 
     // Funções de autenticação
     function checkUserLogin() {
-      // Bypass login check
-      currentUser = 'anonymous@user.com';
-      currentUserKey = 'user';
+      // Get user data from localStorage
+      currentUser = localStorage.getItem('currentUser');
+      currentUserKey = localStorage.getItem('currentUserKey');
 
-      // Atualizar interface do usuário
+      if (!currentUser || !currentUserKey) {
+        window.location.replace('index.html');
+        return false;
+      }
+
+      // Verify user in Firestore and check password expiration
+      const userQuery = query(collection(db, 'users'), where('email', '==', currentUser));
+      getDocs(userQuery).then((querySnapshot) => {
+        if (!querySnapshot.empty) {
+          const userData = querySnapshot.docs[0].data();
+          const currentDate = new Date();
+          const expirationDate = userData.expirationDate.toDate();
+
+          if (currentDate > expirationDate) {
+            // Password expired
+            auth.signOut().then(() => {
+              localStorage.removeItem('currentUser');
+              localStorage.removeItem('currentUserKey');
+              window.location.replace('index.html');
+            });
+            return false;
+          }
+        } else {
+          // User not found in Firestore
+          localStorage.removeItem('currentUser');
+          localStorage.removeItem('currentUserKey');
+          window.location.replace('index.html');
+          return false;
+        }
+      }).catch((error) => {
+        console.error('Error checking user:', error);
+        window.location.replace('index.html');
+        return false;
+      });
+
+      // Update user interface
       document.getElementById('user-email').textContent = currentUser;
       document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
 
-      // Verificar se é admin ou dono dos mercados para mostrar/ocultar o formulário de adicionar mercados
+      // Check if admin or market owner to show/hide market form
       const marketForm = document.getElementById("market-form");
       if (marketForm) {
         marketForm.style.display = "flex";
