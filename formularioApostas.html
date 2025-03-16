@@ -6,6 +6,72 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gerenciamento</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Firebase SDK -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-app-compat.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-auth-compat.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-firestore-compat.min.js"></script>
+  <script>
+    // Verificar se o usuário está logado ao carregar a página
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!sessionStorage.getItem('loggedIn') || sessionStorage.getItem('loggedIn') !== 'true') {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // Inicializar Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyALiAKWq7Z6B9ut6KCHt9L4g8Vt8VHF6iM",
+        authDomain: "rw-tips.firebaseapp.com",
+        projectId: "rw-tips",
+        storageBucket: "rw-tips.appspot.com",
+        messagingSenderId: "806941219354",
+        appId: "1:806941219354:web:6f904532b6884251444fa3",
+        measurementId: "G-64HF8TWQV4"
+      };
+
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+      const db = firebase.firestore();
+
+      // Verificar se o usuário existe no Firebase e se a senha não expirou
+      auth.onAuthStateChanged(user => {
+        if (user) {
+          db.collection('users').doc(user.uid).get()
+            .then((doc) => {
+              if (doc.exists) {
+                const userData = doc.data();
+                const currentDate = new Date();
+                const expirationDate = userData.expirationDate.toDate();
+
+                if (currentDate > expirationDate) {
+                  // Senha expirada
+                  auth.signOut().then(() => {
+                    sessionStorage.removeItem('loggedIn');
+                    localStorage.removeItem('currentUser');
+                    localStorage.removeItem('currentUserKey');
+                    window.location.href = 'index.html';
+                  });
+                }
+              } else {
+                // Usuário não encontrado no Firestore
+                auth.signOut().then(() => {
+                  sessionStorage.removeItem('loggedIn');
+                  localStorage.removeItem('currentUser');
+                  localStorage.removeItem('currentUserKey');
+                  window.location.href = 'index.html';
+                });
+              }
+            })
+            .catch((error) => {
+              console.error('Erro ao verificar usuário:', error);
+              window.location.href = 'index.html';
+            });
+        } else {
+          window.location.href = 'index.html';
+        }
+      });
+    });
+  </script>
   <style>
     /* Reset e estilos base */
     * {
