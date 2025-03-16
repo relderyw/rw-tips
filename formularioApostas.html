@@ -1285,7 +1285,36 @@
       return true;
     }
 
-    // Funções de mercados
+    // Função para adicionar mercado
+    async function adicionarMercado(nome) {
+      if (!currentUser || !nome) return;
+
+      try {
+        // Verificar se o usuário é admin ou dono dos mercados
+        const mercadosRef = collection(db, "mercados");
+        const q = query(mercadosRef, where("userEmail", "==", currentUser), limit(1));
+        const snapshot = await getDocs(q);
+
+        // Se o usuário for admin ou já tiver criado mercados, permitir a adição
+        if (currentUserKey === 'admin' || !snapshot.empty) {
+          await addDoc(collection(db, "mercados"), {
+            nome,
+            userEmail: currentUser,
+            timestamp: serverTimestamp(),
+          });
+
+          document.getElementById("novo-mercado").value = "";
+          await carregarMercados();
+        } else {
+          alert("Apenas o dono dos mercados ou administrador pode adicionar novos mercados.");
+        }
+      } catch (error) {
+        console.error("Erro ao adicionar mercado:", error);
+        alert("Erro ao adicionar mercado: " + error.message);
+      }
+    }
+
+    // Função para carregar mercados
     async function carregarMercados() {
       if (!currentUser) return;
 
@@ -1317,48 +1346,21 @@
         mercadosLista.innerHTML = mercados.length === 0
           ? '<div class="history-empty">Nenhum mercado cadastrado</div>'
           : mercados.map(mercado => `
-              <div class="market-item">
-                <span>${mercado.nome}</span>
-                <button class="remove-button" data-id="${mercado.id}">
-                  <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    <line x1="10" y1="11" x2="10" y2="17"></line>
-                    <line x1="14" y1="11" x2="14" y2="17"></line>
-                  </svg>
-                </button>
-              </div>
-            `).join("");
+          <div class="market-item">
+            <span>${mercado.nome}</span>
+            <button class="remove-button" data-id="${mercado.id}">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+              </svg>
+            </button>
+          </div>
+        `).join("");
 
       } catch (error) {
         console.error("Erro ao carregar mercados:", error);
-      }
-    }
-
-    async function adicionarMercado(nome) {
-      if (!currentUser || !nome) return;
-
-      try {
-        // Verificar se o usuário é admin ou dono do mercado
-        const mercadosRef = collection(db, "mercados");
-        const q = query(mercadosRef, where("userEmail", "==", currentUser), limit(1));
-        const snapshot = await getDocs(q);
-
-        if (!snapshot.empty || currentUserKey === 'admin') {
-          await addDoc(collection(db, "mercados"), {
-            nome,
-            userEmail: currentUser,
-            timestamp: serverTimestamp(),
-          });
-
-          document.getElementById("novo-mercado").value = "";
-          await carregarMercados();
-        } else {
-          alert("Apenas o dono dos mercados ou administrador pode adicionar novos mercados.");
-        }
-      } catch (error) {
-        console.error("Erro ao adicionar mercado:", error);
-        alert("Erro ao adicionar mercado: " + error.message);
       }
     }
 
