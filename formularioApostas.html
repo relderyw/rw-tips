@@ -854,15 +854,35 @@
       return true;
     }
 
+    // Atualizar interface do usuário
+    document.getElementById('user-email').textContent = currentUser;
+    document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
+
+    // Verificar se é admin ou dono dos mercados para mostrar/ocultar o formulário de adicionar mercados
+    const marketForm = document.getElementById("market-form");
+    if (marketForm) {
+      const mercadosRef = collection(db, "mercados");
+      const q = query(mercadosRef, where("userEmail", "==", currentUser), limit(1));
+      getDocs(q).then((snapshot) => {
+        if (!snapshot.empty || currentUserKey === 'admin') {
+          marketForm.style.display = "flex";
+        } else {
+          marketForm.style.display = "none";
+        }
+      });
+    }
+    return true;
+
+    // Funções de mercados
     async function carregarMercados() {
       if (!currentUser) return;
+
       const mercadosRef = collection(db, "mercados");
       const q = query(mercadosRef, where("userEmail", "==", currentUser));
 
       try {
         const querySnapshot = await getDocs(q);
         const mercados = [];
-
         querySnapshot.forEach((doc) => {
           mercados.push({ id: doc.id, ...doc.data() });
         });
@@ -873,14 +893,6 @@
         // Atualizar select de mercados
         const selectMercado = document.getElementById("mercado");
         selectMercado.innerHTML = "";
-
-        // Adicionar opção vazia como primeiro item
-        const emptyOption = document.createElement("option");
-        emptyOption.value = "";
-        emptyOption.textContent = "Selecione um mercado";
-        selectMercado.appendChild(emptyOption);
-
-        // Adicionar opções de mercados do Firebase
         mercados.forEach((mercado) => {
           const option = document.createElement("option");
           option.value = mercado.nome;
@@ -888,30 +900,28 @@
           selectMercado.appendChild(option);
         });
 
-        // Atualizar lista de mercados na tab de mercados
+        // Atualizar lista de mercados
         const mercadosLista = document.getElementById("mercados-lista");
-        if (mercadosLista) {
-          mercadosLista.innerHTML = mercados.length === 0
-            ? '<div class="history-empty">Nenhum mercado cadastrado</div>'
-            : mercados.map(mercado => `
-          <div class="market-item">
-            <span>${mercado.nome}</span>
-            <button class="remove-button" data-id="${mercado.id}">
-              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                <line x1="10" y1="11" x2="10" y2="17"></line>
-                <line x1="14" y1="11" x2="14" y2="17"></line>
-              </svg>
-            </button>
-          </div>
-        `).join("");
-        }
+        mercadosLista.innerHTML = mercados.length === 0
+          ? '<div class="history-empty">Nenhum mercado cadastrado</div>'
+          : mercados.map(mercado => `
+              <div class="market-item">
+                <span>${mercado.nome}</span>
+                <button class="remove-button" data-id="${mercado.id}">
+                  <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                  </svg>
+                </button>
+              </div>
+            `).join("");
+
       } catch (error) {
         console.error("Erro ao carregar mercados:", error);
       }
     }
-
     async function adicionarMercado(nome) {
       if (!currentUser || !nome) return;
 
