@@ -821,7 +821,8 @@
 
     // Funções de autenticação
     function checkUserLogin() {
-      currentUser = localStorage.getItem('currentUser');
+      const userJson = localStorage.getItem('currentUser');
+      currentUser = JSON.parse(userJson)?.email || null;
       currentUserKey = localStorage.getItem('currentUserKey');
 
       if (!currentUser || !currentUserKey) {
