@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -84,6 +85,7 @@
         opacity: 0.5;
         box-shadow: 0 0 5px 1px rgba(0, 255, 100, 0.3);
       }
+
       to {
         opacity: 1;
         box-shadow: 0 0 20px 5px rgba(0, 255, 100, 0.6);
@@ -286,7 +288,8 @@
       color: rgba(255, 255, 255, 0.4);
     }
 
-    .submit-button {
+    .submit-button,
+    .back-button-link {
       width: 100%;
       padding: 0.875rem 1.75rem;
       border: none;
@@ -301,14 +304,19 @@
       letter-spacing: 0.01em;
       font-size: 0.95rem;
       box-shadow: 0 0 15px rgba(0, 255, 100, 0.3);
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
     }
 
-    .submit-button:hover {
+    .submit-button:hover,
+    .back-button-link:hover {
       transform: translateY(-2px);
       box-shadow: 0 0 20px rgba(0, 255, 100, 0.5);
     }
 
-    .submit-button::after {
+    .submit-button::after,
+    .back-button-link::after {
       content: '';
       position: absolute;
       top: 0;
@@ -319,8 +327,23 @@
       transition: 0.5s;
     }
 
-    .submit-button:hover::after {
+    .submit-button:hover::after,
+    .back-button-link:hover::after {
       left: 100%;
+    }
+
+    /* Back button */
+    .back-to-visualization {
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .back-button-link {
+      width: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     /* Resumo */
@@ -835,8 +858,20 @@
     }
   </style>
 </head>
+
 <body>
   <div class="app-container">
+    <div class="back-to-visualization">
+      <a href="visualization.html" class="back-button-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5"></path>
+          <path d="M12 19l-7-7 7-7"></path>
+        </svg>
+        Voltar para Visualization
+      </a>
+    </div>
+
     <div class="container">
       <header class="header">
         <h1 class="app-title">Controle de Apostas</h1>
@@ -890,7 +925,7 @@
           </div>
 
           <div class="date-range-selector">
-            <input type="date" id="start-date"class="date-input">
+            <input type="date" id="start-date" class="date-input">
             <span>até</span>
             <input type="date" id="end-date" class="date-input">
             <button id="clear-date-range" class="clear-date-button">
@@ -924,24 +959,12 @@
 
           <div class="form-group">
             <label for="jogador1">Jogador 1</label>
-            <input 
-              type="text" 
-              id="jogador1" 
-              placeholder="Nome do jogador 1"
-              required
-              list="jogadores-lista"
-            >
+            <input type="text" id="jogador1" placeholder="Nome do jogador 1" required list="jogadores-lista">
           </div>
 
           <div class="form-group">
             <label for="jogador2">Jogador 2</label>
-            <input 
-              type="text" 
-              id="jogador2" 
-              placeholder="Nome do jogador 2" 
-              required
-              list="jogadores-lista"
-            >
+            <input type="text" id="jogador2" placeholder="Nome do jogador 2" required list="jogadores-lista">
           </div>
 
           <div class="form-group">
@@ -954,22 +977,12 @@
 
           <div class="form-group">
             <label for="stake">Stake</label>
-            <input 
-              type="text" 
-              id="stake" 
-              placeholder="Valor apostado" 
-              required
-            >
+            <input type="text" id="stake" placeholder="Valor apostado" required>
           </div>
 
           <div class="form-group">
             <label for="odds">Odds</label>
-            <input 
-              type="text" 
-              id="odds" 
-              placeholder="Odds da aposta" 
-              required
-            >
+            <input type="text" id="odds" placeholder="Odds da aposta" required>
           </div>
 
           <div class="form-group">
@@ -996,12 +1009,7 @@
       <div class="tab-content" id="mercados-tab">
         <form id="market-form" class="market-form">
           <div class="market-input">
-            <input 
-              type="text" 
-              id="novo-mercado" 
-              placeholder="Nome do novo mercado"
-              required
-            >
+            <input type="text" id="novo-mercado" placeholder="Nome do novo mercado" required>
           </div>
           <button type="submit" class="add-market-button">
             <span class="icon-sm">+</span> Adicionar Mercado
@@ -1021,7 +1029,7 @@
 
   <!-- Importar Chart.js para os gráficos -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
+
   <!-- Importar Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
@@ -1208,11 +1216,14 @@
     async function carregarMercados() {
       if (!currentUser) return;
 
-      const mercadosRef = collection(db, "mercados");
-      const q = query(mercadosRef, where("userEmail", "==", currentUser));
-
       try {
-        const querySnapshot = await getDocs(q);
+        // Para usuários não administradores, carregamos todos os mercados existentes
+        // Isso permite que todos usuários possam escolher entre os mercados disponíveis
+        const mercadosRef = collection(db, "mercados");
+
+        // Não filtramos por usuário para permitir que todos vejam todos os mercados
+        const querySnapshot = await getDocs(mercadosRef);
+
         const mercados = [];
         querySnapshot.forEach((doc) => {
           mercados.push({ id: doc.id, ...doc.data() });
@@ -1228,7 +1239,7 @@
         optionDefault.value = "";
         optionDefault.textContent = "Selecione um Mercado";
         selectMercado.appendChild(optionDefault);
-        
+
         mercados.forEach((mercado) => {
           const option = document.createElement("option");
           option.value = mercado.nome;
@@ -1236,11 +1247,16 @@
           selectMercado.appendChild(option);
         });
 
+        // Para a lista de mercados, mostramos apenas os mercados do usuário atual ou se for admin
+        const mercadosUsuario = mercados.filter(m =>
+          m.userEmail === currentUser || currentUserKey === 'admin'
+        );
+
         // Atualizar lista de mercados
         const mercadosLista = document.getElementById("mercados-lista");
-        mercadosLista.innerHTML = mercados.length === 0
+        mercadosLista.innerHTML = mercadosUsuario.length === 0
           ? '<div class="history-empty">Nenhum mercado cadastrado</div>'
-          : mercados.map(mercado => `
+          : mercadosUsuario.map(mercado => `
           <div class="market-item">
             <span>${mercado.nome}</span>
             <button class="remove-button" data-id="${mercado.id}">
@@ -1405,7 +1421,7 @@
     function criarGrafico(dias, dataInicial = null, dataFinal = null) {
       const graficoDiv = document.getElementById("grafico");
       graficoDiv.innerHTML = "";
-      
+
       // Criar canvas para o Chart.js
       const ctx = document.createElement("canvas");
       graficoDiv.appendChild(ctx);
@@ -1817,4 +1833,5 @@
     }
   </script>
 </body>
+
 </html>
