@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema de Apostas</title>
   <style>
+    /* Todo o CSS permanece o mesmo */
     :root {
       --color-primary: rgb(0, 255, 100);
       --color-primary-light: hsl(140, 100%, 60%);
@@ -84,6 +86,7 @@
         opacity: 0.5;
         box-shadow: 0 0 5px 1px rgba(0, 255, 100, 0.3);
       }
+
       to {
         opacity: 1;
         box-shadow: 0 0 20px 5px rgba(0, 255, 100, 0.6);
@@ -286,7 +289,8 @@
       color: rgba(255, 255, 255, 0.4);
     }
 
-    .submit-button, .back-button-link {
+    .submit-button,
+    .back-button-link {
       width: 100%;
       padding: 0.875rem 1.75rem;
       border: none;
@@ -306,12 +310,14 @@
       display: inline-block;
     }
 
-    .submit-button:hover, .back-button-link:hover {
+    .submit-button:hover,
+    .back-button-link:hover {
       transform: translateY(-2px);
       box-shadow: 0 0 20px rgba(0, 255, 100, 0.5);
     }
 
-    .submit-button::after, .back-button-link::after {
+    .submit-button::after,
+    .back-button-link::after {
       content: '';
       position: absolute;
       top: 0;
@@ -322,7 +328,8 @@
       transition: 0.5s;
     }
 
-    .submit-button:hover::after, .back-button-link:hover::after {
+    .submit-button:hover::after,
+    .back-button-link:hover::after {
       left: 100%;
     }
 
@@ -852,18 +859,20 @@
     }
   </style>
 </head>
+
 <body>
   <div class="app-container">
     <div class="back-to-visualization">
       <a href="visualization.html" class="back-button-link">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M19 12H5"></path>
           <path d="M12 19l-7-7 7-7"></path>
         </svg>
         Voltar para Visualization
       </a>
     </div>
-    
+
     <div class="container">
       <header class="header">
         <h1 class="app-title">Controle de Apostas</h1>
@@ -894,7 +903,7 @@
           </div>
           <div class="summary-item loss">
             <div class="label">Perda Total</div>
-            <div class="value" id="perda-total">R$ 0,00</div>
+            <div class="value" id="perda-total">R$F 0,00</div>
           </div>
           <div class="summary-item balance">
             <div class="label">Saldo Total</div>
@@ -917,7 +926,7 @@
           </div>
 
           <div class="date-range-selector">
-            <input type="date" id="start-date"class="date-input">
+            <input type="date" id="start-date" class="date-input">
             <span>até</span>
             <input type="date" id="end-date" class="date-input">
             <button id="clear-date-range" class="clear-date-button">
@@ -951,24 +960,12 @@
 
           <div class="form-group">
             <label for="jogador1">Jogador 1</label>
-            <input 
-              type="text" 
-              id="jogador1" 
-              placeholder="Nome do jogador 1"
-              required
-              list="jogadores-lista"
-            >
+            <input type="text" id="jogador1" placeholder="Nome do jogador 1" required list="jogadores-lista">
           </div>
 
           <div class="form-group">
             <label for="jogador2">Jogador 2</label>
-            <input 
-              type="text" 
-              id="jogador2" 
-              placeholder="Nome do jogador 2" 
-              required
-              list="jogadores-lista"
-            >
+            <input type="text" id="jogador2" placeholder="Nome do jogador 2" required list="jogadores-lista">
           </div>
 
           <div class="form-group">
@@ -981,22 +978,12 @@
 
           <div class="form-group">
             <label for="stake">Stake</label>
-            <input 
-              type="text" 
-              id="stake" 
-              placeholder="Valor apostado" 
-              required
-            >
+            <input type="text" id="stake" placeholder="Valor apostado" required>
           </div>
 
           <div class="form-group">
             <label for="odds">Odds</label>
-            <input 
-              type="text" 
-              id="odds" 
-              placeholder="Odds da aposta" 
-              required
-            >
+            <input type="text" id="odds" placeholder="Odds da aposta" required>
           </div>
 
           <div class="form-group">
@@ -1023,12 +1010,7 @@
       <div class="tab-content" id="mercados-tab">
         <form id="market-form" class="market-form">
           <div class="market-input">
-            <input 
-              type="text" 
-              id="novo-mercado" 
-              placeholder="Nome do novo mercado"
-              required
-            >
+            <input type="text" id="novo-mercado" placeholder="Nome do novo mercado" required>
           </div>
           <button type="submit" class="add-market-button">
             <span class="icon-sm">+</span> Adicionar Mercado
@@ -1048,7 +1030,7 @@
 
   <!-- Importar Chart.js para os gráficos -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
+
   <!-- Importar Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
@@ -1239,10 +1221,10 @@
         // Para usuários não administradores, carregamos todos os mercados existentes
         // Isso permite que todos usuários possam escolher entre os mercados disponíveis
         const mercadosRef = collection(db, "mercados");
-        
+
         // Não filtramos por usuário para permitir que todos vejam todos os mercados
         const querySnapshot = await getDocs(mercadosRef);
-        
+
         const mercados = [];
         querySnapshot.forEach((doc) => {
           mercados.push({ id: doc.id, ...doc.data() });
@@ -1258,7 +1240,7 @@
         optionDefault.value = "";
         optionDefault.textContent = "Selecione um Mercado";
         selectMercado.appendChild(optionDefault);
-        
+
         mercados.forEach((mercado) => {
           const option = document.createElement("option");
           option.value = mercado.nome;
@@ -1267,7 +1249,7 @@
         });
 
         // Para a lista de mercados, mostramos apenas os mercados do usuário atual ou se for admin
-        const mercadosUsuario = mercados.filter(m => 
+        const mercadosUsuario = mercados.filter(m =>
           m.userEmail === currentUser || currentUserKey === 'admin'
         );
 
@@ -1306,93 +1288,119 @@
       }
     }
 
-    // Função para carregar as apostas (ajustada para mostrar apenas do usuário atual)
-    function carregarApostas() {
+    // Nova função para atualizar a interface com as apostas carregadas
+    function atualizarInterfaceApostas() {
       const apostasLista = document.getElementById("apostas-lista");
-      apostasLista.innerHTML = '<div class="loading">Carregando apostas</div>';
 
-      // Modificado para filtrar apenas as apostas do usuário atual
-      const apostasRef = query(
-        collection(db, "apostas"),
-        where("userEmail", "==", currentUser),
-        orderBy("timestamp", "desc")
-      );
+      if (todasApostas.length === 0) {
+        apostasLista.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Nenhuma aposta registrada</div>';
+        document.getElementById("grafico").innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Sem dados para exibir</div>';
+        return;
+      }
 
-      onSnapshot(apostasRef, (snapshot) => {
-        todasApostas = []; // Limpa o array
-        let ganhoTotal = 0;
-        let perdaTotal = 0;
+      let ganhoTotal = 0;
+      let perdaTotal = 0;
 
-        if (snapshot.empty) {
-          apostasLista.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Nenhuma aposta registrada</div>';
-          document.getElementById("grafico").innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Sem dados para exibir</div>';
-          return;
+      apostasLista.innerHTML = "";
+
+      todasApostas.forEach((aposta) => {
+        const apostaItem = document.createElement("div");
+        apostaItem.classList.add("aposta-item");
+
+        const stake = parseFloat(aposta.stake?.toString().replace(/[^\d.,]/g, "").replace(",", ".") || "0");
+        const odds = parseFloat(aposta.odds?.toString().replace(",", ".") || "0");
+        let valorFinal = 0;
+
+        switch (aposta.resultado) {
+          case "green":
+            valorFinal = stake * (odds - 1);
+            ganhoTotal += valorFinal;
+            break;
+          case "red":
+            valorFinal = -stake;
+            perdaTotal += stake;
+            break;
+          case "meio-green":
+            valorFinal = (stake / 2) * (odds - 1);
+            ganhoTotal += valorFinal;
+            break;
+          case "meio-red":
+            valorFinal = -stake / 2;
+            perdaTotal += stake / 2;
+            break;
         }
 
-        snapshot.forEach((doc) => {
-          const aposta = { id: doc.id, ...doc.data() };
-          todasApostas.push(aposta); // Armazena cada aposta no array global
-        });
+        const statusClass = getStatusClass(aposta.resultado);
+        const statusText = getStatusText(aposta.resultado);
+        const valorFinalText = valorFinal === 0 ? "" : ` (${formatarMoeda(valorFinal)})`;
+        let dataFormatada = "Data não disponível";
 
-        // Criar gráfico inicial com 7 dias
-        criarGrafico(7);
-
-        apostasLista.innerHTML = "";
-
-        snapshot.forEach((doc) => {
-          const aposta = doc.data();
-          const apostaId = doc.id;
-          const apostaItem = document.createElement("div");
-          apostaItem.classList.add("aposta-item");
-
-          const stake = parseFloat(aposta.stake.toString().replace(/[^\d.,]/g, "").replace(",", "."));
-          const odds = parseFloat(aposta.odds.toString().replace(",", "."));
-          let valorFinal = 0;
-
-          switch (aposta.resultado) {
-            case "green":
-              valorFinal = stake * (odds - 1);
-              ganhoTotal += valorFinal;
-              break;
-            case "red":
-              valorFinal = -stake;
-              perdaTotal += stake;
-              break;
-            case "meio-green":
-              valorFinal = (stake / 2) * (odds - 1);
-              ganhoTotal += valorFinal;
-              break;
-            case "meio-red":
-              valorFinal = -stake / 2;
-              perdaTotal += stake / 2;
-              break;
+        if (aposta.timestamp) {
+          if (typeof aposta.timestamp.toDate === 'function') {
+            dataFormatada = aposta.timestamp.toDate().toLocaleString('pt-BR');
+          } else if (aposta.timestamp instanceof Date) {
+            dataFormatada = aposta.timestamp.toLocaleString('pt-BR');
+          } else if (aposta.timestamp.seconds) {
+            dataFormatada = new Date(aposta.timestamp.seconds * 1000).toLocaleString('pt-BR');
           }
+        }
 
-          const statusClass = getStatusClass(aposta.resultado);
-          const statusText = getStatusText(aposta.resultado);
-          const valorFinalText = valorFinal === 0 ? "" : ` (${formatarMoeda(valorFinal)})`;
-          const dataFormatada = aposta.timestamp?.toDate().toLocaleString('pt-BR') || '';
+        apostaItem.innerHTML = `
+          <div class="aposta-info">
+            <strong>${aposta.liga}</strong> · <span class="${statusClass}">${statusText}${valorFinalText}</span><br>
+            ${aposta.jogador1} vs ${aposta.jogador2}<br>
+            <small>${aposta.mercado} · Stake: ${formatarMoeda(stake)} · Odds: ${odds}</small><br>
+            <small>${dataFormatada}</small>
+          </div>
+          <div class="aposta-actions">
+            <button onclick="removerAposta('${aposta.id}')">Remover</button>
+          </div>
+        `;
 
-          apostaItem.innerHTML = `
-            <div class="aposta-info">
-              <strong>${aposta.liga}</strong> · <span class="${statusClass}">${statusText}${valorFinalText}</span><br>
-              ${aposta.jogador1} vs ${aposta.jogador2}<br>
-              <small>${aposta.mercado} · Stake: ${formatarMoeda(stake)} · Odds: ${odds}</small><br>
-              <small>${dataFormatada}</small>
-            </div>
-            <div class="aposta-actions">
-              <button onclick="removerAposta('${apostaId}')">Remover</button>
-            </div>
-          `;
+        apostasLista.appendChild(apostaItem);
+      });
 
-          apostasLista.appendChild(apostaItem);
+      // Atualizar resumo
+      document.getElementById("ganho-total").textContent = formatarMoeda(ganhoTotal);
+      document.getElementById("perda-total").textContent = formatarMoeda(perdaTotal);
+      document.getElementById("saldo-total").textContent = formatarMoeda(ganhoTotal - perdaTotal);
+
+      // Criar gráfico inicial com 7 dias
+      criarGrafico(7);
+    }
+
+    // Modificar a função carregarApostas para usar getDocs em vez de onSnapshot
+    async function carregarApostas() {
+      const apostasLista = document.getElementById("apostas-lista");
+      apostasLista.innerHTML = '<div class="loading">Carregando apostas...</div>';
+
+      try {
+        console.log("Carregando apostas para usuário:", currentUser);
+
+        // Consulta com filtro por usuário atual
+        const apostasRef = query(
+          collection(db, "apostas"),
+          where("userEmail", "==", currentUser),
+          orderBy("timestamp", "desc")
+        );
+
+        const snapshot = await getDocs(apostasRef);
+        console.log(`Consulta realizada, encontradas ${snapshot.size} apostas`);
+
+        todasApostas = [];
+        snapshot.forEach(doc => {
+          console.log("Documento:", doc.id, doc.data());
+          todasApostas.push({ id: doc.id, ...doc.data() });
         });
 
-        // Atualizar resumo
-        document.getElementById("ganho-total").textContent = formatarMoeda(ganhoTotal);
-        document.getElementById("perda-total").textContent = formatarMoeda(perdaTotal);
-        document.getElementById("saldo-total").textContent = formatarMoeda(ganhoTotal - perdaTotal);
-      });
+        atualizarInterfaceApostas();
+
+      } catch (error) {
+        console.error("Erro ao carregar apostas:", error);
+        apostasLista.innerHTML = `<div style="text-align: center; padding: 15px; color: #888;">
+          Erro ao carregar apostas: ${error.message}. Tente recarregar a página.
+        </div>`;
+      }
     }
 
     function getStatusText(resultado) {
@@ -1442,7 +1450,7 @@
     function criarGrafico(dias, dataInicial = null, dataFinal = null) {
       const graficoDiv = document.getElementById("grafico");
       graficoDiv.innerHTML = "";
-      
+
       // Criar canvas para o Chart.js
       const ctx = document.createElement("canvas");
       graficoDiv.appendChild(ctx);
@@ -1480,15 +1488,27 @@
 
         // Filtrar apostas para este dia
         const apostasDoDia = todasApostas.filter((aposta) => {
-          const dataAposta = aposta.timestamp?.toDate() || new Date();
+          // Tratar different formatos de timestamp (Firestore)
+          let dataAposta = null;
+          if (aposta.timestamp) {
+            if (typeof aposta.timestamp.toDate === 'function') {
+              dataAposta = aposta.timestamp.toDate();
+            } else if (aposta.timestamp instanceof Date) {
+              dataAposta = aposta.timestamp;
+            } else if (aposta.timestamp.seconds) {
+              dataAposta = new Date(aposta.timestamp.seconds * 1000);
+            }
+          }
+
+          if (!dataAposta) return false;
           return dataAposta >= inicioDoDia && dataAposta <= fimDoDia;
         });
 
         // Calcular saldo para o dia
         let saldoDoDia = 0;
         apostasDoDia.forEach((aposta) => {
-          const stake = parseFloat(aposta.stake.toString().replace(/[^\d.,]/g, "").replace(",", "."));
-          const odds = parseFloat(aposta.odds.toString().replace(",", "."));
+          const stake = parseFloat(aposta.stake?.toString().replace(/[^\d.,]/g, "").replace(",", ".") || 0);
+          const odds = parseFloat(aposta.odds?.toString().replace(",", ".") || 0);
 
           switch (aposta.resultado) {
             case "green":
@@ -1732,12 +1752,57 @@
         // Inicializar a página
         setupTabs();
         await carregarMercados();
-        
-        // Garantimos que o Firebase está inicializado adequadamente antes de carregar as apostas
-        setTimeout(() => {
-          carregarApostas();
-        }, 500);
-        
+
+        // SOLUÇÃO: Tentar carregar as apostas com atraso maior e com retry
+        let retryCount = 0;
+        const maxRetries = 3;
+
+        const tryLoadApostas = () => {
+          setTimeout(async () => {
+            try {
+              console.log(`Tentativa ${retryCount + 1} de carregar apostas...`);
+
+              // Carregar apostas diretamente com getDocs em vez de onSnapshot
+              const apostasRef = query(
+                collection(db, "apostas"),
+                where("userEmail", "==", currentUser),
+                orderBy("timestamp", "desc")
+              );
+
+              const snapshot = await getDocs(apostasRef);
+
+              if (snapshot.empty) {
+                console.log("Nenhuma aposta encontrada");
+                document.getElementById("apostas-lista").innerHTML =
+                  '<div style="text-align: center; padding: 15px; color: #888;">Nenhuma aposta registrada</div>';
+                return;
+              }
+
+              console.log(`Encontradas ${snapshot.size} apostas`);
+
+              // Processar as apostas manualmente
+              todasApostas = [];
+              snapshot.forEach(doc => {
+                todasApostas.push({ id: doc.id, ...doc.data() });
+              });
+
+              // Atualizar a interface com as apostas carregadas
+              atualizarInterfaceApostas();
+
+            } catch (error) {
+              console.error("Erro ao carregar apostas:", error);
+              if (retryCount < maxRetries) {
+                retryCount++;
+                console.log(`Tentando novamente em ${1000 * retryCount}ms...`);
+                tryLoadApostas();
+              }
+            }
+          }, 1000 * (retryCount + 1));  // Tempo progressivo: 1s, 2s, 3s
+        };
+
+        // Iniciar tentativas de carregamento
+        tryLoadApostas();
+
         await buscarDadosAPI();
       } catch (error) {
         console.error("Erro ao carregar a página:", error);
@@ -1770,7 +1835,7 @@
 
         // Limpar formulário
         e.target.reset();
-        document.getElementById("resultado-final").textContent = "Calculando...";
+        document.getElementById("resultado-final").textContent = formatarMoeda(0);
 
         await carregarApostas();
       } catch (error) {
@@ -1873,4 +1938,5 @@
     });
   </script>
 </body>
+
 </html>
