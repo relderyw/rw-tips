@@ -1392,6 +1392,9 @@
             return;
           }
 
+          // Clear existing data
+          todasApostas = [];
+
           console.log(`Tentativa ${retryCount + 1} de carregar apostas para ${currentUser}`);
 
           // Create the query with proper ordering and limit
@@ -1402,19 +1405,24 @@
             limit(100) // Add limit to prevent loading too many documents
           );
 
-          // Initial load with getDocs
-          const initialSnapshot = await getDocs(apostasRef);
-          if (initialSnapshot.empty) {
-            console.log("No bets found");
-            apostasLista.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Nenhuma aposta registrada</div>';
-          } else {
-            console.log(`Initially found ${initialSnapshot.size} bets`);
+          // Set up real-time listener
+          window.unsubscribeApostas = onSnapshot(apostasRef, (snapshot) => {
+            console.log(`Received snapshot with ${snapshot.size} bets`);
             todasApostas = [];
-            initialSnapshot.forEach(doc => {
+            snapshot.forEach(doc => {
               const data = doc.data();
               todasApostas.push({ id: doc.id, ...data });
             });
+            console.log('Updating interface with new bets:', todasApostas);
             atualizarInterfaceApostas();
+          }, (error) => {
+            console.error('Error in real-time listener:', error);
+            apostasLista.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Erro ao carregar apostas. Tente novamente.</div>';
+          });
+
+          // Initial state for empty collection
+          if (todasApostas.length === 0) {
+            apostasLista.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Nenhuma aposta registrada</div>';
           }
 
           // Set up real-time listener for updates
