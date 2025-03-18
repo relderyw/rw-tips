@@ -1293,8 +1293,7 @@
       const apostasLista = document.getElementById("apostas-lista");
 
       if (todasApostas.length === 0) {
-        apostasLista.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Nenhuma aposta registrada</div>';
-        document.getElementById("grafico").innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Sem dados para exibir</div>';
+        apostasLista.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Nenhuma aposta registrada hoje.</div>';
         return;
       }
 
@@ -1307,8 +1306,8 @@
         const apostaItem = document.createElement("div");
         apostaItem.classList.add("aposta-item");
 
-        const stake = parseFloat(aposta.stake?.toString().replace(/[^\d.,]/g, "").replace(",", ".") || "0");
-        const odds = parseFloat(aposta.odds?.toString().replace(",", ".") || "0");
+        const stake = parseFloat(aposta.stake?.toString().replace(/[^\d.,]/g, "").replace(",", ".")) || 0;
+        const odds = parseFloat(aposta.odds?.toString().replace(",", ".")) || 0;
         let valorFinal = 0;
 
         switch (aposta.resultado) {
@@ -1346,16 +1345,16 @@
         }
 
         apostaItem.innerHTML = `
-          <div class="aposta-info">
-            <strong>${aposta.liga}</strong> · <span class="${statusClass}">${statusText}${valorFinalText}</span><br>
-            ${aposta.jogador1} vs ${aposta.jogador2}<br>
-            <small>${aposta.mercado} · Stake: ${formatarMoeda(stake)} · Odds: ${odds}</small><br>
-            <small>${dataFormatada}</small>
-          </div>
-          <div class="aposta-actions">
-            <button onclick="removerAposta('${aposta.id}')">Remover</button>
-          </div>
-        `;
+      <div class="aposta-info">
+        <strong>${aposta.liga}</strong> · <span class="${statusClass}">${statusText}${valorFinalText}</span><br>
+        ${aposta.jogador1} vs ${aposta.jogador2}<br>
+        <small>${aposta.mercado} · Stake: ${formatarMoeda(stake)} · Odds: ${odds}</small><br>
+        <small>${dataFormatada}</small>
+      </div>
+      <div class="aposta-actions">
+        <button onclick="removerAposta('${aposta.id}')">Remover</button>
+      </div>
+    `;
 
         apostasLista.appendChild(apostaItem);
       });
@@ -1368,75 +1367,65 @@
       // Criar gráfico inicial com 7 dias
       criarGrafico(7);
     }
-
     // Replace the tryLoadApostas function with this improved version
+    // Função para carregar as apostas do Firestore
     async function carregarApostas() {
       const apostasLista = document.getElementById("apostas-lista");
       apostasLista.innerHTML = '<div class="loading">Carregando apostas...</div>';
 
-      // Cleanup existing listener if any
-      if (window.unsubscribeApostas) {
-        window.unsubscribeApostas();
-        window.unsubscribeApostas = null;
-      }
+      try {
+        // Verificar se o usuário está logado
+        if (!currentUser) {
+          console.error("Usuário não está logado.");
+          apostasLista.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Por favor, faça login novamente.</div>';
+          window.location.replace('index.html');
+          return;
+        }
 
-      let retryCount = 0;
-      const maxRetries = 3;
+        // Definir o intervalo de tempo para o dia atual
+        const hoje = new Date();
+        const inicioDoDia = new Date(hoje.setHours(0, 0, 0, 0));
+        const fimDoDia = new Date(hoje.setHours(23, 59, 59, 999));
 
-      const tryLoad = async () => {
-        try {
-          if (!currentUser) {
-            console.error("User is not logged in");
-            apostasLista.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Por favor, faça login novamente</div>';
-            window.location.replace('index.html');
+        // Criar a query para buscar as apostas do usuário atual no dia atual
+        const apostasRef = query(
+          collection(db, "apostas"),
+          where("userEmail", "==", currentUser),
+          where("timestamp", ">=", inicioDoDia),
+          where("timestamp", "<=", fimDoDia),
+          orderBy("timestamp", "desc")
+        );
+
+        // Configurar o listener em tempo real com onSnapshot
+        onSnapshot(apostasRef, (snapshot) => {
+          todasApostas = []; // Limpar o array de apostas
+
+          if (snapshot.empty) {
+            apostasLista.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Nenhuma aposta registrada hoje.</div>';
             return;
           }
 
-          // Clear existing data
-          todasApostas = [];
-
-          console.log(`Tentativa ${retryCount + 1} de carregar apostas para ${currentUser}`);
-
-          // Create the query with proper ordering
-          const apostasRef = query(
-            collection(db, "apostas"),
-            where("userEmail", "==", currentUser),
-            orderBy("timestamp", "desc")
-          );
-
-          // Set up real-time listener
-          const unsubscribe = onSnapshot(apostasRef, (snapshot) => {
-            console.log(`Received snapshot with ${snapshot.size} bets`);
-            todasApostas = [];
-            snapshot.forEach(doc => {
-              const data = doc.data();
-              todasApostas.push({
-                id: doc.id,
-                ...data,
-                timestamp: data.timestamp?.toDate() || new Date()
-              });
-            });
-            console.log('Updating interface with new bets:', todasApostas);
-            atualizarInterfaceApostas();
-          }, (error) => {
-            console.error('Error in real-time listener:', error);
-            apostasLista.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Erro ao carregar apostas. Tente novamente.</div>';
+          // Processar cada documento retornado
+          snapshot.forEach((doc) => {
+            const aposta = { id: doc.id, ...doc.data() };
+            todasApostas.push(aposta);
           });
 
-          // Store unsubscribe function for cleanup
-          window.unsubscribeApostas = unsubscribe;
+          // Atualizar a interface com as apostas carregadas
+          atualizarInterfaceApostas();
+        }, (error) => {
+          console.error("Erro ao carregar apostas:", error);
+          apostasLista.innerHTML = `<div style="text-align: center; padding: 15px; color: #888;">
+        Erro ao carregar apostas: ${error.message}. <button onclick="carregarApostas()">Tentar novamente</button>
+      </div>`;
+        });
 
-        } catch (error) {
-          console.error("Erro ao configurar listener:", error);
-          if (retryCount < maxRetries) {
-            retryCount++;
-            console.log(`Tentando novamente em ${1000 * retryCount}ms...`);
-            setTimeout(tryLoad, 1000 * retryCount);
-          }
-        }
-      };
-
-      await tryLoad();
+      } catch (error) {
+        console.error("Erro ao carregar apostas:", error);
+        apostasLista.innerHTML = `<div style="text-align: center; padding: 15px; color: #888;">
+      Erro ao carregar apostas: ${error.message}. <button onclick="carregarApostas()">Tentar novamente</button>
+    </div>`;
+      }
     }
 
     function getStatusText(resultado) {
