@@ -1379,56 +1379,64 @@
 
       const tryLoad = async () => {
         try {
-          console.log(`Tentativa ${retryCount + 1} de carregar apostas para ${currentUser}`);
-
-          // Ensure we're using the correct user email from localStorage
-          const userEmail = localStorage.getItem('currentUser');
-
-          if (!userEmail) {
-            console.error("User email is missing");
-            apostasLista.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Erro: Usuário não encontrado</div>';
+          if (!currentUser) {
+            console.error("User is not logged in");
+            apostasLista.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Por favor, faça login novamente</div>';
+            window.location.replace('index.html');
             return;
           }
 
-          // Create the query with explicit string comparison
-          const apostasRef = collection(db, "apostas");
-          const q = query(
-            apostasRef,
-            where("userEmail", "==", userEmail),
+          console.log(`Tentativa ${retryCount + 1} de carregar apostas para ${currentUser}`);
+
+          // Create the query with proper ordering
+          const apostasRef = query(
+            collection(db, "apostas"),
+            where("userEmail", "==", currentUser),
             orderBy("timestamp", "desc")
           );
 
-          console.log("Executing query with userEmail:", userEmail);
+          // Set up real-time listener
+          const unsubscribe = onSnapshot(apostasRef, (snapshot) => {
+            console.log(`Received snapshot with ${snapshot.size} documents`);
 
-          // Execute query with proper error handling
-          const snapshot = await getDocs(q);
+            if (snapshot.empty) {
+              console.log("No bets found");
+              apostasLista.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Nenhuma aposta registrada</div>';
+              return;
+            }
 
-          console.log(`Query completed. Found ${snapshot.size} documents.`);
+            // Process the apostas
+            todasApostas = [];
+            snapshot.forEach(doc => {
+              const data = doc.data();
+              console.log("Document data:", data);
+              todasApostas.push({ id: doc.id, ...data });
+            });
 
-          // Process the apostas
-          todasApostas = [];
-          snapshot.forEach(doc => {
-            const data = doc.data();
-            console.log("Document data:", data);
-            todasApostas.push({ id: doc.id, ...data });
+            console.log(`Processed ${todasApostas.length} apostas`);
+            atualizarInterfaceApostas();
+          }, (error) => {
+            console.error("Error in real-time listener:", error);
+            apostasLista.innerHTML = `<div style="text-align: center; padding: 15px; color: #888;">
+              Erro ao carregar apostas: ${error.message}
+              <button onclick="carregarApostas()">Tentar novamente</button>
+            </div>`;
           });
 
-          console.log(`Processed ${todasApostas.length} apostas.`);
-
-          // Update the interface with loaded bets
-          atualizarInterfaceApostas();
+          // Store unsubscribe function for cleanup
+          window.unsubscribeApostas = unsubscribe;
 
         } catch (error) {
-          console.error("Erro ao carregar apostas:", error);
+          console.error("Erro ao configurar listener:", error);
           if (retryCount < maxRetries) {
             retryCount++;
             console.log(`Tentando novamente em ${1000 * retryCount}ms...`);
             setTimeout(tryLoad, 1000 * retryCount);
           } else {
             apostasLista.innerHTML = `<div style="text-align: center; padding: 15px; color: #888;">
-          Erro ao carregar apostas: ${error.message}. 
-          <button onclick="window.location.reload()">Tentar novamente</button>
-        </div>`;
+              Erro ao carregar apostas: ${error.message}
+              <button onclick="carregarApostas()">Tentar novamente</button>
+            </div>`;
           }
         }
       };
