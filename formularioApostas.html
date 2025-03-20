@@ -1783,8 +1783,6 @@
               
               // Carregar apostas diretamente com getDocs em vez de onSnapshot
               const apostasRef = query(
-                collection(db, "apostas"),
-                where("userEmail", "==", currentUser),
                 orderBy("timestamp", "desc")
               );
               
