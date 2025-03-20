@@ -1874,6 +1874,48 @@
         }
       }
     });
+
+    // Inicialize o Firebase (certifique-se que já fez isso no seu projeto)
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        const userId = user.uid;
+
+        // Referência ao Firestore
+        const db = firebase.firestore();
+        const userRef = db.collection("apostas").doc(userId);
+
+        // Carregar os dados ao abrir a página
+        userRef.get().then((doc) => {
+          if (doc.exists) {
+            const dados = doc.data();
+            atualizarGrafico(dados);
+            atualizarTabela(dados);
+          }
+        }).catch((error) => {
+          console.log("Erro ao buscar os dados: ", error);
+        });
+
+        // Atualização em tempo real (opcional)
+        userRef.onSnapshot((doc) => {
+          if (doc.exists) {
+            const dados = doc.data();
+            atualizarGrafico(dados);
+            atualizarTabela(dados);
+          }
+        });
+      }
+    });
+
+    // Funções para atualizar a interface
+    function atualizarGrafico(dados) {
+      // Lógica para atualizar o gráfico com os dados
+      console.log("Gráfico atualizado:", dados);
+    }
+
+    function atualizarTabela(dados) {
+      // Lógica para atualizar a tabela com os dados
+      console.log("Tabela atualizada:", dados);
+    }
   </script>
 </body>
 
