@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RW TIPS - Radar de Apostas</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -209,9 +210,17 @@
             font-weight: 600;
         }
 
-        .high-value { color: var(--success-color); }
-        .medium-value { color: var(--warning-color); }
-        .low-value { color: var(--danger-color); }
+        .high-value {
+            color: var(--success-color);
+        }
+
+        .medium-value {
+            color: var(--warning-color);
+        }
+
+        .low-value {
+            color: var(--danger-color);
+        }
 
         .player-prediction {
             margin-top: 15px;
@@ -264,7 +273,8 @@
             font-family: monospace;
         }
 
-        .refresh-btn, .page-btn {
+        .refresh-btn,
+        .page-btn {
             background: linear-gradient(45deg, var(--accent-purple), var(--accent-pink));
             border: none;
             color: white;
@@ -275,7 +285,8 @@
             transition: opacity 0.3s;
         }
 
-        .refresh-btn:hover, .page-btn:hover {
+        .refresh-btn:hover,
+        .page-btn:hover {
             opacity: 0.9;
         }
 
@@ -294,10 +305,27 @@
             <h2>RW TIPS</h2>
             <nav>
                 <ul style="list-style: none; margin-top: 20px;">
-                    <li><a href="#" style="color: var(--text-primary); text-decoration: none; display: block; padding: 10px; margin: 5px 0; border-radius: 8px; background: rgba(255,255,255,0.05);">Dashboard</a></li>
-                    <li><a href="#" style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Análise H2H</a></li>
-                    <li><a href="#" style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Estatísticas</a></li>
-                    <li><a href="#" style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Resultados</a></li>
+                    <li><a href="dashboard"
+                            style="color: var(--text-primary); text-decoration: none; display: block; padding: 10px; margin: 5px 0; border-radius: 8px; background: rgba(255,255,255,0.05);">Dashboard</a>
+                    </li>
+                    <li><a href="h2h_analysis"
+                            style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Análise
+                            H2H</a></li>
+                    <li><a href="statistics"
+                            style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Estatísticas</a>
+                    </li>
+                    <li><a href="results"
+                            style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Resultados</a>
+                    </li>
+                    <li><a href="live"
+                            style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Ao
+                            Vivo</a></li>
+                    <li><a href="players"
+                            style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Jogadores</a>
+                    </li>
+                    <li><a href="visualization"
+                            style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Visualização</a>
+                    </li>
                 </ul>
             </nav>
             <div class="keyboard-shortcuts">
@@ -578,27 +606,39 @@
 
             // Atalhos de teclado
             document.addEventListener('keydown', async (e) => {
-                e.preventDefault(); // Evitar comportamento padrão do F5
-                switch (e.key.toLowerCase()) {
-                    case 'f5':
-                        await updateDashboard();
-                        break;
-                    case 'g':
-                        document.getElementById('sortBy').value = 'goalsFT';
-                        await updateDashboard();
-                        break;
-                    case 'v':
-                        document.getElementById('sortBy').value = 'wins';
-                        await updateDashboard();
-                        break;
-                    case 'r':
-                        await updateDashboard(true);
-                        break;
+                if (e.key.toLowerCase() === 'f5') {
+                    await updateDashboard();
+                } else {
+                    switch (e.key.toLowerCase()) {
+                        case 'g':
+                            document.getElementById('sortBy').value = 'goalsFT';
+                            await updateDashboard();
+                            break;
+                        case 'v':
+                            document.getElementById('sortBy').value = 'wins';
+                            await updateDashboard();
+                            break;
+                        case 'r':
+                            await updateDashboard(true);
+                            break;
+                    }
                 }
+            });
+
+            // Adicionar navegação entre guias
+            document.querySelectorAll('nav a').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const href = link.getAttribute('href').replace('#', '');
+                    if (href) {
+                        window.location.href = `${href}.html`;
+                    }
+                });
             });
         }
 
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
+
 </html>
