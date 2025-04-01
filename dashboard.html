@@ -399,13 +399,6 @@
         </aside>
 
         <main class="main-content">
-            <div class="quick-stats" id="quickStats"></div>
-
-            <div class="chart-container">
-                <h3 style="margin-bottom: 15px; color: var(--text-primary)">Distribuição de Gols FT</h3>
-                <canvas id="goalsDistributionChart"></canvas>
-            </div>
-
             <div class="filters-bar">
                 <div class="filter-control">
                     <label for="leagueFilter">Liga:</label>
@@ -414,11 +407,11 @@
                     </select>
                 </div>
                 <div class="filter-control">
-                    <label for="gamesFilter">Últimos Jogos:</label>
+                    <label for="gamesFilter">Mínimo de Jogos:</label>
                     <select id="gamesFilter" class="filter-select">
-                        <option value="5">5 Jogos</option>
-                        <option value="10" selected>10 Jogos</option>
-                        <option value="15">15 Jogos</option>
+                        <option value="5">5+</option>
+                        <option value="10">10+</option>
+                        <option value="15">15+</option>
                     </select>
                 </div>
                 <div class="filter-control">
@@ -426,18 +419,25 @@
                     <select id="sortBy" class="filter-select">
                         <option value="goalsFT">Gols FT</option>
                         <option value="wins">Vitórias</option>
-                        <option value="goalsScored">Gols Feitos</option>
+                        <option value="goalsScored">Gols Marcados</option>
                     </select>
                 </div>
-                <button id="refreshData" class="refresh-btn">Atualizar</button>
+                <button id="refreshData" class="refresh-button">Atualizar Dados</button>
             </div>
 
-            <div class="player-grid" id="playersContainer"></div>
+            <div id="quickStats" class="quick-stats"></div>
 
-            <div class="pagination">
-                <button id="prevPage" class="page-btn">Anterior</button>
-                <span id="pageIndicator">Página 1</span>
-                <button id="nextPage" class="page-btn">Próxima</button>
+            <div class="chart-container">
+                <canvas id="goalsDistributionChart"></canvas>
+            </div>
+
+            <div class="players-section">
+                <div id="playersContainer" class="players-grid"></div>
+                <div class="pagination">
+                    <button id="prevPage" class="page-button">Anterior</button>
+                    <span id="pageIndicator">Página 1</span>
+                    <button id="nextPage" class="page-button">Próximo</button>
+                </div>
             </div>
         </main>
     </div>
@@ -498,32 +498,220 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Initialize data
+            let currentPage = 1;
+            const itemsPerPage = 12;
+            let allPlayers = [];
+
+            // Quick Stats Update Function
+            function updateQuickStats(data) {
+                const quickStats = document.getElementById('quickStats');
+                const stats = [
+                    { label: 'Total de Jogos', value: data.totalGames || 0 },
+                    { label: 'Média de Gols', value: (data.averageGoals || 0).toFixed(2) },
+                    { label: 'Taxa de Vitória', value: `${((data.winRate || 0) * 100).toFixed(1)}%` },
+                    { label: 'Jogos Analisados', value: data.analyzedGames || 0 }
+                ];
+
+                quickStats.innerHTML = stats.map(stat => `
+                    <div class="stat-card">
+                        <h3>${stat.label}</h3>
+                        <div class="stat-value">${stat.value}</div>
+                    </div>
+                `).join('');
+            }
+
+            // Goals Distribution Chart
+            function updateGoalsChart(data) {
+                const ctx = document.getElementById('goalsDistributionChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['0', '1', '2', '3', '4', '5+'],
+                        datasets: [{
+                            label: 'Distribuição de Gols',
+                            data: data.goalsDistribution || [0, 0, 0, 0, 0, 0],
+                            backgroundColor: 'rgba(139, 92, 246, 0.5)',
+                            borderColor: 'rgba(139, 92, 246, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Player Cards Update
+            function updatePlayerCards(players) {
+                const container = document.getElementById('playersContainer');
+                const start = (currentPage - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+                const pageItems = players.slice(start, end);
+
+                container.innerHTML = pageItems.map(player => `
+                    <div class="player-card ${player.recommended ? 'recommended' : ''}">
+                        <div class="player-header">
+                            <span class="player-name">${player.name}</span>
+                            <span class="player-team">${player.team}</span>
+                        </div>
+                        <div class="player-stats">
+                            <div class="stat-group">
+                                <div class="stat-item">
+                                    <span class="stat-label">Gols FT</span>
+                                    <span class="stat-item-value ${getValueClass(player.goalsFT)}">${player.goalsFT}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Vitórias</span>
+                                    <span class="stat-item-value">${player.wins}</span>
+                                </div>
+                            </div>
+                            <div class="stat-group">
+                                <div class="stat-item">
+                                    <span class="stat-label">Gols Feitos</span>
+                                    <span class="stat-item-value">${player.goalsScored}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Jogos</span>
+                                    <span class="stat-item-value">${player.games}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="player-prediction">
+                            <div class="prediction-title">Previsão para Próximo Jogo</div>
+                            <div class="prediction-values">
+                                <span class="prediction-chip ${player.prediction >= 2 ? 'high' : ''}">
+                                    ${player.prediction.toFixed(1)} Gols
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                document.getElementById('pageIndicator').textContent = `Página ${currentPage}`;
+                updatePaginationButtons();
+            }
+
+            function getValueClass(value) {
+                if (value >= 2.5) return 'high-value';
+                if (value >= 1.5) return 'medium-value';
+                return 'low-value';
+            }
+
+            function updatePaginationButtons() {
+                const prevBtn = document.getElementById('prevPage');
+                const nextBtn = document.getElementById('nextPage');
+                prevBtn.disabled = currentPage === 1;
+                nextBtn.disabled = currentPage >= Math.ceil(allPlayers.length / itemsPerPage);
+            }
+
+            // Event Listeners
+            document.getElementById('prevPage').addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    updatePlayerCards(allPlayers);
+                }
+            });
+
+            document.getElementById('nextPage').addEventListener('click', () => {
+                if (currentPage < Math.ceil(allPlayers.length / itemsPerPage)) {
+                    currentPage++;
+                    updatePlayerCards(allPlayers);
+                }
+            });
+
+            document.getElementById('refreshData').addEventListener('click', fetchData);
+
+            // Filter and Sort Functions
+            function applyFilters() {
+                const league = document.getElementById('leagueFilter').value;
+                const games = parseInt(document.getElementById('gamesFilter').value);
+                const sortBy = document.getElementById('sortBy').value;
+
+                let filtered = [...allPlayers];
+                if (league !== 'all') {
+                    filtered = filtered.filter(p => p.league === league);
+                }
+
+                filtered.sort((a, b) => b[sortBy] - a[sortBy]);
+                updatePlayerCards(filtered);
+            }
+
+            // Add filter change listeners
+            document.getElementById('leagueFilter').addEventListener('change', applyFilters);
+            document.getElementById('gamesFilter').addEventListener('change', applyFilters);
+            document.getElementById('sortBy').addEventListener('change', applyFilters);
+
+            // Keyboard shortcuts
             const shortcuts = {
                 'h': 'h2h_analysis.html',
                 'l': 'live.html',
                 'p': 'players.html',
                 'r': 'results.html',
                 's': 'statistics.html',
-                'v': 'visualization.html'
+                'v': 'visualization.html',
+                'g': () => document.getElementById('sortBy').value = 'goalsFT',
+                'v': () => document.getElementById('sortBy').value = 'wins',
+                'r': () => {
+                    const recommended = document.querySelectorAll('.player-card.recommended');
+                    recommended.forEach(card => card.scrollIntoView({ behavior: 'smooth' }));
+                }
             };
 
-            const indicator = document.createElement('div');
-            indicator.className = 'shortcut-indicator';
-            document.body.appendChild(indicator);
+            // Mock data for testing
+            function fetchData() {
+                // Simulated API response
+                const mockData = {
+                    totalGames: 150,
+                    averageGoals: 2.5,
+                    winRate: 0.65,
+                    analyzedGames: 100,
+                    goalsDistribution: [10, 20, 35, 25, 15, 5],
+                    players: Array.from({ length: 50 }, (_, i) => ({
+                        name: `Player ${i + 1}`,
+                        team: `Team ${Math.floor(i / 5) + 1}`,
+                        league: `League ${Math.floor(i / 10) + 1}`,
+                        goalsFT: (Math.random() * 3).toFixed(1),
+                        wins: Math.floor(Math.random() * 10),
+                        goalsScored: Math.floor(Math.random() * 15),
+                        games: 10,
+                        prediction: Math.random() * 3,
+                        recommended: Math.random() > 0.8
+                    }))
+                };
 
-            document.addEventListener('keydown', function (e) {
-                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                allPlayers = mockData.players;
+                updateQuickStats(mockData);
+                updateGoalsChart(mockData);
+                updatePlayerCards(mockData.players);
 
-                const key = e.key.toLowerCase();
-                if (shortcuts[key]) {
-                    indicator.textContent = `Shortcut: ${key.toUpperCase()}`;
-                    indicator.classList.add('active');
-                    setTimeout(() => {
-                        indicator.classList.remove('active');
-                    }, 1000);
-                    window.location.href = shortcuts[key];
-                }
-            });
+                // Update league filter options
+                const leagues = [...new Set(mockData.players.map(p => p.league))];
+                const leagueFilter = document.getElementById('leagueFilter');
+                leagueFilter.innerHTML = '<option value="all">Todas as Ligas</option>' +
+                    leagues.map(league => `<option value="${league}">${league}</option>`).join('');
+            }
+
+            // Initial data load
+            fetchData();
         });
     </script>
 </body>
