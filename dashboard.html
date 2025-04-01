@@ -4,9 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RW TIPS - Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <title>RW TIPS - Radar de Apostas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -18,6 +17,8 @@
             --text-primary: #ffffff;
             --text-secondary: #b3b3b3;
             --success-color: #00ff88;
+            --warning-color: #ffbb33;
+            --danger-color: #ff4d4d;
             --accent-purple: #8B5CF6;
             --accent-pink: #EC4899;
             --neon-green: #00ff88;
@@ -56,6 +57,8 @@
             height: calc(100vh - 40px);
             position: sticky;
             top: 20px;
+            display: flex;
+            flex-direction: column;
         }
 
         .main-content {
@@ -74,11 +77,12 @@
             border-radius: 15px;
             padding: 20px;
             border: 1px solid var(--glass-border);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .stat-card:hover {
             transform: translateY(-5px);
+            box-shadow: var(--card-shadow);
         }
 
         .stat-value {
@@ -97,41 +101,166 @@
             padding: 20px;
             border: 1px solid var(--glass-border);
             margin-top: 20px;
+            box-shadow: var(--card-shadow);
         }
 
-        .matches-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .match-card {
+        .filters-bar {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
             background: var(--glass-bg);
             border-radius: 15px;
-            padding: 20px;
+            padding: 15px;
             border: 1px solid var(--glass-border);
+        }
+
+        .filter-control {
             display: flex;
-            flex-direction: column;
+            align-items: center;
             gap: 10px;
         }
 
-        .match-teams {
+        .filter-select {
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .player-card {
+            background: var(--glass-bg);
+            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid var(--glass-border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .player-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .player-card.recommended {
+            border: 1px solid var(--neon-green);
+        }
+
+        .player-card.recommended::before {
+            content: "Recomendado";
+            position: absolute;
+            top: 10px;
+            right: -30px;
+            background: var(--neon-green);
+            color: #000;
+            padding: 5px 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transform: rotate(45deg);
+        }
+
+        .player-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .player-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .player-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .player-rating {
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-pink));
+            padding: 5px 10px;
+            border-radius: 20px;
             font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .player-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+        }
+
+        .stat-item-value {
             font-weight: 600;
         }
 
-        .match-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            text-align: center;
-            margin-top: 10px;
+        .high-value {
+            color: var(--success-color);
+        }
+
+        .medium-value {
+            color: var(--warning-color);
+        }
+
+        .low-value {
+            color: var(--danger-color);
+        }
+
+        .player-prediction {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .prediction-title {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .prediction-values {
+            display: flex;
+            gap: 10px;
+        }
+
+        .prediction-chip {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .prediction-chip.high {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--neon-green);
         }
 
         .keyboard-shortcuts {
-            margin-top: 20px;
+            margin-top: auto;
             padding: 15px;
             background: rgba(0, 0, 0, 0.2);
             border-radius: 10px;
@@ -150,6 +279,50 @@
             border-radius: 4px;
             font-family: monospace;
         }
+
+        .trend-indicator {
+            display: flex;
+            align-items: center;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        .trend-up {
+            color: var(--success-color);
+        }
+
+        .trend-down {
+            color: var(--danger-color);
+        }
+
+        .trend-neutral {
+            color: var(--warning-color);
+        }
+
+        .decision-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-pink));
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+
+        .refresh-btn:hover {
+            opacity: 0.9;
+        }
     </style>
 </head>
 
@@ -159,18 +332,10 @@
             <h2>RW TIPS</h2>
             <nav>
                 <ul style="list-style: none; margin-top: 20px;">
-                    <li><a href="#"
-                            style="color: var(--text-primary); text-decoration: none; display: block; padding: 10px; margin: 5px 0; border-radius: 8px; background: rgba(255,255,255,0.05);">Dashboard</a>
-                    </li>
-                    <li><a href="h2h_analysis.html"
-                            style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Análise
-                            H2H</a></li>
-                    <li><a href="statistics.html"
-                            style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Estatísticas</a>
-                    </li>
-                    <li><a href="results.html"
-                            style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Resultados</a>
-                    </li>
+                    <li><a href="#" style="color: var(--text-primary); text-decoration: none; display: block; padding: 10px; margin: 5px 0; border-radius: 8px; background: rgba(255,255,255,0.05);">Dashboard</a></li>
+                    <li><a href="#" style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Análise H2H</a></li>
+                    <li><a href="#" style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Estatísticas</a></li>
+                    <li><a href="#" style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Resultados</a></li>
                 </ul>
             </nav>
             <div class="keyboard-shortcuts">
@@ -180,12 +345,16 @@
                     <span class="key">F5</span>
                 </div>
                 <div class="shortcut-item">
-                    <span>Próximo jogo</span>
-                    <span class="key">→</span>
+                    <span>Filtrar por gols</span>
+                    <span class="key">G</span>
                 </div>
                 <div class="shortcut-item">
-                    <span>Jogo anterior</span>
-                    <span class="key">←</span>
+                    <span>Filtrar por vitórias</span>
+                    <span class="key">V</span>
+                </div>
+                <div class="shortcut-item">
+                    <span>Mostrar recomendados</span>
+                    <span class="key">R</span>
                 </div>
             </div>
         </aside>
@@ -193,294 +362,465 @@
         <main class="main-content">
             <div class="quick-stats">
                 <div class="stat-card">
-                    <h3>Jogos Hoje</h3>
-                    <div class="stat-value" id="todayGames">0</div>
+                    <h3>Tempo de Jogo</h3>
+                    <div class="stat-value">8 mins</div>
+                    <div class="trend-indicator trend-neutral">
+                        Esoccer Battle
+                    </div>
                 </div>
                 <div class="stat-card">
-                    <h3>Win Rate (Hoje)</h3>
-                    <div class="stat-value" id="todayWinRate">0%</div>
+                    <h3>Média Gols HT</h3>
+                    <div class="stat-value">2.81</div>
+                    <div class="trend-indicator trend-up">
+                        ↑ 5.2% últimas 24h
+                    </div>
                 </div>
                 <div class="stat-card">
-                    <h3>Média de Gols</h3>
-                    <div class="stat-value" id="avgGoals">0</div>
+                    <h3>Média Gols FT</h3>
+                    <div class="stat-value">5.19</div>
+                    <div class="trend-indicator trend-down">
+                        ↓ 2.1% últimas 24h
+                    </div>
                 </div>
             </div>
 
             <div class="chart-container">
-                <h3 style="margin-bottom: 15px; color: var(--text-primary)">Performance por Liga</h3>
-                <div style="margin-bottom: 15px">
-                    <select id="timeRangeSelect"
-                        style="background: var(--glass-bg); color: var(--text-primary); border: 1px solid var(--glass-border); padding: 8px; border-radius: 8px;">
-                        <option value="5">Últimos 5 jogos</option>
-                        <option value="10">Últimos 10 jogos</option>
-                        <option value="15">Últimos 15 jogos</option>
-                    </select>
-                </div>
-                <canvas id="leaguePerformanceChart"></canvas>
+                <h3 style="margin-bottom: 15px; color: var(--text-primary)">Distribuição de Gols HT/FT</h3>
+                <canvas id="goalsDistributionChart"></canvas>
             </div>
 
-            <div class="matches-grid" id="upcomingMatches">
-                <!-- Jogos serão inseridos aqui dinamicamente -->
+            <div class="filters-bar">
+                <div class="filter-control">
+                    <label for="sortBy">Ordenar por:</label>
+                    <select id="sortBy" class="filter-select">
+                        <option value="rating">Rating Geral</option>
+                        <option value="goalsHT">Gols HT</option>
+                        <option value="goalsFT">Gols FT</option>
+                        <option value="goalsScored">Gols Feitos</option>
+                        <option value="goalsConceded">Gols Sofridos</option>
+                        <option value="wins">Vitórias</option>
+                    </select>
+                </div>
+                <div class="filter-control">
+                    <label for="betType">Mercado:</label>
+                    <select id="betType" class="filter-select">
+                        <option value="all">Todos</option>
+                        <option value="overHT">Over HT</option>
+                        <option value="underHT">Under HT</option>
+                        <option value="overFT">Over FT</option>
+                        <option value="underFT">Under FT</option>
+                        <option value="btts">Ambos Marcam</option>
+                    </select>
+                </div>
+                <div class="filter-control">
+                    <label for="threshold">Confiança:</label>
+                    <select id="threshold" class="filter-select">
+                        <option value="all">Todos</option>
+                        <option value="high">Alta (>70%)</option>
+                        <option value="medium">Média (50-70%)</option>
+                        <option value="low">Baixa (<50%)</option>
+                    </select>
+                </div>
+                <button id="refreshData" class="refresh-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 2v6h-6"></path>
+                        <path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path>
+                        <path d="M3 22v-6h6"></path>
+                        <path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path>
+                    </svg>
+                    Atualizar
+                </button>
+            </div>
+
+            <div class="decision-header">
+                <h2>Análise de Jogadores</h2>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <div style="font-size: 0.9rem; color: var(--text-secondary);">Última atualização: <span id="lastUpdate">31/03 15:45</span></div>
+                </div>
+            </div>
+
+            <div class="player-grid" id="playersContainer">
+                <!-- Player cards will be generated via JavaScript -->
             </div>
         </main>
     </div>
 
     <script>
-        // Função para atualizar estatísticas rápidas
-        async function updateQuickStats() {
-            try {
-                const response = await fetch('https://api.green365.com.br/api/league/upcoming?sport=fifa&leagueId=&page=1');
-                const data = await response.json();
-                const games = data.data;
-
-                document.getElementById('todayGames').textContent = games.length;
-                // Adicione mais lógica para calcular outras estatísticas
-            } catch (error) {
-                console.error('Erro ao atualizar estatísticas:', error);
+        // Dados dos jogadores
+        const playerData = [
+            {
+                name: "Malenkiy",
+                goalsFT: 6.67,
+                goalsHT: 3.0,
+                goalsScored: 4.0,
+                goalsConceded: 2.67,
+                wins: 2,
+                draws: 1,
+                losses: 0,
+                trend: "up",
+                recommended: true,
+                predictions: [
+                    { market: "Over 2.5 HT", confidence: 82 },
+                    { market: "Over 5.5 FT", confidence: 75 }
+                ]
+            },
+            {
+                name: "why",
+                goalsFT: 6.66,
+                goalsHT: 3.33,
+                goalsScored: 2.33,
+                goalsConceded: 4.33,
+                wins: 0,
+                draws: 1,
+                losses: 2,
+                trend: "down",
+                recommended: false,
+                predictions: [
+                    { market: "Over 2.5 HT", confidence: 85 },
+                    { market: "BTTS", confidence: 78 }
+                ]
+            },
+            {
+                name: "vivienne",
+                goalsFT: 6.0,
+                goalsHT: 3.0,
+                goalsScored: 2.75,
+                goalsConceded: 3.25,
+                wins: 1,
+                draws: 1,
+                losses: 2,
+                trend: "neutral",
+                recommended: false,
+                predictions: [
+                    { market: "Over 2.5 HT", confidence: 80 },
+                    { market: "Under 6.5 FT", confidence: 65 }
+                ]
+            },
+            {
+                name: "Salfour",
+                goalsFT: 5.67,
+                goalsHT: 2.0,
+                goalsScored: 3.0,
+                goalsConceded: 2.67,
+                wins: 1,
+                draws: 0,
+                losses: 2,
+                trend: "down",
+                recommended: false,
+                predictions: [
+                    { market: "Under 2.5 HT", confidence: 70 },
+                    { market: "Over 4.5 FT", confidence: 75 }
+                ]
+            },
+            {
+                name: "Boulevard",
+                goalsFT: 5.5,
+                goalsHT: 3.25,
+                goalsScored: 3.5,
+                goalsConceded: 2.0,
+                wins: 3,
+                draws: 0,
+                losses: 1,
+                trend: "up",
+                recommended: true,
+                predictions: [
+                    { market: "Over 2.5 HT", confidence: 75 },
+                    { market: "Win", confidence: 65 }
+                ]
+            },
+            {
+                name: "Kray",
+                goalsFT: 5.33,
+                goalsHT: 3.33,
+                goalsScored: 2.0,
+                goalsConceded: 3.33,
+                wins: 0,
+                draws: 2,
+                losses: 1,
+                trend: "down",
+                recommended: false,
+                predictions: [
+                    { market: "Over 2.5 HT", confidence: 85 },
+                    { market: "Draw", confidence: 55 }
+                ]
+            },
+            {
+                name: "exhausted",
+                goalsFT: 5.0,
+                goalsHT: 3.0,
+                goalsScored: 3.0,
+                goalsConceded: 2.0,
+                wins: 2,
+                draws: 1,
+                losses: 0,
+                trend: "up",
+                recommended: true,
+                predictions: [
+                    { market: "Over 2.5 HT", confidence: 80 },
+                    { market: "Win", confidence: 62 }
+                ]
+            },
+            {
+                name: "LaikingDast",
+                goalsFT: 4.0,
+                goalsHT: 2.33,
+                goalsScored: 1.67,
+                goalsConceded: 2.33,
+                wins: 0,
+                draws: 2,
+                losses: 1,
+                trend: "neutral",
+                recommended: false,
+                predictions: [
+                    { market: "Under 2.5 HT", confidence: 55 },
+                    { market: "Under 4.5 FT", confidence: 65 }
+                ]
             }
-        }
+        ];
 
-        // Função para processar dados da liga
-        function processLeagueData(games, leagueName) {
-            const totalGames = games.length;
-            if (totalGames === 0) return null;
-
-            const stats = {
-                leagueName,
-                totalGames,
-                goals: {
-                    total: 0,
-                    avg: 0,
-                    over25: 0,
-                    under25: 0
-                },
-                results: {
-                    draws: 0,
-                    drawRate: 0,
-                    homeWins: 0,
-                    awayWins: 0
-                }
+        // Calcular o rating global baseado nas estatísticas
+        function calculateOverallRating(player) {
+            const weights = {
+                goalsFT: 0.2,
+                goalsHT: 0.15,
+                goalsScored: 0.15,
+                goalsConceded: -0.1,
+                wins: 0.3,
+                draws: 0.05,
+                losses: -0.15
             };
 
-            games.forEach(game => {
-                const [home, away] = game.score.split('-').map(Number);
-                const totalGoals = home + away;
+            const maxGoalsFT = Math.max(...playerData.map(p => p.goalsFT));
+            const maxGoalsHT = Math.max(...playerData.map(p => p.goalsHT));
+            const maxGoalsScored = Math.max(...playerData.map(p => p.goalsScored));
+            const maxGoalsConceded = Math.max(...playerData.map(p => p.goalsConceded));
+            const maxWins = Math.max(...playerData.map(p => p.wins));
+            const maxDraws = Math.max(...playerData.map(p => p.draws));
+            const maxLosses = Math.max(...playerData.map(p => p.losses));
 
-                // Gols
-                stats.goals.total += totalGoals;
-                if (totalGoals > 2.5) stats.goals.over25++;
-                if (totalGoals < 2.5) stats.goals.under25++;
+            const normalizedGoalsFT = (player.goalsFT / maxGoalsFT) * 10;
+            const normalizedGoalsHT = (player.goalsHT / maxGoalsHT) * 10;
+            const normalizedGoalsScored = (player.goalsScored / maxGoalsScored) * 10;
+            const normalizedGoalsConceded = (1 - player.goalsConceded / maxGoalsConceded) * 10;
+            const normalizedWins = (player.wins / maxWins) * 10;
+            const normalizedDraws = (player.draws / maxDraws) * 10;
+            const normalizedLosses = (1 - player.losses / maxLosses) * 10;
 
-                // Resultados
-                if (home === away) stats.results.draws++;
-                if (home > away) stats.results.homeWins++;
-                if (home < away) stats.results.awayWins++;
-            });
+            const rating = (
+                normalizedGoalsFT * weights.goalsFT +
+                normalizedGoalsHT * weights.goalsHT +
+                normalizedGoalsScored * weights.goalsScored +
+                normalizedGoalsConceded * weights.goalsConceded +
+                normalizedWins * weights.wins +
+                normalizedDraws * weights.draws +
+                normalizedLosses * weights.losses
+            );
 
-            // Calcular médias e taxas
-            stats.goals.avg = (stats.goals.total / totalGames).toFixed(2);
-            stats.results.drawRate = ((stats.results.draws / totalGames) * 100).toFixed(1);
-            stats.goals.over25Rate = ((stats.goals.over25 / totalGames) * 100).toFixed(1);
-            stats.goals.under25Rate = ((stats.goals.under25 / totalGames) * 100).toFixed(1);
-
-            return stats;
+            return rating.toFixed(1);
         }
 
-        // Função para renderizar o gráfico de performance das ligas
-        async function renderLeaguePerformanceChart() {
-            try {
-                const response = await fetch('https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=1');
-                const data = await response.json();
-                const games = data.data;
+        // Renderizar os cards dos jogadores
+        function renderPlayerCards(sortBy = 'rating') {
+            const container = document.getElementById('playersContainer');
+            container.innerHTML = '';
 
-                const timeRange = parseInt(document.getElementById('timeRangeSelect').value);
-                const leagueGames = {};
+            const enrichedPlayers = playerData.map(player => ({
+                ...player,
+                rating: calculateOverallRating(player)
+            }));
 
-                // Agrupar jogos por liga
-                games.forEach(game => {
-                    if (!leagueGames[game.leagueName]) {
-                        leagueGames[game.leagueName] = [];
+            let sortedPlayers = [...enrichedPlayers];
+            switch (sortBy) {
+                case 'rating':
+                    sortedPlayers.sort((a, b) => b.rating - a.rating);
+                    break;
+                case 'goalsHT':
+                    sortedPlayers.sort((a, b) => b.goalsHT - a.goalsHT);
+                    break;
+                case 'goalsFT':
+                    sortedPlayers.sort((a, b) => b.goalsFT - a.goalsFT);
+                    break;
+                case 'goalsScored':
+                    sortedPlayers.sort((a, b) => b.goalsScored - a.goalsScored);
+                    break;
+                case 'goalsConceded':
+                    sortedPlayers.sort((a, b) => a.goalsConceded - b.goalsConceded);
+                    break;
+                case 'wins':
+                    sortedPlayers.sort((a, b) => b.wins - a.wins);
+                    break;
+            }
+
+            sortedPlayers.forEach(player => {
+                const card = document.createElement('div');
+                card.className = `player-card ${player.recommended ? 'recommended' : ''}`;
+
+                const getValueClass = (value, max, isInversed = false) => {
+                    const percentage = value / max;
+                    if (isInversed) {
+                        if (percentage < 0.4) return 'high-value';
+                        if (percentage < 0.7) return 'medium-value';
+                        return 'low-value';
+                    } else {
+                        if (percentage > 0.7) return 'high-value';
+                        if (percentage > 0.4) return 'medium-value';
+                        return 'low-value';
                     }
-                    leagueGames[game.leagueName].push(game);
-                });
+                };
 
-                const leagueStats = [];
-                for (const [leagueName, games] of Object.entries(leagueGames)) {
-                    const recentGames = games.slice(0, timeRange);
-                    const stats = processLeagueData(recentGames, leagueName);
-                    if (stats) leagueStats.push(stats);
+                const maxGoalsFT = Math.max(...playerData.map(p => p.goalsFT));
+                const maxGoalsHT = Math.max(...playerData.map(p => p.goalsHT));
+                const maxGoalsScored = Math.max(...playerData.map(p => p.goalsScored));
+                const maxWins = Math.max(...playerData.map(p => p.wins));
+
+                const goalsFTClass = getValueClass(player.goalsFT, maxGoalsFT);
+                const goalsHTClass = getValueClass(player.goalsHT, maxGoalsHT);
+                const goalsScoredClass = getValueClass(player.goalsScored, maxGoalsScored);
+                const goalsConcededClass = getValueClass(player.goalsConceded, maxGoalsScored, true);
+                const winsClass = getValueClass(player.wins, maxWins);
+
+                let trendIcon = "";
+                let trendClass = "";
+                switch (player.trend) {
+                    case "up":
+                        trendIcon = "↑";
+                        trendClass = "trend-up";
+                        break;
+                    case "down":
+                        trendIcon = "↓";
+                        trendClass = "trend-down";
+                        break;
+                    default:
+                        trendIcon = "→";
+                        trendClass = "trend-neutral";
                 }
 
-                const ctx = document.getElementById('leaguePerformanceChart').getContext('2d');
-                if (window.leagueChart) window.leagueChart.destroy();
+                card.innerHTML = `
+                    <div class="player-header">
+                        <div>
+                            <span class="player-name">${player.name}</span>
+                            <span class="trend-indicator ${trendClass}" style="margin-left: 5px;">${trendIcon}</span>
+                        </div>
+                        <span class="player-rating">${player.rating}</span>
+                    </div>
+                    <div class="player-stats">
+                        <div class="stat-group">
+                            <div class="stat-item">
+                                <span class="stat-label">Gols FT:</span>
+                                <span class="stat-item-value ${goalsFTClass}">${player.goalsFT}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Gols HT:</span>
+                                <span class="stat-item-value ${goalsHTClass}">${player.goalsHT}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Gols Feitos:</span>
+                                <span class="stat-item-value ${goalsScoredClass}">${player.goalsScored}</span>
+                            </div>
+                        </div>
+                        <div class="stat-group">
+                            <div class="stat-item">
+                                <span class="stat-label">Gols Sofridos:</span>
+                                <span class="stat-item-value ${goalsConcededClass}">${player.goalsConceded}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Vitórias:</span>
+                                <span class="stat-item-value ${winsClass}">${player.wins}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Empates/Derrotas:</span>
+                                <span class="stat-item-value">${player.draws}/${player.losses}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="player-prediction">
+                        <div class="prediction-title">Recomendações de apostas:</div>
+                        <div class="prediction-values">
+                            ${player.predictions.map(pred => {
+                                const confidenceClass = pred.confidence > 70 ? 'high' : '';
+                                return `<div class="prediction-chip ${confidenceClass}">${pred.market} (${pred.confidence}%)</div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
 
-                window.leagueChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: leagueStats.map(stat => stat.leagueName),
-                        datasets: [
-                            {
-                                label: 'Média de Gols',
-                                data: leagueStats.map(stat => parseFloat(stat.goals.avg)),
-                                backgroundColor: '#8B5CF6',
-                                borderColor: '#8B5CF6',
-                                borderWidth: 1,
-                                yAxisID: 'y'
-                            },
-                            {
-                                label: 'Over 2.5 (%)',
-                                data: leagueStats.map(stat => parseFloat(stat.goals.over25Rate)),
-                                backgroundColor: '#EC4899',
-                                borderColor: '#EC4899',
-                                borderWidth: 1,
-                                yAxisID: 'y1'
-                            },
-                            {
-                                label: 'Taxa de Empate (%)',
-                                data: leagueStats.map(stat => parseFloat(stat.results.drawRate)),
-                                backgroundColor: '#00ff88',
-                                borderColor: '#00ff88',
-                                borderWidth: 1,
-                                yAxisID: 'y1'
-                            }
-                        ]
+                container.appendChild(card);
+            });
+        }
+
+        // Renderizar gráfico de distribuição de gols
+        function renderGoalsChart() {
+            const ctx = document.getElementById('goalsDistributionChart').getContext('2d');
+
+            // Dados calculados a partir dos jogadores
+            const avgGoalsHT = playerData.reduce((sum, p) => sum + p.goalsHT, 0) / playerData.length;
+            const avgGoalsFT = playerData.reduce((sum, p) => sum + p.goalsFT, 0) / playerData.length;
+
+            const chartData = {
+                labels: ['Half Time (HT)', 'Full Time (FT)'],
+                datasets: [{
+                    label: 'Média de Gols',
+                    data: [avgGoalsHT, avgGoalsFT],
+                    backgroundColor: [
+                        'rgba(139, 92, 246, 0.5)', // --accent-purple
+                        'rgba(236, 72, 153, 0.5)'  // --accent-pink
+                    ],
+                    borderColor: [
+                        'rgba(139, 92, 246, 1)',
+                        'rgba(236, 72, 153, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: 'var(--text-secondary)' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: 'var(--text-primary)' }
+                        }
                     },
-                    options: {
-                        responsive: true,
-                        interaction: {
-                            mode: 'index',
-                            intersect: false
+                    plugins: {
+                        legend: {
+                            labels: { color: 'var(--text-primary)' }
                         },
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                                labels: { color: 'white' }
-                            },
-                            title: {
-                                display: true,
-                                text: `Análise das Ligas (Últimos ${timeRange} jogos)`,
-                                color: 'white'
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    afterBody: function (context) {
-                                        const stats = leagueStats[context[0].dataIndex];
-                                        return [
-                                            `Total de Jogos: ${stats.totalGames}`,
-                                            `Vitórias Casa: ${stats.results.homeWins}`,
-                                            `Vitórias Fora: ${stats.results.awayWins}`,
-                                            `Empates: ${stats.results.draws}`
-                                        ];
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                type: 'linear',
-                                display: true,
-                                position: 'left',
-                                title: {
-                                    display: true,
-                                    text: 'Média de Gols',
-                                    color: 'white'
-                                },
-                                grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                                ticks: { color: 'white' }
-                            },
-                            y1: {
-                                type: 'linear',
-                                display: true,
-                                position: 'right',
-                                title: {
-                                    display: true,
-                                    text: 'Porcentagem (%)',
-                                    color: 'white'
-                                },
-                                grid: { display: false },
-                                ticks: { color: 'white' }
-                            },
-                            x: {
-                                grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                                ticks: {
-                                    color: 'white',
-                                    maxRotation: 45,
-                                    minRotation: 45
-                                }
-                            }
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: 'var(--text-primary)',
+                            bodyColor: 'var(--text-secondary)'
                         }
                     }
-                });
-            } catch (error) {
-                console.error('Erro ao renderizar gráfico:', error);
-            }
+                }
+            });
         }
 
-        // Função para atualizar próximos jogos
-        async function updateUpcomingMatches() {
-            try {
-                const response = await fetch('https://api.green365.com.br/api/league/upcoming?sport=fifa&leagueId=&page=1');
-                const data = await response.json();
-                const games = data.data;
-                const container = document.getElementById('upcomingMatches');
-                container.innerHTML = '';
-
-                games.slice(0, 6).forEach(game => {
-                    const card = document.createElement('div');
-                    card.className = 'match-card';
-                    card.innerHTML = `
-                        <div class="match-teams">
-                            <span>${game.home}</span>
-                            <span>vs</span>
-                            <span>${game.away}</span>
-                        </div>
-                        <div class="match-stats">
-                            <div>
-                                <div style="font-size: 1.2rem; font-weight: 700;">${game.homeWinRate}%</div>
-                                <div style="color: var(--text-secondary);">Casa</div>
-                            </div>
-                            <div>
-                                <div style="font-size: 1.2rem; font-weight: 700;">${game.drawRate}%</div>
-                                <div style="color: var(--text-secondary);">Empate</div>
-                            </div>
-                            <div>
-                                <div style="font-size: 1.2rem; font-weight: 700;">${game.awayWinRate}%</div>
-                                <div style="color: var(--text-secondary);">Fora</div>
-                            </div>
-                        </div>
-                    `;
-                    container.appendChild(card);
-                });
-            } catch (error) {
-                console.error('Erro ao atualizar jogos:', error);
-            }
-        }
-
-        // Inicialização
+        // Inicializar a página
         document.addEventListener('DOMContentLoaded', () => {
-            updateQuickStats();
-            renderLeaguePerformanceChart();
+            renderPlayerCards();
+            renderGoalsChart();
 
-            // Atualizar gráfico quando mudar o intervalo de tempo
-            document.getElementById('timeRangeSelect').addEventListener('change', renderLeaguePerformanceChart);
-            updateUpcomingMatches();
+            // Evento para o filtro de ordenação
+            document.getElementById('sortBy').addEventListener('change', (e) => {
+                renderPlayerCards(e.target.value);
+            });
 
-            // Atualização automática a cada 15 segundos
-            setInterval(() => {
-                updateQuickStats();
-                updateUpcomingMatches();
-            }, 15000);
-        });
-
-        // Atalhos de teclado
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight') {
-                // Navegar para próximo jogo
-            } else if (e.key === 'ArrowLeft') {
-                // Navegar para jogo anterior
-            }
+            // Evento para o botão de atualização
+            document.getElementById('refreshData').addEventListener('click', () => {
+                const now = new Date();
+                const formattedDate = `${now.getDate().toString().padStart(2, '0')}/${(now.getMonth() + 1).toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+                document.getElementById('lastUpdate').textContent = formattedDate;
+                renderPlayerCards(document.getElementById('sortBy').value);
+            });
         });
     </script>
 </body>
-
 </html>
