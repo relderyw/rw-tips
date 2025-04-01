@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RW TIPS - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --background-dark: #0f0f13;
+            --card-bg: rgba(26, 26, 35, 0.8);
+            --card-hover: #22222c;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --success-color: #00ff88;
+            --accent-purple: #8B5CF6;
+            --accent-pink: #EC4899;
+            --neon-green: #00ff88;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at top right, #1a1a2e, #0f0f13);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .sidebar {
+            background: var(--glass-bg);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid var(--glass-border);
+            height: calc(100vh - 40px);
+            position: sticky;
+            top: 20px;
+        }
+
+        .main-content {
+            display: grid;
+            gap: 20px;
+        }
+
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid var(--glass-border);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 10px 0;
+            background: linear-gradient(45deg, var(--accent-purple), var(--accent-pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .chart-container {
+            background: var(--glass-bg);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid var(--glass-border);
+            margin-top: 20px;
+        }
+
+        .matches-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .match-card {
+            background: var(--glass-bg);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .match-teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .match-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .keyboard-shortcuts {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .shortcut-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-size: 0.9rem;
+        }
+
+        .key {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <h2>RW TIPS</h2>
+            <nav>
+                <ul style="list-style: none; margin-top: 20px;">
+                    <li><a href="#" style="color: var(--text-primary); text-decoration: none; display: block; padding: 10px; margin: 5px 0; border-radius: 8px; background: rgba(255,255,255,0.05);">Dashboard</a></li>
+                    <li><a href="h2h_analysis.html" style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Análise H2H</a></li>
+                    <li><a href="statistics.html" style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Estatísticas</a></li>
+                    <li><a href="results.html" style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Resultados</a></li>
+                </ul>
+            </nav>
+            <div class="keyboard-shortcuts">
+                <h3 style="margin-bottom: 10px; color: var(--text-secondary);">Atalhos</h3>
+                <div class="shortcut-item">
+                    <span>Atualizar dados</span>
+                    <span class="key">F5</span>
+                </div>
+                <div class="shortcut-item">
+                    <span>Próximo jogo</span>
+                    <span class="key">→</span>
+                </div>
+                <div class="shortcut-item">
+                    <span>Jogo anterior</span>
+                    <span class="key">←</span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <h3>Jogos Hoje</h3>
+                    <div class="stat-value" id="todayGames">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Win Rate (Hoje)</h3>
+                    <div class="stat-value" id="todayWinRate">0%</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Média de Gols</h3>
+                    <div class="stat-value" id="avgGoals">0</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="performanceChart"></canvas>
+            </div>
+
+            <div class="matches-grid" id="upcomingMatches">
+                <!-- Jogos serão inseridos aqui dinamicamente -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Função para atualizar estatísticas rápidas
+        async function updateQuickStats() {
+            try {
+                const response = await fetch('https://api.green365.com.br/api/league/upcoming?sport=fifa&leagueId=&page=1');
+                const data = await response.json();
+                const games = data.data;
+
+                document.getElementById('todayGames').textContent = games.length;
+                // Adicione mais lógica para calcular outras estatísticas
+            } catch (error) {
+                console.error('Erro ao atualizar estatísticas:', error);
+            }
+        }
+
+        // Função para renderizar o gráfico de performance
+        function renderPerformanceChart() {
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['1h atrás', '45min atrás', '30min atrás', '15min atrás', 'Agora'],
+                    datasets: [{
+                        label: 'Taxa de Acerto',
+                        data: [65, 70, 75, 80, 85],
+                        borderColor: '#8B5CF6',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Performance das Últimas Horas'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Função para atualizar próximos jogos
+        async function updateUpcomingMatches() {
+            try {
+                const response = await fetch('https://api.green365.com.br/api/league/upcoming?sport=fifa&leagueId=&page=1');
+                const data = await response.json();
+                const games = data.data;
+                const container = document.getElementById('upcomingMatches');
+                container.innerHTML = '';
+
+                games.slice(0, 6).forEach(game => {
+                    const card = document.createElement('div');
+                    card.className = 'match-card';
+                    card.innerHTML = `
+                        <div class="match-teams">
+                            <span>${game.home}</span>
+                            <span>vs</span>
+                            <span>${game.away}</span>
+                        </div>
+                        <div class="match-stats">
+                            <div>
+                                <div style="font-size: 1.2rem; font-weight: 700;">${game.homeWinRate}%</div>
+                                <div style="color: var(--text-secondary);">Casa</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 1.2rem; font-weight: 700;">${game.drawRate}%</div>
+                                <div style="color: var(--text-secondary);">Empate</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 1.2rem; font-weight: 700;">${game.awayWinRate}%</div>
+                                <div style="color: var(--text-secondary);">Fora</div>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Erro ao atualizar jogos:', error);
+            }
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            updateQuickStats();
+            renderPerformanceChart();
+            updateUpcomingMatches();
+
+            // Atualização automática a cada 15 segundos
+            setInterval(() => {
+                updateQuickStats();
+                updateUpcomingMatches();
+            }, 15000);
+        });
+
+        // Atalhos de teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                // Navegar para próximo jogo
+            } else if (e.key === 'ArrowLeft') {
+                // Navegar para jogo anterior
+            }
+        });
+    </script>
+</body>
+</html>
