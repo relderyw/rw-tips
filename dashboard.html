@@ -183,14 +183,6 @@
             font-weight: 700;
         }
 
-        .player-rating {
-            background: linear-gradient(45deg, var(--accent-purple), var(--accent-pink));
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
-
         .player-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -217,17 +209,9 @@
             font-weight: 600;
         }
 
-        .high-value {
-            color: var(--success-color);
-        }
-
-        .medium-value {
-            color: var(--warning-color);
-        }
-
-        .low-value {
-            color: var(--danger-color);
-        }
+        .high-value { color: var(--success-color); }
+        .medium-value { color: var(--warning-color); }
+        .low-value { color: var(--danger-color); }
 
         .player-prediction {
             margin-top: 15px;
@@ -280,32 +264,6 @@
             font-family: monospace;
         }
 
-        .trend-indicator {
-            display: flex;
-            align-items: center;
-            font-size: 0.8rem;
-            margin-top: 5px;
-        }
-
-        .trend-up {
-            color: var(--success-color);
-        }
-
-        .trend-down {
-            color: var(--danger-color);
-        }
-
-        .trend-neutral {
-            color: var(--warning-color);
-        }
-
-        .decision-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
         .refresh-btn {
             background: linear-gradient(45deg, var(--accent-purple), var(--accent-pink));
             border: none;
@@ -340,85 +298,42 @@
             </nav>
             <div class="keyboard-shortcuts">
                 <h3 style="margin-bottom: 10px; color: var(--text-secondary);">Atalhos</h3>
-                <div class="shortcut-item">
-                    <span>Atualizar dados</span>
-                    <span class="key">F5</span>
-                </div>
-                <div class="shortcut-item">
-                    <span>Filtrar por gols</span>
-                    <span class="key">G</span>
-                </div>
-                <div class="shortcut-item">
-                    <span>Filtrar por vitórias</span>
-                    <span class="key">V</span>
-                </div>
-                <div class="shortcut-item">
-                    <span>Mostrar recomendados</span>
-                    <span class="key">R</span>
-                </div>
+                <div class="shortcut-item"><span>Atualizar dados</span><span class="key">F5</span></div>
+                <div class="shortcut-item"><span>Filtrar por gols</span><span class="key">G</span></div>
+                <div class="shortcut-item"><span>Filtrar por vitórias</span><span class="key">V</span></div>
+                <div class="shortcut-item"><span>Mostrar recomendados</span><span class="key">R</span></div>
             </div>
         </aside>
 
         <main class="main-content">
-            <div class="quick-stats">
-                <div class="stat-card">
-                    <h3>Tempo de Jogo</h3>
-                    <div class="stat-value">8 mins</div>
-                    <div class="trend-indicator trend-neutral">
-                        Esoccer Battle
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <h3>Média Gols HT</h3>
-                    <div class="stat-value">2.81</div>
-                    <div class="trend-indicator trend-up">
-                        ↑ 5.2% últimas 24h
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <h3>Média Gols FT</h3>
-                    <div class="stat-value">5.19</div>
-                    <div class="trend-indicator trend-down">
-                        ↓ 2.1% últimas 24h
-                    </div>
-                </div>
-            </div>
+            <div class="quick-stats" id="quickStats"></div>
 
             <div class="chart-container">
-                <h3 style="margin-bottom: 15px; color: var(--text-primary)">Distribuição de Gols HT/FT</h3>
+                <h3 style="margin-bottom: 15px; color: var(--text-primary)">Distribuição de Gols FT</h3>
                 <canvas id="goalsDistributionChart"></canvas>
             </div>
 
             <div class="filters-bar">
                 <div class="filter-control">
+                    <label for="leagueFilter">Liga:</label>
+                    <select id="leagueFilter" class="filter-select">
+                        <option value="all">Todas as Ligas</option>
+                    </select>
+                </div>
+                <div class="filter-control">
+                    <label for="gamesFilter">Últimos Jogos:</label>
+                    <select id="gamesFilter" class="filter-select">
+                        <option value="5">5 Jogos</option>
+                        <option value="10" selected>10 Jogos</option>
+                        <option value="15">15 Jogos</option>
+                    </select>
+                </div>
+                <div class="filter-control">
                     <label for="sortBy">Ordenar por:</label>
                     <select id="sortBy" class="filter-select">
-                        <option value="rating">Rating Geral</option>
-                        <option value="goalsHT">Gols HT</option>
                         <option value="goalsFT">Gols FT</option>
-                        <option value="goalsScored">Gols Feitos</option>
-                        <option value="goalsConceded">Gols Sofridos</option>
                         <option value="wins">Vitórias</option>
-                    </select>
-                </div>
-                <div class="filter-control">
-                    <label for="betType">Mercado:</label>
-                    <select id="betType" class="filter-select">
-                        <option value="all">Todos</option>
-                        <option value="overHT">Over HT</option>
-                        <option value="underHT">Under HT</option>
-                        <option value="overFT">Over FT</option>
-                        <option value="underFT">Under FT</option>
-                        <option value="btts">Ambos Marcam</option>
-                    </select>
-                </div>
-                <div class="filter-control">
-                    <label for="threshold">Confiança:</label>
-                    <select id="threshold" class="filter-select">
-                        <option value="all">Todos</option>
-                        <option value="high">Alta (>70%)</option>
-                        <option value="medium">Média (50-70%)</option>
-                        <option value="low">Baixa (<50%)</option>
+                        <option value="goalsScored">Gols Feitos</option>
                     </select>
                 </div>
                 <button id="refreshData" class="refresh-btn">
@@ -432,395 +347,226 @@
                 </button>
             </div>
 
-            <div class="decision-header">
-                <h2>Análise de Jogadores</h2>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <div style="font-size: 0.9rem; color: var(--text-secondary);">Última atualização: <span id="lastUpdate">31/03 15:45</span></div>
-                </div>
-            </div>
-
-            <div class="player-grid" id="playersContainer">
-                <!-- Player cards will be generated via JavaScript -->
-            </div>
+            <div class="player-grid" id="playersContainer"></div>
         </main>
     </div>
 
     <script>
-        // Dados dos jogadores
-        const playerData = [
-            {
-                name: "Malenkiy",
-                goalsFT: 6.67,
-                goalsHT: 3.0,
-                goalsScored: 4.0,
-                goalsConceded: 2.67,
-                wins: 2,
-                draws: 1,
-                losses: 0,
-                trend: "up",
-                recommended: true,
-                predictions: [
-                    { market: "Over 2.5 HT", confidence: 82 },
-                    { market: "Over 5.5 FT", confidence: 75 }
-                ]
-            },
-            {
-                name: "why",
-                goalsFT: 6.66,
-                goalsHT: 3.33,
-                goalsScored: 2.33,
-                goalsConceded: 4.33,
-                wins: 0,
-                draws: 1,
-                losses: 2,
-                trend: "down",
-                recommended: false,
-                predictions: [
-                    { market: "Over 2.5 HT", confidence: 85 },
-                    { market: "BTTS", confidence: 78 }
-                ]
-            },
-            {
-                name: "vivienne",
-                goalsFT: 6.0,
-                goalsHT: 3.0,
-                goalsScored: 2.75,
-                goalsConceded: 3.25,
-                wins: 1,
-                draws: 1,
-                losses: 2,
-                trend: "neutral",
-                recommended: false,
-                predictions: [
-                    { market: "Over 2.5 HT", confidence: 80 },
-                    { market: "Under 6.5 FT", confidence: 65 }
-                ]
-            },
-            {
-                name: "Salfour",
-                goalsFT: 5.67,
-                goalsHT: 2.0,
-                goalsScored: 3.0,
-                goalsConceded: 2.67,
-                wins: 1,
-                draws: 0,
-                losses: 2,
-                trend: "down",
-                recommended: false,
-                predictions: [
-                    { market: "Under 2.5 HT", confidence: 70 },
-                    { market: "Over 4.5 FT", confidence: 75 }
-                ]
-            },
-            {
-                name: "Boulevard",
-                goalsFT: 5.5,
-                goalsHT: 3.25,
-                goalsScored: 3.5,
-                goalsConceded: 2.0,
-                wins: 3,
-                draws: 0,
-                losses: 1,
-                trend: "up",
-                recommended: true,
-                predictions: [
-                    { market: "Over 2.5 HT", confidence: 75 },
-                    { market: "Win", confidence: 65 }
-                ]
-            },
-            {
-                name: "Kray",
-                goalsFT: 5.33,
-                goalsHT: 3.33,
-                goalsScored: 2.0,
-                goalsConceded: 3.33,
-                wins: 0,
-                draws: 2,
-                losses: 1,
-                trend: "down",
-                recommended: false,
-                predictions: [
-                    { market: "Over 2.5 HT", confidence: 85 },
-                    { market: "Draw", confidence: 55 }
-                ]
-            },
-            {
-                name: "exhausted",
-                goalsFT: 5.0,
-                goalsHT: 3.0,
-                goalsScored: 3.0,
-                goalsConceded: 2.0,
-                wins: 2,
-                draws: 1,
-                losses: 0,
-                trend: "up",
-                recommended: true,
-                predictions: [
-                    { market: "Over 2.5 HT", confidence: 80 },
-                    { market: "Win", confidence: 62 }
-                ]
-            },
-            {
-                name: "LaikingDast",
-                goalsFT: 4.0,
-                goalsHT: 2.33,
-                goalsScored: 1.67,
-                goalsConceded: 2.33,
-                wins: 0,
-                draws: 2,
-                losses: 1,
-                trend: "neutral",
-                recommended: false,
-                predictions: [
-                    { market: "Under 2.5 HT", confidence: 55 },
-                    { market: "Under 4.5 FT", confidence: 65 }
-                ]
+        // Função para buscar jogos finalizados (até 3 páginas)
+        async function fetchEndedEvents() {
+            const allEvents = [];
+            for (let page = 1; page <= 3; page++) {
+                try {
+                    const response = await fetch(`https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=${page}`);
+                    const data = await response.json();
+                    allEvents.push(...data.data);
+                } catch (error) {
+                    console.error(`Erro ao buscar página ${page}:`, error);
+                }
             }
-        ];
-
-        // Calcular o rating global baseado nas estatísticas
-        function calculateOverallRating(player) {
-            const weights = {
-                goalsFT: 0.2,
-                goalsHT: 0.15,
-                goalsScored: 0.15,
-                goalsConceded: -0.1,
-                wins: 0.3,
-                draws: 0.05,
-                losses: -0.15
-            };
-
-            const maxGoalsFT = Math.max(...playerData.map(p => p.goalsFT));
-            const maxGoalsHT = Math.max(...playerData.map(p => p.goalsHT));
-            const maxGoalsScored = Math.max(...playerData.map(p => p.goalsScored));
-            const maxGoalsConceded = Math.max(...playerData.map(p => p.goalsConceded));
-            const maxWins = Math.max(...playerData.map(p => p.wins));
-            const maxDraws = Math.max(...playerData.map(p => p.draws));
-            const maxLosses = Math.max(...playerData.map(p => p.losses));
-
-            const normalizedGoalsFT = (player.goalsFT / maxGoalsFT) * 10;
-            const normalizedGoalsHT = (player.goalsHT / maxGoalsHT) * 10;
-            const normalizedGoalsScored = (player.goalsScored / maxGoalsScored) * 10;
-            const normalizedGoalsConceded = (1 - player.goalsConceded / maxGoalsConceded) * 10;
-            const normalizedWins = (player.wins / maxWins) * 10;
-            const normalizedDraws = (player.draws / maxDraws) * 10;
-            const normalizedLosses = (1 - player.losses / maxLosses) * 10;
-
-            const rating = (
-                normalizedGoalsFT * weights.goalsFT +
-                normalizedGoalsHT * weights.goalsHT +
-                normalizedGoalsScored * weights.goalsScored +
-                normalizedGoalsConceded * weights.goalsConceded +
-                normalizedWins * weights.wins +
-                normalizedDraws * weights.draws +
-                normalizedLosses * weights.losses
-            );
-
-            return rating.toFixed(1);
+            return allEvents;
         }
 
-        // Renderizar os cards dos jogadores
-        function renderPlayerCards(sortBy = 'rating') {
+        // Processar dados em estatísticas por jogador
+        function processPlayerStats(events, gamesLimit) {
+            const playerStats = {};
+
+            events.forEach(event => {
+                const [homeGoals, awayGoals] = event.score.split('-').map(Number);
+                const homePlayer = event.home.match(/\((.*?)\)/)?.[1] || event.home;
+                const awayPlayer = event.away.match(/\((.*?)\)/)?.[1] || event.away;
+
+                // Inicializar jogador
+                if (!playerStats[homePlayer]) playerStats[homePlayer] = { games: [], wins: 0, draws: 0, losses: 0, goalsScored: 0, goalsConceded: 0, leagueID: event.leagueID };
+                if (!playerStats[awayPlayer]) playerStats[awayPlayer] = { games: [], wins: 0, draws: 0, losses: 0, goalsScored: 0, goalsConceded: 0, leagueID: event.leagueID };
+
+                const gameData = { ...event, date: new Date(event.timestamp * 1000).toLocaleString() };
+                playerStats[homePlayer].games.push(gameData);
+                playerStats[awayPlayer].games.push(gameData);
+
+                // Atualizar estatísticas
+                playerStats[homePlayer].goalsScored += homeGoals;
+                playerStats[homePlayer].goalsConceded += awayGoals;
+                playerStats[awayPlayer].goalsScored += awayGoals;
+                playerStats[awayPlayer].goalsConceded += homeGoals;
+
+                if (homeGoals > awayGoals) {
+                    playerStats[homePlayer].wins++;
+                    playerStats[awayPlayer].losses++;
+                } else if (homeGoals < awayGoals) {
+                    playerStats[homePlayer].losses++;
+                    playerStats[awayPlayer].wins++;
+                } else {
+                    playerStats[homePlayer].draws++;
+                    playerStats[awayPlayer].draws++;
+                }
+            });
+
+            // Limitar jogos e calcular médias
+            Object.values(playerStats).forEach(player => {
+                player.games = player.games.slice(0, gamesLimit);
+                player.goalsFT = player.games.reduce((sum, g) => sum + parseInt(g.score.split('-')[0]) + parseInt(g.score.split('-')[1]), 0) / player.games.length;
+            });
+
+            return playerStats;
+        }
+
+        // Preencher filtro de ligas
+        function populateLeagueFilter(events) {
+            const leagues = [...new Set(events.map(event => `${event.leagueID}|${event.leagueName}`))];
+            const select = document.getElementById('leagueFilter');
+            leagues.forEach(league => {
+                const [id, name] = league.split('|');
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = name;
+                select.appendChild(option);
+            });
+        }
+
+        // Renderizar estatísticas rápidas
+        function renderQuickStats(playerStats) {
+            const container = document.getElementById('quickStats');
+            const totalGames = Object.values(playerStats).reduce((sum, p) => sum + p.games.length, 0) / 2; // Dividido por 2 pois cada jogo aparece duas vezes
+            const avgGoalsFT = Object.values(playerStats).reduce((sum, p) => sum + p.goalsFT * p.games.length, 0) / totalGames;
+            const avgWins = Object.values(playerStats).reduce((sum, p) => sum + p.wins, 0) / Object.keys(playerStats).length;
+
+            container.innerHTML = `
+                <div class="stat-card">
+                    <h3>Jogos Analisados</h3>
+                    <div class="stat-value">${totalGames}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Média Gols FT</h3>
+                    <div class="stat-value">${avgGoalsFT.toFixed(2)}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Média Vitórias</h3>
+                    <div class="stat-value">${avgWins.toFixed(1)}</div>
+                </div>
+            `;
+        }
+
+        // Renderizar gráfico
+        function renderGoalsChart(playerStats) {
+            const ctx = document.getElementById('goalsDistributionChart').getContext('2d');
+            const avgGoalsFT = Object.values(playerStats).reduce((sum, p) => sum + p.goalsFT * p.games.length, 0) / 
+                              (Object.values(playerStats).reduce((sum, p) => sum + p.games.length, 0) / 2);
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Full Time (FT)'],
+                    datasets: [{
+                        label: 'Média de Gols',
+                        data: [avgGoalsFT],
+                        backgroundColor: 'rgba(139, 92, 246, 0.5)',
+                        borderColor: 'rgba(139, 92, 246, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: 'var(--text-secondary)' } },
+                        x: { grid: { display: false }, ticks: { color: 'var(--text-primary)' } }
+                    },
+                    plugins: {
+                        legend: { labels: { color: 'var(--text-primary)' } },
+                        tooltip: { backgroundColor: 'rgba(0, 0, 0, 0.8)', titleColor: 'var(--text-primary)', bodyColor: 'var(--text-secondary)' }
+                    }
+                }
+            });
+        }
+
+        // Renderizar cards dos jogadores
+        function renderPlayerCards(playerStats, gamesLimit, leagueFilter, sortBy) {
             const container = document.getElementById('playersContainer');
             container.innerHTML = '';
 
-            const enrichedPlayers = playerData.map(player => ({
-                ...player,
-                rating: calculateOverallRating(player)
-            }));
+            let filteredPlayers = Object.entries(playerStats)
+                .filter(([_, stats]) => leagueFilter === 'all' || stats.leagueID === leagueFilter);
 
-            let sortedPlayers = [...enrichedPlayers];
-            switch (sortBy) {
-                case 'rating':
-                    sortedPlayers.sort((a, b) => b.rating - a.rating);
-                    break;
-                case 'goalsHT':
-                    sortedPlayers.sort((a, b) => b.goalsHT - a.goalsHT);
-                    break;
-                case 'goalsFT':
-                    sortedPlayers.sort((a, b) => b.goalsFT - a.goalsFT);
-                    break;
-                case 'goalsScored':
-                    sortedPlayers.sort((a, b) => b.goalsScored - a.goalsScored);
-                    break;
-                case 'goalsConceded':
-                    sortedPlayers.sort((a, b) => a.goalsConceded - b.goalsConceded);
-                    break;
-                case 'wins':
-                    sortedPlayers.sort((a, b) => b.wins - a.wins);
-                    break;
-            }
+            // Ordenar
+            filteredPlayers.sort((a, b) => {
+                if (sortBy === 'goalsFT') return b[1].goalsFT - a[1].goalsFT;
+                if (sortBy === 'wins') return b[1].wins - a[1].wins;
+                if (sortBy === 'goalsScored') return b[1].goalsScored - a[1].goalsScored;
+                return 0;
+            });
 
-            sortedPlayers.forEach(player => {
+            filteredPlayers.forEach(([name, stats]) => {
+                const recommended = stats.goalsFT > 5 && stats.wins / gamesLimit > 0.5;
                 const card = document.createElement('div');
-                card.className = `player-card ${player.recommended ? 'recommended' : ''}`;
-
-                const getValueClass = (value, max, isInversed = false) => {
-                    const percentage = value / max;
-                    if (isInversed) {
-                        if (percentage < 0.4) return 'high-value';
-                        if (percentage < 0.7) return 'medium-value';
-                        return 'low-value';
-                    } else {
-                        if (percentage > 0.7) return 'high-value';
-                        if (percentage > 0.4) return 'medium-value';
-                        return 'low-value';
-                    }
-                };
-
-                const maxGoalsFT = Math.max(...playerData.map(p => p.goalsFT));
-                const maxGoalsHT = Math.max(...playerData.map(p => p.goalsHT));
-                const maxGoalsScored = Math.max(...playerData.map(p => p.goalsScored));
-                const maxWins = Math.max(...playerData.map(p => p.wins));
-
-                const goalsFTClass = getValueClass(player.goalsFT, maxGoalsFT);
-                const goalsHTClass = getValueClass(player.goalsHT, maxGoalsHT);
-                const goalsScoredClass = getValueClass(player.goalsScored, maxGoalsScored);
-                const goalsConcededClass = getValueClass(player.goalsConceded, maxGoalsScored, true);
-                const winsClass = getValueClass(player.wins, maxWins);
-
-                let trendIcon = "";
-                let trendClass = "";
-                switch (player.trend) {
-                    case "up":
-                        trendIcon = "↑";
-                        trendClass = "trend-up";
-                        break;
-                    case "down":
-                        trendIcon = "↓";
-                        trendClass = "trend-down";
-                        break;
-                    default:
-                        trendIcon = "→";
-                        trendClass = "trend-neutral";
-                }
-
+                card.className = `player-card ${recommended ? 'recommended' : ''}`;
                 card.innerHTML = `
                     <div class="player-header">
-                        <div>
-                            <span class="player-name">${player.name}</span>
-                            <span class="trend-indicator ${trendClass}" style="margin-left: 5px;">${trendIcon}</span>
-                        </div>
-                        <span class="player-rating">${player.rating}</span>
+                        <span class="player-name">${name}</span>
                     </div>
                     <div class="player-stats">
                         <div class="stat-group">
                             <div class="stat-item">
-                                <span class="stat-label">Gols FT:</span>
-                                <span class="stat-item-value ${goalsFTClass}">${player.goalsFT}</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">Gols HT:</span>
-                                <span class="stat-item-value ${goalsHTClass}">${player.goalsHT}</span>
+                                <span class="stat-label">Média Gols FT:</span>
+                                <span class="stat-item-value ${stats.goalsFT > 5 ? 'high-value' : stats.goalsFT > 3 ? 'medium-value' : 'low-value'}">${stats.goalsFT.toFixed(2)}</span>
                             </div>
                             <div class="stat-item">
                                 <span class="stat-label">Gols Feitos:</span>
-                                <span class="stat-item-value ${goalsScoredClass}">${player.goalsScored}</span>
+                                <span class="stat-item-value">${stats.goalsScored}</span>
                             </div>
                         </div>
                         <div class="stat-group">
                             <div class="stat-item">
-                                <span class="stat-label">Gols Sofridos:</span>
-                                <span class="stat-item-value ${goalsConcededClass}">${player.goalsConceded}</span>
-                            </div>
-                            <div class="stat-item">
                                 <span class="stat-label">Vitórias:</span>
-                                <span class="stat-item-value ${winsClass}">${player.wins}</span>
+                                <span class="stat-item-value ${stats.wins / gamesLimit > 0.5 ? 'high-value' : 'medium-value'}">${stats.wins}</span>
                             </div>
                             <div class="stat-item">
-                                <span class="stat-label">Empates/Derrotas:</span>
-                                <span class="stat-item-value">${player.draws}/${player.losses}</span>
+                                <span class="stat-label">Emp/Der:</span>
+                                <span class="stat-item-value">${stats.draws}/${stats.losses}</span>
                             </div>
                         </div>
                     </div>
                     <div class="player-prediction">
-                        <div class="prediction-title">Recomendações de apostas:</div>
+                        <div class="prediction-title">Recomendações:</div>
                         <div class="prediction-values">
-                            ${player.predictions.map(pred => {
-                                const confidenceClass = pred.confidence > 70 ? 'high' : '';
-                                return `<div class="prediction-chip ${confidenceClass}">${pred.market} (${pred.confidence}%)</div>`;
-                            }).join('')}
+                            ${stats.goalsFT > 5 ? '<div class="prediction-chip high">Over 4.5 FT (75%)</div>' : '<div class="prediction-chip">Under 4.5 FT (60%)</div>'}
                         </div>
                     </div>
                 `;
-
                 container.appendChild(card);
             });
         }
 
-        // Renderizar gráfico de distribuição de gols
-        function renderGoalsChart() {
-            const ctx = document.getElementById('goalsDistributionChart').getContext('2d');
+        // Inicializar
+        async function init() {
+            const events = await fetchEndedEvents();
+            let playerStats = processPlayerStats(events, 10); // Default 10 jogos
+            populateLeagueFilter(events);
+            renderQuickStats(playerStats);
+            renderGoalsChart(playerStats);
+            renderPlayerCards(playerStats, 10, 'all', 'goalsFT');
 
-            // Dados calculados a partir dos jogadores
-            const avgGoalsHT = playerData.reduce((sum, p) => sum + p.goalsHT, 0) / playerData.length;
-            const avgGoalsFT = playerData.reduce((sum, p) => sum + p.goalsFT, 0) / playerData.length;
-
-            const chartData = {
-                labels: ['Half Time (HT)', 'Full Time (FT)'],
-                datasets: [{
-                    label: 'Média de Gols',
-                    data: [avgGoalsHT, avgGoalsFT],
-                    backgroundColor: [
-                        'rgba(139, 92, 246, 0.5)', // --accent-purple
-                        'rgba(236, 72, 153, 0.5)'  // --accent-pink
-                    ],
-                    borderColor: [
-                        'rgba(139, 92, 246, 1)',
-                        'rgba(236, 72, 153, 1)'
-                    ],
-                    borderWidth: 1
-                }]
+            // Filtros
+            const updateView = () => {
+                const gamesLimit = parseInt(document.getElementById('gamesFilter').value);
+                const leagueFilter = document.getElementById('leagueFilter').value;
+                const sortBy = document.getElementById('sortBy').value;
+                playerStats = processPlayerStats(events, gamesLimit);
+                renderQuickStats(playerStats);
+                renderGoalsChart(playerStats);
+                renderPlayerCards(playerStats, gamesLimit, leagueFilter, sortBy);
             };
 
-            new Chart(ctx, {
-                type: 'bar',
-                data: chartData,
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                            ticks: { color: 'var(--text-secondary)' }
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: { color: 'var(--text-primary)' }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            labels: { color: 'var(--text-primary)' }
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleColor: 'var(--text-primary)',
-                            bodyColor: 'var(--text-secondary)'
-                        }
-                    }
-                }
+            document.getElementById('gamesFilter').addEventListener('change', updateView);
+            document.getElementById('leagueFilter').addEventListener('change', updateView);
+            document.getElementById('sortBy').addEventListener('change', updateView);
+            document.getElementById('refreshData').addEventListener('click', async () => {
+                const newEvents = await fetchEndedEvents();
+                playerStats = processPlayerStats(newEvents, parseInt(document.getElementById('gamesFilter').value));
+                updateView();
             });
         }
 
-        // Inicializar a página
-        document.addEventListener('DOMContentLoaded', () => {
-            renderPlayerCards();
-            renderGoalsChart();
-
-            // Evento para o filtro de ordenação
-            document.getElementById('sortBy').addEventListener('change', (e) => {
-                renderPlayerCards(e.target.value);
-            });
-
-            // Evento para o botão de atualização
-            document.getElementById('refreshData').addEventListener('click', () => {
-                const now = new Date();
-                const formattedDate = `${now.getDate().toString().padStart(2, '0')}/${(now.getMonth() + 1).toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-                document.getElementById('lastUpdate').textContent = formattedDate;
-                renderPlayerCards(document.getElementById('sortBy').value);
-            });
-        });
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
