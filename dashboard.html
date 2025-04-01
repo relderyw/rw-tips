@@ -7,6 +7,7 @@
     <title>RW TIPS - Radar de Apostas</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <style>
         :root {
             --primary-color: #6c5ce7;
@@ -293,28 +294,7 @@
             color: var(--neon-green);
         }
 
-        .keyboard-shortcuts {
-            margin-top: auto;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-        }
-
-        .shortcut-item {
-            display: flex;
-            justify-content: space-between;
-            margin: 8px 0;
-            font-size: 0.9rem;
-        }
-
-        .key {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-family: monospace;
-        }
-
-        .refresh-btn, .page-btn, .reset-btn {
+        .refresh-btn, .page-btn, .reset-btn, .best-players-btn {
             background: linear-gradient(45deg, var(--accent-purple), var(--accent-pink));
             border: none;
             color: white;
@@ -325,7 +305,7 @@
             transition: opacity 0.3s;
         }
 
-        .refresh-btn:hover, .page-btn:hover, .reset-btn:hover {
+        .refresh-btn:hover, .page-btn:hover, .reset-btn:hover, .best-players-btn:hover {
             opacity: 0.9;
         }
 
@@ -369,26 +349,6 @@
             background-clip: text;
             color: transparent;
         }
-
-        .shortcut-indicator {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0, 255, 136, 0.1);
-            padding: 10px 15px;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 255, 136, 0.2);
-            color: var(--neon-green);
-            font-size: 0.9rem;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.3s ease;
-        }
-
-        .shortcut-indicator.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
     </style>
 </head>
 
@@ -411,13 +371,6 @@
                     <li><a href="#" data-page="visualization">Visualização</a></li>
                 </ul>
             </nav>
-            <div class="keyboard-shortcuts">
-                <h3 style="margin-bottom: 10px; color: var(--text-secondary);">Atalhos</h3>
-                <div class="shortcut-item"><span>Atualizar</span><span class="key">F5</span></div>
-                <div class="shortcut-item"><span>Ordenar Gols</span><span class="key">G</span></div>
-                <div class="shortcut-item"><span>Ordenar Vitórias</span><span class="key">V</span></div>
-                <div class="shortcut-item"><span>Recomendados</span><span class="key">R</span></div>
-            </div>
         </aside>
 
         <main class="main-content">
@@ -447,6 +400,7 @@
                 </div>
                 <button id="refreshData" class="refresh-btn">Atualizar</button>
                 <button id="resetFilters" class="reset-btn">Reset</button>
+                <button id="bestPlayers" class="best-players-btn">Melhores Players</button>
             </div>
             <div class="chart-container">
                 <h3 style="margin-bottom: 15px; color: var(--text-primary)">Distribuição de Gols FT</h3>
@@ -460,7 +414,6 @@
             </div>
         </main>
     </div>
-    <div id="shortcutIndicator" class="shortcut-indicator"></div>
 
     <script>
         let currentPage = 1;
@@ -470,11 +423,9 @@
 
         // Buscar dados da API
         async function fetchEvents(page) {
-            console.log(`Buscando página ${page}...`);
             try {
                 const response = await fetch(`https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=${page}`);
                 const data = await response.json();
-                console.log(`Dados recebidos da página ${page}:`, data.data);
                 return data.data || [];
             } catch (error) {
                 console.error(`Erro ao buscar página ${page}:`, error);
@@ -484,7 +435,6 @@
 
         // Processar estatísticas dos jogadores
         function processPlayerStats(events, gamesLimit) {
-            console.log(`Processando estatísticas com ${gamesLimit} jogos...`);
             const stats = {};
             events.forEach(event => {
                 const [homeGoals, awayGoals] = event.score.split('-').map(Number);
@@ -520,7 +470,6 @@
                 player.goalsFT = player.games.reduce((sum, g) => sum + parseInt(g.score.split('-')[0]) + parseInt(g.score.split('-')[1]), 0) / player.games.length || 0;
             });
 
-            console.log('Estatísticas processadas:', stats);
             return stats;
         }
 
@@ -539,7 +488,6 @@
                 <div class="stat-card"><h3>Média Gols FT</h3><div class="stat-value">${avgGoalsFT.toFixed(2)}</div></div>
                 <div class="stat-card"><h3>Média Vitórias</h3><div class="stat-value">${avgWins.toFixed(1)}</div></div>
             `;
-            console.log('Estatísticas rápidas atualizadas');
         }
 
         // Atualizar gráfico com filtros
@@ -547,7 +495,6 @@
             let filteredEvents = events;
             if (leagueFilter !== 'all') {
                 filteredEvents = events.filter(event => event.leagueID === leagueFilter);
-                console.log(`Filtrando gráfico para liga ${leagueFilter}:`, filteredEvents);
             }
 
             const goalsDist = [0, 0, 0, 0, 0, 0]; // 0, 1, 2, 3, 4, 5+
@@ -574,13 +521,21 @@
                 options: {
                     responsive: true,
                     scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: 'var(--text-secondary)' } },
+                        y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: 'var(--text-primary)' } },
                         x: { grid: { display: false }, ticks: { color: 'var(--text-primary)' } }
                     },
-                    plugins: { legend: { labels: { color: 'var(--text-primary)' } } }
-                }
+                    plugins: {
+                        legend: { labels: { color: 'var(--text-primary)' } },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            color: 'var(--text-primary)',
+                            font: { weight: 'bold' }
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels]
             });
-            console.log('Gráfico atualizado com distribuição:', goalsDist);
         }
 
         // Atualizar cards dos jogadores
@@ -634,11 +589,11 @@
                 `;
                 container.appendChild(card);
             });
-            console.log('Cards dos jogadores atualizados');
         }
 
-        // Preencher filtro de ligas
+        // Preencher filtro de ligas sem resetar o valor selecionado
         function populateLeagueFilter(events) {
+            const currentValue = document.getElementById('leagueFilter').value;
             const leagues = [...new Set(events.map(event => `${event.leagueID}|${event.leagueName}`))];
             const select = document.getElementById('leagueFilter');
             select.innerHTML = '<option value="all">Todas as Ligas</option>';
@@ -649,23 +604,12 @@
                 option.textContent = name;
                 select.appendChild(option);
             });
-            console.log('Filtro de ligas preenchido:', leagues);
-        }
-
-        // Mostrar notificação de atalho
-        function showShortcutNotification(message) {
-            const indicator = document.getElementById('shortcutIndicator');
-            indicator.textContent = message;
-            indicator.classList.add('active');
-            setTimeout(() => indicator.classList.remove('active'), 2000);
-            console.log(`Notificação exibida: ${message}`);
+            select.value = currentValue; // Preserva o valor selecionado
         }
 
         // Atualizar dashboard
         async function updateDashboard(showRecommendedOnly = false) {
-            console.log('Atualizando dashboard...');
             eventsData = await fetchEvents(currentPage);
-            if (eventsData.length === 0) console.warn('Nenhum dado retornado da API');
             document.getElementById('pageIndicator').textContent = `Página ${currentPage}`;
             const gamesLimit = parseInt(document.getElementById('gamesFilter').value);
             const leagueFilter = document.getElementById('leagueFilter').value;
@@ -676,7 +620,6 @@
             updateQuickStats(eventsData);
             updateGoalsChart(eventsData, leagueFilter);
             updatePlayerCards(playerStats, leagueFilter, sortBy, showRecommendedOnly);
-            console.log('Dashboard atualizado com sucesso');
         }
 
         // Resetar filtros e página
@@ -686,69 +629,29 @@
             document.getElementById('gamesFilter').value = '10';
             document.getElementById('sortBy').value = 'goalsFT';
             updateDashboard();
-            showShortcutNotification('Filtros resetados');
-            console.log('Filtros resetados');
         }
 
         // Inicializar
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('Inicializando dashboard...');
             updateDashboard();
 
             // Filtros e botões
-            document.getElementById('refreshData').addEventListener('click', () => {
-                updateDashboard();
-                showShortcutNotification('Dados atualizados');
-            });
-            document.getElementById('gamesFilter').addEventListener('change', () => {
-                console.log('Filtro de jogos alterado para:', document.getElementById('gamesFilter').value);
-                updateDashboard();
-            });
-            document.getElementById('leagueFilter').addEventListener('change', () => {
-                console.log('Filtro de liga alterado para:', document.getElementById('leagueFilter').value);
-                updateDashboard();
-            });
-            document.getElementById('sortBy').addEventListener('change', () => {
-                console.log('Ordenação alterada para:', document.getElementById('sortBy').value);
-                updateDashboard();
-            });
+            document.getElementById('refreshData').addEventListener('click', () => updateDashboard());
+            document.getElementById('gamesFilter').addEventListener('change', () => updateDashboard());
+            document.getElementById('leagueFilter').addEventListener('change', () => updateDashboard());
+            document.getElementById('sortBy').addEventListener('change', () => updateDashboard());
             document.getElementById('prevPage').addEventListener('click', () => {
                 if (currentPage > 1) {
                     currentPage--;
                     updateDashboard();
-                    console.log('Página anterior:', currentPage);
                 }
             });
             document.getElementById('nextPage').addEventListener('click', () => {
                 currentPage++;
                 updateDashboard();
-                console.log('Próxima página:', currentPage);
             });
             document.getElementById('resetFilters').addEventListener('click', resetFilters);
-
-            // Atalhos de teclado
-            document.addEventListener('keydown', (e) => {
-                console.log(`Tecla pressionada: ${e.key}`);
-                if (e.key === 'F5') {
-                    e.preventDefault();
-                    updateDashboard();
-                    showShortcutNotification('Dados atualizados (F5)');
-                } else {
-                    const key = e.key.toLowerCase();
-                    if (key === 'g') {
-                        document.getElementById('sortBy').value = 'goalsFT';
-                        updateDashboard();
-                        showShortcutNotification('Ordenado por Gols FT (G)');
-                    } else if (key === 'v') {
-                        document.getElementById('sortBy').value = 'wins';
-                        updateDashboard();
-                        showShortcutNotification('Ordenado por Vitórias (V)');
-                    } else if (key === 'r') {
-                        updateDashboard(true);
-                        showShortcutNotification('Mostrando Recomendados (R)');
-                    }
-                }
-            });
+            document.getElementById('bestPlayers').addEventListener('click', () => updateDashboard(true));
 
             // Navegação da sidebar
             document.querySelectorAll('.sidebar nav a').forEach(link => {
@@ -756,7 +659,6 @@
                     e.preventDefault();
                     document.querySelector('.sidebar nav a.active')?.classList.remove('active');
                     link.classList.add('active');
-                    showShortcutNotification(`Navegando para ${link.textContent}`);
                 });
             });
         });
