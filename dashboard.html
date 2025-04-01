@@ -352,7 +352,11 @@
     </div>
 
     <script>
-        // Função para buscar jogos finalizados (até 3 páginas)
+        let eventsData = []; // Armazenar eventos globalmente
+        let playerStats = {};
+        let chartInstance = null; // Para destruir e recriar o gráfico
+
+        // Buscar jogos finalizados
         async function fetchEndedEvents() {
             const allEvents = [];
             for (let page = 1; page <= 3; page++) {
@@ -369,52 +373,50 @@
 
         // Processar dados em estatísticas por jogador
         function processPlayerStats(events, gamesLimit) {
-            const playerStats = {};
+            const stats = {};
 
             events.forEach(event => {
                 const [homeGoals, awayGoals] = event.score.split('-').map(Number);
                 const homePlayer = event.home.match(/\((.*?)\)/)?.[1] || event.home;
                 const awayPlayer = event.away.match(/\((.*?)\)/)?.[1] || event.away;
 
-                // Inicializar jogador
-                if (!playerStats[homePlayer]) playerStats[homePlayer] = { games: [], wins: 0, draws: 0, losses: 0, goalsScored: 0, goalsConceded: 0, leagueID: event.leagueID };
-                if (!playerStats[awayPlayer]) playerStats[awayPlayer] = { games: [], wins: 0, draws: 0, losses: 0, goalsScored: 0, goalsConceded: 0, leagueID: event.leagueID };
+                if (!stats[homePlayer]) stats[homePlayer] = { games: [], wins: 0, draws: 0, losses: 0, goalsScored: 0, goalsConceded: 0, leagueID: event.leagueID };
+                if (!stats[awayPlayer]) stats[awayPlayer] = { games: [], wins: 0, draws: 0, losses: 0, goalsScored: 0, goalsConceded: 0, leagueID: event.leagueID };
 
                 const gameData = { ...event, date: new Date(event.timestamp * 1000).toLocaleString() };
-                playerStats[homePlayer].games.push(gameData);
-                playerStats[awayPlayer].games.push(gameData);
+                stats[homePlayer].games.push(gameData);
+                stats[awayPlayer].games.push(gameData);
 
-                // Atualizar estatísticas
-                playerStats[homePlayer].goalsScored += homeGoals;
-                playerStats[homePlayer].goalsConceded += awayGoals;
-                playerStats[awayPlayer].goalsScored += awayGoals;
-                playerStats[awayPlayer].goalsConceded += homeGoals;
+                stats[homePlayer].goalsScored += homeGoals;
+                stats[homePlayer].goalsConceded += awayGoals;
+                stats[awayPlayer]. goalsScored += awayGoals;
+                stats[awayPlayer].goalsConceded += homeGoals;
 
                 if (homeGoals > awayGoals) {
-                    playerStats[homePlayer].wins++;
-                    playerStats[awayPlayer].losses++;
+                    stats[homePlayer].wins++;
+                    stats[awayPlayer].losses++;
                 } else if (homeGoals < awayGoals) {
-                    playerStats[homePlayer].losses++;
-                    playerStats[awayPlayer].wins++;
+                    stats[homePlayer].losses++;
+                    stats[awayPlayer].wins++;
                 } else {
-                    playerStats[homePlayer].draws++;
-                    playerStats[awayPlayer].draws++;
+                    stats[homePlayer].draws++;
+                    stats[awayPlayer].draws++;
                 }
             });
 
-            // Limitar jogos e calcular médias
-            Object.values(playerStats).forEach(player => {
+            Object.values(stats).forEach(player => {
                 player.games = player.games.slice(0, gamesLimit);
-                player.goalsFT = player.games.reduce((sum, g) => sum + parseInt(g.score.split('-')[0]) + parseInt(g.score.split('-')[1]), 0) / player.games.length;
+                player.goalsFT = player.games.reduce((sum, g) => sum + parseInt(g.score.split('-')[0]) + parseInt(g.score.split('-')[1]), 0) / player.games.length || 0;
             });
 
-            return playerStats;
+            return stats;
         }
 
         // Preencher filtro de ligas
         function populateLeagueFilter(events) {
             const leagues = [...new Set(events.map(event => `${event.leagueID}|${event.leagueName}`))];
             const select = document.getElementById('leagueFilter');
+            select.innerHTML = '<option value="all">Todas as Ligas</option>'; // Resetar opções
             leagues.forEach(league => {
                 const [id, name] = league.split('|');
                 const option = document.createElement('option');
@@ -425,11 +427,11 @@
         }
 
         // Renderizar estatísticas rápidas
-        function renderQuickStats(playerStats) {
+        function renderQuickStats(stats) {
             const container = document.getElementById('quickStats');
-            const totalGames = Object.values(playerStats).reduce((sum, p) => sum + p.games.length, 0) / 2; // Dividido por 2 pois cada jogo aparece duas vezes
-            const avgGoalsFT = Object.values(playerStats).reduce((sum, p) => sum + p.goalsFT * p.games.length, 0) / totalGames;
-            const avgWins = Object.values(playerStats).reduce((sum, p) => sum + p.wins, 0) / Object.keys(playerStats).length;
+            const totalGames = eventsData.length; // Total de jogos únicos
+            const avgGoalsFT = Object.values(stats).reduce((sum, p) => sum + p.goalsFT * p.games.length, 0) / (totalGames * 2) || 0;
+            const avgWins = Object.values(stats).reduce((sum, p) => sum + p.wins, 0) / Object.keys(stats).length || 0;
 
             container.innerHTML = `
                 <div class="stat-card">
@@ -448,12 +450,15 @@
         }
 
         // Renderizar gráfico
-        function renderGoalsChart(playerStats) {
+        function renderGoalsChart(stats) {
             const ctx = document.getElementById('goalsDistributionChart').getContext('2d');
-            const avgGoalsFT = Object.values(playerStats).reduce((sum, p) => sum + p.goalsFT * p.games.length, 0) / 
-                              (Object.values(playerStats).reduce((sum, p) => sum + p.games.length, 0) / 2);
+            const totalGames = eventsData.length;
+            const avgGoalsFT = Object.values(stats).reduce((sum, p) => sum + p.goalsFT * p.games.length, 0) / (totalGames * 2) || 0;
 
-            new Chart(ctx, {
+            // Destruir gráfico anterior, se existir
+            if (chartInstance) chartInstance.destroy();
+
+            chartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: ['Full Time (FT)'],
@@ -480,14 +485,13 @@
         }
 
         // Renderizar cards dos jogadores
-        function renderPlayerCards(playerStats, gamesLimit, leagueFilter, sortBy) {
+        function renderPlayerCards(stats, gamesLimit, leagueFilter, sortBy, showRecommendedOnly = false) {
             const container = document.getElementById('playersContainer');
             container.innerHTML = '';
 
-            let filteredPlayers = Object.entries(playerStats)
+            let filteredPlayers = Object.entries(stats)
                 .filter(([_, stats]) => leagueFilter === 'all' || stats.leagueID === leagueFilter);
 
-            // Ordenar
             filteredPlayers.sort((a, b) => {
                 if (sortBy === 'goalsFT') return b[1].goalsFT - a[1].goalsFT;
                 if (sortBy === 'wins') return b[1].wins - a[1].wins;
@@ -497,6 +501,8 @@
 
             filteredPlayers.forEach(([name, stats]) => {
                 const recommended = stats.goalsFT > 5 && stats.wins / gamesLimit > 0.5;
+                if (showRecommendedOnly && !recommended) return;
+
                 const card = document.createElement('div');
                 card.className = `player-card ${recommended ? 'recommended' : ''}`;
                 card.innerHTML = `
@@ -536,33 +542,56 @@
             });
         }
 
+        // Função de atualização centralizada
+        function updateDashboard(showRecommendedOnly = false) {
+            const gamesLimit = parseInt(document.getElementById('gamesFilter').value);
+            const leagueFilter = document.getElementById('leagueFilter').value;
+            const sortBy = document.getElementById('sortBy').value;
+
+            playerStats = processPlayerStats(eventsData, gamesLimit);
+            renderQuickStats(playerStats);
+            renderGoalsChart(playerStats);
+            renderPlayerCards(playerStats, gamesLimit, leagueFilter, sortBy, showRecommendedOnly);
+        }
+
         // Inicializar
         async function init() {
-            const events = await fetchEndedEvents();
-            let playerStats = processPlayerStats(events, 10); // Default 10 jogos
-            populateLeagueFilter(events);
+            eventsData = await fetchEndedEvents();
+            playerStats = processPlayerStats(eventsData, 10);
+            populateLeagueFilter(eventsData);
             renderQuickStats(playerStats);
             renderGoalsChart(playerStats);
             renderPlayerCards(playerStats, 10, 'all', 'goalsFT');
 
-            // Filtros
-            const updateView = () => {
-                const gamesLimit = parseInt(document.getElementById('gamesFilter').value);
-                const leagueFilter = document.getElementById('leagueFilter').value;
-                const sortBy = document.getElementById('sortBy').value;
-                playerStats = processPlayerStats(events, gamesLimit);
-                renderQuickStats(playerStats);
-                renderGoalsChart(playerStats);
-                renderPlayerCards(playerStats, gamesLimit, leagueFilter, sortBy);
-            };
-
-            document.getElementById('gamesFilter').addEventListener('change', updateView);
-            document.getElementById('leagueFilter').addEventListener('change', updateView);
-            document.getElementById('sortBy').addEventListener('change', updateView);
+            // Eventos dos filtros
+            document.getElementById('gamesFilter').addEventListener('change', () => updateDashboard());
+            document.getElementById('leagueFilter').addEventListener('change', () => updateDashboard());
+            document.getElementById('sortBy').addEventListener('change', () => updateDashboard());
             document.getElementById('refreshData').addEventListener('click', async () => {
-                const newEvents = await fetchEndedEvents();
-                playerStats = processPlayerStats(newEvents, parseInt(document.getElementById('gamesFilter').value));
-                updateView();
+                eventsData = await fetchEndedEvents();
+                updateDashboard();
+            });
+
+            // Atalhos de teclado
+            document.addEventListener('keydown', async (e) => {
+                switch (e.key.toLowerCase()) {
+                    case 'f5': // Atualizar dados
+                        e.preventDefault();
+                        eventsData = await fetchEndedEvents();
+                        updateDashboard();
+                        break;
+                    case 'g': // Filtrar por gols
+                        document.getElementById('sortBy').value = 'goalsFT';
+                        updateDashboard();
+                        break;
+                    case 'v': // Filtrar por vitórias
+                        document.getElementById('sortBy').value = 'wins';
+                        updateDashboard();
+                        break;
+                    case 'r': // Mostrar recomendados
+                        updateDashboard(true);
+                        break;
+                }
             });
         }
 
