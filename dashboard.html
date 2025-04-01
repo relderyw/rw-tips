@@ -399,6 +399,13 @@
         </aside>
 
         <main class="main-content">
+            <div class="quick-stats" id="quickStats"></div>
+
+            <div class="chart-container">
+                <h3 style="margin-bottom: 15px; color: var(--text-primary)">Distribuição de Gols FT</h3>
+                <canvas id="goalsDistributionChart"></canvas>
+            </div>
+
             <div class="filters-bar">
                 <div class="filter-control">
                     <label for="leagueFilter">Liga:</label>
@@ -407,11 +414,11 @@
                     </select>
                 </div>
                 <div class="filter-control">
-                    <label for="gamesFilter">Mínimo de Jogos:</label>
+                    <label for="gamesFilter">Últimos Jogos:</label>
                     <select id="gamesFilter" class="filter-select">
-                        <option value="5">5+</option>
-                        <option value="10">10+</option>
-                        <option value="15">15+</option>
+                        <option value="5">5 Jogos</option>
+                        <option value="10" selected>10 Jogos</option>
+                        <option value="15">15 Jogos</option>
                     </select>
                 </div>
                 <div class="filter-control">
@@ -419,25 +426,18 @@
                     <select id="sortBy" class="filter-select">
                         <option value="goalsFT">Gols FT</option>
                         <option value="wins">Vitórias</option>
-                        <option value="goalsScored">Gols Marcados</option>
+                        <option value="goalsScored">Gols Feitos</option>
                     </select>
                 </div>
-                <button id="refreshData" class="refresh-button">Atualizar Dados</button>
+                <button id="refreshData" class="refresh-btn">Atualizar</button>
             </div>
 
-            <div id="quickStats" class="quick-stats"></div>
+            <div class="player-grid" id="playersContainer"></div>
 
-            <div class="chart-container">
-                <canvas id="goalsDistributionChart"></canvas>
-            </div>
-
-            <div class="players-section">
-                <div id="playersContainer" class="players-grid"></div>
-                <div class="pagination">
-                    <button id="prevPage" class="page-button">Anterior</button>
-                    <span id="pageIndicator">Página 1</span>
-                    <button id="nextPage" class="page-button">Próximo</button>
-                </div>
+            <div class="pagination">
+                <button id="prevPage" class="page-btn">Anterior</button>
+                <span id="pageIndicator">Página 1</span>
+                <button id="nextPage" class="page-btn">Próxima</button>
             </div>
         </main>
     </div>
