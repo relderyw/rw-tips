@@ -415,7 +415,7 @@
                     <li><a href="#" data-page="results">Resultados</a></li>
                     <li><a href="#" data-page="live">Ao Vivo</a></li>
                     <li><a href="#" data-page="players">Jogadores</a></li>
-                    <li><a href="#" data-page="visualization">Visualização</a></li>
+                    <li><a href="#" data-page="visualization">Próximos</a></li>
                 </ul>
             </nav>
         </aside>
@@ -741,9 +741,17 @@
                 });
             });
 
-            // Update chart text color to white
+            // Update chart text color and styling
             Chart.defaults.color = '#ffffff';
             Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+            Chart.defaults.font.family = 'Inter';
+
+            // Configure default chart options for better text visibility
+            Chart.defaults.plugins.legend.labels.color = '#ffffff';
+            Chart.defaults.plugins.tooltip.titleColor = '#ffffff';
+            Chart.defaults.plugins.tooltip.bodyColor = '#ffffff';
+            Chart.defaults.scale.grid.color = 'rgba(255, 255, 255, 0.1)';
+            Chart.defaults.scale.ticks.color = '#ffffff';
 
             // Add logo at the bottom of sidebar
             const sidebarNav = document.querySelector('.sidebar nav');
