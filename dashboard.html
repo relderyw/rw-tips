@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RW TIPS - Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -150,16 +152,25 @@
         }
     </style>
 </head>
+
 <body>
     <div class="dashboard-container">
         <aside class="sidebar">
             <h2>RW TIPS</h2>
             <nav>
                 <ul style="list-style: none; margin-top: 20px;">
-                    <li><a href="#" style="color: var(--text-primary); text-decoration: none; display: block; padding: 10px; margin: 5px 0; border-radius: 8px; background: rgba(255,255,255,0.05);">Dashboard</a></li>
-                    <li><a href="h2h_analysis.html" style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Análise H2H</a></li>
-                    <li><a href="statistics.html" style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Estatísticas</a></li>
-                    <li><a href="results.html" style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Resultados</a></li>
+                    <li><a href="#"
+                            style="color: var(--text-primary); text-decoration: none; display: block; padding: 10px; margin: 5px 0; border-radius: 8px; background: rgba(255,255,255,0.05);">Dashboard</a>
+                    </li>
+                    <li><a href="h2h_analysis.html"
+                            style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Análise
+                            H2H</a></li>
+                    <li><a href="statistics.html"
+                            style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Estatísticas</a>
+                    </li>
+                    <li><a href="results.html"
+                            style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Resultados</a>
+                    </li>
                 </ul>
             </nav>
             <div class="keyboard-shortcuts">
@@ -196,7 +207,16 @@
             </div>
 
             <div class="chart-container">
-                <canvas id="performanceChart"></canvas>
+                <h3 style="margin-bottom: 15px; color: var(--text-primary)">Performance por Liga</h3>
+                <div style="margin-bottom: 15px">
+                    <select id="timeRangeSelect"
+                        style="background: var(--glass-bg); color: var(--text-primary); border: 1px solid var(--glass-border); padding: 8px; border-radius: 8px;">
+                        <option value="5">Últimos 5 jogos</option>
+                        <option value="10">Últimos 10 jogos</option>
+                        <option value="15">Últimos 15 jogos</option>
+                    </select>
+                </div>
+                <canvas id="leaguePerformanceChart"></canvas>
             </div>
 
             <div class="matches-grid" id="upcomingMatches">
@@ -220,33 +240,118 @@
             }
         }
 
-        // Função para renderizar o gráfico de performance
-        function renderPerformanceChart() {
-            const ctx = document.getElementById('performanceChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['1h atrás', '45min atrás', '30min atrás', '15min atrás', 'Agora'],
-                    datasets: [{
-                        label: 'Taxa de Acerto',
-                        data: [65, 70, 75, 80, 85],
-                        borderColor: '#8B5CF6',
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top',
+        // Função para processar dados da liga
+        function processLeagueData(games, leagueName) {
+            const totalGames = games.length;
+            if (totalGames === 0) return null;
+
+            const totalGoals = games.reduce((sum, game) => {
+                const [home, away] = game.score.split('-').map(Number);
+                return sum + home + away;
+            }, 0);
+
+            const draws = games.filter(game => {
+                const [home, away] = game.score.split('-').map(Number);
+                return home === away;
+            }).length;
+
+            return {
+                leagueName,
+                avgGoals: (totalGoals / totalGames).toFixed(2),
+                drawRate: ((draws / totalGames) * 100).toFixed(1)
+            };
+        }
+
+        // Função para renderizar o gráfico de performance das ligas
+        async function renderLeaguePerformanceChart() {
+            try {
+                const response = await fetch('https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=1');
+                const data = await response.json();
+                const games = data.data;
+
+                const timeRange = parseInt(document.getElementById('timeRangeSelect').value);
+                const leagueGames = {};
+
+                // Agrupar jogos por liga
+                games.forEach(game => {
+                    if (!leagueGames[game.leagueName]) {
+                        leagueGames[game.leagueName] = [];
+                    }
+                    leagueGames[game.leagueName].push(game);
+                });
+
+                const leagueStats = [];
+                for (const [leagueName, games] of Object.entries(leagueGames)) {
+                    const recentGames = games.slice(0, timeRange);
+                    const stats = processLeagueData(recentGames, leagueName);
+                    if (stats) leagueStats.push(stats);
+                }
+
+                const ctx = document.getElementById('leaguePerformanceChart').getContext('2d');
+                if (window.leagueChart) window.leagueChart.destroy();
+
+                window.leagueChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: leagueStats.map(stat => stat.leagueName),
+                        datasets: [
+                            {
+                                label: 'Média de Gols',
+                                data: leagueStats.map(stat => parseFloat(stat.avgGoals)),
+                                backgroundColor: '#8B5CF6',
+                                borderColor: '#8B5CF6',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Taxa de Empate (%)',
+                                data: leagueStats.map(stat => parseFloat(stat.drawRate)),
+                                backgroundColor: '#EC4899',
+                                borderColor: '#EC4899',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: 'white'
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: `Análise das Ligas (Últimos ${timeRange} jogos)`,
+                                color: 'white'
+                            }
                         },
-                        title: {
-                            display: true,
-                            text: 'Performance das Últimas Horas'
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: 'white'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: 'white',
+                                    maxRotation: 45,
+                                    minRotation: 45
+                                }
+                            }
                         }
                     }
-                }
-            });
+                });
+            } catch (error) {
+                console.error('Erro ao renderizar gráfico:', error);
+            }
         }
 
         // Função para atualizar próximos jogos
@@ -292,7 +397,10 @@
         // Inicialização
         document.addEventListener('DOMContentLoaded', () => {
             updateQuickStats();
-            renderPerformanceChart();
+            renderLeaguePerformanceChart();
+
+            // Atualizar gráfico quando mudar o intervalo de tempo
+            document.getElementById('timeRangeSelect').addEventListener('change', renderLeaguePerformanceChart);
             updateUpcomingMatches();
 
             // Atualização automática a cada 15 segundos
@@ -312,4 +420,5 @@
         });
     </script>
 </body>
+
 </html>
