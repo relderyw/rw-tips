@@ -750,8 +750,18 @@
             Chart.defaults.plugins.legend.labels.color = '#ffffff';
             Chart.defaults.plugins.tooltip.titleColor = '#ffffff';
             Chart.defaults.plugins.tooltip.bodyColor = '#ffffff';
+            Chart.defaults.plugins.tooltip.footerColor = '#ffffff';
             Chart.defaults.scale.grid.color = 'rgba(255, 255, 255, 0.1)';
-            Chart.defaults.scale.ticks.color = '#ffffff';
+            Chart.defaults.scale.x = {
+                ticks: {
+                    color: '#ffffff'
+                }
+            };
+            Chart.defaults.scale.y = {
+                ticks: {
+                    color: '#ffffff'
+                }
+            };
 
             // Add logo at the bottom of sidebar
             const sidebarNav = document.querySelector('.sidebar nav');
