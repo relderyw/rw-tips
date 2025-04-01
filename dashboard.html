@@ -314,7 +314,7 @@
             font-family: monospace;
         }
 
-        .refresh-btn, .page-btn {
+        .refresh-btn, .page-btn, .reset-btn {
             background: linear-gradient(45deg, var(--accent-purple), var(--accent-pink));
             border: none;
             color: white;
@@ -325,7 +325,7 @@
             transition: opacity 0.3s;
         }
 
-        .refresh-btn:hover, .page-btn:hover {
+        .refresh-btn:hover, .page-btn:hover, .reset-btn:hover {
             opacity: 0.9;
         }
 
@@ -422,10 +422,6 @@
 
         <main class="main-content">
             <div class="quick-stats" id="quickStats"></div>
-            <div class="chart-container">
-                <h3 style="margin-bottom: 15px; color: var(--text-primary)">Distribuição de Gols FT</h3>
-                <canvas id="goalsDistributionChart"></canvas>
-            </div>
             <div class="filters-bar">
                 <div class="filter-control">
                     <label for="leagueFilter">Liga:</label>
@@ -450,6 +446,11 @@
                     </select>
                 </div>
                 <button id="refreshData" class="refresh-btn">Atualizar</button>
+                <button id="resetFilters" class="reset-btn">Reset</button>
+            </div>
+            <div class="chart-container">
+                <h3 style="margin-bottom: 15px; color: var(--text-primary)">Distribuição de Gols FT</h3>
+                <canvas id="goalsDistributionChart"></canvas>
             </div>
             <div class="player-grid" id="playersContainer"></div>
             <div class="pagination">
@@ -520,14 +521,14 @@
         }
 
         // Atualizar estatísticas rápidas
-        function updateQuickStats(stats) {
-            const totalGames = eventsData.length;
-            const totalGoals = eventsData.reduce((sum, event) => {
+        function updateQuickStats(events) {
+            const totalGames = events.length;
+            const totalGoals = events.reduce((sum, event) => {
                 const [home, away] = event.score.split('-').map(Number);
                 return sum + home + away;
             }, 0);
             const avgGoalsFT = totalGoals / totalGames || 0;
-            const avgWins = Object.values(stats).reduce((sum, p) => sum + p.wins, 0) / Object.keys(stats).length || 0;
+            const avgWins = Object.values(playerStats).reduce((sum, p) => sum + p.wins, 0) / Object.keys(playerStats).length || 0;
 
             document.getElementById('quickStats').innerHTML = `
                 <div class="stat-card"><h3>Jogos</h3><div class="stat-value">${totalGames}</div></div>
@@ -536,10 +537,15 @@
             `;
         }
 
-        // Atualizar gráfico
-        function updateGoalsChart(events) {
+        // Atualizar gráfico com filtros
+        function updateGoalsChart(events, leagueFilter) {
+            let filteredEvents = events;
+            if (leagueFilter !== 'all') {
+                filteredEvents = events.filter(event => event.leagueID === leagueFilter);
+            }
+
             const goalsDist = [0, 0, 0, 0, 0, 0]; // 0, 1, 2, 3, 4, 5+
-            events.forEach(event => {
+            filteredEvents.forEach(event => {
                 const totalGoals = parseInt(event.score.split('-')[0]) + parseInt(event.score.split('-')[1]);
                 if (totalGoals >= 5) goalsDist[5]++;
                 else goalsDist[totalGoals]++;
@@ -655,9 +661,19 @@
 
             playerStats = processPlayerStats(eventsData, gamesLimit);
             populateLeagueFilter(eventsData);
-            updateQuickStats(playerStats);
-            updateGoalsChart(eventsData);
+            updateQuickStats(eventsData);
+            updateGoalsChart(eventsData, leagueFilter);
             updatePlayerCards(playerStats, leagueFilter, sortBy, showRecommendedOnly);
+        }
+
+        // Resetar filtros e página
+        function resetFilters() {
+            currentPage = 1;
+            document.getElementById('leagueFilter').value = 'all';
+            document.getElementById('gamesFilter').value = '10';
+            document.getElementById('sortBy').value = 'goalsFT';
+            updateDashboard();
+            showShortcutNotification('Filtros resetados');
         }
 
         // Inicializar
@@ -665,10 +681,13 @@
             await updateDashboard();
 
             // Filtros e botões
-            document.getElementById('refreshData').addEventListener('click', () => updateDashboard());
-            document.getElementById('gamesFilter').addEventListener('change', () => updateDashboard());
-            document.getElementById('leagueFilter').addEventListener('change', () => updateDashboard());
-            document.getElementById('sortBy').addEventListener('change', () => updateDashboard());
+            document.getElementById('refreshData').addEventListener('click', () => {
+                updateDashboard();
+                showShortcutNotification('Dados atualizados');
+            });
+            document.getElementById('gamesFilter').addEventListener('change', updateDashboard);
+            document.getElementById('leagueFilter').addEventListener('change', updateDashboard);
+            document.getElementById('sortBy').addEventListener('change', updateDashboard);
             document.getElementById('prevPage').addEventListener('click', () => {
                 if (currentPage > 1) {
                     currentPage--;
@@ -679,29 +698,26 @@
                 currentPage++;
                 updateDashboard();
             });
+            document.getElementById('resetFilters').addEventListener('click', resetFilters);
 
             // Atalhos de teclado
             document.addEventListener('keydown', async (e) => {
-                switch (e.key.toLowerCase()) {
-                    case 'f5':
-                        e.preventDefault();
-                        await updateDashboard();
-                        showShortcutNotification('Dados atualizados (F5)');
-                        break;
-                    case 'g':
-                        document.getElementById('sortBy').value = 'goalsFT';
-                        await updateDashboard();
-                        showShortcutNotification('Ordenado por Gols FT (G)');
-                        break;
-                    case 'v':
-                        document.getElementById('sortBy').value = 'wins';
-                        await updateDashboard();
-                        showShortcutNotification('Ordenado por Vitórias (V)');
-                        break;
-                    case 'r':
-                        await updateDashboard(true);
-                        showShortcutNotification('Mostrando Recomendados (R)');
-                        break;
+                const key = e.key.toLowerCase();
+                if (e.key === 'F5') { // F5 é tratado separadamente
+                    e.preventDefault();
+                    await updateDashboard();
+                    showShortcutNotification('Dados atualizados (F5)');
+                } else if (key === 'g') {
+                    document.getElementById('sortBy').value = 'goalsFT';
+                    await updateDashboard();
+                    showShortcutNotification('Ordenado por Gols FT (G)');
+                } else if (key === 'v') {
+                    document.getElementById('sortBy').value = 'wins';
+                    await updateDashboard();
+                    showShortcutNotification('Ordenado por Vitórias (V)');
+                } else if (key === 'r') {
+                    await updateDashboard(true);
+                    showShortcutNotification('Mostrando Recomendados (R)');
                 }
             });
 
