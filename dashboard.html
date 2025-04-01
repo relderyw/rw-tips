@@ -51,15 +51,72 @@
         }
 
         .sidebar {
-            background: var(--glass-bg);
+            background: rgba(17, 17, 23, 0.95);
             border-radius: 15px;
             padding: 20px;
-            border: 1px solid var(--glass-border);
+            border: 1px solid rgba(0, 255, 136, 0.2);
             height: calc(100vh - 40px);
             position: sticky;
             top: 20px;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
+        }
+
+        .sidebar h2 {
+            font-size: 2rem;
+            background: linear-gradient(45deg, #00ff88, #00ffaa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5),
+                0 0 20px rgba(0, 255, 136, 0.3),
+                0 0 30px rgba(0, 255, 136, 0.2);
+            animation: neonPulse 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes neonPulse {
+            from {
+                text-shadow: 0 0 10px rgba(0, 255, 136, 0.5),
+                    0 0 20px rgba(0, 255, 136, 0.3),
+                    0 0 30px rgba(0, 255, 136, 0.2);
+            }
+
+            to {
+                text-shadow: 0 0 15px rgba(0, 255, 136, 0.7),
+                    0 0 25px rgba(0, 255, 136, 0.5),
+                    0 0 35px rgba(0, 255, 136, 0.3);
+            }
+        }
+
+        .sidebar nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: block;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            background: rgba(0, 255, 136, 0.05);
+            border: 1px solid rgba(0, 255, 136, 0.1);
+        }
+
+        .sidebar nav a:hover {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--neon-green);
+            transform: translateX(5px);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+        }
+
+        .sidebar nav a.active {
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--neon-green);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
         }
 
         .main-content {
@@ -381,6 +438,48 @@
         </main>
     </div>
 
+    <div class="logo-container">
+        <img src="favicon.png" alt="RW TIPS Logo" class="logo">
+        <div class="logo-text">RW TIPS</div>
+    </div>
+
+    <style>
+    .logo-container {
+        text-align: center;
+        margin: 20px 0;
+        padding: 20px;
+        position: relative;
+    }
+
+    .logo {
+        width: 120px;
+        height: auto;
+        margin-bottom: 15px;
+        filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.5));
+        transition: all 0.3s ease;
+    }
+
+    .logo:hover {
+        transform: scale(1.05);
+        filter: drop-shadow(0 0 15px rgba(0, 255, 136, 0.7));
+    }
+
+    .logo-text {
+        font-size: 1.8rem;
+        background: linear-gradient(45deg, #00ff88, #00ffaa);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        font-weight: 700;
+        letter-spacing: 2px;
+        margin-top: 10px;
+        text-shadow: 0 0 10px rgba(0, 255, 136, 0.5),
+            0 0 20px rgba(0, 255, 136, 0.3),
+            0 0 30px rgba(0, 255, 136, 0.2);
+        animation: neonPulse 1.5s ease-in-out infinite alternate;
+    }
+    </style>
+
     <script>
         let currentPage = 1;
         let eventsData = [];
@@ -606,6 +705,7 @@
 
             // Atalhos de teclado
             document.addEventListener('keydown', async (e) => {
+                e.preventDefault();
                 if (e.key.toLowerCase() === 'f5') {
                     await updateDashboard();
                 } else {
@@ -623,6 +723,24 @@
                             break;
                     }
                 }
+            });
+
+            // Adicionar botão de reset
+            const resetButton = document.createElement('button');
+            resetButton.id = 'resetFilters';
+            resetButton.className = 'refresh-btn';
+            resetButton.textContent = 'Resetar Filtros';
+            resetButton.style.marginLeft = 'auto';
+            document.querySelector('.filters-bar').appendChild(resetButton);
+
+            // Evento do botão de reset
+            resetButton.addEventListener('click', async () => {
+                currentPage = 1;
+                document.getElementById('gamesFilter').value = '10';
+                document.getElementById('leagueFilter').value = 'all';
+                document.getElementById('sortBy').value = 'goalsFT';
+                document.getElementById('pageIndicator').textContent = 'Página 1';
+                await updateDashboard();
             });
 
             // Adicionar navegação entre guias
