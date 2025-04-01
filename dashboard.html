@@ -430,7 +430,8 @@
                 <button id="bestPlayers" class="best-players-btn">Melhores Players</button>
             </div>
             <div class="chart-container">
-                <h3 style="margin-bottom: 15px; color: var(--text-primary)">Distribuição de Gols FT</h3>
+                <h3 style="margin-bottom: 10px; color: var(--text-primary)">Distribuição de Gols por Jogo (FT)</h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 15px;">Mostra a frequência de jogos com 0, 1, 2, 3, 4 ou 5+ gols no placar final.</p>
                 <canvas id="goalsDistributionChart"></canvas>
             </div>
             <div class="player-grid" id="playersContainer"></div>
@@ -456,7 +457,7 @@
             if (ligaNome.includes("8 mins")) return "Battle 8 min";
             if (ligaNome.includes("10 mins")) return "Adriact 10 min";
             if (ligaNome.includes("12 mins")) return "GT 12 min";
-            return ligaNome; // Retorna o nome original se não houver correspondência
+            return ligaNome;
         }
 
         // Buscar dados da API
@@ -518,15 +519,18 @@
             return stats;
         }
 
-        // Atualizar estatísticas rápidas
-        function updateQuickStats(events) {
-            const totalGames = events.length;
-            const totalGoals = events.reduce((sum, event) => {
-                const [home, away] = event.score.split('-').map(Number);
-                return sum + home + away;
-            }, 0);
+        // Atualizar estatísticas rápidas com filtros
+        function updateQuickStats(stats, leagueFilter) {
+            let filteredPlayers = Object.values(stats);
+            if (leagueFilter !== 'all') {
+                filteredPlayers = filteredPlayers.filter(player => player.leagueID === leagueFilter);
+            }
+
+            const totalGames = filteredPlayers.reduce((sum, player) => sum + player.games.length, 0);
+            const totalGoals = filteredPlayers.reduce((sum, player) => sum + player.games.reduce((gSum, game) => gSum + game.totalGoals, 0), 0);
             const avgGoalsFT = totalGames ? totalGoals / totalGames : 0;
-            const avgWins = Object.keys(playerStats).length ? Object.values(playerStats).reduce((sum, p) => sum + p.wins, 0) / Object.keys(playerStats).length : 0;
+            const totalWins = filteredPlayers.reduce((sum, player) => sum + player.wins, 0);
+            const avgWins = filteredPlayers.length ? totalWins / filteredPlayers.length : 0;
 
             document.getElementById('quickStats').innerHTML = `
                 <div class="stat-card"><h3>Jogos</h3><div class="stat-value">${totalGames}</div></div>
@@ -669,7 +673,7 @@
 
             playerStats = processPlayerStats(eventsData, gamesLimit);
             populateLeagueFilter(eventsData);
-            updateQuickStats(eventsData);
+            updateQuickStats(playerStats, leagueFilter);
             updateChart(eventsData, leagueFilter);
             updatePlayerCards(playerStats, leagueFilter, sortBy, showRecommendedOnly);
         }
