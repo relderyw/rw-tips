@@ -36,8 +36,37 @@
             padding: 20px;
             min-height: 100vh;
             line-height: 1.6;
+            position: relative;
         }
 
+        .dashboard-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-color);
+            color: var(--text-primary);
+            padding: 15px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        .dashboard-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.5);
+            background: var(--secondary-color);
+        }
+
+        .dashboard-button svg {
+            width: 20px;
+            height: 20px;
+        }
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -475,6 +504,15 @@
 </head>
 
 <body>
+    <a href="dashboard.html" class="dashboard-button">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+        Dashboard
+    </a>
     <a href="live.html" class="live-button">
         <span class="live-dot"></span>
         AO VIVO
