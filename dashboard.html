@@ -562,6 +562,7 @@
         }
 
         // Atualizar gráfico
+        // Atualizar gráfico
         function updateChart(events, leagueFilter) {
             let filteredEvents = events;
             if (leagueFilter !== 'all') {
@@ -574,6 +575,10 @@
                 if (totalGoals >= 5) goalsDist[5]++;
                 else goalsDist[totalGoals]++;
             });
+
+            // Definir configurações globais antes de criar o gráfico
+            Chart.defaults.color = '#ffffff';
+            Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
 
             if (distributionChart) distributionChart.destroy();
             const distCtx = document.getElementById('goalsDistributionChart').getContext('2d');
@@ -592,16 +597,35 @@
                 options: {
                     responsive: true,
                     scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: 'var(--text-primary)' } },
-                        x: { grid: { display: false }, ticks: { color: 'var(--text-primary)' } }
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#ffffff' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#ffffff' }
+                        }
                     },
                     plugins: {
-                        legend: { labels: { color: 'var(--text-primary)' } },
+                        legend: {
+                            labels: {
+                                color: '#ffffff',
+                                font: { weight: 'bold' }
+                            }
+                        },
                         datalabels: {
                             anchor: 'end',
                             align: 'top',
-                            color: 'var(--text-primary)',
+                            color: '#ffffff',
                             font: { weight: 'bold' }
+                        },
+                        tooltip: {
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                            borderColor: 'rgba(255, 255, 255, 0.2)',
+                            borderWidth: 1
                         }
                     }
                 },
