@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RW TIPS - Radar de Apostas</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <style>
@@ -79,8 +80,13 @@
         }
 
         @keyframes neonPulse {
-            from { text-shadow: 0 0 10px rgba(0, 255, 136, 0.5); }
-            to { text-shadow: 0 0 15px rgba(0, 255, 136, 0.7); }
+            from {
+                text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            }
+
+            to {
+                text-shadow: 0 0 15px rgba(0, 255, 136, 0.7);
+            }
         }
 
         .sidebar nav ul {
@@ -282,9 +288,17 @@
             font-weight: 600;
         }
 
-        .high-value { color: var(--success-color); }
-        .medium-value { color: var(--warning-color); }
-        .low-value { color: var(--danger-color); }
+        .high-value {
+            color: var(--success-color);
+        }
+
+        .medium-value {
+            color: var(--warning-color);
+        }
+
+        .low-value {
+            color: var(--danger-color);
+        }
 
         .player-prediction {
             margin-top: 15px;
@@ -321,7 +335,10 @@
             color: var(--danger-color);
         }
 
-        .refresh-btn, .page-btn, .reset-btn, .best-players-btn {
+        .refresh-btn,
+        .page-btn,
+        .reset-btn,
+        .best-players-btn {
             background: linear-gradient(45deg, var(--accent-purple), var(--accent-pink));
             border: none;
             color: white;
@@ -332,7 +349,10 @@
             transition: opacity 0.3s;
         }
 
-        .refresh-btn:hover, .page-btn:hover, .reset-btn:hover, .best-players-btn:hover {
+        .refresh-btn:hover,
+        .page-btn:hover,
+        .reset-btn:hover,
+        .best-players-btn:hover {
             opacity: 0.9;
         }
 
@@ -431,7 +451,8 @@
             </div>
             <div class="chart-container">
                 <h3 style="margin-bottom: 10px; color: var(--text-primary)">Distribuição de Gols por Jogo (FT)</h3>
-                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 15px;">Mostra a frequência de jogos com 0, 1, 2, 3, 4 ou 5+ gols no placar final.</p>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 15px;">Mostra a frequência de
+                    jogos com 0, 1, 2, 3, 4 ou 5+ gols no placar final.</p>
                 <canvas id="goalsDistributionChart"></canvas>
             </div>
             <div class="player-grid" id="playersContainer"></div>
@@ -713,9 +734,27 @@
                     e.preventDefault();
                     document.querySelector('.sidebar nav a.active')?.classList.remove('active');
                     link.classList.add('active');
+                    const page = link.getAttribute('data-page');
+                    if (page !== 'dashboard') {
+                        window.location.href = `${page}.html`;
+                    }
                 });
             });
+
+            // Update chart text color to white
+            Chart.defaults.color = '#ffffff';
+            Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+
+            // Add logo at the bottom of sidebar
+            const sidebarNav = document.querySelector('.sidebar nav');
+            const logoDiv = document.createElement('div');
+            logoDiv.className = 'sidebar-logo';
+            logoDiv.innerHTML = `
+                <img src="favicon.png" alt="RW TIPS Logo" style="width: 80px; height: 80px; display: block; margin: 20px auto;">
+            `;
+            sidebarNav.appendChild(logoDiv);
         });
     </script>
 </body>
+
 </html>
