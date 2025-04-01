@@ -405,6 +405,8 @@
             <div class="chart-container">
                 <h3 style="margin-bottom: 15px; color: var(--text-primary)">Distribuição de Gols FT</h3>
                 <canvas id="goalsDistributionChart"></canvas>
+                <h3 style="margin-top: 20px; margin-bottom: 15px; color: var(--text-primary)">Média de Gols FT por Jogador</h3>
+                <canvas id="goalsTrendChart"></canvas>
             </div>
             <div class="player-grid" id="playersContainer"></div>
             <div class="pagination">
@@ -419,7 +421,8 @@
         let currentPage = 1;
         let eventsData = [];
         let playerStats = {};
-        let chartInstance = null;
+        let distributionChart = null;
+        let trendChart = null;
 
         // Buscar dados da API
         async function fetchEvents(page) {
@@ -444,7 +447,7 @@
                 if (!stats[homePlayer]) stats[homePlayer] = { games: [], wins: 0, draws: 0, losses: 0, goalsScored: 0, goalsConceded: 0, goalsFT: 0, leagueID: event.leagueID };
                 if (!stats[awayPlayer]) stats[awayPlayer] = { games: [], wins: 0, draws: 0, losses: 0, goalsScored: 0, goalsConceded: 0, goalsFT: 0, leagueID: event.leagueID };
 
-                const gameData = { ...event, date: new Date(event.timestamp * 1000).toLocaleString() };
+                const gameData = { ...event, date: new Date(event.timestamp * 1000).toLocaleString(), totalGoals: homeGoals + awayGoals };
                 stats[homePlayer].games.push(gameData);
                 stats[awayPlayer].games.push(gameData);
 
@@ -467,10 +470,33 @@
 
             Object.values(stats).forEach(player => {
                 player.games = player.games.slice(0, gamesLimit);
-                player.goalsFT = player.games.reduce((sum, g) => sum + parseInt(g.score.split('-')[0]) + parseInt(g.score.split('-')[1]), 0) / player.games.length || 0;
+                player.goalsFT = player.games.reduce((sum, g) => sum + g.totalGoals, 0) / player.games.length || 0;
             });
 
             return stats;
+        }
+
+        // Calcular recomendação mais frequente
+        function getMostFrequentGoalRange(games) {
+            const goalRanges = { 'Under 1.5': 0, 'Over 1.5': 0, 'Over 2.5': 0, 'Over 3.5': 0 };
+            games.forEach(game => {
+                const totalGoals = game.totalGoals;
+                if (totalGoals < 1.5) goalRanges['Under 1.5']++;
+                if (totalGoals > 1.5) goalRanges['Over 1.5']++;
+                if (totalGoals > 2.5) goalRanges['Over 2.5']++;
+                if (totalGoals > 3.5) goalRanges['Over 3.5']++;
+            });
+
+            let maxCount = 0;
+            let recommendation = 'Under 1.5';
+            for (const [range, count] of Object.entries(goalRanges)) {
+                if (count > maxCount) {
+                    maxCount = count;
+                    recommendation = range;
+                }
+            }
+            const percentage = games.length ? Math.round((maxCount / games.length) * 100) : 0;
+            return { range: recommendation, percentage };
         }
 
         // Atualizar estatísticas rápidas
@@ -490,13 +516,14 @@
             `;
         }
 
-        // Atualizar gráfico com filtros
-        function updateGoalsChart(events, leagueFilter) {
+        // Atualizar gráficos
+        function updateCharts(events, leagueFilter) {
             let filteredEvents = events;
             if (leagueFilter !== 'all') {
                 filteredEvents = events.filter(event => event.leagueID === leagueFilter);
             }
 
+            // Gráfico de Distribuição
             const goalsDist = [0, 0, 0, 0, 0, 0]; // 0, 1, 2, 3, 4, 5+
             filteredEvents.forEach(event => {
                 const totalGoals = parseInt(event.score.split('-')[0]) + parseInt(event.score.split('-')[1]);
@@ -504,9 +531,9 @@
                 else goalsDist[totalGoals]++;
             });
 
-            if (chartInstance) chartInstance.destroy();
-            const ctx = document.getElementById('goalsDistributionChart').getContext('2d');
-            chartInstance = new Chart(ctx, {
+            if (distributionChart) distributionChart.destroy();
+            const distCtx = document.getElementById('goalsDistributionChart').getContext('2d');
+            distributionChart = new Chart(distCtx, {
                 type: 'bar',
                 data: {
                     labels: ['0', '1', '2', '3', '4', '5+'],
@@ -536,6 +563,35 @@
                 },
                 plugins: [ChartDataLabels]
             });
+
+            // Gráfico de Tendência
+            const players = Object.keys(playerStats);
+            const trendData = players.map(player => ({
+                label: player,
+                data: playerStats[player].games.map(game => game.totalGoals).reverse(),
+                borderColor: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`,
+                fill: false
+            }));
+
+            if (trendChart) trendChart.destroy();
+            const trendCtx = document.getElementById('goalsTrendChart').getContext('2d');
+            trendChart = new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({ length: parseInt(document.getElementById('gamesFilter').value) }, (_, i) => `Jogo ${i + 1}`),
+                    datasets: trendData
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: 'var(--text-primary)' } },
+                        x: { grid: { display: false }, ticks: { color: 'var(--text-primary)' } }
+                    },
+                    plugins: {
+                        legend: { labels: { color: 'var(--text-primary)' } }
+                    }
+                }
+            });
         }
 
         // Atualizar cards dos jogadores
@@ -551,6 +607,8 @@
             filteredPlayers.forEach(([name, stats]) => {
                 const recommended = stats.goalsFT > 5 && stats.wins / stats.games.length > 0.5;
                 if (showRecommendedOnly && !recommended) return;
+
+                const { range, percentage } = getMostFrequentGoalRange(stats.games);
 
                 const card = document.createElement('div');
                 card.className = `player-card ${recommended ? 'recommended' : ''}`;
@@ -583,7 +641,7 @@
                     <div class="player-prediction">
                         <div class="prediction-title">Recomendações:</div>
                         <div class="prediction-values">
-                            ${stats.goalsFT > 5 ? '<div class="prediction-chip high">Over 4.5 FT (75%)</div>' : '<div class="prediction-chip">Under 4.5 FT (60%)</div>'}
+                            <div class="prediction-chip ${percentage > 50 ? 'high' : ''}">${range} (${percentage}%)</div>
                         </div>
                     </div>
                 `;
@@ -591,7 +649,7 @@
             });
         }
 
-        // Preencher filtro de ligas sem resetar o valor selecionado
+        // Preencher filtro de ligas
         function populateLeagueFilter(events) {
             const currentValue = document.getElementById('leagueFilter').value;
             const leagues = [...new Set(events.map(event => `${event.leagueID}|${event.leagueName}`))];
@@ -604,7 +662,7 @@
                 option.textContent = name;
                 select.appendChild(option);
             });
-            select.value = currentValue; // Preserva o valor selecionado
+            select.value = currentValue;
         }
 
         // Atualizar dashboard
@@ -618,7 +676,7 @@
             playerStats = processPlayerStats(eventsData, gamesLimit);
             populateLeagueFilter(eventsData);
             updateQuickStats(eventsData);
-            updateGoalsChart(eventsData, leagueFilter);
+            updateCharts(eventsData, leagueFilter);
             updatePlayerCards(playerStats, leagueFilter, sortBy, showRecommendedOnly);
         }
 
@@ -635,7 +693,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             updateDashboard();
 
-            // Filtros e botões
             document.getElementById('refreshData').addEventListener('click', () => updateDashboard());
             document.getElementById('gamesFilter').addEventListener('change', () => updateDashboard());
             document.getElementById('leagueFilter').addEventListener('change', () => updateDashboard());
@@ -653,7 +710,6 @@
             document.getElementById('resetFilters').addEventListener('click', resetFilters);
             document.getElementById('bestPlayers').addEventListener('click', () => updateDashboard(true));
 
-            // Navegação da sidebar
             document.querySelectorAll('.sidebar nav a').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
