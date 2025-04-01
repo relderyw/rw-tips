@@ -202,16 +202,33 @@
         }
 
         .player-card.recommended::before {
-            content: "Recomendado";
+            content: "✔";
             position: absolute;
             top: 10px;
-            right: -30px;
+            right: 10px;
             background: var(--neon-green);
             color: #000;
-            padding: 5px 30px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            transform: rotate(45deg);
+            padding: 5px;
+            border-radius: 50%;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .player-card.not-recommended {
+            border: 2px solid var(--danger-color);
+        }
+
+        .player-card.not-recommended::before {
+            content: "✖";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--danger-color);
+            color: #fff;
+            padding: 5px;
+            border-radius: 50%;
+            font-size: 1rem;
+            font-weight: bold;
         }
 
         .player-grid {
@@ -232,6 +249,11 @@
         .player-name {
             font-size: 1.2rem;
             font-weight: 700;
+        }
+
+        .player-league {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
         }
 
         .player-stats {
@@ -292,6 +314,11 @@
         .prediction-chip.high {
             background: rgba(0, 255, 136, 0.2);
             color: var(--neon-green);
+        }
+
+        .prediction-chip.low {
+            background: rgba(255, 77, 77, 0.2);
+            color: var(--danger-color);
         }
 
         .refresh-btn, .page-btn, .reset-btn, .best-players-btn {
@@ -393,9 +420,9 @@
                 <div class="filter-control">
                     <label for="sortBy">Ordenar por:</label>
                     <select id="sortBy" class="filter-select">
-                        <option value="goalsFT">Gols FT</option>
+                        <option value="over2_5">Over 2.5</option>
                         <option value="wins">Vitórias</option>
-                        <option value="goalsScored">Gols Feitos</option>
+                        <option value="under2_5">Under 2.5</option>
                     </select>
                 </div>
                 <button id="refreshData" class="refresh-btn">Atualizar</button>
@@ -405,8 +432,6 @@
             <div class="chart-container">
                 <h3 style="margin-bottom: 15px; color: var(--text-primary)">Distribuição de Gols FT</h3>
                 <canvas id="goalsDistributionChart"></canvas>
-                <h3 style="margin-top: 20px; margin-bottom: 15px; color: var(--text-primary)">Média de Gols FT por Jogador</h3>
-                <canvas id="goalsTrendChart"></canvas>
             </div>
             <div class="player-grid" id="playersContainer"></div>
             <div class="pagination">
@@ -422,7 +447,17 @@
         let eventsData = [];
         let playerStats = {};
         let distributionChart = null;
-        let trendChart = null;
+
+        // Função para abreviar nomes das ligas
+        function abbreviateLeagueName(ligaNome) {
+            if (!ligaNome) return "Desconhecida";
+            if (ligaNome.includes("8 mins") && ligaNome.includes("H2H")) return "Battle 8 min (H2H)";
+            if (ligaNome.includes("6 mins")) return "Battle 6 min";
+            if (ligaNome.includes("8 mins")) return "Battle 8 min";
+            if (ligaNome.includes("10 mins")) return "Adriact 10 min";
+            if (ligaNome.includes("12 mins")) return "GT 12 min";
+            return ligaNome; // Retorna o nome original se não houver correspondência
+        }
 
         // Buscar dados da API
         async function fetchEvents(page) {
@@ -443,18 +478,22 @@
                 const [homeGoals, awayGoals] = event.score.split('-').map(Number);
                 const homePlayer = event.home.match(/\((.*?)\)/)?.[1] || event.home;
                 const awayPlayer = event.away.match(/\((.*?)\)/)?.[1] || event.away;
+                const totalGoals = homeGoals + awayGoals;
 
-                if (!stats[homePlayer]) stats[homePlayer] = { games: [], wins: 0, draws: 0, losses: 0, goalsScored: 0, goalsConceded: 0, goalsFT: 0, leagueID: event.leagueID };
-                if (!stats[awayPlayer]) stats[awayPlayer] = { games: [], wins: 0, draws: 0, losses: 0, goalsScored: 0, goalsConceded: 0, goalsFT: 0, leagueID: event.leagueID };
+                if (!stats[homePlayer]) stats[homePlayer] = { games: [], wins: 0, draws: 0, losses: 0, over2_5: 0, under2_5: 0, leagueID: event.leagueID, leagueName: event.leagueName };
+                if (!stats[awayPlayer]) stats[awayPlayer] = { games: [], wins: 0, draws: 0, losses: 0, over2_5: 0, under2_5: 0, leagueID: event.leagueID, leagueName: event.leagueName };
 
-                const gameData = { ...event, date: new Date(event.timestamp * 1000).toLocaleString(), totalGoals: homeGoals + awayGoals };
+                const gameData = { ...event, date: new Date(event.timestamp * 1000).toLocaleString(), totalGoals };
                 stats[homePlayer].games.push(gameData);
                 stats[awayPlayer].games.push(gameData);
 
-                stats[homePlayer].goalsScored += homeGoals;
-                stats[homePlayer].goalsConceded += awayGoals;
-                stats[awayPlayer].goalsScored += awayGoals;
-                stats[awayPlayer].goalsConceded += homeGoals;
+                if (totalGoals > 2.5) {
+                    stats[homePlayer].over2_5++;
+                    stats[awayPlayer].over2_5++;
+                } else {
+                    stats[homePlayer].under2_5++;
+                    stats[awayPlayer].under2_5++;
+                }
 
                 if (homeGoals > awayGoals) {
                     stats[homePlayer].wins++;
@@ -470,33 +509,13 @@
 
             Object.values(stats).forEach(player => {
                 player.games = player.games.slice(0, gamesLimit);
-                player.goalsFT = player.games.reduce((sum, g) => sum + g.totalGoals, 0) / player.games.length || 0;
+                const totalGames = player.games.length;
+                player.over2_5 = totalGames ? (player.over2_5 / totalGames) * 100 : 0;
+                player.under2_5 = totalGames ? (player.under2_5 / totalGames) * 100 : 0;
+                player.winPercentage = totalGames ? (player.wins / totalGames) * 100 : 0;
             });
 
             return stats;
-        }
-
-        // Calcular recomendação mais frequente
-        function getMostFrequentGoalRange(games) {
-            const goalRanges = { 'Under 1.5': 0, 'Over 1.5': 0, 'Over 2.5': 0, 'Over 3.5': 0 };
-            games.forEach(game => {
-                const totalGoals = game.totalGoals;
-                if (totalGoals < 1.5) goalRanges['Under 1.5']++;
-                if (totalGoals > 1.5) goalRanges['Over 1.5']++;
-                if (totalGoals > 2.5) goalRanges['Over 2.5']++;
-                if (totalGoals > 3.5) goalRanges['Over 3.5']++;
-            });
-
-            let maxCount = 0;
-            let recommendation = 'Under 1.5';
-            for (const [range, count] of Object.entries(goalRanges)) {
-                if (count > maxCount) {
-                    maxCount = count;
-                    recommendation = range;
-                }
-            }
-            const percentage = games.length ? Math.round((maxCount / games.length) * 100) : 0;
-            return { range: recommendation, percentage };
         }
 
         // Atualizar estatísticas rápidas
@@ -516,14 +535,13 @@
             `;
         }
 
-        // Atualizar gráficos
-        function updateCharts(events, leagueFilter) {
+        // Atualizar gráfico
+        function updateChart(events, leagueFilter) {
             let filteredEvents = events;
             if (leagueFilter !== 'all') {
                 filteredEvents = events.filter(event => event.leagueID === leagueFilter);
             }
 
-            // Gráfico de Distribuição
             const goalsDist = [0, 0, 0, 0, 0, 0]; // 0, 1, 2, 3, 4, 5+
             filteredEvents.forEach(event => {
                 const totalGoals = parseInt(event.score.split('-')[0]) + parseInt(event.score.split('-')[1]);
@@ -563,35 +581,6 @@
                 },
                 plugins: [ChartDataLabels]
             });
-
-            // Gráfico de Tendência
-            const players = Object.keys(playerStats);
-            const trendData = players.map(player => ({
-                label: player,
-                data: playerStats[player].games.map(game => game.totalGoals).reverse(),
-                borderColor: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.7)`,
-                fill: false
-            }));
-
-            if (trendChart) trendChart.destroy();
-            const trendCtx = document.getElementById('goalsTrendChart').getContext('2d');
-            trendChart = new Chart(trendCtx, {
-                type: 'line',
-                data: {
-                    labels: Array.from({ length: parseInt(document.getElementById('gamesFilter').value) }, (_, i) => `Jogo ${i + 1}`),
-                    datasets: trendData
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: 'var(--text-primary)' } },
-                        x: { grid: { display: false }, ticks: { color: 'var(--text-primary)' } }
-                    },
-                    plugins: {
-                        legend: { labels: { color: 'var(--text-primary)' } }
-                    }
-                }
-            });
         }
 
         // Atualizar cards dos jogadores
@@ -605,32 +594,35 @@
             filteredPlayers.sort((a, b) => b[1][sortBy] - a[1][sortBy]);
 
             filteredPlayers.forEach(([name, stats]) => {
-                const recommended = stats.goalsFT > 5 && stats.wins / stats.games.length > 0.5;
-                if (showRecommendedOnly && !recommended) return;
+                const isRecommended = stats.over2_5 >= 90 && stats.winPercentage > 55;
+                const isNotRecommended = stats.under2_5 > stats.over2_5;
 
-                const { range, percentage } = getMostFrequentGoalRange(stats.games);
+                if (showRecommendedOnly && !isRecommended) return;
+
+                const abbreviatedLeague = abbreviateLeagueName(stats.leagueName);
 
                 const card = document.createElement('div');
-                card.className = `player-card ${recommended ? 'recommended' : ''}`;
+                card.className = `player-card ${isRecommended ? 'recommended' : isNotRecommended ? 'not-recommended' : ''}`;
                 card.innerHTML = `
                     <div class="player-header">
                         <span class="player-name">${name}</span>
+                        <span class="player-league">${abbreviatedLeague}</span>
                     </div>
                     <div class="player-stats">
                         <div class="stat-group">
                             <div class="stat-item">
-                                <span class="stat-label">Média Gols FT:</span>
-                                <span class="stat-item-value ${stats.goalsFT > 5 ? 'high-value' : stats.goalsFT > 3 ? 'medium-value' : 'low-value'}">${stats.goalsFT.toFixed(2)}</span>
+                                <span class="stat-label">Over 2.5:</span>
+                                <span class="stat-item-value ${stats.over2_5 >= 90 ? 'high-value' : stats.over2_5 >= 50 ? 'medium-value' : 'low-value'}">${stats.over2_5.toFixed(1)}%</span>
                             </div>
                             <div class="stat-item">
-                                <span class="stat-label">Gols Feitos:</span>
-                                <span class="stat-item-value">${stats.goalsScored}</span>
+                                <span class="stat-label">Under 2.5:</span>
+                                <span class="stat-item-value ${stats.under2_5 >= 90 ? 'high-value' : stats.under2_5 >= 50 ? 'medium-value' : 'low-value'}">${stats.under2_5.toFixed(1)}%</span>
                             </div>
                         </div>
                         <div class="stat-group">
                             <div class="stat-item">
-                                <span class="stat-label">Vitórias:</span>
-                                <span class="stat-item-value ${stats.wins / stats.games.length > 0.5 ? 'high-value' : 'medium-value'}">${stats.wins}</span>
+                                <span class="stat-label">% Vitórias:</span>
+                                <span class="stat-item-value ${stats.winPercentage > 55 ? 'high-value' : stats.winPercentage >= 30 ? 'medium-value' : 'low-value'}">${stats.winPercentage.toFixed(1)}%</span>
                             </div>
                             <div class="stat-item">
                                 <span class="stat-label">Emp/Der:</span>
@@ -641,7 +633,9 @@
                     <div class="player-prediction">
                         <div class="prediction-title">Recomendações:</div>
                         <div class="prediction-values">
-                            <div class="prediction-chip ${percentage > 50 ? 'high' : ''}">${range} (${percentage}%)</div>
+                            <div class="prediction-chip ${isRecommended ? 'high' : isNotRecommended ? 'low' : ''}">
+                                ${isRecommended ? 'Over 2.5' : isNotRecommended ? 'Under 2.5' : 'Neutro'}
+                            </div>
                         </div>
                     </div>
                 `;
@@ -676,7 +670,7 @@
             playerStats = processPlayerStats(eventsData, gamesLimit);
             populateLeagueFilter(eventsData);
             updateQuickStats(eventsData);
-            updateCharts(eventsData, leagueFilter);
+            updateChart(eventsData, leagueFilter);
             updatePlayerCards(playerStats, leagueFilter, sortBy, showRecommendedOnly);
         }
 
@@ -685,7 +679,7 @@
             currentPage = 1;
             document.getElementById('leagueFilter').value = 'all';
             document.getElementById('gamesFilter').value = '10';
-            document.getElementById('sortBy').value = 'goalsFT';
+            document.getElementById('sortBy').value = 'over2_5';
             updateDashboard();
         }
 
