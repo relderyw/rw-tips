@@ -45,22 +45,26 @@
         .dashboard-container {
             display: grid;
             grid-template-columns: 250px 1fr;
-            gap: 20px;
+            gap: 30px;
             max-width: 1600px;
             margin: 0 auto;
+            padding: 20px;
+            background: var(--glass-bg);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--card-shadow);
         }
 
         .sidebar {
-            background: rgba(17, 17, 23, 0.95);
+            background: var(--card-bg);
             border-radius: 15px;
             padding: 20px;
-            border: 1px solid rgba(0, 255, 136, 0.2);
-            height: calc(100vh - 40px);
-            position: sticky;
-            top: 20px;
+            height: 100%;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
+            gap: 20px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--glass-border);
         }
 
         .sidebar h2 {
@@ -357,11 +361,11 @@
 </head>
 
 <body>
-    <div class="logo-container">
-        <img src="favicon.png" alt="RW TIPS Logo" class="logo">
-        <div class="logo-text">RW TIPS</div>
-    </div>
     <div class="dashboard-container">
+        <div class="logo-container" style="text-align: center; margin-bottom: 30px;">
+            <img src="favicon.png" alt="RW TIPS Logo" class="logo" style="width: 120px; height: auto;">
+            <div class="logo-text" style="margin-top: 15px;">RW TIPS</div>
+        </div>
         <aside class="sidebar">
             <h2>RW TIPS</h2>
             <nav>
