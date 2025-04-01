@@ -245,21 +245,45 @@
             const totalGames = games.length;
             if (totalGames === 0) return null;
 
-            const totalGoals = games.reduce((sum, game) => {
-                const [home, away] = game.score.split('-').map(Number);
-                return sum + home + away;
-            }, 0);
-
-            const draws = games.filter(game => {
-                const [home, away] = game.score.split('-').map(Number);
-                return home === away;
-            }).length;
-
-            return {
+            const stats = {
                 leagueName,
-                avgGoals: (totalGoals / totalGames).toFixed(2),
-                drawRate: ((draws / totalGames) * 100).toFixed(1)
+                totalGames,
+                goals: {
+                    total: 0,
+                    avg: 0,
+                    over25: 0,
+                    under25: 0
+                },
+                results: {
+                    draws: 0,
+                    drawRate: 0,
+                    homeWins: 0,
+                    awayWins: 0
+                }
             };
+
+            games.forEach(game => {
+                const [home, away] = game.score.split('-').map(Number);
+                const totalGoals = home + away;
+
+                // Gols
+                stats.goals.total += totalGoals;
+                if (totalGoals > 2.5) stats.goals.over25++;
+                if (totalGoals < 2.5) stats.goals.under25++;
+
+                // Resultados
+                if (home === away) stats.results.draws++;
+                if (home > away) stats.results.homeWins++;
+                if (home < away) stats.results.awayWins++;
+            });
+
+            // Calcular médias e taxas
+            stats.goals.avg = (stats.goals.total / totalGames).toFixed(2);
+            stats.results.drawRate = ((stats.results.draws / totalGames) * 100).toFixed(1);
+            stats.goals.over25Rate = ((stats.goals.over25 / totalGames) * 100).toFixed(1);
+            stats.goals.under25Rate = ((stats.goals.under25 / totalGames) * 100).toFixed(1);
+
+            return stats;
         }
 
         // Função para renderizar o gráfico de performance das ligas
@@ -297,49 +321,87 @@
                         datasets: [
                             {
                                 label: 'Média de Gols',
-                                data: leagueStats.map(stat => parseFloat(stat.avgGoals)),
+                                data: leagueStats.map(stat => parseFloat(stat.goals.avg)),
                                 backgroundColor: '#8B5CF6',
                                 borderColor: '#8B5CF6',
-                                borderWidth: 1
+                                borderWidth: 1,
+                                yAxisID: 'y'
+                            },
+                            {
+                                label: 'Over 2.5 (%)',
+                                data: leagueStats.map(stat => parseFloat(stat.goals.over25Rate)),
+                                backgroundColor: '#EC4899',
+                                borderColor: '#EC4899',
+                                borderWidth: 1,
+                                yAxisID: 'y1'
                             },
                             {
                                 label: 'Taxa de Empate (%)',
-                                data: leagueStats.map(stat => parseFloat(stat.drawRate)),
-                                backgroundColor: '#EC4899',
-                                borderColor: '#EC4899',
-                                borderWidth: 1
+                                data: leagueStats.map(stat => parseFloat(stat.results.drawRate)),
+                                backgroundColor: '#00ff88',
+                                borderColor: '#00ff88',
+                                borderWidth: 1,
+                                yAxisID: 'y1'
                             }
                         ]
                     },
                     options: {
                         responsive: true,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
                         plugins: {
                             legend: {
                                 position: 'top',
-                                labels: {
-                                    color: 'white'
-                                }
+                                labels: { color: 'white' }
                             },
                             title: {
                                 display: true,
                                 text: `Análise das Ligas (Últimos ${timeRange} jogos)`,
                                 color: 'white'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    afterBody: function (context) {
+                                        const stats = leagueStats[context[0].dataIndex];
+                                        return [
+                                            `Total de Jogos: ${stats.totalGames}`,
+                                            `Vitórias Casa: ${stats.results.homeWins}`,
+                                            `Vitórias Fora: ${stats.results.awayWins}`,
+                                            `Empates: ${stats.results.draws}`
+                                        ];
+                                    }
+                                }
                             }
                         },
                         scales: {
                             y: {
-                                beginAtZero: true,
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
-                                },
-                                ticks: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Média de Gols',
                                     color: 'white'
-                                }
+                                },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                                ticks: { color: 'white' }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: {
+                                    display: true,
+                                    text: 'Porcentagem (%)',
+                                    color: 'white'
+                                },
+                                grid: { display: false },
+                                ticks: { color: 'white' }
                             },
                             x: {
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
-                                },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' },
                                 ticks: {
                                     color: 'white',
                                     maxRotation: 45,
