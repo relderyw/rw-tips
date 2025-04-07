@@ -36,36 +36,6 @@
             padding: 20px;
             min-height: 100vh;
             line-height: 1.6;
-            position: relative;
-        }
-
-        .dashboard-button {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: var(--primary-color);
-            color: var(--text-primary);
-            padding: 15px 25px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            z-index: 1000;
-        }
-
-        .dashboard-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.5);
-            background: var(--secondary-color);
-        }
-
-        .dashboard-button svg {
-            width: 20px;
-            height: 20px;
         }
 
         .container {
@@ -99,38 +69,328 @@
             background: linear-gradient(45deg, #00ff88, #00ffaa);
             -webkit-background-clip: text;
             background-clip: text;
+            color: transparent;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-top: 10px;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5),
+                0 0 20px rgba(0, 255, 136, 0.3),
+                0 0 30px rgba(0, 255, 136, 0.2);
+            animation: neonPulse 1.5s ease-in-out infinite alternate;
         }
 
-        .nba-button {
-            position: fixed;
-            bottom: 100px;
-            right: 30px;
-            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+        @keyframes neonPulse {
+            from {
+                text-shadow: 0 0 10px rgba(0, 255, 136, 0.5),
+                    0 0 20px rgba(0, 255, 136, 0.3),
+                    0 0 30px rgba(0, 255, 136, 0.2);
+            }
+
+            to {
+                text-shadow: 0 0 15px rgba(0, 255, 136, 0.7),
+                    0 0 25px rgba(0, 255, 136, 0.5),
+                    0 0 35px rgba(0, 255, 136, 0.3);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 30px 0;
+            background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+
+        .button-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .action-button {
+            background: var(--card-bg);
             color: var(--text-primary);
-            width: 60px;
-            height: 60px;
+            border: 1px solid var(--border-color);
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-button:hover {
+            background: var(--card-hover);
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+        }
+
+        .action-button::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .action-button:hover::after {
+            transform: scaleX(1);
+        }
+
+        #filter {
+            width: 100%;
+            padding: 15px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #filter:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.1);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 0;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+        }
+
+        .card:hover::before {
+            opacity: 0.05;
+        }
+
+        .league-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+            z-index: 1;
+        }
+
+        .teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .team {
+            text-align: center;
+            flex: 1;
+        }
+
+        .team img {
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
+            margin-bottom: 10px;
+            border: 2px solid var(--primary-color);
+            padding: 2px;
+            transition: all 0.3s ease;
+            background: var(--card-bg);
+        }
+
+        .team:hover img {
+            transform: scale(1.1);
+            border-color: var(--accent-color);
+        }
+
+        .team span {
+            display: block;
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+
+        .team span:first-of-type {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--accent-color);
+        }
+
+        .match-time {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            backdrop-filter: blur(5px);
+            position: relative;
+            z-index: 1;
+        }
+
+        .metrics-container {
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            position: relative;
+            z-index: 1;
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 8px 0;
+            background: rgba(108, 92, 231, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .metric-item:hover {
+            background: rgba(108, 92, 231, 0.1);
+            transform: translateX(5px);
+        }
+
+        .special-metric {
+            background: linear-gradient(45deg, rgba(108, 92, 231, 0.1), rgba(0, 255, 136, 0.1));
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .metric-description {
+            color: var(--accent-color);
+            font-size: 0.85em;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .metric-values {
+            text-align: right;
+        }
+
+        .metric-value {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+
+        .metric-raw {
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            margin-left: 8px;
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .metric-item:last-child {
+            border-bottom: none;
+        }
+
+        .metric-name {
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            gap: 8px;
+        }
+
+        .metric-value {
+            color: var(--accent-color);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .metric-raw {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-left: 8px;
+        }
+
+        .special-metric {
+            background: rgba(108, 92, 231, 0.1);
+            border-radius: 8px;
+            padding: 10px;
+            margin: 5px 0;
+        }
+
+        .special-metric small {
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+
+        .h2h-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            color: var(--text-primary);
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
             transition: all 0.3s ease;
-            z-index: 1000;
+            margin-top: 15px;
+            position: relative;
+            z-index: 1;
         }
 
-        .nba-button:hover {
-            transform: translateY(-3px) rotate(15deg);
-            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5);
-        }
-
-        .nba-button svg {
-            width: 35px;
-            height: 35px;
-            fill: white;
+        .h2h-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
         }
 
         .live-button {
+            background: linear-gradient(45deg, #ff4757, #ff6b81);
             color: white;
             padding: 12px 25px;
             border-radius: 25px;
@@ -215,32 +475,12 @@
 </head>
 
 <body>
-    <a href="dashboard.html" class="dashboard-button">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="7" height="7"></rect>
-            <rect x="14" y="3" width="7" height="7"></rect>
-            <rect x="14" y="14" width="7" height="7"></rect>
-            <rect x="3" y="14" width="7" height="7"></rect>
-        </svg>
-        Dashboard
-    </a>
     <a href="live.html" class="live-button">
         <span class="live-dot"></span>
         AO VIVO
     </a>
 
     <div class="container">
-        <div class="logo-container">
-            <img src="favicon.png" alt="RW TIPS Logo" class="logo">
-            <h1 class="logo-text">RW TIPS</h1>
-        </div>
-        <a href="nba.html" class="nba-button" title="NBA Stats">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path
-                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-4h2v2h-2v-2zm0-11h2v8h-2V5z" />
-            </svg>
-        </a>
         <div class="logo-container">
             <img src="https://i.ibb.co/v6MhLNJX/11zon-cropped.png" alt="RW Tips Logo" class="logo">
             <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
@@ -350,6 +590,8 @@
 
             // Métricas base (mantendo a formatação original)
             const metrics = [
+                { name: 'Over 1.5 HT', value: (stats.over1_5HT / totalGames) * 100, raw: `${stats.over1_5HT}/${totalGames}`, icon: '⚽' },
+                { name: 'Over 2.5 HT', value: (stats.over2_5HT / totalGames) * 100, raw: `${stats.over2_5HT}/${totalGames}`, icon: '⚽' },
                 { name: 'Over 2.5 FT', value: (stats.over2_5FT / totalGames) * 100, raw: `${stats.over2_5FT}/${totalGames}`, icon: '⚽' },
                 { name: 'Over 3.5 FT', value: (stats.over3_5FT / totalGames) * 100, raw: `${stats.over3_5FT}/${totalGames}`, icon: '⚽' },
                 { name: 'Over 4.5 FT', value: (stats.over4_5FT / totalGames) * 100, raw: `${stats.over4_5FT}/${totalGames}`, icon: '⚽' }
@@ -359,33 +601,33 @@
             const homeWinRate = (stats.winHome / totalGames) * 100;
             const awayWinRate = (stats.winAway / totalGames) * 100;
 
+            // Encontra métricas com alta probabilidade (acima de 80%)
+            const highProbMetrics = metrics.filter(metric => metric.value >= 80);
+
             let finalMetrics = [];
 
             // Adiciona métricas regulares com alta probabilidade
-            const highProbMetrics = metrics.filter(metric => metric.value >= 80);
-            finalMetrics.push(...highProbMetrics);
+            finalMetrics.push(...metrics.filter(m => m.value >= 80));
 
             // Adiciona análise especial dos jogadores
             if (highProbMetrics.length > 0) {
                 const bestMetric = highProbMetrics[0];
                 if (homeWinRate >= 35) {
                     finalMetrics.push({
-                        name: `${homePlayer}`,
+                        name: `${homePlayer} - ${bestMetric.name}`,  // Changed format here
                         value: homeWinRate,
                         raw: `${stats.winHome}/${totalGames}`,
                         isSpecial: true,
-                        icon: '👑',
-                        description: bestMetric.name
+                        icon: '👑'
                     });
                 }
                 if (awayWinRate >= 35) {
                     finalMetrics.push({
-                        name: `${awayPlayer}`,
+                        name: `${awayPlayer} - ${bestMetric.name}`,  // Changed format here
                         value: awayWinRate,
                         raw: `${stats.winAway}/${totalGames}`,
                         isSpecial: true,
-                        icon: '👑',
-                        description: bestMetric.name
+                        icon: '👑'
                     });
                 }
             }
@@ -405,7 +647,7 @@
                 const response = await fetch(apiUrl);
                 const data = await response.json();
                 const h2hStats = processH2HStats(data.mutualInfos.lastGames);
-                return getTop3Metrics(h2hStats, homePlayer, awayPlayer);
+                return getTop3Metrics(h2hStats);
             } catch (error) {
                 console.error('Erro ao buscar métricas H2H:', error);
                 return null;
