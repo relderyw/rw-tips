@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -5,8 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NBA Stats - RW Tips</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -26,19 +26,13 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
-            position: relative;
         }
 
-        /* Header Styles - FIXED */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
-            padding: 0 20px;
-            position: relative;
-            /* Important for absolute positioning of children */
         }
 
         .header h1 {
@@ -49,19 +43,6 @@
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 10px rgba(139, 0, 255, 0.5);
             margin: 0;
-            /* This ensures the title is properly visible */
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Navigation Styles - FIXED */
-        .nav-buttons {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            /* Changed from absolute to relative positioning */
-            position: relative;
-            z-index: 2;
         }
 
         .logo {
@@ -76,54 +57,16 @@
             gap: 5px;
         }
 
-        .viz-button {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 20px;
-            background: linear-gradient(145deg, #1c1c1c, #2a004d);
-            border-radius: 12px;
-            color: #ffffff;
-            text-decoration: none;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            border: 1px solid #8B00FF;
-            box-shadow: 0 0 10px rgba(139, 0, 255, 0.3);
-        }
-
-        .viz-button:hover {
-            background: linear-gradient(45deg, #8B00FF, #00DDEB);
-            box-shadow: 0 0 20px rgba(139, 0, 255, 0.8);
-            transform: translateY(-2px) scale(1.02);
-            border-color: #00DDEB;
-        }
-
-        .viz-button svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        /* Tab Navigation - FIXED */
         .tabs {
             display: flex;
             gap: 10px;
-            margin: 0 auto 30px;
-            padding: 10px 20px;
+            margin-bottom: 30px;
             overflow-x: auto;
             white-space: nowrap;
-            justify-content: center;
-            width: 100%;
-            max-width: 800px;
-            /* Ensure tabs are visible and not overlapped */
-            position: relative;
-            z-index: 1;
+            padding-bottom: 5px;
         }
 
-        .tab,
-        .tab-button {
+        .tab {
             background: linear-gradient(45deg, #2a004d, #004d66);
             padding: 12px 24px;
             border-radius: 8px;
@@ -136,20 +79,17 @@
             border: 1px solid #8B00FF;
         }
 
-        .tab:hover,
-        .tab-button:hover {
+        .tab:hover {
             background: linear-gradient(45deg, #8B00FF, #00DDEB);
             box-shadow: 0 0 15px rgba(139, 0, 255, 0.7);
             transform: translateY(-2px);
         }
 
-        .tab.active,
-        .tab-button.active {
+        .tab.active {
             background: linear-gradient(45deg, #8B00FF, #00DDEB);
             box-shadow: 0 0 15px rgba(139, 0, 255, 0.7);
         }
 
-        /* Schedule Section - FIXED */
         .schedule {
             background: linear-gradient(145deg, #1c1c1c, #2a004d);
             border-radius: 10px;
@@ -157,8 +97,7 @@
             box-shadow: 0 0 20px rgba(139, 0, 255, 0.2);
         }
 
-        .day-header,
-        .date-header {
+        .day-header {
             background: linear-gradient(90deg, #FF0057, #8B00FF);
             padding: 15px;
             font-family: 'Orbitron', sans-serif;
@@ -168,12 +107,9 @@
             text-align: center;
         }
 
-        /* Game Card Styles - FIXED */
-        .match,
-        .game-card {
-            display: grid;
-            grid-template-columns: 1fr 2fr 1fr;
-            gap: 15px;
+        .match {
+            display: flex;
+            flex-direction: column;
             align-items: center;
             padding: 20px;
             border-bottom: 1px solid rgba(139, 0, 255, 0.3);
@@ -181,42 +117,129 @@
             position: relative;
         }
 
-        .match:hover,
-        .game-card:hover {
+        .match:hover {
             background: rgba(139, 0, 255, 0.1);
             box-shadow: inset 0 0 10px rgba(139, 0, 255, 0.3);
         }
 
-        .match:last-child,
-        .game-card:last-child {
+        .match:last-child {
             border-bottom: none;
         }
 
-        /* Team Display - FIXED */
-        .team,
-        .team-info {
+        /* Estilo para jogos ao vivo */
+        .match.live-game {
+            border-left: 5px solid #FF0057;
+            background: rgba(255, 0, 87, 0.1);
+            animation: livePulse 2s infinite;
+        }
+
+        /* Estilo para jogos finalizados */
+        .match.final-game {
+            opacity: 0.8;
+            background: rgba(30, 30, 30, 0.5);
+        }
+
+        @keyframes livePulse {
+            0% { box-shadow: 0 0 5px rgba(255, 0, 87, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(255, 0, 87, 0.8); }
+            100% { box-shadow: 0 0 5px rgba(255, 0, 87, 0.5); }
+        }
+
+        .live-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #FF0057;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-family: 'Orbitron', sans-serif;
+            animation: pulse 1.5s infinite;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .live-badge::before {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .match-header {
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+            color: #00DDEB;
+            text-shadow: 0 0 5px rgba(0, 221, 235, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .teams {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .team {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 5px;
+            font-size: 16px;
+            flex: 1;
             text-align: center;
         }
 
-        .team img,
-        .team-logo {
-            width: 60px;
-            height: 60px;
+        .team img {
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             box-shadow: 0 0 8px rgba(0, 221, 235, 0.5);
-            object-fit: contain;
         }
 
         .team-name {
             font-family: 'Roboto', sans-serif;
+            color: #ffffff;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .team-city {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .team-nickname {
+            font-size: 14px;
+            opacity: 0.8;
             color: #00DDEB;
-            font-size: 16px;
-            text-shadow: 0 0 5px rgba(0, 221, 235, 0.3);
-            margin: 5px 0;
+            text-shadow: 0 0 5px rgba(0, 221, 235, 0.5);
         }
 
         .team-record {
@@ -224,51 +247,77 @@
             font-size: 14px;
         }
 
-        .team-record.losing {
+        .wins {
+            color: #00FF00;
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+        }
+
+        .losses {
             color: #FF0057;
             text-shadow: 0 0 5px rgba(255, 0, 87, 0.3);
         }
 
-        /* Score Display - FIXED */
-        .versus,
-        .game-score {
+        .team .winner {
+            color: #00FF00;
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+            font-size: 14px;
+        }
+
+        .versus {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 5px;
+        }
+
+        .score {
             font-family: 'Orbitron', sans-serif;
-            font-size: 28px;
+            font-size: 32px;
             background: linear-gradient(90deg, #FF0057, #00DDEB);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 8px rgba(255, 0, 87, 0.5);
-            text-align: center;
         }
 
-        .game-time {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 24px;
-            color: #00DDEB;
-            text-shadow: 0 0 5px rgba(0, 221, 235, 0.3);
-            text-align: center;
+        .score-updated {
+            animation: pulse 1s ease-in-out;
         }
 
-        .status,
-        .final-tag {
+        .status {
             font-family: 'Roboto', sans-serif;
             font-size: 12px;
             padding: 5px 10px;
             border-radius: 15px;
             text-transform: uppercase;
-            background: #555;
-            color: #ccc;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-            margin: 5px 0;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
         }
 
-        /* Button Styles - FIXED */
-        .details button,
-        .stats-button {
+        /* Status para jogos ao vivo */
+        .status.in-progress {
+            background: #FF0057;
+            color: #ffffff;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Status para jogos finalizados */
+        .status.final {
+            background: #555;
+            color: #ccc;
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+
+        .time {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            color: #00DDEB;
+            text-shadow: 0 0 5px rgba(0, 221, 235, 0.3);
+        }
+
+        .details {
+            margin-top: 10px;
+        }
+
+        .details button {
             background: linear-gradient(45deg, #8B00FF, #00DDEB);
             border: none;
             padding: 8px 16px;
@@ -280,19 +329,22 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 0 10px rgba(139, 0, 255, 0.5);
-            display: block;
-            margin: 10px auto 0;
-            width: auto;
         }
 
-        .details button:hover,
-        .stats-button:hover {
+        .details button:hover {
             transform: scale(1.05);
             box-shadow: 0 0 15px rgba(0, 221, 235, 0.8);
             background: linear-gradient(45deg, #00DDEB, #8B00FF);
         }
 
-        /* Modal Styles */
+        .error {
+            color: #FF0057;
+            padding: 15px;
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+            text-shadow: 0 0 5px rgba(255, 0, 87, 0.3);
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -347,29 +399,103 @@
             text-shadow: 0 0 5px rgba(0, 221, 235, 0.5);
         }
 
-        /* Responsive Styling */
-        @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
 
-            .nav-buttons {
-                margin-top: 20px;
-                position: static;
-            }
+        .stats-header span {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 22px;
+            color: #ffffff;
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+            width: 33%;
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+        }
 
-            .match,
-            .game-card {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
+        .stat-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            align-items: center;
+            margin: 10px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(139, 0, 255, 0.2);
+        }
 
-            .versus,
-            .game-score {
-                margin: 15px 0;
-            }
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            text-align: center;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        .stat-label {
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+            color: #00DDEB;
+            text-shadow: 0 0 5px rgba(0, 221, 235, 0.3);
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .stat-bar-container {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 400px;
+            padding: 0 20px;
+        }
+
+        .stat-bar {
+            height: 6px;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .stat-bar.home {
+            background: linear-gradient(90deg, #5D76A9, #00DDEB);
+            box-shadow: 0 0 8px rgba(0, 221, 235, 0.5);
+        }
+
+        .stat-bar.away {
+            background: linear-gradient(90deg, #C8102E, #FF0057);
+            box-shadow: 0 0 8px rgba(255, 0, 87, 0.5);
+        }
+
+        .error-details {
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+            color: #ffffff;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .retry-btn {
+            background: linear-gradient(45deg, #FF0057, #8B00FF);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(255, 0, 87, 0.5);
+            display: block;
+            margin: 10px auto;
+        }
+
+        .retry-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(139, 0, 255, 0.8);
+            background: linear-gradient(45deg, #8B00FF, #FF0057);
         }
     </style>
 </head>
@@ -378,192 +504,183 @@
     <div class="container">
         <div class="header">
             <h1>CALENDÁRIO NBA</h1>
-            <div class="nav-buttons">
-                <a href="visualization.html" class="viz-button">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                        <circle cx="12" cy="12" r="3" />
-                    </svg>
-                    Visualização
-                </a>
-                <div class="logo">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</div>
-            </div>
-            <div class="tabs" id="tabs"></div>
-            <div class="schedule" id="schedule"></div>
+            <div class="logo">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</div>
         </div>
-        <div class="modal" id="gameStatsModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="modalTitle"></h2>
-                    <button class="close-btn" id="closeModal">×</button>
-                </div>
-                <div class="stats-header">
-                    <span id="homeTeamName"></span>
-                    <span></span>
-                    <span id="awayTeamName"></span>
-                </div>
-                <div id="statsContent"></div>
+        <div class="tabs" id="tabs"></div>
+        <div class="schedule" id="schedule"></div>
+    </div>
+    <div class="modal" id="gameStatsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="close-btn" id="closeModal">×</button>
             </div>
+            <div class="stats-header">
+                <span id="homeTeamName"></span>
+                <span></span>
+                <span id="awayTeamName"></span>
+            </div>
+            <div id="statsContent"></div>
         </div>
-        <script>
-            const tabsDiv = document.querySelector('#tabs');
-            const scheduleDiv = document.querySelector('#schedule');
-            let currentDate = null;
-            let autoUpdateInterval = null;
-            let previousScores = {};
+    </div>
+    <script>
+        const tabsDiv = document.querySelector('#tabs');
+        const scheduleDiv = document.querySelector('#schedule');
+        let currentDate = null;
+        let autoUpdateInterval = null;
+        let previousScores = {};
 
-            const modal = document.querySelector('#gameStatsModal');
-            const modalTitle = document.querySelector('#modalTitle');
-            const awayTeamName = document.querySelector('#awayTeamName');
-            const homeTeamName = document.querySelector('#homeTeamName');
-            const statsContent = document.querySelector('#statsContent');
-            const closeModalBtn = document.querySelector('#closeModal');
+        const modal = document.querySelector('#gameStatsModal');
+        const modalTitle = document.querySelector('#modalTitle');
+        const awayTeamName = document.querySelector('#awayTeamName');
+        const homeTeamName = document.querySelector('#homeTeamName');
+        const statsContent = document.querySelector('#statsContent');
+        const closeModalBtn = document.querySelector('#closeModal');
 
-            function formatarDataBrasil(dataStr) {
-                const data = new Date(dataStr + 'T12:00:00');
-                const options = { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'America/Sao_Paulo' };
-                return data.toLocaleDateString('pt-BR', options).replace('.', '').toUpperCase();
+        function formatarDataBrasil(dataStr) {
+            const data = new Date(dataStr + 'T12:00:00');
+            const options = { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'America/Sao_Paulo' };
+            return data.toLocaleDateString('pt-BR', options).replace('.', '').toUpperCase();
+        }
+
+        function getDataAtualSP() {
+            const now = new Date();
+            const spTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
+            return spTime.toISOString().split('T')[0];
+        }
+
+        async function fetchDates() {
+            const apiUrl = `https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/scheduleV2/subset/dates?brand=tsn&type=json`;
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
+            try {
+                const response = await fetch(proxyUrl);
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                const data = await response.json();
+                return Object.keys(data).sort();
+            } catch (error) {
+                console.error('Error fetching dates:', error);
+                throw error;
             }
+        }
 
-            function getDataAtualSP() {
-                const now = new Date();
-                const spTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
-                return spTime.toISOString().split('T')[0];
+        async function fetchSchedule(date) {
+            const apiUrl = `https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/scheduleV2/subset/dates?brand=tsn&type=json&dateOrId=${date}`;
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
+            try {
+                const response = await fetch(proxyUrl);
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                const data = await response.json();
+                return data[date];
+            } catch (error) {
+                console.error('Error fetching schedule:', error);
+                throw error;
             }
+        }
 
-            async function fetchDates() {
-                const apiUrl = `https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/scheduleV2/subset/dates?brand=tsn&type=json`;
-                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
-                try {
-                    const response = await fetch(proxyUrl);
-                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                    const data = await response.json();
-                    return Object.keys(data).sort();
-                } catch (error) {
-                    console.error('Error fetching dates:', error);
-                    throw error;
-                }
-            }
+        async function renderTabs() {
+            try {
+                const dates = await fetchDates();
+                const hoje = getDataAtualSP();
 
-            async function fetchSchedule(date) {
-                const apiUrl = `https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/scheduleV2/subset/dates?brand=tsn&type=json&dateOrId=${date}`;
-                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
-                try {
-                    const response = await fetch(proxyUrl);
-                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                    const data = await response.json();
-                    return data[date];
-                } catch (error) {
-                    console.error('Error fetching schedule:', error);
-                    throw error;
-                }
-            }
+                let html = '';
+                let dataAtiva = dates.includes(hoje) ? hoje : dates[0];
 
-            async function renderTabs() {
-                try {
-                    const dates = await fetchDates();
-                    const hoje = getDataAtualSP();
+                dates.forEach(date => {
+                    const ativa = date === dataAtiva;
+                    const textoAba = formatarDataBrasil(date);
+                    html += `<div class="tab${ativa ? ' active' : ''}" data-date="${date}">${textoAba}</div>`;
+                });
 
-                    let html = '';
-                    let dataAtiva = dates.includes(hoje) ? hoje : dates[0];
+                tabsDiv.innerHTML = html;
+                currentDate = dataAtiva;
 
-                    dates.forEach(date => {
-                        const ativa = date === dataAtiva;
-                        const textoAba = formatarDataBrasil(date);
-                        html += `<div class="tab${ativa ? ' active' : ''}" data-date="${date}">${textoAba}</div>`;
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        currentDate = tab.dataset.date;
+                        previousScores = {};
+                        startAutoUpdate();
                     });
+                });
 
-                    tabsDiv.innerHTML = html;
-                    currentDate = dataAtiva;
+                startAutoUpdate();
 
-                    document.querySelectorAll('.tab').forEach(tab => {
-                        tab.addEventListener('click', () => {
-                            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                            tab.classList.add('active');
-                            currentDate = tab.dataset.date;
-                            previousScores = {};
-                            startAutoUpdate();
-                        });
-                    });
+            } catch (error) {
+                console.error('Erro ao renderizar abas:', error);
+                tabsDiv.innerHTML = '<div class="error">Erro ao carregar datas</div>';
+            }
+        }
 
-                    startAutoUpdate();
+        function splitTeamName(fullName) {
+            const specialCases = {
+                'Trail Blazers': 'Portland', 'Timberwolves': 'Minnesota', 'Thunder': 'Oklahoma City', 'Jazz': 'Utah',
+                'Heat': 'Miami', 'Magic': 'Orlando', 'Wizards': 'Washington', 'Pacers': 'Indiana', 'Knicks': 'New York',
+                'Nets': 'Brooklyn', 'Celtics': 'Boston', '76ers': 'Philadelphia', 'Raptors': 'Toronto', 'Bulls': 'Chicago',
+                'Cavaliers': 'Cleveland', 'Pistons': 'Detroit', 'Bucks': 'Milwaukee', 'Hawks': 'Atlanta', 'Hornets': 'Charlotte',
+                'Mavericks': 'Dallas', 'Rockets': 'Houston', 'Grizzlies': 'Memphis', 'Pelicans': 'New Orleans', 'Spurs': 'San Antonio',
+                'Nuggets': 'Denver', 'Warriors': 'Golden State', 'Clippers': 'LA Clippers', 'Lakers': 'Los Angeles', 'Suns': 'Phoenix',
+                'Kings': 'Sacramento'
+            };
+            for (const [nickname, city] of Object.entries(specialCases)) {
+                if (fullName.includes(nickname)) return { city, nickname };
+            }
+            const parts = fullName.split(' ');
+            if (parts.length === 1) return { city: fullName, nickname: '' };
+            const nickname = parts.pop();
+            const city = parts.join(' ');
+            return { city, nickname };
+        }
 
-                } catch (error) {
-                    console.error('Erro ao renderizar abas:', error);
-                    tabsDiv.innerHTML = '<div class="error">Erro ao carregar datas</div>';
+        function formatRecord(record) {
+            if (!record) return '';
+            const [wins, losses] = record.split('-');
+            return `<span class="wins">${wins}</span>-<span class="losses">${losses}</span>`;
+        }
+
+        function getTeamLogoUrl(seoIdentifier) {
+            return `https://tsnimages.tsn.ca/ImageProvider/TeamLogo?seoId=${seoIdentifier}&width=50&height=50`;
+        }
+
+        function formatTime(dateET) {
+            const date = new Date(dateET);
+            return date.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo', hour: 'numeric', minute: 'numeric', hour12: true }).replace(':', 'h');
+        }
+
+        async function renderSchedule(date) {
+            try {
+                const data = await fetchSchedule(date);
+                if (!data || !data.events) {
+                    scheduleDiv.innerHTML = `<div class="day-header">${formatarDataBrasil(date)}</div><div class="match">Nenhum jogo agendado</div>`;
+                    return;
                 }
-            }
 
-            function splitTeamName(fullName) {
-                const specialCases = {
-                    'Trail Blazers': 'Portland', 'Timberwolves': 'Minnesota', 'Thunder': 'Oklahoma City', 'Jazz': 'Utah',
-                    'Heat': 'Miami', 'Magic': 'Orlando', 'Wizards': 'Washington', 'Pacers': 'Indiana', 'Knicks': 'New York',
-                    'Nets': 'Brooklyn', 'Celtics': 'Boston', '76ers': 'Philadelphia', 'Raptors': 'Toronto', 'Bulls': 'Chicago',
-                    'Cavaliers': 'Cleveland', 'Pistons': 'Detroit', 'Bucks': 'Milwaukee', 'Hawks': 'Atlanta', 'Hornets': 'Charlotte',
-                    'Mavericks': 'Dallas', 'Rockets': 'Houston', 'Grizzlies': 'Memphis', 'Pelicans': 'New Orleans', 'Spurs': 'San Antonio',
-                    'Nuggets': 'Denver', 'Warriors': 'Golden State', 'Clippers': 'LA Clippers', 'Lakers': 'Los Angeles', 'Suns': 'Phoenix',
-                    'Kings': 'Sacramento'
-                };
-                for (const [nickname, city] of Object.entries(specialCases)) {
-                    if (fullName.includes(nickname)) return { city, nickname };
-                }
-                const parts = fullName.split(' ');
-                if (parts.length === 1) return { city: fullName, nickname: '' };
-                const nickname = parts.pop();
-                const city = parts.join(' ');
-                return { city, nickname };
-            }
+                let html = `<div class="day-header">${formatarDataBrasil(date)}</div>`;
+                data.events.forEach(event => {
+                    const eventData = event.event;
+                    const { top, bottom, status, dateET } = eventData;
+                    const eventId = event.eventId;
 
-            function formatRecord(record) {
-                if (!record) return '';
-                const [wins, losses] = record.split('-');
-                return `<span class="wins">${wins}</span>-<span class="losses">${losses}</span>`;
-            }
+                    const isLiveGame = status.includes('Progress') || status.includes('Em Andamento');
+                    const isFinalGame = status.includes('Final') || status.includes('Terminado');
 
-            function getTeamLogoUrl(seoIdentifier) {
-                return `https://tsnimages.tsn.ca/ImageProvider/TeamLogo?seoId=${seoIdentifier}&width=50&height=50`;
-            }
+                    const topTeam = splitTeamName(top.name);
+                    const bottomTeam = splitTeamName(bottom.name);
 
-            function formatTime(dateET) {
-                const date = new Date(dateET);
-                return date.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo', hour: 'numeric', minute: 'numeric', hour12: true }).replace(':', 'h');
-            }
+                    const scoreDisplay = (top.score != null && bottom.score != null) ? `${bottom.score} - ${top.score}` : '';
+                    const timeDisplay = formatTime(dateET);
+                    const topLogo = getTeamLogoUrl(top.seoIdentifier);
+                    const bottomLogo = getTeamLogoUrl(bottom.seoIdentifier);
 
-            async function renderSchedule(date) {
-                try {
-                    const data = await fetchSchedule(date);
-                    if (!data || !data.events) {
-                        scheduleDiv.innerHTML = `<div class="day-header">${formatarDataBrasil(date)}</div><div class="match">Nenhum jogo agendado</div>`;
-                        return;
-                    }
+                    const hasScore = top.score != null && bottom.score != null;
+                    const scoreKey = `${eventId}`;
+                    const previousScore = previousScores[scoreKey] || '';
+                    const currentScore = hasScore ? scoreDisplay : '';
+                    const scoreChanged = previousScore && currentScore && previousScore !== currentScore;
+                    previousScores[scoreKey] = currentScore;
 
-                    let html = `<div class="day-header">${formatarDataBrasil(date)}</div>`;
-                    data.events.forEach(event => {
-                        const eventData = event.event;
-                        const { top, bottom, status, dateET } = eventData;
-                        const eventId = event.eventId;
-
-                        const isLiveGame = status.includes('Progress') || status.includes('Em Andamento');
-                        const isFinalGame = status.includes('Final') || status.includes('Terminado');
-
-                        const topTeam = splitTeamName(top.name);
-                        const bottomTeam = splitTeamName(bottom.name);
-
-                        const scoreDisplay = (top.score != null && bottom.score != null) ? `${bottom.score} - ${top.score}` : '';
-                        const timeDisplay = formatTime(dateET);
-                        const topLogo = getTeamLogoUrl(top.seoIdentifier);
-                        const bottomLogo = getTeamLogoUrl(bottom.seoIdentifier);
-
-                        const hasScore = top.score != null && bottom.score != null;
-                        const scoreKey = `${eventId}`;
-                        const previousScore = previousScores[scoreKey] || '';
-                        const currentScore = hasScore ? scoreDisplay : '';
-                        const scoreChanged = previousScore && currentScore && previousScore !== currentScore;
-                        previousScores[scoreKey] = currentScore;
-
-                        if (status === 'Final' || hasScore) {
-                            html += `
+                    if (status === 'Final' || hasScore) {
+                        html += `
                             <div class="match ${isLiveGame ? 'live-game' : ''} ${isFinalGame ? 'final-game' : ''}">
                                 ${isLiveGame ? '<div class="live-badge">AO VIVO</div>' : ''}
                                 <div class="match-header">${bottom.name} vs ${top.name}</div>
@@ -596,8 +713,8 @@
                                 </div>
                             </div>
                         `;
-                        } else {
-                            html += `
+                    } else {
+                        html += `
                             <div class="match">
                                 <div class="match-header">${bottom.name} vs ${top.name}</div>
                                 <div class="teams">
@@ -626,81 +743,81 @@
                                 </div>
                             </div>
                         `;
-                        }
-                    });
-                    scheduleDiv.innerHTML = html;
-                } catch (error) {
-                    scheduleDiv.innerHTML = `<div class="day-header">${formatarDataBrasil(date)}</div><div class="error">Erro ao carregar o calendário: ${error.message}</div>`;
-                }
-            }
-
-            function startAutoUpdate() {
-                if (autoUpdateInterval) clearInterval(autoUpdateInterval);
-                if (currentDate) renderSchedule(currentDate);
-                autoUpdateInterval = setInterval(async () => {
-                    if (currentDate) await renderSchedule(currentDate);
-                }, 30000);
-            }
-
-            async function showGameStats(eventId, homeName, awayName) {
-                try {
-                    const scheduleData = await fetchSchedule(currentDate);
-                    const game = scheduleData?.events.find(e => e.eventId === eventId)?.event;
-                    const gameStatus = game?.status || 'Pre-Game';
-                    const hasScores = game?.top.score != null && game?.bottom.score != null;
-                    const isLiveOrFinished = hasScores || gameStatus === 'In Progress' || gameStatus === 'Final';
-
-                    let data;
-                    if (isLiveOrFinished) {
-                        const gameStatsUrl = `https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/event/${eventId}/stats?brand=tsn&type=json`;
-                        const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(gameStatsUrl)}`);
-                        data = await response.json();
-                    } else {
-                        const seasonStatsUrl = `https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/event/${eventId}/competitorSeasonStats?brand=tsn&type=json`;
-                        const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(seasonStatsUrl)}`);
-                        data = await response.json();
                     }
+                });
+                scheduleDiv.innerHTML = html;
+            } catch (error) {
+                scheduleDiv.innerHTML = `<div class="day-header">${formatarDataBrasil(date)}</div><div class="error">Erro ao carregar o calendário: ${error.message}</div>`;
+            }
+        }
 
-                    modalTitle.textContent = `${homeName} vs ${awayName}`;
-                    homeTeamName.textContent = homeName;
-                    awayTeamName.textContent = awayName;
+        function startAutoUpdate() {
+            if (autoUpdateInterval) clearInterval(autoUpdateInterval);
+            if (currentDate) renderSchedule(currentDate);
+            autoUpdateInterval = setInterval(async () => {
+                if (currentDate) await renderSchedule(currentDate);
+            }, 30000);
+        }
 
-                    if (data && (data.away || data.home)) {
-                        const stats = isLiveOrFinished ? [
-                            { label: 'PONTOS', home: game?.bottom.score || '0', away: game?.top.score || '0' },
-                            { label: 'PONTOS SOFRIDOS', home: game?.top.score || '0', away: game?.bottom.score || '0' },
-                            { label: '% DE ARREMESSOS CERTOS', home: data.home.stats?.fieldGoalsPercentage ? `${(parseFloat(data.home.stats.fieldGoalsPercentage) * 100).toFixed(1)}%` : 'N/A', away: data.away.stats?.fieldGoalsPercentage ? `${(parseFloat(data.away.stats.fieldGoalsPercentage) * 100).toFixed(1)}%` : 'N/A' },
-                            { label: '% DE LANCES LIVRES', home: data.home.stats?.freeThrowsPercentage ? `${(parseFloat(data.home.stats.freeThrowsPercentage) * 100).toFixed(1)}%` : 'N/A', away: data.away.stats?.freeThrowsPercentage ? `${(parseFloat(data.away.stats.freeThrowsPercentage) * 100).toFixed(1)}%` : 'N/A' },
-                            { label: '% DE ARREMESSOS DE 3 PONTOS', home: data.home.stats?.threePointPercentage ? `${(parseFloat(data.home.stats.threePointPercentage) * 100).toFixed(1)}%` : 'N/A', away: data.away.stats?.threePointPercentage ? `${(parseFloat(data.away.stats.threePointPercentage) * 100).toFixed(1)}%` : 'N/A' },
-                            { label: 'REBOTES', home: data.home.stats?.reboundsTotal || '0', away: data.away.stats?.reboundsTotal || '0' },
-                            { label: 'REBOTES OFENSIVOS / DEFENSIVOS', home: 'N/A', away: 'N/A' },
-                            { label: 'ASSISTÊNCIAS', home: data.home.stats?.assists || '0', away: data.away.stats?.assists || '0' },
-                            { label: 'TOCOS', home: data.home.stats?.blockedShots || '0', away: data.away.stats?.blockedShots || '0' },
-                            { label: 'ROUBOS DE BOLA', home: data.home.stats?.steals || '0', away: data.away.stats?.steals || '0' },
-                            { label: 'ERROS DE POSSE', home: data.home.stats?.turnovers || '0', away: data.away.stats?.turnovers || '0' }
-                        ] : [
-                            { label: 'PONTOS POR JOGO', home: data.home?.stats?.pointsForPerGame || 'N/A', away: data.away?.stats?.pointsForPerGame || 'N/A' },
-                            { label: 'PONTOS SOFRIDOS POR JOGO', home: data.home?.stats?.pointsAgainstPerGame || 'N/A', away: data.away?.stats?.pointsAgainstPerGame || 'N/A' },
-                            { label: '% DE ARREMESSOS CERTOS', home: data.home?.stats?.fieldGoalsPercentage ? `${(parseFloat(data.home.stats.fieldGoalsPercentage) * 100).toFixed(1)}%` : 'N/A', away: data.away.stats?.fieldGoalsPercentage ? `${(parseFloat(data.away.stats.fieldGoalsPercentage) * 100).toFixed(1)}%` : 'N/A' },
-                            { label: '% DE LANCES LIVRES', home: data.home?.stats?.freeThrowsPercentage ? `${(parseFloat(data.home.stats.freeThrowsPercentage) * 100).toFixed(1)}%` : 'N/A', away: data.away?.stats?.freeThrowsPercentage ? `${(parseFloat(data.away.stats.freeThrowsPercentage) * 100).toFixed(1)}%` : 'N/A' },
-                            { label: '% DE ARREMESSOS DE 3 PONTOS', home: data.home?.stats?.threePointPercentage ? `${(parseFloat(data.home.stats.threePointPercentage) * 100).toFixed(1)}%` : 'N/A', away: data.away?.stats?.threePointPercentage ? `${(parseFloat(data.away.stats.threePointPercentage) * 100).toFixed(1)}%` : 'N/A' },
-                            { label: 'REBOTES POR JOGO', home: data.home?.stats?.reboundsPerGame || 'N/A', away: data.away?.stats?.reboundsPerGame || 'N/A' },
-                            { label: 'REBOTES OFENSIVOS / DEFENSIVOS POR JOGO', home: `${data.home?.stats?.offensiveReboundsPerGame || 'N/A'} / ${data.home?.stats?.defensiveReboundsPerGame || 'N/A'}`, away: `${data.away?.stats?.offensiveReboundsPerGame || 'N/A'} / ${data.away?.stats?.defensiveReboundsPerGame || 'N/A'}` },
-                            { label: 'ASSISTÊNCIAS POR JOGO', home: data.home?.stats?.assistsPerGame || 'N/A', away: data.away?.stats?.assistsPerGame || 'N/A' },
-                            { label: 'TOCOS POR JOGO', home: data.home?.stats?.blocksPerGame || 'N/A', away: data.away?.stats?.blocksPerGame || 'N/A' },
-                            { label: 'ROUBOS DE BOLA POR JOGO', home: data.home?.stats?.stealsPerGame || 'N/A', away: data.away?.stats?.stealsPerGame || 'N/A' },
-                            { label: 'ERROS DE POSSE POR JOGO', home: data.home?.stats?.turnoverPerGame || 'N/A', away: data.away?.stats?.turnoverPerGame || 'N/A' }
-                        ];
+        async function showGameStats(eventId, homeName, awayName) {
+            try {
+                const scheduleData = await fetchSchedule(currentDate);
+                const game = scheduleData?.events.find(e => e.eventId === eventId)?.event;
+                const gameStatus = game?.status || 'Pre-Game';
+                const hasScores = game?.top.score != null && game?.bottom.score != null;
+                const isLiveOrFinished = hasScores || gameStatus === 'In Progress' || gameStatus === 'Final';
 
-                        let html = '';
-                        stats.forEach(stat => {
-                            const homeValue = parseFloat(stat.home) || 0;
-                            const awayValue = parseFloat(stat.away) || 0;
-                            const max = Math.max(homeValue, awayValue, 1);
-                            const homeWidth = (homeValue / max) * 100;
-                            const awayWidth = (awayValue / max) * 100;
+                let data;
+                if (isLiveOrFinished) {
+                    const gameStatsUrl = `https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/event/${eventId}/stats?brand=tsn&type=json`;
+                    const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(gameStatsUrl)}`);
+                    data = await response.json();
+                } else {
+                    const seasonStatsUrl = `https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/event/${eventId}/competitorSeasonStats?brand=tsn&type=json`;
+                    const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(seasonStatsUrl)}`);
+                    data = await response.json();
+                }
 
-                            html += `
+                modalTitle.textContent = `${homeName} vs ${awayName}`;
+                homeTeamName.textContent = homeName;
+                awayTeamName.textContent = awayName;
+
+                if (data && (data.away || data.home)) {
+                    const stats = isLiveOrFinished ? [
+                        { label: 'PONTOS', home: game?.bottom.score || '0', away: game?.top.score || '0' },
+                        { label: 'PONTOS SOFRIDOS', home: game?.top.score || '0', away: game?.bottom.score || '0' },
+                        { label: '% DE ARREMESSOS CERTOS', home: data.home.stats?.fieldGoalsPercentage ? `${(parseFloat(data.home.stats.fieldGoalsPercentage) * 100).toFixed(1)}%` : 'N/A', away: data.away.stats?.fieldGoalsPercentage ? `${(parseFloat(data.away.stats.fieldGoalsPercentage) * 100).toFixed(1)}%` : 'N/A' },
+                        { label: '% DE LANCES LIVRES', home: data.home.stats?.freeThrowsPercentage ? `${(parseFloat(data.home.stats.freeThrowsPercentage) * 100).toFixed(1)}%` : 'N/A', away: data.away.stats?.freeThrowsPercentage ? `${(parseFloat(data.away.stats.freeThrowsPercentage) * 100).toFixed(1)}%` : 'N/A' },
+                        { label: '% DE ARREMESSOS DE 3 PONTOS', home: data.home.stats?.threePointPercentage ? `${(parseFloat(data.home.stats.threePointPercentage) * 100).toFixed(1)}%` : 'N/A', away: data.away.stats?.threePointPercentage ? `${(parseFloat(data.away.stats.threePointPercentage) * 100).toFixed(1)}%` : 'N/A' },
+                        { label: 'REBOTES', home: data.home.stats?.reboundsTotal || '0', away: data.away.stats?.reboundsTotal || '0' },
+                        { label: 'REBOTES OFENSIVOS / DEFENSIVOS', home: 'N/A', away: 'N/A' },
+                        { label: 'ASSISTÊNCIAS', home: data.home.stats?.assists || '0', away: data.away.stats?.assists || '0' },
+                        { label: 'TOCOS', home: data.home.stats?.blockedShots || '0', away: data.away.stats?.blockedShots || '0' },
+                        { label: 'ROUBOS DE BOLA', home: data.home.stats?.steals || '0', away: data.away.stats?.steals || '0' },
+                        { label: 'ERROS DE POSSE', home: data.home.stats?.turnovers || '0', away: data.away.stats?.turnovers || '0' }
+                    ] : [
+                        { label: 'PONTOS POR JOGO', home: data.home?.stats?.pointsForPerGame || 'N/A', away: data.away?.stats?.pointsForPerGame || 'N/A' },
+                        { label: 'PONTOS SOFRIDOS POR JOGO', home: data.home?.stats?.pointsAgainstPerGame || 'N/A', away: data.away?.stats?.pointsAgainstPerGame || 'N/A' },
+                        { label: '% DE ARREMESSOS CERTOS', home: data.home?.stats?.fieldGoalsPercentage ? `${(parseFloat(data.home.stats.fieldGoalsPercentage) * 100).toFixed(1)}%` : 'N/A', away: data.away.stats?.fieldGoalsPercentage ? `${(parseFloat(data.away.stats.fieldGoalsPercentage) * 100).toFixed(1)}%` : 'N/A' },
+                        { label: '% DE LANCES LIVRES', home: data.home?.stats?.freeThrowsPercentage ? `${(parseFloat(data.home.stats.freeThrowsPercentage) * 100).toFixed(1)}%` : 'N/A', away: data.away?.stats?.freeThrowsPercentage ? `${(parseFloat(data.away.stats.freeThrowsPercentage) * 100).toFixed(1)}%` : 'N/A' },
+                        { label: '% DE ARREMESSOS DE 3 PONTOS', home: data.home?.stats?.threePointPercentage ? `${(parseFloat(data.home.stats.threePointPercentage) * 100).toFixed(1)}%` : 'N/A', away: data.away?.stats?.threePointPercentage ? `${(parseFloat(data.away.stats.threePointPercentage) * 100).toFixed(1)}%` : 'N/A' },
+                        { label: 'REBOTES POR JOGO', home: data.home?.stats?.reboundsPerGame || 'N/A', away: data.away?.stats?.reboundsPerGame || 'N/A' },
+                        { label: 'REBOTES OFENSIVOS / DEFENSIVOS POR JOGO', home: `${data.home?.stats?.offensiveReboundsPerGame || 'N/A'} / ${data.home?.stats?.defensiveReboundsPerGame || 'N/A'}`, away: `${data.away?.stats?.offensiveReboundsPerGame || 'N/A'} / ${data.away?.stats?.defensiveReboundsPerGame || 'N/A'}` },
+                        { label: 'ASSISTÊNCIAS POR JOGO', home: data.home?.stats?.assistsPerGame || 'N/A', away: data.away?.stats?.assistsPerGame || 'N/A' },
+                        { label: 'TOCOS POR JOGO', home: data.home?.stats?.blocksPerGame || 'N/A', away: data.away?.stats?.blocksPerGame || 'N/A' },
+                        { label: 'ROUBOS DE BOLA POR JOGO', home: data.home?.stats?.stealsPerGame || 'N/A', away: data.away?.stats?.stealsPerGame || 'N/A' },
+                        { label: 'ERROS DE POSSE POR JOGO', home: data.home?.stats?.turnoverPerGame || 'N/A', away: data.away?.stats?.turnoverPerGame || 'N/A' }
+                    ];
+
+                    let html = '';
+                    stats.forEach(stat => {
+                        const homeValue = parseFloat(stat.home) || 0;
+                        const awayValue = parseFloat(stat.away) || 0;
+                        const max = Math.max(homeValue, awayValue, 1);
+                        const homeWidth = (homeValue / max) * 100;
+                        const awayWidth = (awayValue / max) * 100;
+
+                        html += `
                             <div class="stat-row">
                                 <div class="stat-value home">${stat.home}</div>
                                 <div class="stat-label">${stat.label}</div>
@@ -711,31 +828,30 @@
                                 <div class="stat-bar away" style="width: ${awayWidth}%"></div>
                             </div>
                         `;
-                        });
-                        statsContent.innerHTML = html;
-                    } else {
-                        statsContent.innerHTML = `<div class="stat-row"><div class="stat-label" style="width: 100%; text-align: center;">Estatísticas não disponíveis</div></div>`;
-                    }
-                    modal.style.display = 'flex';
-                } catch (error) {
-                    console.error('Failed to load game stats:', error);
-                    statsContent.innerHTML = `
+                    });
+                    statsContent.innerHTML = html;
+                } else {
+                    statsContent.innerHTML = `<div class="stat-row"><div class="stat-label" style="width: 100%; text-align: center;">Estatísticas não disponíveis</div></div>`;
+                }
+                modal.style.display = 'flex';
+            } catch (error) {
+                console.error('Failed to load game stats:', error);
+                statsContent.innerHTML = `
                     <div class="error">Erro ao carregar estatísticas</div>
                     <div class="error-details">${error.message}</div>
                     <button class="retry-btn" onclick="showGameStats('${eventId}', '${homeName}', '${awayName}')">Tentar Novamente</button>
                 `;
-                    modal.style.display = 'flex';
-                }
+                modal.style.display = 'flex';
             }
+        }
 
-            closeModalBtn.addEventListener('click', () => modal.style.display = 'none');
-            window.addEventListener('click', (event) => {
-                if (event.target === modal) modal.style.display = 'none';
-            });
+        closeModalBtn.addEventListener('click', () => modal.style.display = 'none');
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) modal.style.display = 'none';
+        });
 
-            // Inicializa a aplicação
-            renderTabs();
-        </script>
+        // Inicializa a aplicação
+        renderTabs();
+    </script>
 </body>
-
 </html>
