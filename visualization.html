@@ -67,6 +67,7 @@
             width: 20px;
             height: 20px;
         }
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -505,13 +506,22 @@
 
 <body>
     <a href="dashboard.html" class="dashboard-button">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="3" width="7" height="7"></rect>
             <rect x="14" y="3" width="7" height="7"></rect>
             <rect x="14" y="14" width="7" height="7"></rect>
             <rect x="3" y="14" width="7" height="7"></rect>
         </svg>
         Dashboard
+    </a>
+    <a href="NBA.html" class="nba-button">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 2a10 10 0 0 1 10 10M12 2v20M2 12h20M4 7h16M4 17h16"></path>
+        </svg>
+        NBA Stats
     </a>
     <a href="live.html" class="live-button">
         <span class="live-dot"></span>
@@ -857,3 +867,35 @@
 </body>
 
 </html>
+
+<style>
+    .nba-button {
+        position: fixed;
+        top: 80px;
+        left: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 15px;
+        background: linear-gradient(145deg, #1c1c1c, #2a004d);
+        border-radius: 8px;
+        color: #ffffff;
+        text-decoration: none;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        border: 1px solid #8B00FF;
+        z-index: 1000;
+    }
+
+    .nba-button:hover {
+        background: linear-gradient(45deg, #8B00FF, #00DDEB);
+        box-shadow: 0 0 15px rgba(139, 0, 255, 0.7);
+        transform: translateY(-2px);
+    }
+
+    .nba-button svg {
+        width: 20px;
+        height: 20px;
+    }
+</style>
