@@ -26,6 +26,8 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            padding: 20px;
+            position: relative;
         }
 
         .header {
@@ -33,6 +35,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
+            padding: 0 20px;
         }
 
         .header h1 {
@@ -43,6 +46,30 @@
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 10px rgba(139, 0, 255, 0.5);
             margin: 0;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin: 0 auto 30px;
+            padding: 10px 20px;
+            overflow-x: auto;
+            white-space: nowrap;
+            justify-content: center;
+            width: 100%;
+            max-width: 800px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .nav-buttons {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 2;
         }
 
         .logo {
@@ -895,37 +922,49 @@
         display: flex;
         align-items: center;
         gap: 20px;
-        position: fixed;
+        position: absolute;
         top: 20px;
         right: 20px;
-        z-index: 1000;
+        z-index: 2;
     }
 
     .container {
         max-width: 1200px;
         margin: 0 auto;
-        padding-top: 60px;
+        padding: 20px;
         position: relative;
     }
 
     .header {
         display: flex;
-        justify-content: flex-start;
+        justify-content: space-between;
         align-items: center;
         margin-bottom: 30px;
-        position: relative;
+        padding: 0 20px;
+    }
+
+    .header h1 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 36px;
+        background: linear-gradient(90deg, #8B00FF, #00DDEB);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 10px rgba(139, 0, 255, 0.5);
+        margin: 0;
     }
 
     .tabs {
         display: flex;
         gap: 10px;
         margin: 0 auto 30px;
+        padding: 10px 20px;
         overflow-x: auto;
         white-space: nowrap;
-        padding: 5px 0;
         justify-content: center;
         width: 100%;
         max-width: 800px;
+        position: relative;
+        z-index: 1;
     }
 
     .viz-button {
