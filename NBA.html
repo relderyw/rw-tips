@@ -30,13 +30,15 @@
             position: relative;
         }
 
-        /* Header Styles */
+        /* Header Styles - FIXED */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
             padding: 0 20px;
+            position: relative;
+            /* Important for absolute positioning of children */
         }
 
         .header h1 {
@@ -47,6 +49,19 @@
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 10px rgba(139, 0, 255, 0.5);
             margin: 0;
+            /* This ensures the title is properly visible */
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Navigation Styles - FIXED */
+        .nav-buttons {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            /* Changed from absolute to relative positioning */
+            position: relative;
+            z-index: 2;
         }
 
         .logo {
@@ -59,17 +74,6 @@
             display: flex;
             align-items: center;
             gap: 5px;
-        }
-
-        /* Navigation Styles */
-        .nav-buttons {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 2;
         }
 
         .viz-button {
@@ -102,7 +106,7 @@
             height: 20px;
         }
 
-        /* Tab Navigation */
+        /* Tab Navigation - FIXED */
         .tabs {
             display: flex;
             gap: 10px;
@@ -113,11 +117,13 @@
             justify-content: center;
             width: 100%;
             max-width: 800px;
+            /* Ensure tabs are visible and not overlapped */
             position: relative;
             z-index: 1;
         }
 
-        .tab {
+        .tab,
+        .tab-button {
             background: linear-gradient(45deg, #2a004d, #004d66);
             padding: 12px 24px;
             border-radius: 8px;
@@ -130,18 +136,20 @@
             border: 1px solid #8B00FF;
         }
 
-        .tab:hover {
+        .tab:hover,
+        .tab-button:hover {
             background: linear-gradient(45deg, #8B00FF, #00DDEB);
             box-shadow: 0 0 15px rgba(139, 0, 255, 0.7);
             transform: translateY(-2px);
         }
 
-        .tab.active {
+        .tab.active,
+        .tab-button.active {
             background: linear-gradient(45deg, #8B00FF, #00DDEB);
             box-shadow: 0 0 15px rgba(139, 0, 255, 0.7);
         }
 
-        /* Schedule Section */
+        /* Schedule Section - FIXED */
         .schedule {
             background: linear-gradient(145deg, #1c1c1c, #2a004d);
             border-radius: 10px;
@@ -149,7 +157,8 @@
             box-shadow: 0 0 20px rgba(139, 0, 255, 0.2);
         }
 
-        .day-header {
+        .day-header,
+        .date-header {
             background: linear-gradient(90deg, #FF0057, #8B00FF);
             padding: 15px;
             font-family: 'Orbitron', sans-serif;
@@ -159,10 +168,12 @@
             text-align: center;
         }
 
-        /* Match Styles */
-        .match {
-            display: flex;
-            flex-direction: column;
+        /* Game Card Styles - FIXED */
+        .match,
+        .game-card {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 15px;
             align-items: center;
             padding: 20px;
             border-bottom: 1px solid rgba(139, 0, 255, 0.3);
@@ -170,153 +181,42 @@
             position: relative;
         }
 
-        .match:hover {
+        .match:hover,
+        .game-card:hover {
             background: rgba(139, 0, 255, 0.1);
             box-shadow: inset 0 0 10px rgba(139, 0, 255, 0.3);
         }
 
-        .match:last-child {
+        .match:last-child,
+        .game-card:last-child {
             border-bottom: none;
         }
 
-        /* Live Game Styles */
-        .match.live-game {
-            border-left: 5px solid #FF0057;
-            background: rgba(255, 0, 87, 0.1);
-            animation: livePulse 2s infinite;
-        }
-
-        .match.final-game {
-            opacity: 0.8;
-            background: rgba(30, 30, 30, 0.5);
-        }
-
-        @keyframes livePulse {
-            0% {
-                box-shadow: 0 0 5px rgba(255, 0, 87, 0.5);
-            }
-
-            50% {
-                box-shadow: 0 0 20px rgba(255, 0, 87, 0.8);
-            }
-
-            100% {
-                box-shadow: 0 0 5px rgba(255, 0, 87, 0.5);
-            }
-        }
-
-        .live-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #FF0057;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-            font-family: 'Orbitron', sans-serif;
-            animation: pulse 1.5s infinite;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .live-badge::before {
-            content: '';
-            display: block;
-            width: 8px;
-            height: 8px;
-            background: white;
-            border-radius: 50%;
-            animation: blink 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                opacity: 0.7;
-            }
-
-            50% {
-                opacity: 1;
-            }
-
-            100% {
-                opacity: 0.7;
-            }
-        }
-
-        @keyframes blink {
-            0% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.5;
-            }
-
-            100% {
-                opacity: 1;
-            }
-        }
-
-        .match-header {
-            font-family: 'Roboto', sans-serif;
-            font-size: 14px;
-            color: #00DDEB;
-            text-shadow: 0 0 5px rgba(0, 221, 235, 0.3);
-            margin-bottom: 10px;
-        }
-
-        /* Team Display */
-        .teams {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            width: 100%;
-            margin-bottom: 10px;
-        }
-
-        .team {
+        /* Team Display - FIXED */
+        .team,
+        .team-info {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 5px;
-            font-size: 16px;
-            flex: 1;
             text-align: center;
         }
 
-        .team img {
-            width: 50px;
-            height: 50px;
+        .team img,
+        .team-logo {
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             box-shadow: 0 0 8px rgba(0, 221, 235, 0.5);
+            object-fit: contain;
         }
 
         .team-name {
             font-family: 'Roboto', sans-serif;
-            color: #ffffff;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-        }
-
-        .team-city {
-            font-size: 18px;
-            font-weight: bold;
-            color: #ffffff;
-        }
-
-        .team-nickname {
-            font-size: 14px;
-            opacity: 0.8;
             color: #00DDEB;
-            text-shadow: 0 0 5px rgba(0, 221, 235, 0.5);
+            font-size: 16px;
+            text-shadow: 0 0 5px rgba(0, 221, 235, 0.3);
+            margin: 5px 0;
         }
 
         .team-record {
@@ -324,77 +224,51 @@
             font-size: 14px;
         }
 
-        .wins {
-            color: #00FF00;
-            text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
-        }
-
-        .losses {
+        .team-record.losing {
             color: #FF0057;
             text-shadow: 0 0 5px rgba(255, 0, 87, 0.3);
         }
 
-        .team .winner {
-            color: #00FF00;
-            text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
-            font-size: 14px;
-        }
-
-        /* Versus and Score */
-        .versus {
+        /* Score Display - FIXED */
+        .versus,
+        .game-score {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 5px;
-        }
-
-        .score {
             font-family: 'Orbitron', sans-serif;
-            font-size: 32px;
+            font-size: 28px;
             background: linear-gradient(90deg, #FF0057, #00DDEB);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 8px rgba(255, 0, 87, 0.5);
+            text-align: center;
         }
 
-        .score-updated {
-            animation: pulse 1s ease-in-out;
+        .game-time {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            color: #00DDEB;
+            text-shadow: 0 0 5px rgba(0, 221, 235, 0.3);
+            text-align: center;
         }
 
-        .status {
+        .status,
+        .final-tag {
             font-family: 'Roboto', sans-serif;
             font-size: 12px;
             padding: 5px 10px;
             border-radius: 15px;
             text-transform: uppercase;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-        }
-
-        .status.in-progress {
-            background: #FF0057;
-            color: #ffffff;
-            animation: pulse 1.5s infinite;
-        }
-
-        .status.final {
             background: #555;
             color: #ccc;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+            margin: 5px 0;
         }
 
-        .time {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 24px;
-            color: #00DDEB;
-            text-shadow: 0 0 5px rgba(0, 221, 235, 0.3);
-        }
-
-        /* Detail Buttons */
-        .details {
-            margin-top: 10px;
-        }
-
-        .details button {
+        /* Button Styles - FIXED */
+        .details button,
+        .stats-button {
             background: linear-gradient(45deg, #8B00FF, #00DDEB);
             border: none;
             padding: 8px 16px;
@@ -406,51 +280,16 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 0 10px rgba(139, 0, 255, 0.5);
+            display: block;
+            margin: 10px auto 0;
+            width: auto;
         }
 
-        .details button:hover {
+        .details button:hover,
+        .stats-button:hover {
             transform: scale(1.05);
             box-shadow: 0 0 15px rgba(0, 221, 235, 0.8);
             background: linear-gradient(45deg, #00DDEB, #8B00FF);
-        }
-
-        /* Error Messages */
-        .error {
-            color: #FF0057;
-            padding: 15px;
-            text-align: center;
-            font-family: 'Roboto', sans-serif;
-            text-shadow: 0 0 5px rgba(255, 0, 87, 0.3);
-        }
-
-        .error-details {
-            font-family: 'Roboto', sans-serif;
-            font-size: 14px;
-            color: #ffffff;
-            text-align: center;
-            margin-top: 10px;
-        }
-
-        .retry-btn {
-            background: linear-gradient(45deg, #FF0057, #8B00FF);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
-            color: #ffffff;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 14px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 10px rgba(255, 0, 87, 0.5);
-            display: block;
-            margin: 10px auto;
-        }
-
-        .retry-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(139, 0, 255, 0.8);
-            background: linear-gradient(45deg, #8B00FF, #FF0057);
         }
 
         /* Modal Styles */
@@ -508,74 +347,29 @@
             text-shadow: 0 0 5px rgba(0, 221, 235, 0.5);
         }
 
-        /* Stats Section */
-        .stats-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            padding: 0 20px;
-        }
+        /* Responsive Styling */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
 
-        .stats-header span {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 22px;
-            color: #ffffff;
-            text-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
-            width: 33%;
-            text-align: center;
-            font-weight: bold;
-            letter-spacing: 1.5px;
-        }
+            .nav-buttons {
+                margin-top: 20px;
+                position: static;
+            }
 
-        .stat-row {
-            display: grid;
-            grid-template-columns: 1fr 2fr 1fr;
-            align-items: center;
-            margin: 10px 0;
-            padding: 5px 0;
-            border-bottom: 1px solid rgba(139, 0, 255, 0.2);
-        }
+            .match,
+            .game-card {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
 
-        .stat-value {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 16px;
-            text-align: center;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
-        }
-
-        .stat-label {
-            font-family: 'Roboto', sans-serif;
-            font-size: 14px;
-            color: #00DDEB;
-            text-shadow: 0 0 5px rgba(0, 221, 235, 0.3);
-            text-align: center;
-            text-transform: uppercase;
-        }
-
-        .stat-bar-container {
-            display: flex;
-            justify-content: center;
-            gap: 4px;
-            margin: 0 auto;
-            width: 100%;
-            max-width: 400px;
-            padding: 0 20px;
-        }
-
-        .stat-bar {
-            height: 6px;
-            border-radius: 3px;
-            transition: width 0.5s ease;
-        }
-
-        .stat-bar.home {
-            background: linear-gradient(90deg, #5D76A9, #00DDEB);
-            box-shadow: 0 0 8px rgba(0, 221, 235, 0.5);
-        }
-
-        .stat-bar.away {
-            background: linear-gradient(90deg, #C8102E, #FF0057);
-            box-shadow: 0 0 8px rgba(255, 0, 87, 0.5);
+            .versus,
+            .game-score {
+                margin: 15px 0;
+            }
         }
     </style>
 </head>
