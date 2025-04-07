@@ -895,10 +895,37 @@
         display: flex;
         align-items: center;
         gap: 20px;
-        position: absolute;
+        position: fixed;
         top: 20px;
         right: 20px;
-        z-index: 10;
+        z-index: 1000;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding-top: 60px;
+        position: relative;
+    }
+
+    .header {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        margin-bottom: 30px;
+        position: relative;
+    }
+
+    .tabs {
+        display: flex;
+        gap: 10px;
+        margin: 0 auto 30px;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding: 5px 0;
+        justify-content: center;
+        width: 100%;
+        max-width: 800px;
     }
 
     .viz-button {
