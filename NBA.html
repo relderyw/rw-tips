@@ -201,34 +201,37 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background: #2a004d;
+            object-fit: cover;
             border: 2px solid #8B00FF;
+            box-shadow: 0 0 10px rgba(139, 0, 255, 0.5);
         }
 
         .leader-info {
             flex-grow: 1;
         }
 
-        .leader-info .position {
-            display: inline-block;
+        .position {
+            display: block;
             font-size: 12px;
-            padding: 2px 6px;
-            background: #8B00FF;
-            border-radius: 4px;
-            margin-bottom: 4px;
+            color: #00DDEB;
+            text-shadow: 0 0 5px rgba(0, 221, 235, 0.3);
         }
 
-        .leader-info .name {
+        .name {
             display: block;
             font-size: 14px;
             font-weight: bold;
+            color: #ffffff;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
         }
 
         .stat {
             font-family: 'Orbitron', sans-serif;
-            font-size: 20px;
-            color: #00DDEB;
-            text-shadow: 0 0 8px rgba(0, 221, 235, 0.5);
+            font-size: 18px;
+            color: #FFD700;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+            min-width: 60px;
+            text-align: right;
         }
 
         @keyframes livePulse {
@@ -689,7 +692,7 @@
             <div class="logo">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</div>
         </div>
         <div class="tabs" id="tabs"></div>
-        <div id="teamLeaders" style="display: none;">
+        <div id="teamLeaders">
             <div class="team-leaders-container">
                 <h2 class="section-title">TEAM LEADERS</h2>
                 <div class="leaders-grid">
@@ -756,29 +759,34 @@
                     'points': { title: 'POINTS PER GAME', key: 'ppg' },
                     'rebounds': { title: 'REBOUNDS/GAME', key: 'rpg' },
                     'assists': { title: 'ASSISTS/GAME', key: 'apg' },
-                    'blocks': { title: 'BLOCKS/GAME', key: 'bpg' }
+                    'blocks': { title: 'BLOCKS/GAME', key: 'bpg' },
+                    'steals': { title: 'STEALS/GAME', key: 'spg' }
                 };
 
                 Object.entries(categories).forEach(([category, info]) => {
-                    const categoryLeaders = leaders[category].slice(0, 2);
+                    const categoryLeaders = leaders[category]?.slice(0, 2) || [];
                     const container = document.querySelector(`[data-category="${category}"]`);
                     if (container) {
                         container.innerHTML = categoryLeaders.map(player => `
                             <div class="leader-team">
-                                <img src="${player.photoUrl || ''}" alt="${player.name}" class="leader-photo">
+                                <img src="${player.photoUrl || 'https://cdn.nba.com/headshots/nba/latest/260x190/logoman.png'}" 
+                                     alt="${player.name}" 
+                                     class="leader-photo"
+                                     onerror="this.src='https://cdn.nba.com/headshots/nba/latest/260x190/logoman.png'">
                                 <div class="leader-info">
-                                    <span class="position">${player.position}</span>
+                                    <span class="position">${player.position || ''}</span>
                                     <span class="name">${player.name}</span>
                                 </div>
-                                <div class="stat">${player[info.key]}</div>
+                                <div class="stat">${player[info.key] || '0.0'}</div>
                             </div>
                         `).join('');
                     }
                 });
-
-                document.getElementById('teamLeaders').style.display = 'block';
             } catch (error) {
                 console.error('Error updating team leaders:', error);
+                document.querySelectorAll('.leader-stats').forEach(container => {
+                    container.innerHTML = '<div class="error-message">Unable to load stats</div>';
+                });
             }
         }
 
@@ -1051,7 +1059,7 @@
                     // Function to get team leaders
                     const getTeamLeaders = (teamData) => {
                         if (!teamData || !teamData.playerStatsByCategory) return {};
-                        
+
                         const leaders = {
                             points: null,
                             rebounds: null,
@@ -1059,7 +1067,7 @@
                             blocks: null,
                             steals: null
                         };
-                        
+
                         // Points leader
                         if (teamData.playerStatsByCategory.pointsAverage && teamData.playerStatsByCategory.pointsAverage[0]) {
                             leaders.points = {
@@ -1069,7 +1077,7 @@
                                 value: teamData.playerStatsByCategory.pointsAverage[0].stats.pointsAverage
                             };
                         }
-                        
+
                         // Rebounds leader
                         if (teamData.playerStatsByCategory.reboundsPerGame && teamData.playerStatsByCategory.reboundsPerGame[0]) {
                             leaders.rebounds = {
@@ -1079,7 +1087,7 @@
                                 value: teamData.playerStatsByCategory.reboundsPerGame[0].stats.reboundsPerGame
                             };
                         }
-                        
+
                         // Assists leader
                         if (teamData.playerStatsByCategory.assistsPerGame && teamData.playerStatsByCategory.assistsPerGame[0]) {
                             leaders.assists = {
@@ -1089,7 +1097,7 @@
                                 value: teamData.playerStatsByCategory.assistsPerGame[0].stats.assistsPerGame
                             };
                         }
-                        
+
                         // Blocks leader
                         if (teamData.playerStatsByCategory.blocksPerGame && teamData.playerStatsByCategory.blocksPerGame[0]) {
                             leaders.blocks = {
@@ -1099,7 +1107,7 @@
                                 value: teamData.playerStatsByCategory.blocksPerGame[0].stats.blocksPerGame
                             };
                         }
-                        
+
                         // Steals leader
                         if (teamData.playerStatsByCategory.stealsPerGame && teamData.playerStatsByCategory.stealsPerGame[0]) {
                             leaders.steals = {
@@ -1109,10 +1117,10 @@
                                 value: teamData.playerStatsByCategory.stealsPerGame[0].stats.stealsPerGame
                             };
                         }
-                        
+
                         return leaders;
                     };
-                    
+
                     const homeLeaders = getTeamLeaders(data.home);
                     const awayLeaders = getTeamLeaders(data.away);
 
