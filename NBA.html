@@ -658,108 +658,23 @@
                 <div class="leaders-grid">
                     <div class="leader-category">
                         <h3>POINTS PER GAME</h3>
-                        <div class="leader-stats">
-                            <div class="leader-team">
-                                <img src="" alt="" class="leader-photo">
-                                <div class="leader-info">
-                                    <span class="position">G</span>
-                                    <span class="name">Coby White</span>
-                                </div>
-                                <div class="stat">20.7</div>
-                            </div>
-                            <div class="leader-team">
-                                <img src="" alt="" class="leader-photo">
-                                <div class="leader-info">
-                                    <span class="position">G</span>
-                                    <span class="name">Donovan Mitchell</span>
-                                </div>
-                                <div class="stat">24.0</div>
-                            </div>
-                        </div>
+                        <div class="leader-stats" data-category="points"></div>
                     </div>
                     <div class="leader-category">
                         <h3>REBOUNDS/GAME</h3>
-                        <div class="leader-stats">
-                            <div class="leader-team">
-                                <img src="" alt="" class="leader-photo">
-                                <div class="leader-info">
-                                    <span class="position">C</span>
-                                    <span class="name">Nikola Vucevic</span>
-                                </div>
-                                <div class="stat">10.1</div>
-                            </div>
-                            <div class="leader-team">
-                                <img src="" alt="" class="leader-photo">
-                                <div class="leader-info">
-                                    <span class="position">C</span>
-                                    <span class="name">Jarrett Allen</span>
-                                </div>
-                                <div class="stat">9.8</div>
-                            </div>
-                        </div>
+                        <div class="leader-stats" data-category="rebounds"></div>
                     </div>
                     <div class="leader-category">
                         <h3>ASSISTS/GAME</h3>
-                        <div class="leader-stats">
-                            <div class="leader-team">
-                                <img src="" alt="" class="leader-photo">
-                                <div class="leader-info">
-                                    <span class="position">G</span>
-                                    <span class="name">Josh Giddey</span>
-                                </div>
-                                <div class="stat">7.1</div>
-                            </div>
-                            <div class="leader-team">
-                                <img src="" alt="" class="leader-photo">
-                                <div class="leader-info">
-                                    <span class="position">PG</span>
-                                    <span class="name">Darius Garland</span>
-                                </div>
-                                <div class="stat">6.7</div>
-                            </div>
-                        </div>
+                        <div class="leader-stats" data-category="assists"></div>
                     </div>
                     <div class="leader-category">
                         <h3>BLOCKS/GAME</h3>
-                        <div class="leader-stats">
-                            <div class="leader-team">
-                                <img src="" alt="" class="leader-photo">
-                                <div class="leader-info">
-                                    <span class="position">F</span>
-                                    <span class="name">Matas Buzelis</span>
-                                </div>
-                                <div class="stat">0.9</div>
-                            </div>
-                            <div class="leader-team">
-                                <img src="" alt="" class="leader-photo">
-                                <div class="leader-info">
-                                    <span class="position">F/C</span>
-                                    <span class="name">Evan Mobley</span>
-                                </div>
-                                <div class="stat">1.6</div>
-                            </div>
-                        </div>
+                        <div class="leader-stats" data-category="blocks"></div>
                     </div>
                     <div class="leader-category">
                         <h3>STEALS/GAME</h3>
-                        <div class="leader-stats">
-                            <div class="leader-team">
-                                <img src="" alt="" class="leader-photo">
-                                <div class="leader-info">
-                                    <span class="position">G</span>
-                                    <span class="name">Lonzo Ball</span>
-                                </div>
-                                <div class="stat">1.3</div>
-                            </div>
-                            <div class="leader-team">
-                                <img src="" alt="" class="leader-photo">
-                                <div class="leader-info">
-                                    <span class="position">G</span>
-                                    <span class="name">Donovan Mitchell</span>
-                                </div>
-                                <div class="stat">1.3</div>
-                            </div>
-                        </div>
+                        <div class="leader-stats" data-category="steals"></div>
                     </div>
                 </div>
             </div>
@@ -782,6 +697,55 @@
     </div>
     <script>
         const tabsDiv = document.querySelector('#tabs');
+        async function fetchTeamLeaders() {
+            const apiUrl = 'https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/leaders?brand=tsn&type=json';
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
+            try {
+                const response = await fetch(proxyUrl);
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching team leaders:', error);
+                throw error;
+            }
+        }
+
+        async function updateTeamLeaders() {
+            try {
+                const leaders = await fetchTeamLeaders();
+                const categories = {
+                    'points': { title: 'POINTS PER GAME', key: 'ppg' },
+                    'rebounds': { title: 'REBOUNDS/GAME', key: 'rpg' },
+                    'assists': { title: 'ASSISTS/GAME', key: 'apg' },
+                    'blocks': { title: 'BLOCKS/GAME', key: 'bpg' }
+                };
+
+                Object.entries(categories).forEach(([category, info]) => {
+                    const categoryLeaders = leaders[category].slice(0, 2);
+                    const container = document.querySelector(`[data-category="${category}"]`);
+                    if (container) {
+                        container.innerHTML = categoryLeaders.map(player => `
+                            <div class="leader-team">
+                                <img src="${player.photoUrl || ''}" alt="${player.name}" class="leader-photo">
+                                <div class="leader-info">
+                                    <span class="position">${player.position}</span>
+                                    <span class="name">${player.name}</span>
+                                </div>
+                                <div class="stat">${player[info.key]}</div>
+                            </div>
+                        `).join('');
+                    }
+                });
+
+                document.getElementById('teamLeaders').style.display = 'block';
+            } catch (error) {
+                console.error('Error updating team leaders:', error);
+            }
+        }
+
+        // Call updateTeamLeaders when the page loads
+        document.addEventListener('DOMContentLoaded', updateTeamLeaders);
         const scheduleDiv = document.querySelector('#schedule');
         let currentDate = null;
         let autoUpdateInterval = null;
