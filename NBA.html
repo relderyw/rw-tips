@@ -639,6 +639,43 @@
             box-shadow: 0 0 15px rgba(0, 221, 235, 0.8);
             background: linear-gradient(45deg, #00DDEB, #8B00FF);
         }
+
+        .team-leaders {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(139, 0, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .team-leaders-section {
+            width: 45%;
+        }
+
+        .team-leaders-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #00DDEB;
+            text-shadow: 0 0 8px rgba(0, 221, 235, 0.5);
+        }
+
+        .leader-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+
+        .leader-category-label {
+            color: #00DDEB;
+        }
+
+        .leader-player-info {
+            text-align: right;
+        }
     </style>
 </head>
 
@@ -692,6 +729,7 @@
                 <span></span>
                 <span id="awayTeamName"></span>
             </div>
+            <div id="teamLeadersContainer"></div>
             <div id="statsContent"></div>
         </div>
     </div>
@@ -755,6 +793,7 @@
         const modalTitle = document.querySelector('#modalTitle');
         const awayTeamName = document.querySelector('#awayTeamName');
         const homeTeamName = document.querySelector('#homeTeamName');
+        const teamLeadersContainer = document.querySelector('#teamLeadersContainer');
         const statsContent = document.querySelector('#statsContent');
         const closeModalBtn = document.querySelector('#closeModal');
 
@@ -1009,6 +1048,109 @@
                 awayTeamName.textContent = awayName;
 
                 if (data && (data.away || data.home)) {
+                    // Function to get team leaders
+                    const getTeamLeaders = (teamData) => {
+                        if (!teamData || !teamData.playerStatsByCategory) return {};
+                        
+                        const leaders = {
+                            points: null,
+                            rebounds: null,
+                            assists: null,
+                            blocks: null,
+                            steals: null
+                        };
+                        
+                        // Points leader
+                        if (teamData.playerStatsByCategory.pointsAverage && teamData.playerStatsByCategory.pointsAverage[0]) {
+                            leaders.points = {
+                                name: teamData.playerStatsByCategory.pointsAverage[0].player.displayName,
+                                position: teamData.playerStatsByCategory.pointsAverage[0].player.positionShort,
+                                number: teamData.playerStatsByCategory.pointsAverage[0].player.number,
+                                value: teamData.playerStatsByCategory.pointsAverage[0].stats.pointsAverage
+                            };
+                        }
+                        
+                        // Rebounds leader
+                        if (teamData.playerStatsByCategory.reboundsPerGame && teamData.playerStatsByCategory.reboundsPerGame[0]) {
+                            leaders.rebounds = {
+                                name: teamData.playerStatsByCategory.reboundsPerGame[0].player.displayName,
+                                position: teamData.playerStatsByCategory.reboundsPerGame[0].player.positionShort,
+                                number: teamData.playerStatsByCategory.reboundsPerGame[0].player.number,
+                                value: teamData.playerStatsByCategory.reboundsPerGame[0].stats.reboundsPerGame
+                            };
+                        }
+                        
+                        // Assists leader
+                        if (teamData.playerStatsByCategory.assistsPerGame && teamData.playerStatsByCategory.assistsPerGame[0]) {
+                            leaders.assists = {
+                                name: teamData.playerStatsByCategory.assistsPerGame[0].player.displayName,
+                                position: teamData.playerStatsByCategory.assistsPerGame[0].player.positionShort,
+                                number: teamData.playerStatsByCategory.assistsPerGame[0].player.number,
+                                value: teamData.playerStatsByCategory.assistsPerGame[0].stats.assistsPerGame
+                            };
+                        }
+                        
+                        // Blocks leader
+                        if (teamData.playerStatsByCategory.blocksPerGame && teamData.playerStatsByCategory.blocksPerGame[0]) {
+                            leaders.blocks = {
+                                name: teamData.playerStatsByCategory.blocksPerGame[0].player.displayName,
+                                position: teamData.playerStatsByCategory.blocksPerGame[0].player.positionShort,
+                                number: teamData.playerStatsByCategory.blocksPerGame[0].player.number,
+                                value: teamData.playerStatsByCategory.blocksPerGame[0].stats.blocksPerGame
+                            };
+                        }
+                        
+                        // Steals leader
+                        if (teamData.playerStatsByCategory.stealsPerGame && teamData.playerStatsByCategory.stealsPerGame[0]) {
+                            leaders.steals = {
+                                name: teamData.playerStatsByCategory.stealsPerGame[0].player.displayName,
+                                position: teamData.playerStatsByCategory.stealsPerGame[0].player.positionShort,
+                                number: teamData.playerStatsByCategory.stealsPerGame[0].player.number,
+                                value: teamData.playerStatsByCategory.stealsPerGame[0].stats.stealsPerGame
+                            };
+                        }
+                        
+                        return leaders;
+                    };
+                    
+                    const homeLeaders = getTeamLeaders(data.home);
+                    const awayLeaders = getTeamLeaders(data.away);
+
+                    // Create team leaders HTML
+                    const createLeadersHTML = (leaders) => {
+                        return `
+                            <div class="team-leaders-section">
+                                <div class="leader-row">
+                                    <span class="leader-category-label">PTS</span>
+                                    <span class="leader-player-info">${leaders.points ? `${leaders.points.position} ${leaders.points.number} | ${leaders.points.name} ${leaders.points.value}` : 'N/A'}</span>
+                                </div>
+                                <div class="leader-row">
+                                    <span class="leader-category-label">REB</span>
+                                    <span class="leader-player-info">${leaders.rebounds ? `${leaders.rebounds.position} ${leaders.rebounds.number} | ${leaders.rebounds.name} ${leaders.rebounds.value}` : 'N/A'}</span>
+                                </div>
+                                <div class="leader-row">
+                                    <span class="leader-category-label">AST</span>
+                                    <span class="leader-player-info">${leaders.assists ? `${leaders.assists.position} ${leaders.assists.number} | ${leaders.assists.name} ${leaders.assists.value}` : 'N/A'}</span>
+                                </div>
+                                <div class="leader-row">
+                                    <span class="leader-category-label">BLK</span>
+                                    <span class="leader-player-info">${leaders.blocks ? `${leaders.blocks.position} ${leaders.blocks.number} | ${leaders.blocks.name} ${leaders.blocks.value}` : 'N/A'}</span>
+                                </div>
+                                <div class="leader-row">
+                                    <span class="leader-category-label">STL</span>
+                                    <span class="leader-player-info">${leaders.steals ? `${leaders.steals.position} ${leaders.steals.number} | ${leaders.steals.name} ${leaders.steals.value}` : 'N/A'}</span>
+                                </div>
+                            </div>
+                        `;
+                    };
+
+                    teamLeadersContainer.innerHTML = `
+                        <div class="team-leaders">
+                            ${createLeadersHTML(homeLeaders)}
+                            ${createLeadersHTML(awayLeaders)}
+                        </div>
+                    `;
+
                     const stats = isLiveOrFinished ? [
                         { label: 'PONTOS', home: game?.bottom.score || '0', away: game?.top.score || '0' },
                         { label: 'PONTOS SOFRIDOS', home: game?.top.score || '0', away: game?.bottom.score || '0' },
@@ -1057,11 +1199,13 @@
                     });
                     statsContent.innerHTML = html;
                 } else {
+                    teamLeadersContainer.innerHTML = '';
                     statsContent.innerHTML = `<div class="stat-row"><div class="stat-label" style="width: 100%; text-align: center;">Estatísticas não disponíveis</div></div>`;
                 }
                 modal.style.display = 'flex';
             } catch (error) {
                 console.error('Failed to load game stats:', error);
+                teamLeadersContainer.innerHTML = '';
                 statsContent.innerHTML = `
                     <div class="error">Erro ao carregar estatísticas</div>
                     <div class="error-details">${error.message}</div>
