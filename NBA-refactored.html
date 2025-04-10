@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBA Stats - RW Tips</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #1a0033 0%, #0d0d0d 70%);
+            color: #ffffff;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 36px;
+            background: linear-gradient(90deg, #8B00FF, #00DDEB);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(139, 0, 255, 0.5);
+            margin: 0;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 5px;
+        }
+
+        .tab {
+            background: linear-gradient(45deg, #2a004d, #004d66);
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            color: #ffffff;
+            transition: all 0.3s ease;
+            border: 1px solid #8B00FF;
+        }
+
+        .tab:hover {
+            background: linear-gradient(45deg, #8B00FF, #00DDEB);
+            box-shadow: 0 0 15px rgba(139, 0, 255, 0.7);
+            transform: translateY(-2px);
+        }
+
+        .tab.active {
+            background: linear-gradient(45deg, #8B00FF, #00DDEB);
+            box-shadow: 0 0 15px rgba(139, 0, 255, 0.7);
+        }
+
+        .schedule {
+            background: linear-gradient(145deg, #1c1c1c, #2a004d);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(139, 0, 255, 0.2);
+        }
+
+        .day-header {
+            background: linear-gradient(90deg, #FF0057, #8B00FF);
+            padding: 15px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            text-transform: uppercase;
+            text-shadow: 0 0 8px rgba(255, 0, 87, 0.5);
+            text-align: center;
+        }
+
+        .match {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid rgba(139, 0, 255, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .match:hover {
+            background: rgba(139, 0, 255, 0.1);
+            box-shadow: inset 0 0 10px rgba(139, 0, 255, 0.3);
+        }
+
+        .match:last-child {
+            border-bottom: none;
+        }
+
+        /* Estilo para jogos ao vivo */
+        .match.live-game {
+            border-left: 5px solid #FF0057;
+            background: rgba(255, 0, 87, 0.1);
+            animation: livePulse 2s infinite;
+        }
+
+        /* Estilo para jogos finalizados */
+        .match.final-game {
+            opacity: 0.8;
+            background: rgba(30, 30, 30, 0.5);
+        }
+
+        @keyframes livePulse {
+            0% {
+                box-shadow: 0 0 5px rgba(255, 0, 87, 0.5);
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(255, 0, 87, 0.8);
+            }
+
+            100% {
+                box-shadow: 0 0 5px rgba(255, 0, 87, 0.5);
+            }
+        }
+
+        .live-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #FF0057;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-family: 'Orbitron', sans-serif;
+            animation: pulse 1.5s infinite;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .live-badge::before {
+            content: '';
+            display: block;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.7;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.7;
+            }
+        }
+
+        @keyframes blink {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .match-header {
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+            color: #00DDEB;
+            text-shadow: 0 0 5px rgba(0, 221, 235, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .teams {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            font-size: 16px;
+            flex: 1;
+            text-align: center;
+        }
+
+        .team img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(0, 221, 235, 0.5);
+        }
+
+        .team-name {
+            font-family: 'Roboto', sans-serif;
+            color: #ffffff;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .team-city {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .team-nickname {
+            font-size: 14px;
+            opacity: 0.8;
+            color: #00DDEB;
+            text-shadow: 0 0 5px rgba(0, 221, 235, 0.5);
+        }
+
+        .team-record {
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+        }
+
+        .wins {
+            color: #00FF00;
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+        }
+
+        .losses {
+            color: #FF0057;
+            text-shadow: 0 0 5px rgba(255, 0, 87, 0.3);
+        }
+
+        .team .winner {
+            color: #00FF00;
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+            font-size: 14px;
+        }
+
+        .versus {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .score {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 32px;
+            background: linear-gradient(90deg, #FF0057, #00DDEB);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 8px rgba(255, 0, 87, 0.5);
+        }
+
+        .score-updated {
+            animation: pulse 1s ease-in-out;
+        }
+
+        .status {
+            font-family: 'Roboto', sans-serif;
+            font-size: 12px;
+            padding: 5px 10px;
+            border-radius: 15px;
+            text-transform: uppercase;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Status para jogos ao vivo */
+        .status.in-progress {
+            background: #FF0057;
+            color: #ffffff;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Status para jogos finalizados */
+        .status.final {
+            background: #555;
+            color: #ccc;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .time {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            color: #00DDEB;
+            text-shadow: 0 0 5px rgba(0, 221, 235, 0.3);
+        }
+
+        .details {
+            margin-top: 10px;
+        }
+
+        .details button {
+            background: linear-gradient(45deg, #8B00FF, #00DDEB);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(139, 0, 255, 0.5);
+        }
+
+        .details button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 221, 235, 0.8);
+            background: linear-gradient(45deg, #00DDEB, #8B00FF);
+        }
+
+        .error {
+            color: #FF0057;
+            padding: 15px;
+            text-align: center;
+            font-family: 'Roboto', sans-serif;
+            text-shadow: 0 0 5px rgba(255, 0, 87, 0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, #1c1c1c, #2a004d);
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 0 20px rgba(139, 0, 255, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            background: linear-gradient(90deg, #FF0057, #00DDEB);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 8px rgba(255, 0, 87, 0.5);
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #FF0057;
+            font-size: 24px;
+            cursor: pointer;
+            text-shadow: 0 0 5px rgba(255, 0, 87, 0.3);
+        }
+
+        .close-btn:hover {
+            color: #00DDEB;
+            text-shadow: 0 0 5px rgba(0, 221, 235, 0.5);
+        }
+
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
+
+        .stats-header span {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 22px;
+            color: #ffffff;
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+            width: 33%;
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+        }
+
+        .stat-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            align-items: center;
+            margin: 10px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(139, 0, 255, 0.2);
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            text-align: center;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        .stat-label {
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+            color: #00DDEB;
+            text-shadow: 0 0 5px rgba(0, 221, 235, 0.3);
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .stat-bar-container {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 400px;
+            padding: 0 20px;
+        }
+
+        .stat-bar {
+            height: 6px;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .stat-bar.home {
+            background: linear-gradient(90deg, #5D76A9, #00DDEB);
+            box-shadow: 0 0 8px rgba(0, 221, 235, 0.5);
+        }
+
+        .stat-bar.away {
+            background: linear-gradient(90deg, #C8102E, #FF0057);
+            box-shadow: 0 0 8px rgba(255, 0, 87, 0.5);
+        }
+
+        .error-details {
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+            color: #ffffff;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .retry-btn {
+            background: linear-gradient(45deg, #FF0057, #8B00FF);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(255, 0, 87, 0.5);
+            display: block;
+            margin: 10px auto;
+        }
+
+        .retry-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(139, 0, 255, 0.8);
+            background: linear-gradient(45deg, #8B00FF, #FF0057);
+        }
+
+        .nav-buttons {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .viz-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: linear-gradient(145deg, #1c1c1c, #2a004d);
+            border-radius: 12px;
+            color: #ffffff;
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            border: 1px solid #8B00FF;
+            box-shadow: 0 0 10px rgba(139, 0, 255, 0.3);
+        }
+
+        .viz-button:hover {
+            background: linear-gradient(45deg, #8B00FF, #00DDEB);
+            box-shadow: 0 0 20px rgba(139, 0, 255, 0.8);
+            transform: translateY(-2px) scale(1.02);
+            border-color: #00DDEB;
+        }
+
+        .viz-button svg {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CALENDÁRIO NBA</h1>
+            <div class="nav-buttons">
+                <a href="visualization.html" class="viz-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                        <circle cx="12" cy="12" r="3" />
+                    </svg>
+                    Visualização
+                </a>
+                <div class="logo">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</div>
+            </div>
+            <div class="tabs" id="tabs"></div>
+            <div class="schedule" id="schedule"></div>
+        </div>
+        <div class="modal" id="gameStatsModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle"></h2>
+                    <button class="close-btn" id="closeModal">×</button>
+                </div>
+                <div class="stats-header">
+                    <span id="homeTeamName"></span>
+                    <span></span>
+                    <span id="awayTeamName"></span>
+                </div>
+                <div id="statsContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import modular JavaScript files -->
+    <script type="module" src="js/app.js"></script>
+</body>
+
+</html>
