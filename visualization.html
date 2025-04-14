@@ -213,6 +213,39 @@
             box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.1);
         }
 
+        .league-section {
+            margin-bottom: 40px;
+        }
+
+        .league-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .best-player-card {
+            background: linear-gradient(45deg, rgba(108, 92, 231, 0.2), rgba(0, 255, 136, 0.2));
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid var(--accent-color);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .best-player-card h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+        }
+
+        .best-player-card p {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
         .games-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -311,30 +344,6 @@
             padding: 8px;
             background: rgba(0, 0, 0, 0.2);
             border-radius: 8px;
-        }
-
-        .live-match {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .live-match::after {
-            content: 'AO VIVO';
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: var(--danger-color);
-            color: var(--text-primary);
-            padding: 5px 10px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            animation: blink 1s infinite alternate;
-        }
-
-        @keyframes blink {
-            0% { opacity: 1; }
-            100% { opacity: 0.5; }
         }
 
         .metrics-container {
@@ -505,7 +514,6 @@
             <div class="nav-tabs">
                 <button id="viewUpcomingButton" class="nav-tab active"><span>⚽ Próximos Jogos</span></button>
                 <button id="viewResultsButton" class="nav-tab"><span>🏁 Últimos Resultados</span></button>
-                <button id="viewTopPlayersButton" class="nav-tab"><span>🏆 Melhores Jogadores</span></button>
                 <button id="viewLiveButton" class="nav-tab"><span>📡 Ao Vivo</span></button>
             </div>
 
@@ -522,9 +530,6 @@
             </div>
 
             <div id="gamesContainer" class="games-grid"></div>
-            <div id="resultsContainer" class="games-grid" style="display: none;"></div>
-            <div id="topPlayersContainer" class="games-grid" style="display: none;"></div>
-            <div id="liveContainer" class="games-grid" style="display: none;"></div>
         </div>
 
         <aside class="sidebar-right">
@@ -539,12 +544,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const gamesContainer = document.getElementById('gamesContainer');
-            const resultsContainer = document.getElementById('resultsContainer');
-            const topPlayersContainer = document.getElementById('topPlayersContainer');
-            const liveContainer = document.getElementById('liveContainer');
             const viewUpcomingButton = document.getElementById('viewUpcomingButton');
             const viewResultsButton = document.getElementById('viewResultsButton');
-            const viewTopPlayersButton = document.getElementById('viewTopPlayersButton');
             const viewLiveButton = document.getElementById('viewLiveButton');
             const viewLeagueStatsButton = document.getElementById('viewLeagueStatsButton');
             const registerBetsButton = document.getElementById('registerBetsButton');
@@ -751,6 +752,44 @@
                 }
             }
 
+            function getBestPlayerForLeague(leagueName, games) {
+                const simulatedPlayers = {
+                    "Esoccer Battle - 8 mins play": [
+                        { name: "Smetana", winRate: 80, last5Wins: 4 },
+                        { name: "Endry", winRate: 60, last5Wins: 3 }
+                    ],
+                    "Esoccer Battle Volta - 6 mins play": [
+                        { name: "Ganger_77", winRate: 75, last5Wins: 4 },
+                        { name: "Why", winRate: 55, last5Wins: 3 }
+                    ],
+                    "Esoccer GT Leagues – 12 mins play": [
+                        { name: "Dorian", winRate: 70, last5Wins: 4 },
+                        { name: "Jekun", winRate: 65, last5Wins: 3 }
+                    ],
+                    "Esoccer H2H GG League - 8 mins play": [
+                        { name: "Chester", winRate: 85, last5Wins: 5 },
+                        { name: "Ghost", winRate: 60, last5Wins: 3 }
+                    ],
+                    "Esoccer Adriatic League - 10 mins play": [
+                        { name: "Andrew", winRate: 70, last5Wins: 4 },
+                        { name: "Felix", winRate: 50, last5Wins: 2 }
+                    ]
+                };
+
+                const players = simulatedPlayers[leagueName] || [];
+                if (players.length === 0) {
+                    return {
+                        name: "Nenhum jogador destacado",
+                        winRate: 0,
+                        last5Wins: 0
+                    };
+                }
+
+                return players.reduce((best, player) => {
+                    return player.winRate > best.winRate ? player : best;
+                }, players[0]);
+            }
+
             async function updateGames() {
                 try {
                     const response = await fetch('https://api.green365.com.br/api/league/upcoming?sport=fifa&leagueId=&page=1');
@@ -766,78 +805,115 @@
                         return;
                     }
 
-                    for (const game of games) {
-                        const card = document.createElement('div');
-                        card.className = 'card';
+                    const gamesByLeague = games.reduce((acc, game) => {
+                        const leagueName = game.leagueName || 'Desconhecida';
+                        if (!acc[leagueName]) {
+                            acc[leagueName] = [];
+                        }
+                        acc[leagueName].push(game);
+                        return acc;
+                    }, {});
 
-                        const leagueInfo = getLeagueDisplayName(game.leagueName);
-                        const leagueName = document.createElement('div');
-                        leagueName.className = 'league-name';
-                        leagueName.innerText = leagueInfo.name;
-                        leagueName.style.color = leagueInfo.color;
+                    for (const leagueName in gamesByLeague) {
+                        const leagueSection = document.createElement('div');
+                        leagueSection.className = 'league-section';
 
-                        const teams = document.createElement('div');
-                        teams.className = 'teams';
+                        const leagueInfo = getLeagueDisplayName(leagueName);
+                        const leagueHeader = document.createElement('h2');
+                        leagueHeader.className = 'league-header';
+                        leagueHeader.innerText = leagueInfo.name;
+                        leagueHeader.style.color = leagueInfo.color;
+                        leagueSection.appendChild(leagueHeader);
 
-                        const homePlayer = extractPlayerName(game.home);
-                        const awayPlayer = extractPlayerName(game.away);
+                        const bestPlayer = getBestPlayerForLeague(leagueName, gamesByLeague[leagueName]);
+                        const bestPlayerCard = document.createElement('div');
+                        bestPlayerCard.className = 'best-player-card';
+                        bestPlayerCard.innerHTML = `
+                            <h3>🏆 Melhor Jogador da Liga</h3>
+                            <p>Nome: ${bestPlayer.name}</p>
+                            <p>Taxa de Vitórias: ${bestPlayer.winRate}%</p>
+                            <p>Vitórias nos Últimos 5 Jogos: ${bestPlayer.last5Wins}/5</p>
+                        `;
+                        leagueSection.appendChild(bestPlayerCard);
 
-                        const homeTeam = document.createElement('div');
-                        homeTeam.className = 'team';
-                        homeTeam.innerHTML = `
-                            <img src="${game.homeImage || 'https://via.placeholder.com/60?text=🏠'}" alt="${game.home_team_name || 'Time Desconhecido'}">
-                            <span>${homePlayer}</span>
-                            <span>(${game.home_team_name || 'N/A'})</span>`;
+                        const leagueGamesGrid = document.createElement('div');
+                        leagueGamesGrid.className = 'games-grid';
 
-                        const awayTeam = document.createElement('div');
-                        awayTeam.className = 'team';
-                        awayTeam.innerHTML = `
-                            <img src="${game.awayImage || 'https://via.placeholder.com/60?text=🛡️'}" alt="${game.away_team_name || 'Time Desconhecido'}">
-                            <span>${awayPlayer}</span>
-                            <span>(${game.away_team_name || 'N/A'})</span>`;
+                        for (const game of gamesByLeague[leagueName]) {
+                            const card = document.createElement('div');
+                            card.className = 'card';
 
-                        teams.appendChild(homeTeam);
-                        teams.appendChild(awayTeam);
+                            const leagueNameDiv = document.createElement('div');
+                            leagueNameDiv.className = 'league-name';
+                            leagueNameDiv.innerText = leagueInfo.name;
+                            leagueNameDiv.style.color = leagueInfo.color;
 
-                        const matchTime = document.createElement('div');
-                        matchTime.className = 'match-time';
-                        matchTime.innerText = `${game.day || 'N/A'} ${game.hour || 'N/A'}`;
+                            const teams = document.createElement('div');
+                            teams.className = 'teams';
 
-                        const metricsContainer = document.createElement('div');
-                        metricsContainer.className = 'metrics-container';
-                        metricsContainer.innerHTML = '<div style="text-align: center; padding: 10px;">Carregando métricas...</div>';
+                            const homePlayer = extractPlayerName(game.home);
+                            const awayPlayer = extractPlayerName(game.away);
 
-                        const metrics = await fetchH2HMetrics(game.homeID, game.awayID, game.leagueID, homePlayer, awayPlayer);
-                        if (metrics) {
-                            metricsContainer.innerHTML = metrics.map(metric => `
-                                <div class="metric-item ${metric.isSpecial ? 'special-metric' : ''}">
-                                    <span class="metric-name">
-                                        ${metric.icon} ${metric.name}
-                                        ${metric.isSpecial ? `<br><small class="metric-description">${metric.description}</small>` : ''}
-                                    </span>
-                                    <span class="metric-values">
-                                        <span class="metric-value">${typeof metric.value === 'number' && metric.value % 1 !== 0 ? metric.value.toFixed(1) : metric.value}${metric.name.includes('Form') || metric.name.includes('Avg Goals') ? '' : '%'}</span>
-                                        <span class="metric-raw">(${metric.raw})</span>
-                                    </span>
-                                </div>
-                            `).join('');
-                        } else {
-                            metricsContainer.innerHTML = '<div style="text-align: center; padding: 10px;">Sem dados disponíveis</div>';
+                            const homeTeam = document.createElement('div');
+                            homeTeam.className = 'team';
+                            homeTeam.innerHTML = `
+                                <img src="${game.homeImage || 'https://via.placeholder.com/60?text=🏠'}" alt="${game.home_team_name || 'Time Desconhecido'}">
+                                <span>${homePlayer}</span>
+                                <span>(${game.home_team_name || 'N/A'})</span>`;
+
+                            const awayTeam = document.createElement('div');
+                            awayTeam.className = 'team';
+                            awayTeam.innerHTML = `
+                                <img src="${game.awayImage || 'https://via.placeholder.com/60?text=🛡️'}" alt="${game.away_team_name || 'Time Desconhecido'}">
+                                <span>${awayPlayer}</span>
+                                <span>(${game.away_team_name || 'N/A'})</span>`;
+
+                            teams.appendChild(homeTeam);
+                            teams.appendChild(awayTeam);
+
+                            const matchTime = document.createElement('div');
+                            matchTime.className = 'match-time';
+                            matchTime.innerText = `${game.day || 'N/A'} ${game.hour || 'N/A'}`;
+
+                            const metricsContainer = document.createElement('div');
+                            metricsContainer.className = 'metrics-container';
+                            metricsContainer.innerHTML = '<div style="text-align: center; padding: 10px;">Carregando métricas...</div>';
+
+                            const metrics = await fetchH2HMetrics(game.homeID, game.awayID, game.leagueID, homePlayer, awayPlayer);
+                            if (metrics) {
+                                metricsContainer.innerHTML = metrics.map(metric => `
+                                    <div class="metric-item ${metric.isSpecial ? 'special-metric' : ''}">
+                                        <span class="metric-name">
+                                            ${metric.icon} ${metric.name}
+                                            ${metric.isSpecial ? `<br><small class="metric-description">${metric.description}</small>` : ''}
+                                        </span>
+                                        <span class="metric-values">
+                                            <span class="metric-value">${typeof metric.value === 'number' && metric.value % 1 !== 0 ? metric.value.toFixed(1) : metric.value}${metric.name.includes('Form') || metric.name.includes('Avg Goals') ? '' : '%'}</span>
+                                            <span class="metric-raw">(${metric.raw})</span>
+                                        </span>
+                                    </div>
+                                `).join('');
+                            } else {
+                                metricsContainer.innerHTML = '<div style="text-align: center; padding: 10px;">Sem dados disponíveis</div>';
+                            }
+
+                            const h2hButton = document.createElement('button');
+                            h2hButton.className = 'h2h-button';
+                            h2hButton.innerText = 'Ver H2H';
+                            h2hButton.onclick = () => {
+                                window.location.href = `h2h_analysis.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${game.homeID || ''}&awayID=${game.awayID || ''}&leagueID=${game.leagueID || ''}`;
+                            };
+
+                            card.appendChild(leagueNameDiv);
+                            card.appendChild(teams);
+                            card.appendChild(matchTime);
+                            card.appendChild(metricsContainer);
+                            card.appendChild(h2hButton);
+                            leagueGamesGrid.appendChild(card);
                         }
 
-                        const h2hButton = document.createElement('button');
-                        h2hButton.className = 'h2h-button';
-                        h2hButton.innerText = 'Ver H2H';
-                        h2hButton.onclick = () => {
-                            window.location.href = `h2h_analysis.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${game.homeID || ''}&awayID=${game.awayID || ''}&leagueID=${game.leagueID || ''}`;
-                        };
-
-                        card.appendChild(leagueName);
-                        card.appendChild(teams);
-                        card.appendChild(matchTime);
-                        card.appendChild(metricsContainer);
-                        card.appendChild(h2hButton);
-                        gamesContainer.appendChild(card);
+                        leagueSection.appendChild(leagueGamesGrid);
+                        gamesContainer.appendChild(leagueSection);
                     }
 
                     applyFilters();
@@ -847,221 +923,20 @@
                 }
             }
 
-            async function updateResults() {
-                try {
-                    const response = await fetch('https://api.green365.com.br/api/league/results?sport=fifa&leagueId=&page=1');
-                    if (!response.ok) {
-                        throw new Error(`Erro na API: ${response.status} - ${response.statusText}`);
-                    }
-                    const data = await response.json();
-                    const games = data.data;
-                    resultsContainer.innerHTML = '';
-
-                    if (!games || games.length === 0) {
-                        resultsContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Nenhum resultado disponível no momento.</div>';
-                        return;
-                    }
-
-                    for (const game of games) {
-                        const card = document.createElement('div');
-                        card.className = 'card';
-
-                        const leagueInfo = getLeagueDisplayName(game.leagueName);
-                        const leagueName = document.createElement('div');
-                        leagueName.className = 'league-name';
-                        leagueName.innerText = leagueInfo.name;
-                        leagueName.style.color = leagueInfo.color;
-
-                        const teams = document.createElement('div');
-                        teams.className = 'teams';
-
-                        const homePlayer = extractPlayerName(game.home);
-                        const awayPlayer = extractPlayerName(game.away);
-
-                        const homeTeam = document.createElement('div');
-                        homeTeam.className = 'team';
-                        homeTeam.innerHTML = `
-                            <img src="${game.homeImage || 'https://via.placeholder.com/60?text=🏠'}" alt="${game.home_team_name || 'Time Desconhecido'}">
-                            <span>${homePlayer}</span>
-                            <span>(${game.home_team_name || 'N/A'})</span>`;
-
-                        const awayTeam = document.createElement('div');
-                        awayTeam.className = 'team';
-                        awayTeam.innerHTML = `
-                            <img src="${game.awayImage || 'https://via.placeholder.com/60?text=🛡️'}" alt="${game.away_team_name || 'Time Desconhecido'}">
-                            <span>${awayPlayer}</span>
-                            <span>(${game.away_team_name || 'N/A'})</span>`;
-
-                        teams.appendChild(homeTeam);
-                        teams.appendChild(awayTeam);
-
-                        const matchTime = document.createElement('div');
-                        matchTime.className = 'match-time';
-                        matchTime.innerText = `Finalizado: ${game.day || 'N/A'} ${game.hour || 'N/A'}`;
-
-                        const score = document.createElement('div');
-                        score.className = 'match-time';
-                        score.innerText = `Placar: ${game.score || 'N/A'}`;
-
-                        card.appendChild(leagueName);
-                        card.appendChild(teams);
-                        card.appendChild(matchTime);
-                        card.appendChild(score);
-                        resultsContainer.appendChild(card);
-                    }
-
-                    applyFilters();
-                } catch (error) {
-                    console.error('Erro ao buscar resultados:', error.message);
-                    resultsContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Erro ao carregar resultados. Verifique sua conexão ou tente novamente mais tarde.</div>';
-                }
-            }
-
-            async function updateTopPlayers() {
-                try {
-                    const response = await fetch('https://api.green365.com.br/api/players/top?sport=fifa');
-                    if (!response.ok) {
-                        throw new Error(`Erro na API: ${response.status} - ${response.statusText}`);
-                    }
-                    const data = await response.json();
-                    const players = data.data;
-                    topPlayersContainer.innerHTML = '';
-
-                    if (!players || players.length === 0) {
-                        topPlayersContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Nenhum jogador disponível no momento.</div>';
-                        return;
-                    }
-
-                    for (const player of players) {
-                        const card = document.createElement('div');
-                        card.className = 'card';
-
-                        const playerName = document.createElement('div');
-                        playerName.className = 'league-name';
-                        playerName.innerText = player.name || 'Jogador Desconhecido';
-                        playerName.style.color = '#FFFFFF';
-
-                        const stats = document.createElement('div');
-                        stats.className = 'metrics-container';
-                        stats.innerHTML = `
-                            <div class="metric-item">
-                                <span class="metric-name">🏆 Win Rate</span>
-                                <span class="metric-values">
-                                    <span class="metric-value">${player.winRate || 0}%</span>
-                                </span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="metric-name">⚽ Total Jogos</span>
-                                <span class="metric-values">
-                                    <span class="metric-value">${player.totalGames || 0}</span>
-                                </span>
-                            </div>
-                            <div class="metric-item">
-                                <span class="metric-name">✅ Vitórias</span>
-                                <span class="metric-values">
-                                    <span class="metric-value">${player.wins || 0}</span>
-                                </span>
-                            </div>
-                        `;
-
-                        card.appendChild(playerName);
-                        card.appendChild(stats);
-                        topPlayersContainer.appendChild(card);
-                    }
-                } catch (error) {
-                    console.error('Erro ao buscar melhores jogadores:', error.message);
-                    topPlayersContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Erro ao carregar melhores jogadores. Verifique sua conexão ou tente novamente mais tarde.</div>';
-                }
-            }
-
-            async function updateLiveGames() {
-                try {
-                    const response = await fetch('https://api.green365.com.br/api/league/live?sport=fifa&leagueId=&page=1');
-                    if (!response.ok) {
-                        throw new Error(`Erro na API: ${response.status} - ${response.statusText}`);
-                    }
-                    const data = await response.json();
-                    const games = data.data;
-                    liveContainer.innerHTML = '';
-
-                    if (!games || games.length === 0) {
-                        liveContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Nenhum jogo ao vivo no momento.</div>';
-                        return;
-                    }
-
-                    for (const game of games) {
-                        const card = document.createElement('div');
-                        card.className = 'card live-match';
-
-                        const leagueInfo = getLeagueDisplayName(game.leagueName);
-                        const leagueName = document.createElement('div');
-                        leagueName.className = 'league-name';
-                        leagueName.innerText = leagueInfo.name;
-                        leagueName.style.color = leagueInfo.color;
-
-                        const teams = document.createElement('div');
-                        teams.className = 'teams';
-
-                        const homePlayer = extractPlayerName(game.home);
-                        const awayPlayer = extractPlayerName(game.away);
-
-                        const homeTeam = document.createElement('div');
-                        homeTeam.className = 'team';
-                        homeTeam.innerHTML = `
-                            <img src="${game.homeImage || 'https://via.placeholder.com/60?text=🏠'}" alt="${game.home_team_name || 'Time Desconhecido'}">
-                            <span>${homePlayer}</span>
-                            <span>(${game.home_team_name || 'N/A'})</span>`;
-
-                        const awayTeam = document.createElement('div');
-                        awayTeam.className = 'team';
-                        awayTeam.innerHTML = `
-                            <img src="${game.awayImage || 'https://via.placeholder.com/60?text=🛡️'}" alt="${game.away_team_name || 'Time Desconhecido'}">
-                            <span>${awayPlayer}</span>
-                            <span>(${game.away_team_name || 'N/A'})</span>`;
-
-                        teams.appendChild(homeTeam);
-                        teams.appendChild(awayTeam);
-
-                        const matchTime = document.createElement('div');
-                        matchTime.className = 'match-time';
-                        matchTime.innerText = `Tempo: ${game.currentTime || 'N/A'}`;
-
-                        const score = document.createElement('div');
-                        score.className = 'match-time';
-                        score.innerText = `Placar: ${game.score || '0-0'}`;
-
-                        const h2hButton = document.createElement('button');
-                        h2hButton.className = 'h2h-button';
-                        h2hButton.innerText = 'Ver H2H';
-                        h2hButton.onclick = () => {
-                            window.location.href = `h2h_analysis.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${game.homeID || ''}&awayID=${game.awayID || ''}&leagueID=${game.leagueID || ''}`;
-                        };
-
-                        card.appendChild(leagueName);
-                        card.appendChild(teams);
-                        card.appendChild(matchTime);
-                        card.appendChild(score);
-                        card.appendChild(h2hButton);
-                        liveContainer.appendChild(card);
-                    }
-
-                    applyFilters();
-                } catch (error) {
-                    console.error('Erro ao buscar jogos ao vivo:', error.message);
-                    liveContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Erro ao carregar jogos ao vivo. Verifique sua conexão ou tente novamente mais tarde.</div>';
-                }
-            }
-
             function applyFilters() {
                 const selectedLeague = leagueFilter.value;
                 const searchTerm = searchFilter.value.toLowerCase();
-                const containers = [gamesContainer, resultsContainer, liveContainer, topPlayersContainer];
-                containers.forEach(container => {
-                    const cards = container.getElementsByClassName('card');
-                    for (let i = 0; i < cards.length; i++) {
-                        const leagueNameElement = cards[i].getElementsByClassName('league-name')[0];
-                        const leagueName = leagueNameElement ? leagueNameElement.innerText : '';
-                        const teams = cards[i].getElementsByClassName('team');
+                const leagueSections = gamesContainer.getElementsByClassName('league-section');
+
+                for (let i = 0; i < leagueSections.length; i++) {
+                    const leagueSection = leagueSections[i];
+                    const leagueHeader = leagueSection.getElementsByClassName('league-header')[0];
+                    const leagueName = leagueHeader ? leagueHeader.innerText : '';
+                    const cards = leagueSection.getElementsByClassName('card');
+                    let hasVisibleCards = false;
+
+                    for (let j = 0; j < cards.length; j++) {
+                        const teams = cards[j].getElementsByClassName('team');
                         let homePlayer = '', awayPlayer = '', homeTeam = '', awayTeam = '';
                         if (teams.length >= 2) {
                             homePlayer = teams[0].getElementsByTagName('span')[0]?.innerText.toLowerCase() || '';
@@ -1077,53 +952,29 @@
                             homeTeam.includes(searchTerm) || 
                             awayTeam.includes(searchTerm);
 
-                        cards[i].style.display = leagueMatch && searchMatch ? '' : 'none';
+                        cards[j].style.display = leagueMatch && searchMatch ? '' : 'none';
+                        if (leagueMatch && searchMatch) {
+                            hasVisibleCards = true;
+                        }
                     }
-                });
-            }
 
-            function showContainer(activeContainer) {
-                gamesContainer.style.display = 'none';
-                resultsContainer.style.display = 'none';
-                topPlayersContainer.style.display = 'none';
-                liveContainer.style.display = 'none';
-                activeContainer.style.display = 'grid';
+                    leagueSection.style.display = hasVisibleCards ? '' : 'none';
+                }
             }
 
             viewUpcomingButton.addEventListener('click', () => {
                 viewUpcomingButton.classList.add('active');
                 viewResultsButton.classList.remove('active');
-                viewTopPlayersButton.classList.remove('active');
                 viewLiveButton.classList.remove('active');
-                showContainer(gamesContainer);
                 updateGames();
             });
 
             viewResultsButton.addEventListener('click', () => {
-                viewUpcomingButton.classList.remove('active');
-                viewResultsButton.classList.add('active');
-                viewTopPlayersButton.classList.remove('active');
-                viewLiveButton.classList.remove('active');
-                showContainer(resultsContainer);
-                updateResults();
-            });
-
-            viewTopPlayersButton.addEventListener('click', () => {
-                viewUpcomingButton.classList.remove('active');
-                viewResultsButton.classList.remove('active');
-                viewTopPlayersButton.classList.add('active');
-                viewLiveButton.classList.remove('active');
-                showContainer(topPlayersContainer);
-                updateTopPlayers();
+                window.location.href = 'results.html';
             });
 
             viewLiveButton.addEventListener('click', () => {
-                viewUpcomingButton.classList.remove('active');
-                viewResultsButton.classList.remove('active');
-                viewTopPlayersButton.classList.remove('active');
-                viewLiveButton.classList.add('active');
-                showContainer(liveContainer);
-                updateLiveGames();
+                window.location.href = 'live.html';
             });
 
             viewLeagueStatsButton.addEventListener('click', () => {
@@ -1153,8 +1004,6 @@
             setInterval(() => {
                 if (viewUpcomingButton.classList.contains('active')) {
                     updateGames();
-                } else if (viewLiveButton.classList.contains('active')) {
-                    updateLiveGames();
                 }
             }, 15000);
 
@@ -1162,8 +1011,6 @@
                 if (document.visibilityState === 'visible') {
                     if (viewUpcomingButton.classList.contains('active')) {
                         updateGames();
-                    } else if (viewLiveButton.classList.contains('active')) {
-                        updateLiveGames();
                     }
                 }
             });
@@ -1171,8 +1018,6 @@
             window.addEventListener('focus', () => {
                 if (viewUpcomingButton.classList.contains('active')) {
                     updateGames();
-                } else if (viewLiveButton.classList.contains('active')) {
-                    updateLiveGames();
                 }
             });
 
@@ -1180,8 +1025,6 @@
                 if (event.persisted) {
                     if (viewUpcomingButton.classList.contains('active')) {
                         updateGames();
-                    } else if (viewLiveButton.classList.contains('active')) {
-                        updateLiveGames();
                     }
                 }
             });
@@ -1189,8 +1032,6 @@
             window.addEventListener('popstate', () => {
                 if (viewUpcomingButton.classList.contains('active')) {
                     updateGames();
-                } else if (viewLiveButton.classList.contains('active')) {
-                    updateLiveGames();
                 }
             });
         });
