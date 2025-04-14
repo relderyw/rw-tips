@@ -194,24 +194,31 @@
         }
 
         .league-header {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             font-weight: 600;
             margin-bottom: 15px;
-            padding-bottom: 8px;
+            padding: 8px;
             color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            height: 48px;
+            line-height: 32px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .best-player-card {
             background: var(--card-bg);
             border-radius: 8px;
-            padding: 10px;
+            padding: 15px;
             margin-bottom: 15px;
             border: 2px solid var(--accent-color);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .best-player-card h3 {
-            font-size: 0.9rem;
+            font-size: 1rem;
             font-weight: 600;
             margin-bottom: 5px;
             color: var(--accent-color);
@@ -221,21 +228,21 @@
         }
 
         .best-player-card p {
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             color: var(--text-secondary);
             margin: 2px 0;
         }
 
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
         }
 
         .card {
             background: var(--card-bg);
             border-radius: 8px;
-            padding: 10px;
+            padding: 15px;
             border: 2px solid var(--accent-color);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
@@ -244,10 +251,10 @@
         .card-placeholder {
             background: var(--card-bg);
             border-radius: 8px;
-            padding: 10px;
+            padding: 15px;
             border: 1px solid var(--border-color);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            height: 200px;
+            height: 220px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -265,7 +272,7 @@
             justify-content: space-between;
             align-items: center;
             gap: 10px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .team {
@@ -274,8 +281,8 @@
         }
 
         .team img {
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             margin-bottom: 5px;
             border: 1px solid var(--border-color);
@@ -283,7 +290,7 @@
 
         .team span {
             display: block;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             color: var(--text-primary);
         }
 
@@ -294,22 +301,22 @@
 
         .match-time {
             text-align: center;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: var(--text-secondary);
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .metrics-container {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .metric-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: var(--text-secondary);
-            margin: 3px 0;
+            margin: 4px 0;
         }
 
         .metric-item .metric-name {
@@ -335,19 +342,19 @@
 
         .metric-raw {
             color: var(--text-secondary);
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             margin-left: 5px;
         }
 
         .h2h-button {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
             background: var(--primary-color);
             color: var(--text-primary);
             border: none;
             border-radius: 8px;
             font-weight: 500;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.3s ease;
         }
@@ -371,7 +378,7 @@
             }
 
             .games-grid {
-                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             }
 
             .header {
@@ -381,6 +388,12 @@
             .search-input {
                 width: 180px;
             }
+
+            .league-header {
+                font-size: 1.3rem;
+                height: 44px;
+                line-height: 28px;
+            }
         }
 
         @media (max-width: 768px) {
@@ -389,12 +402,12 @@
             }
 
             .team img {
-                width: 25px;
-                height: 25px;
+                width: 35px;
+                height: 35px;
             }
 
             .team span {
-                font-size: 0.75rem;
+                font-size: 0.85rem;
             }
 
             #leagueFilter, #searchFilter {
@@ -439,6 +452,12 @@
             .sidebar-section h3 {
                 display: none;
             }
+
+            .league-header {
+                font-size: 1.2rem;
+                height: 40px;
+                line-height: 24px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -460,6 +479,12 @@
             .logo-img {
                 width: 35px;
                 height: 35px;
+            }
+
+            .league-header {
+                font-size: 1.1rem;
+                height: 36px;
+                line-height: 20px;
             }
         }
     </style>
@@ -706,14 +731,14 @@
                         const homeTeam = document.createElement('div');
                         homeTeam.className = 'team';
                         homeTeam.innerHTML = `
-                            <img src="${game.homeImage || 'https://via.placeholder.com/30?text=🏠'}" alt="${game.home_team_name || 'Time Desconhecido'}">
+                            <img src="${game.homeImage || 'https://via.placeholder.com/40?text=🏠'}" alt="${game.home_team_name || 'Time Desconhecido'}">
                             <span>${homePlayer}</span>
                             <span>(${game.home_team_name || 'N/A'})</span>`;
 
                         const awayTeam = document.createElement('div');
                         awayTeam.className = 'team';
                         awayTeam.innerHTML = `
-                            <img src="${game.awayImage || 'https://via.placeholder.com/30?text=🛡️'}" alt="${game.away_team_name || 'Time Desconhecido'}">
+                            <img src="${game.awayImage || 'https://via.placeholder.com/40?text=🛡️'}" alt="${game.away_team_name || 'Time Desconhecido'}">
                             <span>${awayPlayer}</span>
                             <span>(${game.away_team_name || 'N/A'})</span>`;
 
