@@ -9,18 +9,15 @@
             --primary-color: #6c5ce7;
             --secondary-color: #a29bfe;
             --background-dark: #0f0f13;
-            --card-bg: #1a1a23;
-            --card-hover: #22222c;
+            --card-bg: #1e1e28;
             --text-primary: #ffffff;
-            --text-secondary: #a0a0a0;
+            --text-secondary: #b0b0b0;
             --accent-color: #00ff88;
-            --danger-color: #ff5252;
-            --success-color: #00ff88;
-            --border-color: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(255, 255, 255, 0.1);
             --gradient-primary: linear-gradient(45deg, #6c5ce7, #00ff88);
-            --gradient-hover: linear-gradient(45deg, #a29bfe, #00ffaa);
             --sidebar-bg: #1a1a23;
             --active-bg: #2ecc71;
+            --header-height: 80px;
         }
 
         * {
@@ -31,7 +28,7 @@
         }
 
         body {
-            background: linear-gradient(135deg, var(--background-dark) 0%, #16161f 100%);
+            background: var(--background-dark);
             color: var(--text-primary);
             min-height: 100vh;
             line-height: 1.6;
@@ -46,6 +43,9 @@
             padding: 15px 30px;
             background: var(--sidebar-bg);
             border-bottom: 1px solid var(--border-color);
+            position: relative;
+            z-index: 100;
+            height: var(--header-height);
         }
 
         .logo-container {
@@ -108,19 +108,31 @@
             position: relative;
         }
 
-        .sidebar-right {
-            width: 200px;
+        .sidebar-left {
+            width: 220px;
             background: var(--sidebar-bg);
             padding: 20px;
-            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             gap: 10px;
             position: fixed;
-            right: 0;
-            top: 0;
+            left: 0;
+            top: var(--header-height);
             bottom: 0;
             overflow-y: auto;
+            z-index: 50;
+        }
+
+        .sidebar-section {
+            margin-bottom: 20px;
+        }
+
+        .sidebar-section h3 {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            padding-left: 10px;
         }
 
         .sidebar-button {
@@ -133,10 +145,11 @@
             padding: 10px 15px;
             border-radius: 8px;
             font-size: 0.9rem;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: left;
+            width: 100%;
         }
 
         .sidebar-button:hover,
@@ -148,44 +161,8 @@
         .content {
             flex: 1;
             padding: 20px;
-            margin-right: 200px;
+            margin-left: 220px;
             overflow-y: auto;
-        }
-
-        .nav-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
-        }
-
-        .nav-tab {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--card-bg);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-            padding: 12px 20px;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .nav-tab.active, .nav-tab:hover {
-            background: var(--gradient-primary);
-            border: none;
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
-        }
-
-        .nav-tab span {
-            display: inline-flex;
-            align-items: center;
         }
 
         .filter-container {
@@ -198,10 +175,10 @@
         #leagueFilter, #searchFilter {
             flex: 1;
             max-width: 300px;
-            padding: 15px;
+            padding: 12px;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 8px;
             color: var(--text-primary);
             font-size: 0.9rem;
             transition: all 0.3s ease;
@@ -210,7 +187,6 @@
         #leagueFilter:focus, #searchFilter:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.1);
         }
 
         .league-section {
@@ -218,92 +194,78 @@
         }
 
         .league-header {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--accent-color);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            color: var(--text-primary);
         }
 
         .best-player-card {
-            background: linear-gradient(45deg, rgba(108, 92, 231, 0.2), rgba(0, 255, 136, 0.2));
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 15px;
             border: 2px solid var(--accent-color);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .best-player-card h3 {
-            font-size: 1.2rem;
+            font-size: 0.9rem;
             font-weight: 600;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .best-player-card p {
-            font-size: 0.9rem;
-            color: var(--text-primary);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin: 2px 0;
         }
 
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 30px;
-            padding: 20px 0;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
         }
 
         .card {
             background: var(--card-bg);
-            border-radius: 16px;
-            padding: 20px;
-            border: 2px solid transparent;
-            background-clip: padding-box;
-            position: relative;
+            border-radius: 8px;
+            padding: 10px;
+            border: 2px solid var(--accent-color);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: 16px;
-            padding: 2px;
-            background: var(--gradient-primary);
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            z-index: -1;
+        .card-placeholder {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            background: var(--card-hover);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .card:hover::before {
-            background: var(--gradient-hover);
-        }
-
-        .league-name {
-            font-weight: 600;
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
         .teams {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
+            gap: 10px;
+            margin-bottom: 8px;
         }
 
         .team {
@@ -312,131 +274,112 @@
         }
 
         .team img {
-            width: 60px;
-            height: 60px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
-            margin-bottom: 8px;
-            border: 2px solid var(--primary-color);
-            padding: 2px;
-            transition: all 0.3s ease;
-        }
-
-        .team:hover img {
-            transform: scale(1.1);
-            border-color: var(--accent-color);
+            margin-bottom: 5px;
+            border: 1px solid var(--border-color);
         }
 
         .team span {
             display: block;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
+            color: var(--text-primary);
         }
 
         .team span:first-of-type {
-            font-weight: 600;
+            font-weight: 500;
             color: var(--accent-color);
         }
 
         .match-time {
             text-align: center;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: var(--text-secondary);
-            margin: 15px 0;
-            padding: 8px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
+            margin-bottom: 8px;
         }
 
         .metrics-container {
-            margin: 15px 0;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 12px;
+            margin-bottom: 8px;
         }
 
         .metric-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
-            border-radius: 8px;
-            margin: 8px 0;
-            background: rgba(108, 92, 231, 0.05);
-            transition: all 0.3s ease;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin: 3px 0;
         }
 
-        .metric-item:hover {
-            background: rgba(108, 92, 231, 0.1);
-            transform: translateX(5px);
-        }
-
-        .special-metric {
-            background: linear-gradient(45deg, rgba(108, 92, 231, 0.1), rgba(0, 255, 136, 0.1));
-            border-left: 4px solid var(--accent-color);
-        }
-
-        .metric-name {
-            color: var(--text-primary);
-            font-weight: 500;
-            font-size: 0.9rem;
+        .metric-item .metric-name {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 5px;
         }
 
-        .metric-description {
+        .metric-item .metric-name::before {
+            content: '⬤';
             color: var(--accent-color);
-            font-size: 0.7em;
-            margin-top: 4px;
-            display: block;
+            font-size: 0.6rem;
         }
 
-        .metric-values {
-            text-align: right;
+        .metric-item.special .metric-name::before {
+            content: '👑';
+            font-size: 0.8rem;
         }
 
         .metric-value {
-            font-size: 1em;
-            font-weight: 600;
-            color: var(--accent-color);
+            color: var(--text-primary);
         }
 
         .metric-raw {
             color: var(--text-secondary);
-            font-size: 0.8em;
-            margin-left: 8px;
+            font-size: 0.7rem;
+            margin-left: 5px;
         }
 
         .h2h-button {
             width: 100%;
-            padding: 12px;
-            background: var(--gradient-primary);
+            padding: 8px;
+            background: var(--primary-color);
             color: var(--text-primary);
             border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-transform: uppercase;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.8rem;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
         .h2h-button:hover {
-            background: var(--gradient-hover);
-            transform: translateY(-2px);
+            background: var(--secondary-color);
         }
 
         @media (max-width: 1024px) {
-            .sidebar-right {
-                width: 150px;
+            .sidebar-left {
+                width: 180px;
             }
 
             .content {
-                margin-right: 150px;
+                margin-left: 180px;
             }
 
             .sidebar-button {
                 font-size: 0.8rem;
-                padding: 8px 10px;
+                padding: 8px 12px;
+            }
+
+            .games-grid {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            }
+
+            .header {
+                padding: 15px 20px;
+            }
+
+            .search-input {
+                width: 180px;
             }
         }
 
@@ -446,27 +389,16 @@
             }
 
             .team img {
-                width: 50px;
-                height: 50px;
+                width: 25px;
+                height: 25px;
             }
 
             .team span {
-                font-size: 0.8rem;
+                font-size: 0.75rem;
             }
 
             #leagueFilter, #searchFilter {
                 max-width: 100%;
-            }
-
-            .nav-tabs {
-                flex-wrap: wrap;
-                gap: 8px;
-            }
-
-            .nav-tab {
-                flex: 1;
-                text-align: center;
-                padding: 10px;
             }
 
             .logo-img {
@@ -478,12 +410,20 @@
                 font-size: 1.2rem;
             }
 
-            .sidebar-right {
+            .header {
+                padding: 15px 10px 15px 70px;
+            }
+
+            .search-input {
+                width: 150px;
+            }
+
+            .sidebar-left {
                 width: 60px;
             }
 
             .content {
-                margin-right: 60px;
+                margin-left: 60px;
             }
 
             .sidebar-button {
@@ -494,6 +434,32 @@
 
             .sidebar-button span {
                 display: none;
+            }
+
+            .sidebar-section h3 {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 10px 10px 10px 70px;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .search-input {
+                width: 100%;
+                max-width: 200px;
+            }
+
+            .logo-text {
+                font-size: 1rem;
+            }
+
+            .logo-img {
+                width: 35px;
+                height: 35px;
             }
         }
     </style>
@@ -510,13 +476,24 @@
     </header>
 
     <div class="main-container">
-        <div class="content">
-            <div class="nav-tabs">
-                <button id="viewUpcomingButton" class="nav-tab active"><span>⚽ Próximos Jogos</span></button>
-                <button id="viewResultsButton" class="nav-tab"><span>🏁 Últimos Resultados</span></button>
-                <button id="viewLiveButton" class="nav-tab"><span>📡 Ao Vivo</span></button>
+        <aside class="sidebar-left">
+            <div class="sidebar-section">
+                <h3>Navegação</h3>
+                <button id="viewUpcomingButton" class="sidebar-button active"><span>⚽</span> Próximos Jogos</button>
+                <button id="viewResultsButton" class="sidebar-button"><span>🏁</span> Últimos Resultados</button>
+                <button id="viewLiveButton" class="sidebar-button"><span>📡</span> Ao Vivo</button>
             </div>
+            <div class="sidebar-section">
+                <h3>Ações</h3>
+                <button id="viewLeagueStatsButton" class="sidebar-button"><span>📊</span> Estatísticas das Ligas</button>
+                <button id="registerBetsButton" class="sidebar-button"><span>💰</span> Registrar Apostas</button>
+                <button id="viewPlayerAnalysisButton" class="sidebar-button"><span>👤</span> Análise de Jogadores</button>
+                <button id="dashboardButton" class="sidebar-button"><span>📋</span> Dashboard</button>
+                <button id="nbaStatsButton" class="sidebar-button"><span>🏀</span> NBA Stats</button>
+            </div>
+        </aside>
 
+        <div class="content">
             <div class="filter-container">
                 <select id="leagueFilter">
                     <option value="">Todas as Ligas</option>
@@ -531,14 +508,6 @@
 
             <div id="gamesContainer" class="games-grid"></div>
         </div>
-
-        <aside class="sidebar-right">
-            <button id="viewLeagueStatsButton" class="sidebar-button"><span>📊</span> Estatísticas das Ligas</button>
-            <button id="registerBetsButton" class="sidebar-button"><span>💰</span> Registrar Apostas</button>
-            <button id="viewPlayerAnalysisButton" class="sidebar-button"><span>👤</span> Análise de Jogadores</button>
-            <button id="dashboardButton" class="sidebar-button"><span>📋</span> Dashboard</button>
-            <button id="nbaStatsButton" class="sidebar-button"><span>🏀</span> NBA Stats</button>
-        </aside>
     </div>
 
     <script>
@@ -555,7 +524,7 @@
             const leagueFilter = document.getElementById('leagueFilter');
             const searchFilter = document.getElementById('searchFilter');
 
-            let h2hErrorLogged = false;
+            let gamesData = null;
 
             function extractPlayerName(text) {
                 if (!text || typeof text !== 'string') return 'Desconhecido';
@@ -574,185 +543,7 @@
                 return leagueMappings[leagueName] || { name: leagueName || 'Desconhecida', color: "#FFFFFF" };
             }
 
-            function processH2HStats(lastGames) {
-                if (!Array.isArray(lastGames)) return null;
-
-                let stats = {
-                    totalGames: lastGames.length,
-                    over1_5HT: 0,
-                    over2_5HT: 0,
-                    over2_5FT: 0,
-                    over3_5FT: 0,
-                    over4_5FT: 0,
-                    bttsHT: 0,
-                    bttsFT: 0,
-                    totalGoalsHT: 0,
-                    totalGoalsFT: 0,
-                    winHome: 0,
-                    winAway: 0,
-                    draw: 0
-                };
-
-                lastGames.forEach(game => {
-                    const [homeGoals, awayGoals] = (game.score || '0-0').split('-').map(Number);
-                    const [homeHT, awayHT] = (game.scoreHT || '0-0').split('-').map(Number);
-
-                    const totalGoalsHT = homeHT + awayHT;
-                    const totalGoalsFT = homeGoals + awayGoals;
-
-                    stats.totalGoalsHT += totalGoalsHT;
-                    stats.totalGoalsFT += totalGoalsFT;
-
-                    if (totalGoalsHT > 1) stats.over1_5HT++;
-                    if (totalGoalsHT > 2) stats.over2_5HT++;
-                    if (homeHT > 0 && awayHT > 0) stats.bttsHT++;
-
-                    if (totalGoalsFT > 2) stats.over2_5FT++;
-                    if (totalGoalsFT > 3) stats.over3_5FT++;
-                    if (totalGoalsFT > 4) stats.over4_5FT++;
-                    if (homeGoals > 0 && awayGoals > 0) stats.bttsFT++;
-
-                    if (homeGoals > awayGoals) stats.winHome++;
-                    else if (awayGoals > homeGoals) stats.winAway++;
-                    else stats.draw++;
-                });
-
-                return stats;
-            }
-
-            function getLeagueTrend(leagueID) {
-                const leagueTrends = {
-                    '22614': { avgGoals: 3.5, over2_5Rate: 75 },
-                    'default': { avgGoals: 2.8, over2_5Rate: 60 }
-                };
-                return leagueTrends[leagueID] || leagueTrends['default'];
-            }
-
-            function getPlayerForm(playerName) {
-                const playerForms = {
-                    'Smetana': { winRate: 80, last5Wins: 4 },
-                    'Endry': { winRate: 60, last5Wins: 3 },
-                    'default': { winRate: 50, last5Wins: 2 }
-                };
-                return playerForms[playerName] || playerForms['default'];
-            }
-
-            function getFallbackMetrics(homePlayer, awayPlayer, leagueID) {
-                return [
-                    { name: 'Over 2.5 FT', value: 70, raw: 'N/A', icon: '⚽' },
-                    { name: 'Over 3.5 FT', value: 50, raw: 'N/A', icon: '⚽' },
-                    { name: `${homePlayer}`, value: 60, raw: 'N/A', isSpecial: true, icon: '👑', description: 'Over 2.5 FT' },
-                    { name: `${awayPlayer}`, value: 40, raw: 'N/A', isSpecial: true, icon: '👑', description: 'Over 2.5 FT' },
-                    { name: 'League Avg Goals', value: 2.8, raw: 'Over 2.5: 60%', icon: '📊' },
-                    { name: `${homePlayer} Form`, value: 50, raw: 'Wins: 2/5', icon: '🏆' },
-                    { name: `${awayPlayer} Form`, value: 50, raw: 'Wins: 2/5', icon: '🏆' }
-                ];
-            }
-
-            function getTopMetrics(stats, homePlayer, awayPlayer, leagueID) {
-                if (!stats) return getFallbackMetrics(homePlayer, awayPlayer, leagueID);
-
-                const totalGames = stats.totalGames;
-
-                const metrics = [
-                    { name: 'Over 2.5 FT', value: (stats.over2_5FT / totalGames) * 100, raw: `${stats.over2_5FT}/${totalGames}`, icon: '⚽' },
-                    { name: 'Over 3.5 FT', value: (stats.over3_5FT / totalGames) * 100, raw: `${stats.over3_5FT}/${totalGames}`, icon: '⚽' }
-                ];
-
-                const homeWinRate = (stats.winHome / totalGames) * 100;
-                const awayWinRate = (stats.winAway / totalGames) * 100;
-
-                const highProbMetrics = metrics.filter(metric => metric.value >= 80);
-                let finalMetrics = [...highProbMetrics];
-
-                if (highProbMetrics.length > 0) {
-                    const bestMetric = highProbMetrics[0];
-                    if (homeWinRate >= 35) {
-                        finalMetrics.push({
-                            name: `${homePlayer}`,
-                            value: homeWinRate,
-                            raw: `${stats.winHome}/${totalGames}`,
-                            isSpecial: true,
-                            icon: '👑',
-                            description: bestMetric.name
-                        });
-                    }
-                    if (awayWinRate >= 35) {
-                        finalMetrics.push({
-                            name: `${awayPlayer}`,
-                            value: awayWinRate,
-                            raw: `${stats.winAway}/${totalGames}`,
-                            isSpecial: true,
-                            icon: '👑',
-                            description: bestMetric.name
-                        });
-                    }
-                }
-
-                const leagueTrend = getLeagueTrend(leagueID);
-                finalMetrics.push({
-                    name: 'League Avg Goals',
-                    value: leagueTrend.avgGoals,
-                    raw: `Over 2.5: ${leagueTrend.over2_5Rate}%`,
-                    icon: '📊'
-                });
-
-                const homeForm = getPlayerForm(homePlayer);
-                const awayForm = getPlayerForm(awayPlayer);
-                finalMetrics.push({
-                    name: `${homePlayer} Form`,
-                    value: homeForm.winRate,
-                    raw: `Wins: ${homeForm.last5Wins}/5`,
-                    icon: '🏆'
-                });
-                finalMetrics.push({
-                    name: `${awayPlayer} Form`,
-                    value: awayForm.winRate,
-                    raw: `Wins: ${awayForm.last5Wins}/5`,
-                    icon: '🏆'
-                });
-
-                return finalMetrics;
-            }
-
-            async function fetchH2HMetrics(homeID, awayID, leagueID, homePlayer, awayPlayer) {
-                if (!homeID || !awayID || !leagueID || !homePlayer || !awayPlayer) {
-                    if (!h2hErrorLogged) {
-                        console.error('Parâmetros inválidos para buscar métricas H2H:', { homeID, awayID, leagueID, homePlayer, awayPlayer });
-                        h2hErrorLogged = true;
-                    }
-                    return null;
-                }
-
-                let apiUrl;
-                if (leagueID === '22614') {
-                    apiUrl = `https://api.green365.com.br/api/e-soccer/event/stats?homeID=${homeID}&awayID=${awayID}&home=${encodeURIComponent(homePlayer.toLowerCase())}&away=${encodeURIComponent(awayPlayer.toLowerCase())}&homeTeam=&awayTeam=&league=${leagueID}&eventID=0&period=last_30`;
-                } else {
-                    apiUrl = `https://api.green365.com.br/api/e-soccer/event/stats?homeID=${homeID}&awayID=${awayID}&home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&league=${leagueID}&eventID=0&period=last_30`;
-                }
-
-                try {
-                    const response = await fetch(apiUrl);
-                    if (!response.ok) {
-                        throw new Error(`Erro na API: ${response.status} - ${response.statusText}`);
-                    }
-                    const data = await response.json();
-                    if (!data || !data.mutualInfos || !Array.isArray(data.mutualInfos.lastGames)) {
-                        throw new Error('Estrutura de dados inválida retornada pela API');
-                    }
-                    const h2hStats = processH2HStats(data.mutualInfos.lastGames);
-                    return getTopMetrics(h2hStats, homePlayer, awayPlayer, leagueID);
-                } catch (error) {
-                    if (!h2hErrorLogged) {
-                        console.error('Erro ao buscar métricas H2H:', error.message);
-                        console.error('URL da API:', apiUrl);
-                        h2hErrorLogged = true;
-                    }
-                    return null;
-                }
-            }
-
-            function getBestPlayerForLeague(leagueName, games) {
+            function getBestPlayerForLeague(leagueName) {
                 const simulatedPlayers = {
                     "Esoccer Battle - 8 mins play": [
                         { name: "Smetana", winRate: 80, last5Wins: 4 },
@@ -790,140 +581,183 @@
                 }, players[0]);
             }
 
+            function getSimulatedMetrics(leagueName, homePlayer, awayPlayer) {
+                const simulatedMetrics = {
+                    "Esoccer Battle - 8 mins play": [
+                        { name: "Over 2.5 FT", value: 90, raw: "(27/30)" },
+                        { name: "Over 3.5 FT", value: 86, raw: "(26/30)" },
+                        { name: "Smetana Over 2.5 FT", value: 83, raw: "(25/30)", isSpecial: true },
+                        { name: "League Avg Goals", value: 2.8, raw: "(Over 2.5: 60%)" },
+                        { name: "Smetana Form", value: 80, raw: "(Wins: 4/5)", isSpecial: true }
+                    ],
+                    "Esoccer Battle Volta - 6 mins play": [
+                        { name: "Over 2.5 FT", value: 100, raw: "(30/30)" },
+                        { name: "Over 3.5 FT", value: 93, raw: "(28/30)" },
+                        { name: "Ganger_77 Over 2.5 FT", value: 87, raw: "(26/30)", isSpecial: true },
+                        { name: "League Avg Goals", value: 3.0, raw: "(Over 2.5: 70%)" },
+                        { name: "Ganger_77 Form", value: 75, raw: "(Wins: 4/5)", isSpecial: true }
+                    ],
+                    "Esoccer GT Leagues – 12 mins play": [
+                        { name: "Over 2.5 FT", value: 100, raw: "(30/30)" },
+                        { name: "Over 3.5 FT", value: 86, raw: "(26/30)" },
+                        { name: "Dorian Over 2.5 FT", value: 83, raw: "(25/30)", isSpecial: true },
+                        { name: "League Avg Goals", value: 2.8, raw: "(Over 2.5: 60%)" },
+                        { name: "Dorian Form", value: 70, raw: "(Wins: 4/5)", isSpecial: true }
+                    ],
+                    "Esoccer H2H GG League - 8 mins play": [
+                        { name: "Over 2.5 FT", value: 90, raw: "(27/30)" },
+                        { name: "Over 3.5 FT", value: 80, raw: "(24/30)" },
+                        { name: "Chester Form", value: 85, raw: "(Wins: 5/5)", isSpecial: true },
+                        { name: "League Avg Goals", value: 2.6, raw: "(Over 2.5: 55%)" },
+                        { name: "Chester Over 2.5 FT", value: 80, raw: "(24/30)", isSpecial: true }
+                    ],
+                    "Esoccer Adriatic League - 10 mins play": [
+                        { name: "Over 2.5 FT", value: 85, raw: "(25/30)" },
+                        { name: "Over 3.5 FT", value: 70, raw: "(21/30)" },
+                        { name: "Andrew Form", value: 70, raw: "(Wins: 4/5)", isSpecial: true },
+                        { name: "League Avg Goals", value: 2.5, raw: "(Over 2.5: 50%)" },
+                        { name: "Andrew Over 2.5 FT", value: 75, raw: "(22/30)", isSpecial: true }
+                    ]
+                };
+
+                return simulatedMetrics[leagueName] || [
+                    { name: "Over 2.5 FT", value: 80, raw: "(24/30)" },
+                    { name: "Over 3.5 FT", value: 60, raw: "(18/30)" },
+                    { name: "League Avg Goals", value: 2.5, raw: "(Over 2.5: 50%)" }
+                ];
+            }
+
             async function updateGames() {
+                gamesContainer.innerHTML = '';
+                const placeholderCount = 6;
+                for (let i = 0; i < placeholderCount; i++) {
+                    const placeholder = document.createElement('div');
+                    placeholder.className = 'card-placeholder';
+                    placeholder.innerText = 'Carregando...';
+                    gamesContainer.appendChild(placeholder);
+                }
+
                 try {
                     const response = await fetch('https://api.green365.com.br/api/league/upcoming?sport=fifa&leagueId=&page=1');
                     if (!response.ok) {
                         throw new Error(`Erro na API: ${response.status} - ${response.statusText}`);
                     }
                     const data = await response.json();
-                    const games = data.data;
-                    gamesContainer.innerHTML = '';
-
-                    if (!games || games.length === 0) {
-                        gamesContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Nenhum jogo disponível no momento.</div>';
-                        return;
-                    }
-
-                    const gamesByLeague = games.reduce((acc, game) => {
-                        const leagueName = game.leagueName || 'Desconhecida';
-                        if (!acc[leagueName]) {
-                            acc[leagueName] = [];
-                        }
-                        acc[leagueName].push(game);
-                        return acc;
-                    }, {});
-
-                    for (const leagueName in gamesByLeague) {
-                        const leagueSection = document.createElement('div');
-                        leagueSection.className = 'league-section';
-
-                        const leagueInfo = getLeagueDisplayName(leagueName);
-                        const leagueHeader = document.createElement('h2');
-                        leagueHeader.className = 'league-header';
-                        leagueHeader.innerText = leagueInfo.name;
-                        leagueHeader.style.color = leagueInfo.color;
-                        leagueSection.appendChild(leagueHeader);
-
-                        const bestPlayer = getBestPlayerForLeague(leagueName, gamesByLeague[leagueName]);
-                        const bestPlayerCard = document.createElement('div');
-                        bestPlayerCard.className = 'best-player-card';
-                        bestPlayerCard.innerHTML = `
-                            <h3>🏆 Melhor Jogador da Liga</h3>
-                            <p>Nome: ${bestPlayer.name}</p>
-                            <p>Taxa de Vitórias: ${bestPlayer.winRate}%</p>
-                            <p>Vitórias nos Últimos 5 Jogos: ${bestPlayer.last5Wins}/5</p>
-                        `;
-                        leagueSection.appendChild(bestPlayerCard);
-
-                        const leagueGamesGrid = document.createElement('div');
-                        leagueGamesGrid.className = 'games-grid';
-
-                        for (const game of gamesByLeague[leagueName]) {
-                            const card = document.createElement('div');
-                            card.className = 'card';
-
-                            const leagueNameDiv = document.createElement('div');
-                            leagueNameDiv.className = 'league-name';
-                            leagueNameDiv.innerText = leagueInfo.name;
-                            leagueNameDiv.style.color = leagueInfo.color;
-
-                            const teams = document.createElement('div');
-                            teams.className = 'teams';
-
-                            const homePlayer = extractPlayerName(game.home);
-                            const awayPlayer = extractPlayerName(game.away);
-
-                            const homeTeam = document.createElement('div');
-                            homeTeam.className = 'team';
-                            homeTeam.innerHTML = `
-                                <img src="${game.homeImage || 'https://via.placeholder.com/60?text=🏠'}" alt="${game.home_team_name || 'Time Desconhecido'}">
-                                <span>${homePlayer}</span>
-                                <span>(${game.home_team_name || 'N/A'})</span>`;
-
-                            const awayTeam = document.createElement('div');
-                            awayTeam.className = 'team';
-                            awayTeam.innerHTML = `
-                                <img src="${game.awayImage || 'https://via.placeholder.com/60?text=🛡️'}" alt="${game.away_team_name || 'Time Desconhecido'}">
-                                <span>${awayPlayer}</span>
-                                <span>(${game.away_team_name || 'N/A'})</span>`;
-
-                            teams.appendChild(homeTeam);
-                            teams.appendChild(awayTeam);
-
-                            const matchTime = document.createElement('div');
-                            matchTime.className = 'match-time';
-                            matchTime.innerText = `${game.day || 'N/A'} ${game.hour || 'N/A'}`;
-
-                            const metricsContainer = document.createElement('div');
-                            metricsContainer.className = 'metrics-container';
-                            metricsContainer.innerHTML = '<div style="text-align: center; padding: 10px;">Carregando métricas...</div>';
-
-                            const metrics = await fetchH2HMetrics(game.homeID, game.awayID, game.leagueID, homePlayer, awayPlayer);
-                            if (metrics) {
-                                metricsContainer.innerHTML = metrics.map(metric => `
-                                    <div class="metric-item ${metric.isSpecial ? 'special-metric' : ''}">
-                                        <span class="metric-name">
-                                            ${metric.icon} ${metric.name}
-                                            ${metric.isSpecial ? `<br><small class="metric-description">${metric.description}</small>` : ''}
-                                        </span>
-                                        <span class="metric-values">
-                                            <span class="metric-value">${typeof metric.value === 'number' && metric.value % 1 !== 0 ? metric.value.toFixed(1) : metric.value}${metric.name.includes('Form') || metric.name.includes('Avg Goals') ? '' : '%'}</span>
-                                            <span class="metric-raw">(${metric.raw})</span>
-                                        </span>
-                                    </div>
-                                `).join('');
-                            } else {
-                                metricsContainer.innerHTML = '<div style="text-align: center; padding: 10px;">Sem dados disponíveis</div>';
-                            }
-
-                            const h2hButton = document.createElement('button');
-                            h2hButton.className = 'h2h-button';
-                            h2hButton.innerText = 'Ver H2H';
-                            h2hButton.onclick = () => {
-                                window.location.href = `h2h_analysis.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${game.homeID || ''}&awayID=${game.awayID || ''}&leagueID=${game.leagueID || ''}`;
-                            };
-
-                            card.appendChild(leagueNameDiv);
-                            card.appendChild(teams);
-                            card.appendChild(matchTime);
-                            card.appendChild(metricsContainer);
-                            card.appendChild(h2hButton);
-                            leagueGamesGrid.appendChild(card);
-                        }
-
-                        leagueSection.appendChild(leagueGamesGrid);
-                        gamesContainer.appendChild(leagueSection);
-                    }
-
-                    applyFilters();
+                    gamesData = data.data;
+                    renderGames();
                 } catch (error) {
                     console.error('Erro ao buscar dados:', error.message);
                     gamesContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Erro ao carregar dados. Verifique sua conexão ou tente novamente mais tarde.</div>';
                 }
             }
 
+            function renderGames() {
+                gamesContainer.innerHTML = '';
+
+                if (!gamesData || gamesData.length === 0) {
+                    gamesContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Nenhum jogo disponível no momento.</div>';
+                    return;
+                }
+
+                const gamesByLeague = gamesData.reduce((acc, game) => {
+                    const leagueName = game.leagueName || 'Desconhecida';
+                    if (!acc[leagueName]) {
+                        acc[leagueName] = [];
+                    }
+                    acc[leagueName].push(game);
+                    return acc;
+                }, {});
+
+                for (const leagueName in gamesByLeague) {
+                    const leagueSection = document.createElement('div');
+                    leagueSection.className = 'league-section';
+
+                    const leagueInfo = getLeagueDisplayName(leagueName);
+                    const leagueHeader = document.createElement('h2');
+                    leagueHeader.className = 'league-header';
+                    leagueHeader.innerText = leagueInfo.name;
+                    leagueHeader.style.color = leagueInfo.color;
+                    leagueSection.appendChild(leagueHeader);
+
+                    const bestPlayer = getBestPlayerForLeague(leagueName);
+                    const bestPlayerCard = document.createElement('div');
+                    bestPlayerCard.className = 'best-player-card';
+                    bestPlayerCard.innerHTML = `
+                        <h3><span>🏆</span> Melhor Jogador da Liga</h3>
+                        <p>Nome: ${bestPlayer.name}</p>
+                        <p>Taxa de Vitórias: ${bestPlayer.winRate}%</p>
+                        <p>Vitórias nos Últimos 5 Jogos: ${bestPlayer.last5Wins}/5</p>
+                    `;
+                    leagueSection.appendChild(bestPlayerCard);
+
+                    const leagueGamesGrid = document.createElement('div');
+                    leagueGamesGrid.className = 'games-grid';
+
+                    for (const game of gamesByLeague[leagueName]) {
+                        const card = document.createElement('div');
+                        card.className = 'card';
+
+                        const teams = document.createElement('div');
+                        teams.className = 'teams';
+
+                        const homePlayer = extractPlayerName(game.home);
+                        const awayPlayer = extractPlayerName(game.away);
+
+                        const homeTeam = document.createElement('div');
+                        homeTeam.className = 'team';
+                        homeTeam.innerHTML = `
+                            <img src="${game.homeImage || 'https://via.placeholder.com/30?text=🏠'}" alt="${game.home_team_name || 'Time Desconhecido'}">
+                            <span>${homePlayer}</span>
+                            <span>(${game.home_team_name || 'N/A'})</span>`;
+
+                        const awayTeam = document.createElement('div');
+                        awayTeam.className = 'team';
+                        awayTeam.innerHTML = `
+                            <img src="${game.awayImage || 'https://via.placeholder.com/30?text=🛡️'}" alt="${game.away_team_name || 'Time Desconhecido'}">
+                            <span>${awayPlayer}</span>
+                            <span>(${game.away_team_name || 'N/A'})</span>`;
+
+                        teams.appendChild(homeTeam);
+                        teams.appendChild(awayTeam);
+
+                        const matchTime = document.createElement('div');
+                        matchTime.className = 'match-time';
+                        matchTime.innerText = `${game.day || 'N/A'} ${game.hour || 'N/A'}`;
+
+                        const metricsContainer = document.createElement('div');
+                        metricsContainer.className = 'metrics-container';
+                        const metrics = getSimulatedMetrics(leagueName, homePlayer, awayPlayer);
+                        metricsContainer.innerHTML = metrics.map(metric => `
+                            <div class="metric-item ${metric.isSpecial ? 'special' : ''}">
+                                <span class="metric-name">${metric.name}</span>
+                                <span class="metric-value">${metric.value}${metric.name.includes('Form') || metric.name.includes('Avg Goals') ? '' : '%'} <span class="metric-raw">${metric.raw}</span></span>
+                            </div>
+                        `).join('');
+
+                        const h2hButton = document.createElement('button');
+                        h2hButton.className = 'h2h-button';
+                        h2hButton.innerText = 'Ver H2H';
+                        h2hButton.onclick = () => {
+                            window.location.href = `h2h_analysis.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${game.homeID || ''}&awayID=${game.awayID || ''}&leagueID=${game.leagueID || ''}`;
+                        };
+
+                        card.appendChild(teams);
+                        card.appendChild(matchTime);
+                        card.appendChild(metricsContainer);
+                        card.appendChild(h2hButton);
+                        leagueGamesGrid.appendChild(card);
+                    }
+
+                    leagueSection.appendChild(leagueGamesGrid);
+                    gamesContainer.appendChild(leagueSection);
+                }
+
+                applyFilters();
+            }
+
             function applyFilters() {
+                if (!gamesData) return;
+
                 const selectedLeague = leagueFilter.value;
                 const searchTerm = searchFilter.value.toLowerCase();
                 const leagueSections = gamesContainer.getElementsByClassName('league-section');
@@ -1005,35 +839,7 @@
                 if (viewUpcomingButton.classList.contains('active')) {
                     updateGames();
                 }
-            }, 15000);
-
-            document.addEventListener('visibilitychange', () => {
-                if (document.visibilityState === 'visible') {
-                    if (viewUpcomingButton.classList.contains('active')) {
-                        updateGames();
-                    }
-                }
-            });
-
-            window.addEventListener('focus', () => {
-                if (viewUpcomingButton.classList.contains('active')) {
-                    updateGames();
-                }
-            });
-
-            window.addEventListener('pageshow', (event) => {
-                if (event.persisted) {
-                    if (viewUpcomingButton.classList.contains('active')) {
-                        updateGames();
-                    }
-                }
-            });
-
-            window.addEventListener('popstate', () => {
-                if (viewUpcomingButton.classList.contains('active')) {
-                    updateGames();
-                }
-            });
+            }, 30000);
         });
     </script>
 </body>
