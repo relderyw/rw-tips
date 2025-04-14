@@ -190,7 +190,7 @@
         }
 
         .league-section {
-            margin-bottom: 40px;
+            margin-bottom: 50px;
         }
 
         .league-header {
@@ -236,7 +236,7 @@
         .games-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            gap: 25px;
         }
 
         .card {
@@ -394,11 +394,20 @@
                 height: 44px;
                 line-height: 28px;
             }
+
+            .league-section {
+                margin-bottom: 40px;
+            }
+
+            .games-grid {
+                gap: 20px;
+            }
         }
 
         @media (max-width: 768px) {
             .games-grid {
                 grid-template-columns: 1fr;
+                gap: 15px;
             }
 
             .team img {
@@ -458,6 +467,10 @@
                 height: 40px;
                 line-height: 24px;
             }
+
+            .league-section {
+                margin-bottom: 30px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -485,6 +498,14 @@
                 font-size: 1.1rem;
                 height: 36px;
                 line-height: 20px;
+            }
+
+            .league-section {
+                margin-bottom: 20px;
+            }
+
+            .games-grid {
+                gap: 10px;
             }
         }
     </style>
@@ -522,11 +543,11 @@
             <div class="filter-container">
                 <select id="leagueFilter">
                     <option value="">Todas as Ligas</option>
-                    <option value="Esoccer Battle - 8 mins play">Esoccer Battle - 8 mins play</option>
-                    <option value="Esoccer Battle Volta - 6 mins play">Esoccer Battle Volta - 6 mins play</option>
-                    <option value="Esoccer GT Leagues – 12 mins play">Esoccer GT Leagues – 12 mins play</option>
-                    <option value="Esoccer H2H GG League - 8 mins play">Esoccer H2H GG League - 8 mins play</option>
-                    <option value="Esoccer Adriatic League - 10 mins play">Esoccer Adriatic League - 10 mins play</option>
+                    <option value="Esoccer Battle - 8 mins play">Battle 8m</option>
+                    <option value="Esoccer Battle Volta - 6 mins play">Battle Volta 6m</option>
+                    <option value="Esoccer GT Leagues – 12 mins play">GT Leagues 12m</option>
+                    <option value="Esoccer H2H GG League - 8 mins play">H2H GG 8m</option>
+                    <option value="Esoccer Adriatic League - 10 mins play">Adriatic 10m</option>
                 </select>
                 <input type="text" id="searchFilter" placeholder="Buscar por jogador ou time...">
             </div>
@@ -557,30 +578,42 @@
                 return match ? match[1] : text;
             }
 
+            function getShortLeagueName(leagueName) {
+                const shortNames = {
+                    "Esoccer Battle - 8 mins play": "Battle 8m",
+                    "Esoccer Battle Volta - 6 mins play": "Battle Volta 6m",
+                    "Esoccer GT Leagues – 12 mins play": "GT Leagues 12m",
+                    "Esoccer H2H GG League - 8 mins play": "H2H GG 8m",
+                    "Esoccer Adriatic League - 10 mins play": "Adriatic 10m"
+                };
+                return shortNames[leagueName] || leagueName || 'Desconhecida';
+            }
+
             function getLeagueDisplayName(leagueName) {
                 const leagueMappings = {
-                    "Esoccer Battle - 8 mins play": { name: "Esoccer Battle - 8 mins play", color: "#FF4C4C" },
-                    "Esoccer Battle Volta - 6 mins play": { name: "Esoccer Battle Volta - 6 mins play", color: "#FFD700" },
-                    "Esoccer GT Leagues – 12 mins play": { name: "Esoccer GT Leagues – 12 mins play", color: "#32CD32" },
-                    "Esoccer H2H GG League - 8 mins play": { name: "Esoccer H2H GG League - 8 mins play", color: "#8A2BE2" },
-                    "Esoccer Adriatic League - 10 mins play": { name: "Esoccer Adriatic League - 10 mins play", color: "#1E90FF" }
+                    "Esoccer Battle - 8 mins play": { name: "Battle 8m", color: "#FF4C4C" },
+                    "Esoccer Battle Volta - 6 mins play": { name: "Battle Volta 6m", color: "#FFD700" },
+                    "Esoccer GT Leagues – 12 mins play": { name: "GT Leagues 12m", color: "#32CD32" },
+                    "Esoccer H2H GG League - 8 mins play": { name: "H2H GG 8m", color: "#8A2BE2" },
+                    "Esoccer Adriatic League - 10 mins play": { name: "Adriatic 10m", color: "#1E90FF" }
                 };
-                return leagueMappings[leagueName] || { name: leagueName || 'Desconhecida', color: "#FFFFFF" };
+                const shortName = getShortLeagueName(leagueName);
+                return leagueMappings[leagueName] || { name: shortName, color: "#FFFFFF" };
             }
 
             function getBestPlayerForLeague(leagueName) {
                 const simulatedPlayers = {
                     "Esoccer Battle - 8 mins play": [
-                        { name: "Smetana", winRate: 80, last5Wins: 4 },
-                        { name: "Endry", winRate: 60, last5Wins: 3 }
+                        { name: "Dorian", winRate: 80, last5Wins: 4 },
+                        { name: "Smetana", winRate: 60, last5Wins: 3 }
                     ],
                     "Esoccer Battle Volta - 6 mins play": [
                         { name: "Ganger_77", winRate: 75, last5Wins: 4 },
                         { name: "Why", winRate: 55, last5Wins: 3 }
                     ],
                     "Esoccer GT Leagues – 12 mins play": [
-                        { name: "Dorian", winRate: 70, last5Wins: 4 },
-                        { name: "Jekun", winRate: 65, last5Wins: 3 }
+                        { name: "Jekun", winRate: 65, last5Wins: 3 },
+                        { name: "Carlos", winRate: 60, last5Wins: 3 }
                     ],
                     "Esoccer H2H GG League - 8 mins play": [
                         { name: "Chester", winRate: 85, last5Wins: 5 },
@@ -606,50 +639,79 @@
                 }, players[0]);
             }
 
+            function getPlayerStats(playerName) {
+                const simulatedPlayerStats = {
+                    "Dorian": { winRate: 80, last5Wins: 4, over25Rate: 83 },
+                    "Smetana": { winRate: 60, last5Wins: 3, over25Rate: 70 },
+                    "Ganger_77": { winRate: 75, last5Wins: 4, over25Rate: 87 },
+                    "Why": { winRate: 55, last5Wins: 3, over25Rate: 65 },
+                    "Jekun": { winRate: 65, last5Wins: 3, over25Rate: 80 },
+                    "Carlos": { winRate: 60, last5Wins: 3, over25Rate: 75 },
+                    "Chester": { winRate: 85, last5Wins: 5, over25Rate: 80 },
+                    "Ghost": { winRate: 60, last5Wins: 3, over25Rate: 70 },
+                    "Andrew": { winRate: 70, last5Wins: 4, over25Rate: 75 },
+                    "Felix": { winRate: 50, last5Wins: 2, over25Rate: 60 },
+                    "Delpiero": { winRate: 70, last5Wins: 4, over25Rate: 85 },
+                    "Sato": { winRate: 68, last5Wins: 3, over25Rate: 82 }
+                };
+                return simulatedPlayerStats[playerName] || { winRate: 50, last5Wins: 2, over25Rate: 60 };
+            }
+
             function getSimulatedMetrics(leagueName, homePlayer, awayPlayer) {
                 const simulatedMetrics = {
                     "Esoccer Battle - 8 mins play": [
                         { name: "Over 2.5 FT", value: 90, raw: "(27/30)" },
                         { name: "Over 3.5 FT", value: 86, raw: "(26/30)" },
-                        { name: "Smetana Over 2.5 FT", value: 83, raw: "(25/30)", isSpecial: true },
-                        { name: "League Avg Goals", value: 2.8, raw: "(Over 2.5: 60%)" },
-                        { name: "Smetana Form", value: 80, raw: "(Wins: 4/5)", isSpecial: true }
+                        { name: "League Avg Goals", value: 2.8, raw: "(Over 2.5: 60%)" }
                     ],
                     "Esoccer Battle Volta - 6 mins play": [
                         { name: "Over 2.5 FT", value: 100, raw: "(30/30)" },
                         { name: "Over 3.5 FT", value: 93, raw: "(28/30)" },
-                        { name: "Ganger_77 Over 2.5 FT", value: 87, raw: "(26/30)", isSpecial: true },
-                        { name: "League Avg Goals", value: 3.0, raw: "(Over 2.5: 70%)" },
-                        { name: "Ganger_77 Form", value: 75, raw: "(Wins: 4/5)", isSpecial: true }
+                        { name: "League Avg Goals", value: 3.0, raw: "(Over 2.5: 70%)" }
                     ],
                     "Esoccer GT Leagues – 12 mins play": [
                         { name: "Over 2.5 FT", value: 100, raw: "(30/30)" },
                         { name: "Over 3.5 FT", value: 86, raw: "(26/30)" },
-                        { name: "Dorian Over 2.5 FT", value: 83, raw: "(25/30)", isSpecial: true },
-                        { name: "League Avg Goals", value: 2.8, raw: "(Over 2.5: 60%)" },
-                        { name: "Dorian Form", value: 70, raw: "(Wins: 4/5)", isSpecial: true }
+                        { name: "League Avg Goals", value: 2.8, raw: "(Over 2.5: 60%)" }
                     ],
                     "Esoccer H2H GG League - 8 mins play": [
                         { name: "Over 2.5 FT", value: 90, raw: "(27/30)" },
                         { name: "Over 3.5 FT", value: 80, raw: "(24/30)" },
-                        { name: "Chester Form", value: 85, raw: "(Wins: 5/5)", isSpecial: true },
-                        { name: "League Avg Goals", value: 2.6, raw: "(Over 2.5: 55%)" },
-                        { name: "Chester Over 2.5 FT", value: 80, raw: "(24/30)", isSpecial: true }
+                        { name: "League Avg Goals", value: 2.6, raw: "(Over 2.5: 55%)" }
                     ],
                     "Esoccer Adriatic League - 10 mins play": [
                         { name: "Over 2.5 FT", value: 85, raw: "(25/30)" },
                         { name: "Over 3.5 FT", value: 70, raw: "(21/30)" },
-                        { name: "Andrew Form", value: 70, raw: "(Wins: 4/5)", isSpecial: true },
-                        { name: "League Avg Goals", value: 2.5, raw: "(Over 2.5: 50%)" },
-                        { name: "Andrew Over 2.5 FT", value: 75, raw: "(22/30)", isSpecial: true }
+                        { name: "League Avg Goals", value: 2.5, raw: "(Over 2.5: 50%)" }
                     ]
                 };
 
-                return simulatedMetrics[leagueName] || [
+                let metrics = simulatedMetrics[leagueName] || [
                     { name: "Over 2.5 FT", value: 80, raw: "(24/30)" },
                     { name: "Over 3.5 FT", value: 60, raw: "(18/30)" },
                     { name: "League Avg Goals", value: 2.5, raw: "(Over 2.5: 50%)" }
                 ];
+
+                const homeStats = getPlayerStats(homePlayer);
+                const awayStats = getPlayerStats(awayPlayer);
+                const featuredPlayer = homeStats.winRate >= awayStats.winRate ? homePlayer : awayPlayer;
+                const featuredStats = homeStats.winRate >= awayStats.winRate ? homeStats : awayStats;
+
+                metrics.splice(2, 0, {
+                    name: `${featuredPlayer} Over 2.5 FT`,
+                    value: featuredStats.over25Rate,
+                    raw: `(${(featuredStats.over25Rate / 100 * 30).toFixed(0)}/30)`,
+                    isSpecial: true
+                });
+
+                metrics.push({
+                    name: `${featuredPlayer} Form`,
+                    value: featuredStats.winRate,
+                    raw: `(Wins: ${featuredStats.last5Wins}/5)`,
+                    isSpecial: true
+                });
+
+                return metrics;
             }
 
             async function updateGames() {
@@ -804,7 +866,7 @@
                             awayTeam = teams[1].getElementsByTagName('span')[1]?.innerText.toLowerCase() || '';
                         }
 
-                        const leagueMatch = selectedLeague === "" || selectedLeague === leagueName;
+                        const leagueMatch = selectedLeague === "" || selectedLeague === getShortLeagueName(leagueName);
                         const searchMatch = searchTerm === "" || 
                             homePlayer.includes(searchTerm) || 
                             awayPlayer.includes(searchTerm) || 
