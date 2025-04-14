@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RW TIPS - Visualização de Jogos (Pré-visualização)</title>
+    <title>RW TIPS - Visualização de Jogos</title>
     <style>
         :root {
             --primary-color: #6c5ce7;
@@ -113,10 +113,12 @@
             display: flex;
             gap: 15px;
             margin-bottom: 25px;
+            justify-content: center;
         }
 
         #leagueFilter, #searchFilter {
             flex: 1;
+            max-width: 300px;
             padding: 15px;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -134,18 +136,20 @@
 
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px; /* Aumentado para mais espaçamento */
+            padding: 20px 0;
         }
 
         .card {
             background: var(--card-bg);
             border-radius: 16px;
-            padding: 15px;
+            padding: 20px; /* Aumentado para mais espaço interno */
             border: 2px solid transparent;
             background-clip: padding-box;
             position: relative;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
         .card::before {
@@ -167,6 +171,7 @@
         .card:hover {
             transform: translateY(-5px);
             background: var(--card-hover);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
         }
 
         .card:hover::before {
@@ -175,7 +180,7 @@
 
         .league-name {
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 1.1rem;
             margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 1px solid var(--border-color);
@@ -185,7 +190,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
+            margin-bottom: 15px;
         }
 
         .team {
@@ -193,14 +199,24 @@
             flex: 1;
         }
 
-        .team-placeholder {
-            font-size: 1.5rem;
-            margin-bottom: 5px;
+        .team img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-bottom: 8px;
+            border: 2px solid var(--primary-color);
+            padding: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .team:hover img {
+            transform: scale(1.1);
+            border-color: var(--accent-color);
         }
 
         .team span {
             display: block;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
         }
 
         .team span:first-of-type {
@@ -210,17 +226,17 @@
 
         .match-time {
             text-align: center;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             color: var(--text-secondary);
-            margin: 10px 0;
-            padding: 5px;
+            margin: 15px 0;
+            padding: 8px;
             background: rgba(0, 0, 0, 0.2);
             border-radius: 8px;
         }
 
         .metrics-container {
-            margin: 10px 0;
-            padding: 10px;
+            margin: 15px 0;
+            padding: 15px;
             background: rgba(0, 0, 0, 0.2);
             border-radius: 12px;
         }
@@ -229,9 +245,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px;
+            padding: 10px;
             border-radius: 8px;
-            margin: 5px 0;
+            margin: 8px 0;
             background: rgba(108, 92, 231, 0.05);
             transition: all 0.3s ease;
         }
@@ -249,7 +265,7 @@
         .metric-name {
             color: var(--text-primary);
             font-weight: 500;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -267,26 +283,26 @@
         }
 
         .metric-value {
-            font-size: 0.9em;
+            font-size: 1em;
             font-weight: 600;
             color: var(--accent-color);
         }
 
         .metric-raw {
             color: var(--text-secondary);
-            font-size: 0.7em;
+            font-size: 0.8em;
             margin-left: 8px;
         }
 
         .h2h-button {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             background: var(--gradient-primary);
             color: var(--text-primary);
             border: none;
             border-radius: 12px;
             font-weight: 600;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             text-transform: uppercase;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -302,12 +318,17 @@
                 grid-template-columns: 1fr;
             }
 
-            .team-placeholder {
-                font-size: 1.2rem;
+            .team img {
+                width: 50px;
+                height: 50px;
             }
 
             .team span {
-                font-size: 0.7rem;
+                font-size: 0.8rem;
+            }
+
+            #leagueFilter, #searchFilter {
+                max-width: 100%;
             }
         }
     </style>
@@ -331,7 +352,10 @@
             <select id="leagueFilter">
                 <option value="">Todas as Ligas</option>
                 <option value="Esoccer Battle - 8 mins play">Esoccer Battle - 8 mins play</option>
+                <option value="Esoccer Battle Volta - 6 mins play">Esoccer Battle Volta - 6 mins play</option>
                 <option value="Esoccer GT Leagues – 12 mins play">Esoccer GT Leagues – 12 mins play</option>
+                <option value="Esoccer H2H GG League - 8 mins play">Esoccer H2H GG League - 8 mins play</option>
+                <option value="Esoccer Adriatic League - 10 mins play">Esoccer Adriatic League - 10 mins play</option>
             </select>
             <input type="text" id="searchFilter" placeholder="Buscar por jogador ou time...">
         </div>
@@ -352,34 +376,6 @@
             const leagueFilter = document.getElementById('leagueFilter');
             const searchFilter = document.getElementById('searchFilter');
 
-            // Dados simulados para pré-visualização
-            const mockGames = [
-                {
-                    leagueName: "Esoccer Battle - 8 mins play",
-                    home: "Team A (Smetana)",
-                    away: "Team B (Endry)",
-                    home_team_name: "Team A",
-                    away_team_name: "Team B",
-                    day: "Hoje",
-                    hour: "14:30",
-                    homeID: "1",
-                    awayID: "2",
-                    leagueID: "22614"
-                },
-                {
-                    leagueName: "Esoccer GT Leagues – 12 mins play",
-                    home: "Team C (PlayerX)",
-                    away: "Team D (PlayerY)",
-                    home_team_name: "Team C",
-                    away_team_name: "Team D",
-                    day: "Hoje",
-                    hour: "15:00",
-                    homeID: "3",
-                    awayID: "4",
-                    leagueID: "22615"
-                }
-            ];
-
             function extractPlayerName(text) {
                 const match = text.match(/\(([^)]+)\)/);
                 return match ? match[1] : text;
@@ -388,7 +384,10 @@
             function getLeagueDisplayName(leagueName) {
                 const leagueMappings = {
                     "Esoccer Battle - 8 mins play": { name: "Esoccer Battle - 8 mins play", color: "#FF4C4C" },
-                    "Esoccer GT Leagues – 12 mins play": { name: "Esoccer GT Leagues – 12 mins play", color: "#32CD32" }
+                    "Esoccer Battle Volta - 6 mins play": { name: "Esoccer Battle Volta - 6 mins play", color: "#FFD700" },
+                    "Esoccer GT Leagues – 12 mins play": { name: "Esoccer GT Leagues – 12 mins play", color: "#32CD32" },
+                    "Esoccer H2H GG League - 8 mins play": { name: "Esoccer H2H GG League - 8 mins play", color: "#8A2BE2" },
+                    "Esoccer Adriatic League - 10 mins play": { name: "Esoccer Adriatic League - 10 mins play", color: "#1E90FF" }
                 };
                 return leagueMappings[leagueName] || { name: leagueName, color: "#FFFFFF" };
             }
@@ -438,6 +437,7 @@
             }
 
             function getLeagueTrend(leagueID) {
+                // Dados simulados para demonstração (substitua por uma chamada à API, se disponível)
                 const leagueTrends = {
                     '22614': { avgGoals: 3.5, over2_5Rate: 75 },
                     'default': { avgGoals: 2.8, over2_5Rate: 60 }
@@ -446,6 +446,7 @@
             }
 
             function getPlayerForm(playerName) {
+                // Dados simulados para demonstração (substitua por uma chamada à API, se disponível)
                 const playerForms = {
                     'Smetana': { winRate: 80, last5Wins: 4 },
                     'Endry': { winRate: 60, last5Wins: 3 },
@@ -492,6 +493,7 @@
                     }
                 }
 
+                // Adicionar Tendência da Liga
                 const leagueTrend = getLeagueTrend(leagueID);
                 finalMetrics.push({
                     name: 'League Avg Goals',
@@ -500,6 +502,7 @@
                     icon: '📊'
                 });
 
+                // Adicionar Forma do Jogador
                 const homeForm = getPlayerForm(homePlayer);
                 const awayForm = getPlayerForm(awayPlayer);
                 finalMetrics.push({
@@ -518,100 +521,117 @@
                 return finalMetrics;
             }
 
-            function fetchH2HMetricsMock(homeID, awayID, leagueID, homePlayer, awayPlayer) {
-                // Dados simulados de H2H para pré-visualização
-                const mockH2HData = {
-                    mutualInfos: {
-                        lastGames: [
-                            { score: "3-2", scoreHT: "1-1" },
-                            { score: "2-1", scoreHT: "1-0" },
-                            { score: "4-3", scoreHT: "2-1" }
-                        ]
+            async function fetchH2HMetrics(homeID, awayID, leagueID, homePlayer, awayPlayer) {
+                let apiUrl;
+                if (leagueID === '22614') {
+                    apiUrl = `https://api.green365.com.br/api/e-soccer/event/stats?homeID=${homeID}&awayID=${awayID}&home=${encodeURIComponent(homePlayer.toLowerCase())}&away=${encodeURIComponent(awayPlayer.toLowerCase())}&homeTeam=&awayTeam=&league=${leagueID}&eventID=0&period=last_30`;
+                } else {
+                    apiUrl = `https://api.green365.com.br/api/e-soccer/event/stats?homeID=${homeID}&awayID=${awayID}&home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&league=${leagueID}&eventID=0&period=last_30`;
+                }
+
+                try {
+                    const response = await fetch(apiUrl);
+                    if (!response.ok) {
+                        throw new Error(`Erro na API: ${response.status}`);
                     }
-                };
-                const h2hStats = processH2HStats(mockH2HData.mutualInfos.lastGames);
-                return getTopMetrics(h2hStats, homePlayer, awayPlayer, leagueID);
+                    const data = await response.json();
+                    const h2hStats = processH2HStats(data.mutualInfos.lastGames);
+                    return getTopMetrics(h2hStats, homePlayer, awayPlayer, leagueID);
+                } catch (error) {
+                    console.error('Erro ao buscar métricas H2H:', error);
+                    return null;
+                }
             }
 
-            function updateGames() {
-                const games = mockGames;
-                gamesContainer.innerHTML = '';
+            async function updateGames() {
+                try {
+                    const response = await fetch('https://api.green365.com.br/api/league/upcoming?sport=fifa&leagueId=&page=1');
+                    if (!response.ok) {
+                        throw new Error(`Erro na API: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    const games = data.data;
+                    gamesContainer.innerHTML = '';
 
-                games.forEach(game => {
-                    const card = document.createElement('div');
-                    card.className = 'card';
+                    for (const game of games) {
+                        const card = document.createElement('div');
+                        card.className = 'card';
 
-                    const leagueInfo = getLeagueDisplayName(game.leagueName);
-                    const leagueName = document.createElement('div');
-                    leagueName.className = 'league-name';
-                    leagueName.innerText = leagueInfo.name;
-                    leagueName.style.color = leagueInfo.color;
+                        const leagueInfo = getLeagueDisplayName(game.leagueName);
+                        const leagueName = document.createElement('div');
+                        leagueName.className = 'league-name';
+                        leagueName.innerText = leagueInfo.name;
+                        leagueName.style.color = leagueInfo.color;
 
-                    const teams = document.createElement('div');
-                    teams.className = 'teams';
+                        const teams = document.createElement('div');
+                        teams.className = 'teams';
 
-                    const homePlayer = extractPlayerName(game.home);
-                    const awayPlayer = extractPlayerName(game.away);
+                        const homePlayer = extractPlayerName(game.home);
+                        const awayPlayer = extractPlayerName(game.away);
 
-                    const homeTeam = document.createElement('div');
-                    homeTeam.className = 'team';
-                    homeTeam.innerHTML = `
-                        <div class="team-placeholder">🏠</div>
-                        <span>${homePlayer}</span>
-                        <span>(${game.home_team_name})</span>`;
+                        const homeTeam = document.createElement('div');
+                        homeTeam.className = 'team';
+                        homeTeam.innerHTML = `
+                            <img src="${game.homeImage}" alt="${game.home_team_name}" onerror="this.src='https://via.placeholder.com/60?text=🏠';">
+                            <span>${homePlayer}</span>
+                            <span>(${game.home_team_name})</span>`;
 
-                    const awayTeam = document.createElement('div');
-                    awayTeam.className = 'team';
-                    awayTeam.innerHTML = `
-                        <div class="team-placeholder">🛡️</div>
-                        <span>${awayPlayer}</span>
-                        <span>(${game.away_team_name})</span>`;
+                        const awayTeam = document.createElement('div');
+                        awayTeam.className = 'team';
+                        awayTeam.innerHTML = `
+                            <img src="${game.awayImage}" alt="${game.away_team_name}" onerror="this.src='https://via.placeholder.com/60?text=🛡️';">
+                            <span>${awayPlayer}</span>
+                            <span>(${game.away_team_name})</span>`;
 
-                    teams.appendChild(homeTeam);
-                    teams.appendChild(awayTeam);
+                        teams.appendChild(homeTeam);
+                        teams.appendChild(awayTeam);
 
-                    const matchTime = document.createElement('div');
-                    matchTime.className = 'match-time';
-                    matchTime.innerText = `${game.day} ${game.hour}`;
+                        const matchTime = document.createElement('div');
+                        matchTime.className = 'match-time';
+                        matchTime.innerText = `${game.day} ${game.hour}`;
 
-                    const metricsContainer = document.createElement('div');
-                    metricsContainer.className = 'metrics-container';
-                    metricsContainer.innerHTML = '<div style="text-align: center; padding: 10px;">Carregando métricas...</div>';
+                        const metricsContainer = document.createElement('div');
+                        metricsContainer.className = 'metrics-container';
+                        metricsContainer.innerHTML = '<div style="text-align: center; padding: 10px;">Carregando métricas...</div>';
 
-                    const metrics = fetchH2HMetricsMock(game.homeID, game.awayID, game.leagueID, homePlayer, awayPlayer);
-                    if (metrics) {
-                        metricsContainer.innerHTML = metrics.map(metric => `
-                            <div class="metric-item ${metric.isSpecial ? 'special-metric' : ''}">
-                                <span class="metric-name">
-                                    ${metric.icon} ${metric.name}
-                                    ${metric.isSpecial ? `<br><small class="metric-description">${metric.description}</small>` : ''}
-                                </span>
-                                <span class="metric-values">
-                                    <span class="metric-value">${typeof metric.value === 'number' && metric.value % 1 !== 0 ? metric.value.toFixed(1) : metric.value}${metric.name.includes('Form') || metric.name.includes('Avg Goals') ? '' : '%'}</span>
-                                    <span class="metric-raw">(${metric.raw})</span>
-                                </span>
-                            </div>
-                        `).join('');
-                    } else {
-                        metricsContainer.innerHTML = '<div style="text-align: center; padding: 10px;">Sem dados disponíveis</div>';
+                        const metrics = await fetchH2HMetrics(game.homeID, game.awayID, game.leagueID, homePlayer, awayPlayer);
+                        if (metrics) {
+                            metricsContainer.innerHTML = metrics.map(metric => `
+                                <div class="metric-item ${metric.isSpecial ? 'special-metric' : ''}">
+                                    <span class="metric-name">
+                                        ${metric.icon} ${metric.name}
+                                        ${metric.isSpecial ? `<br><small class="metric-description">${metric.description}</small>` : ''}
+                                    </span>
+                                    <span class="metric-values">
+                                        <span class="metric-value">${typeof metric.value === 'number' && metric.value % 1 !== 0 ? metric.value.toFixed(1) : metric.value}${metric.name.includes('Form') || metric.name.includes('Avg Goals') ? '' : '%'}</span>
+                                        <span class="metric-raw">(${metric.raw})</span>
+                                    </span>
+                                </div>
+                            `).join('');
+                        } else {
+                            metricsContainer.innerHTML = '<div style="text-align: center; padding: 10px;">Sem dados disponíveis</div>';
+                        }
+
+                        const h2hButton = document.createElement('button');
+                        h2hButton.className = 'h2h-button';
+                        h2hButton.innerText = 'Ver H2H';
+                        h2hButton.onclick = () => {
+                            window.location.href = `h2h_analysis.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${game.homeID}&awayID=${game.awayID}&leagueID=${game.leagueID}`;
+                        };
+
+                        card.appendChild(leagueName);
+                        card.appendChild(teams);
+                        card.appendChild(matchTime);
+                        card.appendChild(metricsContainer);
+                        card.appendChild(h2hButton);
+                        gamesContainer.appendChild(card);
                     }
 
-                    const h2hButton = document.createElement('button');
-                    h2hButton.className = 'h2h-button';
-                    h2hButton.innerText = 'Ver H2H';
-                    h2hButton.onclick = () => {
-                        alert(`Navegando para H2H: ${homePlayer} vs ${awayPlayer}`);
-                    };
-
-                    card.appendChild(leagueName);
-                    card.appendChild(teams);
-                    card.appendChild(matchTime);
-                    card.appendChild(metricsContainer);
-                    card.appendChild(h2hButton);
-                    gamesContainer.appendChild(card);
-                });
-
-                applyFilters();
+                    applyFilters();
+                } catch (error) {
+                    console.error('Erro ao buscar dados:', error);
+                    gamesContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Erro ao carregar dados. Verifique sua conexão ou tente novamente mais tarde.</div>';
+                }
             }
 
             function applyFilters() {
@@ -655,7 +675,7 @@
                 gamesContainer.style.display = 'none';
                 resultsContainer.style.display = 'grid';
                 topPlayersContainer.style.display = 'none';
-                resultsContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Últimos Resultados (Simulado)</div>';
+                resultsContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Carregando últimos resultados...</div>';
             });
 
             viewTopPlayersButton.addEventListener('click', () => {
@@ -665,13 +685,24 @@
                 gamesContainer.style.display = 'none';
                 resultsContainer.style.display = 'none';
                 topPlayersContainer.style.display = 'block';
-                topPlayersContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Melhores Jogadores (Simulado)</div>';
+                topPlayersContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Carregando melhores jogadores...</div>';
             });
 
             leagueFilter.addEventListener('change', applyFilters);
             searchFilter.addEventListener('input', applyFilters);
 
             updateGames();
+            setInterval(updateGames, 15000);
+
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') updateGames();
+            });
+
+            window.addEventListener('focus', updateGames);
+            window.addEventListener('pageshow', (event) => {
+                if (event.persisted) updateGames();
+            });
+            window.addEventListener('popstate', updateGames);
         });
     </script>
 </body>
