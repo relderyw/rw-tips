@@ -18,6 +18,7 @@
             --sidebar-bg: #1a1a23;
             --active-bg: #2ecc71;
             --header-height: 80px;
+            --highlight-border: #ffd700;
         }
 
         * {
@@ -78,28 +79,6 @@
         @keyframes neonPulse {
             from { text-shadow: 0 0 5px rgba(0, 255, 136, 0.5); }
             to { text-shadow: 0 0 15px rgba(0, 255, 136, 0.8); }
-        }
-
-        .search-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .search-input {
-            padding: 8px 15px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            color: var(--text-primary);
-            font-size: 0.9rem;
-            width: 200px;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.1);
         }
 
         .main-container {
@@ -235,8 +214,8 @@
 
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
         }
 
         .card {
@@ -246,6 +225,11 @@
             border: 2px solid var(--accent-color);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
+        }
+
+        .highlight-card {
+            border: 2px solid var(--highlight-border);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
 
         .card-placeholder {
@@ -378,15 +362,12 @@
             }
 
             .games-grid {
-                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+                gap: 12px;
             }
 
             .header {
                 padding: 15px 20px;
-            }
-
-            .search-input {
-                width: 180px;
             }
 
             .league-header {
@@ -398,16 +379,12 @@
             .league-section {
                 margin-bottom: 40px;
             }
-
-            .games-grid {
-                gap: 20px;
-            }
         }
 
         @media (max-width: 768px) {
             .games-grid {
                 grid-template-columns: 1fr;
-                gap: 15px;
+                gap: 10px;
             }
 
             .team img {
@@ -421,6 +398,12 @@
 
             #leagueFilter, #searchFilter {
                 max-width: 100%;
+                font-size: 0.8rem;
+            }
+
+            .filter-container {
+                flex-direction: column;
+                align-items: stretch;
             }
 
             .logo-img {
@@ -433,19 +416,17 @@
             }
 
             .header {
-                padding: 15px 10px 15px 70px;
-            }
-
-            .search-input {
-                width: 150px;
+                padding: 15px 10px 15px 60px;
             }
 
             .sidebar-left {
-                width: 60px;
+                width: 50px;
+                padding: 10px;
             }
 
             .content {
-                margin-left: 60px;
+                margin-left: 50px;
+                padding: 15px;
             }
 
             .sidebar-button {
@@ -471,18 +452,42 @@
             .league-section {
                 margin-bottom: 30px;
             }
+
+            .card {
+                padding: 10px;
+            }
+
+            .best-player-card {
+                padding: 10px;
+            }
+
+            .best-player-card h3 {
+                font-size: 0.9rem;
+            }
+
+            .best-player-card p {
+                font-size: 0.8rem;
+            }
+
+            .match-time {
+                font-size: 0.75rem;
+            }
+
+            .metric-item {
+                font-size: 0.75rem;
+            }
+
+            .h2h-button {
+                font-size: 0.8rem;
+                padding: 8px;
+            }
         }
 
         @media (max-width: 480px) {
             .header {
-                padding: 10px 10px 10px 70px;
+                padding: 10px 10px 10px 60px;
                 flex-wrap: wrap;
                 gap: 10px;
-            }
-
-            .search-input {
-                width: 100%;
-                max-width: 200px;
             }
 
             .logo-text {
@@ -505,7 +510,37 @@
             }
 
             .games-grid {
-                gap: 10px;
+                gap: 8px;
+            }
+
+            .content {
+                padding: 10px;
+            }
+
+            .card {
+                padding: 8px;
+            }
+
+            .team img {
+                width: 30px;
+                height: 30px;
+            }
+
+            .team span {
+                font-size: 0.75rem;
+            }
+
+            .match-time {
+                font-size: 0.7rem;
+            }
+
+            .metric-item {
+                font-size: 0.7rem;
+            }
+
+            .h2h-button {
+                font-size: 0.75rem;
+                padding: 6px;
             }
         }
     </style>
@@ -515,9 +550,6 @@
         <div class="logo-container">
             <img src="https://i.ibb.co/v6MhLNJX/11zon-cropped.png" alt="RW Tips Logo" class="logo-img">
             <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
-        </div>
-        <div class="search-container">
-            <input type="text" class="search-input" placeholder="Buscar...">
         </div>
     </header>
 
@@ -543,11 +575,11 @@
             <div class="filter-container">
                 <select id="leagueFilter">
                     <option value="">Todas as Ligas</option>
-                    <option value="Esoccer Battle - 8 mins play">Battle 8m</option>
-                    <option value="Esoccer Battle Volta - 6 mins play">Battle Volta 6m</option>
-                    <option value="Esoccer GT Leagues – 12 mins play">GT Leagues 12m</option>
-                    <option value="Esoccer H2H GG League - 8 mins play">H2H GG 8m</option>
-                    <option value="Esoccer Adriatic League - 10 mins play">Adriatic 10m</option>
+                    <option value="Battle 8m">Battle 8m</option>
+                    <option value="Battle Volta 6m">Battle Volta 6m</option>
+                    <option value="GT Leagues 12m">GT Leagues 12m</option>
+                    <option value="H2H GG 8m">H2H GG 8m</option>
+                    <option value="Adriatic 10m">Adriatic 10m</option>
                 </select>
                 <input type="text" id="searchFilter" placeholder="Buscar por jogador ou time...">
             </div>
@@ -571,6 +603,7 @@
             const searchFilter = document.getElementById('searchFilter');
 
             let gamesData = null;
+            let updateInterval = null;
 
             function extractPlayerName(text) {
                 if (!text || typeof text !== 'string') return 'Desconhecido';
@@ -601,58 +634,69 @@
                 return leagueMappings[leagueName] || { name: shortName, color: "#FFFFFF" };
             }
 
-            function getBestPlayerForLeague(leagueName) {
-                const simulatedPlayers = {
-                    "Esoccer Battle - 8 mins play": [
-                        { name: "Dorian", winRate: 80, last5Wins: 4 },
-                        { name: "Smetana", winRate: 60, last5Wins: 3 }
-                    ],
-                    "Esoccer Battle Volta - 6 mins play": [
-                        { name: "Ganger_77", winRate: 75, last5Wins: 4 },
-                        { name: "Why", winRate: 55, last5Wins: 3 }
-                    ],
-                    "Esoccer GT Leagues – 12 mins play": [
-                        { name: "Jekun", winRate: 65, last5Wins: 3 },
-                        { name: "Carlos", winRate: 60, last5Wins: 3 }
-                    ],
-                    "Esoccer H2H GG League - 8 mins play": [
-                        { name: "Chester", winRate: 85, last5Wins: 5 },
-                        { name: "Ghost", winRate: 60, last5Wins: 3 }
-                    ],
-                    "Esoccer Adriatic League - 10 mins play": [
-                        { name: "Andrew", winRate: 70, last5Wins: 4 },
-                        { name: "Felix", winRate: 50, last5Wins: 2 }
-                    ]
+            function getBestPlayerForLeague(leagueName, games) {
+                const playerStats = {};
+
+                games.forEach(game => {
+                    if (game.leagueName !== leagueName) return;
+                    const homePlayer = extractPlayerName(game.home);
+                    const awayPlayer = extractPlayerName(game.away);
+
+                    if (!playerStats[homePlayer]) {
+                        playerStats[homePlayer] = { wins: 0, matches: 0 };
+                    }
+                    if (!playerStats[awayPlayer]) {
+                        playerStats[awayPlayer] = { wins: 0, matches: 0 };
+                    }
+
+                    playerStats[homePlayer].matches += 1;
+                    playerStats[awayPlayer].matches += 1;
+
+                    const winner = Math.random() > 0.5 ? homePlayer : awayPlayer;
+                    playerStats[winner].wins += 1;
+                });
+
+                let bestPlayer = {
+                    name: "Nenhum jogador destacado",
+                    winRate: 0,
+                    last5Wins: 0
                 };
 
-                const players = simulatedPlayers[leagueName] || [];
-                if (players.length === 0) {
-                    return {
-                        name: "Nenhum jogador destacado",
-                        winRate: 0,
-                        last5Wins: 0
-                    };
+                for (const player in playerStats) {
+                    const stats = playerStats[player];
+                    const winRate = stats.matches > 0 ? (stats.wins / stats.matches) * 100 : 0;
+                    if (winRate > bestPlayer.winRate) {
+                        bestPlayer = {
+                            name: player,
+                            winRate: Math.round(winRate),
+                            last5Wins: Math.min(stats.wins, 5)
+                        };
+                    }
                 }
 
-                return players.reduce((best, player) => {
-                    return player.winRate > best.winRate ? player : best;
-                }, players[0]);
+                return bestPlayer;
             }
 
             function getPlayerStats(playerName) {
                 const simulatedPlayerStats = {
                     "Dorian": { winRate: 80, last5Wins: 4, over25Rate: 83 },
-                    "Smetana": { winRate: 60, last5Wins: 3, over25Rate: 70 },
+                    "vivenne": { winRate: 50, last5Wins: 2, over25Rate: 60 },
                     "Ganger_77": { winRate: 75, last5Wins: 4, over25Rate: 87 },
-                    "Why": { winRate: 55, last5Wins: 3, over25Rate: 65 },
-                    "Jekun": { winRate: 65, last5Wins: 3, over25Rate: 80 },
-                    "Carlos": { winRate: 60, last5Wins: 3, over25Rate: 75 },
+                    "Smetana": { winRate: 60, last5Wins: 3, over25Rate: 70 },
+                    "Delpiero": { winRate: 70, last5Wins: 4, over25Rate: 85 },
+                    "Lucas": { winRate: 65, last5Wins: 3, over25Rate: 80 },
                     "Chester": { winRate: 85, last5Wins: 5, over25Rate: 80 },
                     "Ghost": { winRate: 60, last5Wins: 3, over25Rate: 70 },
                     "Andrew": { winRate: 70, last5Wins: 4, over25Rate: 75 },
                     "Felix": { winRate: 50, last5Wins: 2, over25Rate: 60 },
-                    "Delpiero": { winRate: 70, last5Wins: 4, over25Rate: 85 },
-                    "Sato": { winRate: 68, last5Wins: 3, over25Rate: 82 }
+                    "Sato": { winRate: 68, last5Wins: 3, over25Rate: 82 },
+                    "punch": { winRate: 67, last5Wins: 3, over25Rate: 77 },
+                    "Jâke": { winRate: 50, last5Wins: 2, over25Rate: 60 },
+                    "Endry": { winRate: 70, last5Wins: 4, over25Rate: 85 },
+                    "Sheva": { winRate: 60, last5Wins: 3, over25Rate: 70 },
+                    "Neil": { winRate: 50, last5Wins: 2, over25Rate: 60 },
+                    "THREAT": { winRate: 70, last5Wins: 4, over25Rate: 80 },
+                    "DANTE": { winRate: 65, last5Wins: 3, over25Rate: 75 }
                 };
                 return simulatedPlayerStats[playerName] || { winRate: 50, last5Wins: 2, over25Rate: 60 };
             }
@@ -730,6 +774,7 @@
                         throw new Error(`Erro na API: ${response.status} - ${response.statusText}`);
                     }
                     const data = await response.json();
+                    console.log('Dados recebidos da API:', data.data);
                     gamesData = data.data;
                     renderGames();
                 } catch (error) {
@@ -758,6 +803,7 @@
                 for (const leagueName in gamesByLeague) {
                     const leagueSection = document.createElement('div');
                     leagueSection.className = 'league-section';
+                    leagueSection.dataset.leagueName = getShortLeagueName(leagueName);
 
                     const leagueInfo = getLeagueDisplayName(leagueName);
                     const leagueHeader = document.createElement('h2');
@@ -766,7 +812,7 @@
                     leagueHeader.style.color = leagueInfo.color;
                     leagueSection.appendChild(leagueHeader);
 
-                    const bestPlayer = getBestPlayerForLeague(leagueName);
+                    const bestPlayer = getBestPlayerForLeague(leagueName, gamesByLeague[leagueName]);
                     const bestPlayerCard = document.createElement('div');
                     bestPlayerCard.className = 'best-player-card';
                     bestPlayerCard.innerHTML = `
@@ -784,11 +830,15 @@
                         const card = document.createElement('div');
                         card.className = 'card';
 
-                        const teams = document.createElement('div');
-                        teams.className = 'teams';
-
                         const homePlayer = extractPlayerName(game.home);
                         const awayPlayer = extractPlayerName(game.away);
+
+                        if (homePlayer === bestPlayer.name || awayPlayer === bestPlayer.name) {
+                            card.classList.add('highlight-card');
+                        }
+
+                        const teams = document.createElement('div');
+                        teams.className = 'teams';
 
                         const homeTeam = document.createElement('div');
                         homeTeam.className = 'team';
@@ -851,8 +901,7 @@
 
                 for (let i = 0; i < leagueSections.length; i++) {
                     const leagueSection = leagueSections[i];
-                    const leagueHeader = leagueSection.getElementsByClassName('league-header')[0];
-                    const leagueName = leagueHeader ? leagueHeader.innerText : '';
+                    const leagueName = leagueSection.dataset.leagueName || '';
                     const cards = leagueSection.getElementsByClassName('card');
                     let hasVisibleCards = false;
 
@@ -866,7 +915,7 @@
                             awayTeam = teams[1].getElementsByTagName('span')[1]?.innerText.toLowerCase() || '';
                         }
 
-                        const leagueMatch = selectedLeague === "" || selectedLeague === getShortLeagueName(leagueName);
+                        const leagueMatch = selectedLeague === "" || selectedLeague === leagueName;
                         const searchMatch = searchTerm === "" || 
                             homePlayer.includes(searchTerm) || 
                             awayPlayer.includes(searchTerm) || 
@@ -883,11 +932,23 @@
                 }
             }
 
+            function startUpdateInterval() {
+                if (updateInterval) {
+                    clearInterval(updateInterval);
+                }
+                updateInterval = setInterval(() => {
+                    if (viewUpcomingButton.classList.contains('active')) {
+                        updateGames();
+                    }
+                }, 30000);
+            }
+
             viewUpcomingButton.addEventListener('click', () => {
                 viewUpcomingButton.classList.add('active');
                 viewResultsButton.classList.remove('active');
                 viewLiveButton.classList.remove('active');
                 updateGames();
+                startUpdateInterval();
             });
 
             viewResultsButton.addEventListener('click', () => {
@@ -922,11 +983,7 @@
             searchFilter.addEventListener('input', applyFilters);
 
             updateGames();
-            setInterval(() => {
-                if (viewUpcomingButton.classList.contains('active')) {
-                    updateGames();
-                }
-            }, 30000);
+            startUpdateInterval();
         });
     </script>
 </body>
