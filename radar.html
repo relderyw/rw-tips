@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RW TIPS - Análise de Estatísticas</title>
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --background-dark: #0f0f13;
+            --card-bg: #1e1e28;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --accent-color: #00ff88;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --gradient-primary: linear-gradient(45deg, #6c5ce7, #00ff88);
+            --sidebar-bg: #1a1a23;
+            --active-bg: #2ecc71;
+            --header-height: 80px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: var(--background-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: var(--sidebar-bg);
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+            z-index: 100;
+            height: var(--header-height);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--primary-color);
+            padding: 2px;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.7);
+            animation: neonPulse 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes neonPulse {
+            from { text-shadow: 0 0 5px rgba(0, 255, 136, 0.5); }
+            to { text-shadow: 0 0 15px rgba(0, 255, 136, 0.8); }
+        }
+
+        .content {
+            flex: 1;
+            padding: 40px 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            color: var(--accent-color);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent-color);
+        }
+
+        .tab-content {
+            width: 100%;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .filters {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filters select {
+            padding: 10px 15px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .filters select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .sort-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--gradient-primary);
+            color: var(--text-primary);
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 255, 136, 0.3);
+        }
+
+        .sort-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 255, 136, 0.5);
+        }
+
+        .sort-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(0, 255, 136, 0.3);
+        }
+
+        .sort-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .sort-icon.asc {
+            transform: rotate(180deg);
+        }
+
+        .table-container {
+            width: 100%;
+            max-width: 1200px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+            font-size: 0.95rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--sidebar-bg);
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        td {
+            color: var(--text-secondary);
+        }
+
+        td.green {
+            color: #32CD32;
+        }
+
+        td.red {
+            color: #FF4C4C;
+        }
+
+        .back-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: var(--primary-color);
+            color: var(--text-primary);
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: var(--secondary-color);
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px 10px;
+            }
+
+            .title {
+                font-size: 1.5rem;
+            }
+
+            .subtitle {
+                font-size: 0.9rem;
+            }
+
+            .tabs {
+                gap: 15px;
+            }
+
+            .tab {
+                font-size: 1rem;
+                padding: 8px 15px;
+            }
+
+            .filters {
+                gap: 10px;
+            }
+
+            .filters select {
+                font-size: 0.9rem;
+                padding: 8px 12px;
+            }
+
+            .sort-button {
+                font-size: 0.9rem;
+                padding: 8px 15px;
+            }
+
+            th, td {
+                padding: 10px;
+                font-size: 0.85rem;
+            }
+
+            .back-button {
+                font-size: 0.9rem;
+                padding: 8px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo-container">
+            <img src="https://i.ibb.co/v6MhLNJX/11zon-cropped.png" alt="RW Tips Logo" class="logo-img">
+            <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
+        </div>
+    </header>
+
+    <div class="content">
+        <h1 class="title">Análise de Estatísticas</h1>
+        <p class="subtitle">Estatísticas detalhadas de jogadores e confrontos</p>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="top-players">Top Jogadores</button>
+            <button class="tab" data-tab="top-matches">Melhores Confrontos</button>
+        </div>
+
+        <!-- Tab: Top Jogadores -->
+        <div id="top-players" class="tab-content active">
+            <div class="filters">
+                <select id="leagueFilter">
+                    <option value="">Todas as Ligas</option>
+                </select>
+                <select id="sortOrder">
+                    <option value="desc">Taxa de Vitória: Maior para Menor</option>
+                    <option value="asc">Taxa de Vitória: Menor para Maior</option>
+                </select>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Jogador</th>
+                            <th>Time</th>
+                            <th>Liga</th>
+                            <th>Vitórias</th>
+                            <th>Empates</th>
+                            <th>Derrotas</th>
+                            <th>Jogos</th>
+                            <th>Média Gols</th>
+                            <th>Over 2.5</th>
+                            <th>BTTS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="playersTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Tab: Melhores Confrontos -->
+        <div id="top-matches" class="tab-content">
+            <button id="sortButton" class="sort-button">
+                Ordenar: Melhor para Pior
+                <span id="sortIcon" class="sort-icon">↓</span>
+            </button>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Player 1 x Player 2</th>
+                            <th>Liga</th>
+                            <th>+1.5 Gols</th>
+                            <th>+2.5 Gols</th>
+                            <th>+3.5 Gols</th>
+                            <th>+4.5 Gols</th>
+                            <th>BTTS</th>
+                            <th>Média de Gols</th>
+                        </tr>
+                    </thead>
+                    <tbody id="matchesTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <button class="back-button" onclick="window.location.href='visualization.html'">Voltar para Próximos Jogos</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const leagueFilter = document.getElementById('leagueFilter');
+            const sortOrder = document.getElementById('sortOrder');
+            const playersTable = document.getElementById('playersTable');
+            const sortButton = document.getElementById('sortButton');
+            const sortIcon = document.getElementById('sortIcon');
+            const matchesTable = document.getElementById('matchesTable');
+
+            let allGames = [];
+            let playerStats = {};
+            let matchups = [];
+            let leagues = new Set();
+            let sortOrderMatches = 'desc'; // Inicialmente do melhor para o pior
+
+            // Função para buscar jogos da API (múltiplas páginas)
+            async function fetchGames() {
+                const pagesToFetch = 5; // Buscar 5 páginas (250 jogos)
+                let games = [];
+                for (let page = 1; page <= pagesToFetch; page++) {
+                    try {
+                        const response = await fetch(`https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=${page}`);
+                        const data = await response.json();
+                        games = games.concat(data.data);
+                    } catch (error) {
+                        console.error(`Erro ao buscar página ${page}:`, error);
+                    }
+                }
+                return games;
+            }
+
+            // Função para extrair o nome do jogador
+            function extractPlayerName(text) {
+                const match = text.match(/\(([^)]+)\)/);
+                return match ? match[1] : text;
+            }
+
+            // Função para calcular estatísticas dos jogadores
+            function calculatePlayerStats() {
+                playerStats = {};
+                allGames.forEach(game => {
+                    const homePlayer = extractPlayerName(game.home);
+                    const awayPlayer = extractPlayerName(game.away);
+                    const homeTeam = game.home.split(' (')[0];
+                    const awayTeam = game.away.split(' (')[0];
+                    const league = game.leagueName;
+                    const score = game.score.split('-').map(Number);
+                    const homeGoals = score[0];
+                    const awayGoals = score[1];
+                    const totalGoals = homeGoals + awayGoals;
+                    const isBTTS = homeGoals > 0 && awayGoals > 0;
+
+                    if (!playerStats[homePlayer]) {
+                        playerStats[homePlayer] = { games: [], teams: new Set(), leagues: new Set() };
+                    }
+                    if (!playerStats[awayPlayer]) {
+                        playerStats[awayPlayer] = { games: [], teams: new Set(), leagues: new Set() };
+                    }
+
+                    playerStats[homePlayer].games.push({
+                        opponent: awayPlayer,
+                        goalsScored: homeGoals,
+                        goalsConceded: awayGoals,
+                        totalGoals,
+                        isBTTS,
+                        league,
+                        team: homeTeam,
+                        won: homeGoals > awayGoals,
+                        draw: homeGoals === awayGoals
+                    });
+                    playerStats[awayPlayer].games.push({
+                        opponent: homePlayer,
+                        goalsScored: awayGoals,
+                        goalsConceded: homeGoals,
+                        totalGoals,
+                        isBTTS,
+                        league,
+                        team: awayTeam,
+                        won: awayGoals > homeGoals,
+                        draw: awayGoals === homeGoals
+                    });
+
+                    playerStats[homePlayer].teams.add(homeTeam);
+                    playerStats[homePlayer].leagues.add(league);
+                    playerStats[awayPlayer].teams.add(awayTeam);
+                    playerStats[awayPlayer].leagues.add(league);
+                    leagues.add(league);
+                });
+
+                for (const player in playerStats) {
+                    const gamesByLeague = {};
+                    playerStats[player].games.forEach(game => {
+                        if (!gamesByLeague[game.league]) {
+                            gamesByLeague[game.league] = [];
+                        }
+                        gamesByLeague[game.league].push(game);
+                    });
+
+                    playerStats[player].statsByLeague = {};
+                    for (const league in gamesByLeague) {
+                        const last5Games = gamesByLeague[league].slice(0, 5);
+                        if (last5Games.length < 5) continue;
+
+                        const wins = last5Games.filter(g => g.won).length;
+                        const draws = last5Games.filter(g => g.draw).length;
+                        const losses = last5Games.length - wins - draws;
+                        const totalGoals = last5Games.reduce((sum, g) => sum + g.totalGoals, 0);
+                        const avgGoals = (totalGoals / last5Games.length).toFixed(2);
+                        const over2_5Games = last5Games.filter(g => g.totalGoals > 2.5).length;
+                        const over2_5Rate = ((over2_5Games / last5Games.length) * 100).toFixed(0);
+                        const bttsGames = last5Games.filter(g => g.isBTTS).length;
+                        const bttsRate = ((bttsGames / last5Games.length) * 100).toFixed(0);
+
+                        playerStats[player].statsByLeague[league] = {
+                            wins,
+                            draws,
+                            losses,
+                            games: last5Games.length,
+                            avgGoals,
+                            over2_5Rate,
+                            bttsRate,
+                            team: last5Games[0].team
+                        };
+                    }
+                }
+            }
+
+            // Função para calcular estatísticas dos confrontos
+            function calculateMatchups() {
+                const matchupGames = {};
+                allGames.forEach(game => {
+                    const player1 = extractPlayerName(game.home);
+                    const player2 = extractPlayerName(game.away);
+                    const league = game.leagueName;
+                    const score = game.score.split('-').map(Number);
+                    const totalGoals = score[0] + score[1];
+                    const isBTTS = score[0] > 0 && score[1] > 0;
+
+                    const matchupKey = [player1, player2].sort().join(' vs ');
+                    if (!matchupGames[matchupKey]) {
+                        matchupGames[matchupKey] = { games: [], league };
+                    }
+
+                    matchupGames[matchupKey].games.push({
+                        totalGoals,
+                        isBTTS
+                    });
+                });
+
+                matchups = [];
+                for (const matchup in matchupGames) {
+                    const games = matchupGames[matchup].games;
+                    if (games.length < 5) continue;
+
+                    const totalGames = games.length;
+                    const over1_5 = games.filter(g => g.totalGoals > 1.5).length;
+                    const over2_5 = games.filter(g => g.totalGoals > 2.5).length;
+                    const over3_5 = games.filter(g => g.totalGoals > 3.5).length;
+                    const over4_5 = games.filter(g => g.totalGoals > 4.5).length;
+                    const bttsGames = games.filter(g => g.isBTTS).length;
+                    const totalGoals = games.reduce((sum, g) => sum + g.totalGoals, 0);
+                    const avgGoals = (totalGoals / totalGames).toFixed(2);
+
+                    matchups.push({
+                        matchup,
+                        league: matchupGames[matchup].league,
+                        over1_5: ((over1_5 / totalGames) * 100).toFixed(0),
+                        over2_5: ((over2_5 / totalGames) * 100).toFixed(0),
+                        over3_5: ((over3_5 / totalGames) * 100).toFixed(0),
+                        over4_5: ((over4_5 / totalGames) * 100).toFixed(0),
+                        btts: ((bttsGames / totalGames) * 100).toFixed(0),
+                        avgGoals: parseFloat(avgGoals)
+                    });
+                }
+            }
+
+            // Função para popular o dropdown de ligas
+            function populateLeagues() {
+                leagues.forEach(league => {
+                    const option = document.createElement('option');
+                    option.value = league;
+                    option.textContent = league;
+                    leagueFilter.appendChild(option);
+                });
+            }
+
+            // Função para renderizar a tabela de jogadores
+            function renderPlayersTable() {
+                playersTable.innerHTML = '';
+                const selectedLeague = leagueFilter.value;
+                const order = sortOrder.value;
+
+                let playersList = [];
+                for (const player in playerStats) {
+                    const statsByLeague = playerStats[player].statsByLeague;
+                    for (const league in statsByLeague) {
+                        if (selectedLeague && league !== selectedLeague) continue;
+                        playersList.push({
+                            player,
+                            league,
+                            ...statsByLeague[league],
+                            winRate: (statsByLeague[league].wins / statsByLeague[league].games) * 100
+                        });
+                    }
+                }
+
+                playersList.sort((a, b) => {
+                    return order === 'desc' ? b.winRate - a.winRate : a.winRate - b.winRate;
+                });
+
+                playersList.forEach(player => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${player.player}</td>
+                        <td>${player.team}</td>
+                        <td>${player.league}</td>
+                        <td class="${player.wins >= 3 ? 'green' : 'red'}">${player.wins * 20}%</td>
+                        <td>${player.draws * 20}%</td>
+                        <td>${player.losses * 20}%</td>
+                        <td>${player.games}</td>
+                        <td>${player.avgGoals}</td>
+                        <td class="${player.over2_5Rate >= 70 ? 'green' : 'red'}">${player.over2_5Rate}%</td>
+                        <td class="${player.bttsRate >= 70 ? 'green' : 'red'}">${player.bttsRate}%</td>
+                    `;
+                    playersTable.appendChild(row);
+                });
+            }
+
+            // Função para renderizar a tabela de confrontos
+            function renderMatchesTable() {
+                matchesTable.innerHTML = '';
+
+                matchups.sort((a, b) => {
+                    return sortOrderMatches === 'desc' ? b.avgGoals - a.avgGoals : a.avgGoals - b.avgGoals;
+                });
+
+                matchups.forEach(match => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${match.matchup}</td>
+                        <td>${match.league}</td>
+                        <td class="${match.over1_5 >= 70 ? 'green' : 'red'}">${match.over1_5}%</td>
+                        <td class="${match.over2_5 >= 70 ? 'green' : 'red'}">${match.over2_5}%</td>
+                        <td class="${match.over3_5 >= 70 ? 'green' : 'red'}">${match.over3_5}%</td>
+                        <td class="${match.over4_5 >= 70 ? 'green' : 'red'}">${match.over4_5}%</td>
+                        <td class="${match.btts >= 70 ? 'green' : 'red'}">${match.btts}%</td>
+                        <td>${match.avgGoals}</td>
+                    `;
+                    matchesTable.appendChild(row);
+                });
+            }
+
+            // Carregar dados e inicializar
+            allGames = await fetchGames();
+            calculatePlayerStats();
+            calculateMatchups();
+            populateLeagues();
+            renderPlayersTable();
+            renderMatchesTable();
+
+            // Eventos para as guias
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+
+                    tab.classList.add('active');
+                    document.getElementById(tab.dataset.tab).classList.add('active');
+                });
+            });
+
+            // Eventos para filtros e ordenação
+            leagueFilter.addEventListener('change', renderPlayersTable);
+            sortOrder.addEventListener('change', renderPlayersTable);
+
+            sortButton.addEventListener('click', () => {
+                sortOrderMatches = sortOrderMatches === 'desc' ? 'asc' : 'desc';
+                sortButton.firstChild.nodeValue = `Ordenar: ${sortOrderMatches === 'desc' ? 'Melhor para Pior' : 'Pior para Melhor'} `;
+                sortIcon.textContent = sortOrderMatches === 'desc' ? '↓' : '↑';
+                sortIcon.classList.toggle('asc', sortOrderMatches === 'asc');
+                renderMatchesTable();
+            });
+        });
+    </script>
+</body>
+</html>
