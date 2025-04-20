@@ -123,7 +123,7 @@
             justify-content: center;
             gap: 15px;
             position: sticky;
-            top: calc(var(--header-height) + 60px); /* Ajuste para a nova barra superior */
+            top: calc(var(--header-height) + 60px);
             z-index: 90;
             flex-wrap: wrap;
         }
@@ -680,16 +680,16 @@
             <span>⚽</span> Próximos Jogos
         </button>
         <button class="main-nav-button" id="viewResultsButton">
-            <span>🏆</span> Últimos Resultados
+            <span>🏁</span> Últimos Resultados
         </button>
         <button class="main-nav-button" id="viewLiveButton">
-            <span>📡</span> Ao Vivo
+            <span>🛑AO VIVO </span>
         </button>
         <button class="main-nav-button" id="viewStatsButton">
             <span>📊</span> Estatísticas das Ligas
         </button>
         <button class="main-nav-button" id="registerBetsButton">
-            <span>🎯</span> Registrar Apostas
+            <span>💲</span> Registrar Apostas
         </button>
         <button class="main-nav-button" id="playerAnalysisButton">
             <span>🔍</span> Análise de Jogadores
@@ -699,6 +699,9 @@
         </button>
         <button class="main-nav-button" id="nbaStatsButton">
             <span>🏀</span> NBA Stats
+        </button>
+        <button class="main-nav-button" id="radarButton">
+            <span>📡</span> Radar
         </button>
     </div>
 
@@ -731,6 +734,7 @@
             const playerAnalysisButton = document.getElementById('playerAnalysisButton');
             const dashboardButton = document.getElementById('dashboardButton');
             const nbaStatsButton = document.getElementById('nbaStatsButton');
+            const radarButton = document.getElementById('radarButton');
 
             let gamesData = null;
             let pastGamesData = {};
@@ -775,7 +779,7 @@
             }
 
             async function fetchPastGames() {
-                const pagesToFetch = 5; // Buscar 5 páginas (250 jogos no total)
+                const pagesToFetch = 5;
                 let newGames = [];
                 let hasNewData = false;
 
@@ -1303,17 +1307,17 @@
 
             viewStatsButton.addEventListener('click', () => {
                 setActiveMainNavButton(viewStatsButton);
-                window.location.href = 'league_stats.html';
+                window.location.href = 'statistics.html';
             });
 
             registerBetsButton.addEventListener('click', () => {
                 setActiveMainNavButton(registerBetsButton);
-                window.location.href = 'register_bets.html';
+                window.location.href = 'formularioApostas.html';
             });
 
             playerAnalysisButton.addEventListener('click', () => {
                 setActiveMainNavButton(playerAnalysisButton);
-                window.location.href = 'player_analysis.html';
+                window.location.href = 'players.html';
             });
 
             dashboardButton.addEventListener('click', () => {
@@ -1323,7 +1327,12 @@
 
             nbaStatsButton.addEventListener('click', () => {
                 setActiveMainNavButton(nbaStatsButton);
-                window.location.href = 'nba_stats.html';
+                window.location.href = 'NBA.html';
+            });
+
+            radarButton.addEventListener('click', () => {
+                setActiveMainNavButton(radarButton);
+                window.location.href = 'radar.html';
             });
 
             updateGames();
