@@ -81,58 +81,67 @@
             to { text-shadow: 0 0 15px rgba(0, 255, 136, 0.8); }
         }
 
-        .main-container {
-            display: flex;
-            flex: 1;
-            position: relative;
-        }
-
-        .sidebar-left {
-            width: 220px;
+        .main-nav {
             background: var(--sidebar-bg);
-            padding: 20px;
-            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 30px;
             display: flex;
-            flex-direction: column;
-            gap: 10px;
-            position: fixed;
-            left: 0;
+            justify-content: center;
+            gap: 15px;
+            position: sticky;
             top: var(--header-height);
-            bottom: 0;
-            overflow-y: auto;
-            z-index: 50;
+            z-index: 95;
+            flex-wrap: wrap;
         }
 
-        .sidebar-section {
-            margin-bottom: 20px;
-        }
-
-        .sidebar-section h3 {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin-bottom: 10px;
-            padding-left: 10px;
-        }
-
-        .sidebar-button {
+        .main-nav-button {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 5px;
             background: var(--card-bg);
             color: var(--text-primary);
             border: none;
-            padding: 10px 15px;
+            padding: 10px 20px;
             border-radius: 8px;
-            font-size: 0.9rem;
+            font-size: 1rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s ease;
-            text-align: left;
-            width: 100%;
         }
 
-        .sidebar-button:hover,
-        .sidebar-button.active {
+        .main-nav-button:hover,
+        .main-nav-button.active {
+            background: var(--active-bg);
+            color: #000;
+        }
+
+        .top-nav {
+            background: var(--sidebar-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 10px 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            position: sticky;
+            top: calc(var(--header-height) + 60px); /* Ajuste para a nova barra superior */
+            z-index: 90;
+            flex-wrap: wrap;
+        }
+
+        .top-nav-button {
+            background: var(--card-bg);
+            color: var(--text-primary);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .top-nav-button:hover,
+        .top-nav-button.active {
             background: var(--active-bg);
             color: #000;
         }
@@ -140,7 +149,6 @@
         .content {
             flex: 1;
             padding: 40px 20px;
-            margin-left: 220px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -149,14 +157,13 @@
 
         .filter-container {
             display: flex;
-            gap: 25px;
-            margin-bottom: 40px;
             justify-content: center;
             width: 100%;
             max-width: 1200px;
+            margin-bottom: 40px;
         }
 
-        #leagueFilter, #searchFilter {
+        #searchFilter {
             flex: 1;
             max-width: 400px;
             padding: 16px;
@@ -168,7 +175,7 @@
             transition: all 0.3s ease;
         }
 
-        #leagueFilter:focus, #searchFilter:focus {
+        #searchFilter:focus {
             outline: none;
             border-color: var(--primary-color);
         }
@@ -375,18 +382,8 @@
         }
 
         @media (max-width: 1024px) {
-            .sidebar-left {
-                width: 180px;
-            }
-
             .content {
-                margin-left: 180px;
                 padding: 30px 15px;
-            }
-
-            .sidebar-button {
-                font-size: 0.8rem;
-                padding: 8px 12px;
             }
 
             .games-grid {
@@ -396,6 +393,18 @@
 
             .header {
                 padding: 15px 20px;
+            }
+
+            .main-nav,
+            .top-nav {
+                padding: 10px 20px;
+                gap: 10px;
+            }
+
+            .main-nav-button,
+            .top-nav-button {
+                padding: 8px 15px;
+                font-size: 0.9rem;
             }
 
             .league-header {
@@ -409,11 +418,10 @@
             }
 
             .filter-container {
-                gap: 20px;
                 margin-bottom: 30px;
             }
 
-            #leagueFilter, #searchFilter {
+            #searchFilter {
                 max-width: 350px;
                 padding: 14px;
                 font-size: 0.9rem;
@@ -494,16 +502,13 @@
                 font-size: 0.9rem;
             }
 
-            #leagueFilter, #searchFilter {
+            #searchFilter {
                 max-width: 100%;
                 font-size: 0.8rem;
                 padding: 12px;
             }
 
             .filter-container {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 15px;
                 margin-bottom: 25px;
             }
 
@@ -517,31 +522,19 @@
             }
 
             .header {
-                padding: 15px 10px 15px 60px;
+                padding: 15px 10px;
             }
 
-            .sidebar-left {
-                width: 50px;
-                padding: 10px;
+            .main-nav,
+            .top-nav {
+                padding: 8px 10px;
+                gap: 8px;
             }
 
-            .content {
-                margin-left: 50px;
-                padding: 25px 10px;
-            }
-
-            .sidebar-button {
-                font-size: 0.7rem;
-                padding: 8px;
-                justify-content: center;
-            }
-
-            .sidebar-button span {
-                display: none;
-            }
-
-            .sidebar-section h3 {
-                display: none;
+            .main-nav-button,
+            .top-nav-button {
+                padding: 8px 12px;
+                font-size: 0.85rem;
             }
 
             .league-header {
@@ -602,7 +595,7 @@
 
         @media (max-width: 480px) {
             .header {
-                padding: 10px 10px 10px 60px;
+                padding: 10px 10px;
                 flex-wrap: wrap;
                 gap: 10px;
             }
@@ -614,6 +607,18 @@
             .logo-img {
                 width: 35px;
                 height: 35px;
+            }
+
+            .main-nav,
+            .top-nav {
+                padding: 8px 10px;
+                gap: 6px;
+            }
+
+            .main-nav-button,
+            .top-nav-button {
+                padding: 6px 10px;
+                font-size: 0.8rem;
             }
 
             .league-header {
@@ -670,58 +675,70 @@
         </div>
     </header>
 
-    <div class="main-container">
-        <aside class="sidebar-left">
-            <div class="sidebar-section">
-                <h3>Navegação</h3>
-                <button id="viewUpcomingButton" class="sidebar-button active"><span>⚽</span> Próximos Jogos</button>
-                <button id="viewResultsButton" class="sidebar-button"><span>🏁</span> Últimos Resultados</button>
-                <button id="viewLiveButton" class="sidebar-button"><span>📡</span> Ao Vivo</button>
-            </div>
-            <div class="sidebar-section">
-                <h3>Ações</h3>
-                <button id="viewLeagueStatsButton" class="sidebar-button"><span>📊</span> Estatísticas das Ligas</button>
-                <button id="registerBetsButton" class="sidebar-button"><span>💰</span> Registrar Apostas</button>
-                <button id="viewPlayerAnalysisButton" class="sidebar-button"><span>👤</span> Análise de Jogadores</button>
-                <button id="dashboardButton" class="sidebar-button"><span>📋</span> Dashboard</button>
-                <button id="nbaStatsButton" class="sidebar-button"><span>🏀</span> NBA Stats</button>
-            </div>
-        </aside>
+    <div class="main-nav">
+        <button class="main-nav-button active" id="viewUpcomingButton">
+            <span>⚽</span> Próximos Jogos
+        </button>
+        <button class="main-nav-button" id="viewResultsButton">
+            <span>🏆</span> Últimos Resultados
+        </button>
+        <button class="main-nav-button" id="viewLiveButton">
+            <span>📡</span> Ao Vivo
+        </button>
+        <button class="main-nav-button" id="viewStatsButton">
+            <span>📊</span> Estatísticas das Ligas
+        </button>
+        <button class="main-nav-button" id="registerBetsButton">
+            <span>🎯</span> Registrar Apostas
+        </button>
+        <button class="main-nav-button" id="playerAnalysisButton">
+            <span>🔍</span> Análise de Jogadores
+        </button>
+        <button class="main-nav-button" id="dashboardButton">
+            <span>📋</span> Dashboard
+        </button>
+        <button class="main-nav-button" id="nbaStatsButton">
+            <span>🏀</span> NBA Stats
+        </button>
+    </div>
 
-        <div class="content">
-            <div class="filter-container">
-                <select id="leagueFilter">
-                    <option value="">Todas as Ligas</option>
-                    <option value="Battle 8m">Battle 8m</option>
-                    <option value="Battle Volta 6m">Battle Volta 6m</option>
-                    <option value="GT Leagues 12m">GT Leagues 12m</option>
-                    <option value="H2H GG 8m">H2H GG 8m</option>
-                    <option value="Adriatic 10m">Adriatic 10m</option>
-                </select>
-                <input type="text" id="searchFilter" placeholder="Buscar por jogador ou time...">
-            </div>
+    <div class="top-nav">
+        <button class="top-nav-button active" data-league="">Todas as Ligas</button>
+        <button class="top-nav-button" data-league="Battle 8m" style="color: #FF4C4C;">Battle 8m</button>
+        <button class="top-nav-button" data-league="Battle Volta 6m" style="color: #FFD700;">Battle Volta 6m</button>
+        <button class="top-nav-button" data-league="GT Leagues 12m" style="color: #32CD32;">GT Leagues 12m</button>
+        <button class="top-nav-button" data-league="H2H GG 8m" style="color: #8A2BE2;">H2H GG 8m</button>
+    </div>
 
-            <div id="gamesContainer" class="games-grid"></div>
+    <div class="content">
+        <div class="filter-container">
+            <input type="text" id="searchFilter" placeholder="Buscar por jogador ou time...">
         </div>
+
+        <div id="gamesContainer" class="games-grid"></div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const gamesContainer = document.getElementById('gamesContainer');
+            const searchFilter = document.getElementById('searchFilter');
+            const topNavButtons = document.querySelectorAll('.top-nav-button');
             const viewUpcomingButton = document.getElementById('viewUpcomingButton');
             const viewResultsButton = document.getElementById('viewResultsButton');
             const viewLiveButton = document.getElementById('viewLiveButton');
-            const viewLeagueStatsButton = document.getElementById('viewLeagueStatsButton');
+            const viewStatsButton = document.getElementById('viewStatsButton');
             const registerBetsButton = document.getElementById('registerBetsButton');
-            const viewPlayerAnalysisButton = document.getElementById('viewPlayerAnalysisButton');
+            const playerAnalysisButton = document.getElementById('playerAnalysisButton');
             const dashboardButton = document.getElementById('dashboardButton');
             const nbaStatsButton = document.getElementById('nbaStatsButton');
-            const leagueFilter = document.getElementById('leagueFilter');
-            const searchFilter = document.getElementById('searchFilter');
 
             let gamesData = null;
             let pastGamesData = {};
+            let allGamesCache = [];
+            let latestTimestamp = 0;
+            let bestPlayersCache = {};
             let updateInterval = null;
+            let selectedLeague = '';
 
             function extractPlayerName(text) {
                 if (!text || typeof text !== 'string') return 'Desconhecido';
@@ -759,7 +776,9 @@
 
             async function fetchPastGames() {
                 const pagesToFetch = 5; // Buscar 5 páginas (250 jogos no total)
-                let allGames = [];
+                let newGames = [];
+                let hasNewData = false;
+
                 for (let page = 1; page <= pagesToFetch; page++) {
                     try {
                         const response = await fetch(`https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=${page}`);
@@ -767,56 +786,71 @@
                             throw new Error(`Erro na API na página ${page}: ${response.status} - ${response.statusText}`);
                         }
                         const data = await response.json();
-                        allGames = allGames.concat(data.data);
+                        const games = data.data;
+
+                        const newGamesOnPage = games.filter(game => game.timestamp > latestTimestamp);
+                        if (newGamesOnPage.length > 0) {
+                            hasNewData = true;
+                            newGames = newGames.concat(newGamesOnPage);
+                        }
                     } catch (error) {
                         console.error(`Erro ao buscar jogos da página ${page}:`, error.message);
                         continue;
                     }
                 }
 
-                // Processar os jogos para montar pastGamesData
-                const playerGames = {};
-                allGames.forEach(game => {
-                    const homePlayer = extractPlayerName(game.home);
-                    const awayPlayer = extractPlayerName(game.away);
-                    const score = parseScore(game.score);
-                    const gameData = {
-                        goalsScored: 0,
-                        goalsConceded: 0,
-                        totalGoals: score.totalGoals,
-                        won: false
-                    };
+                if (hasNewData) {
+                    allGamesCache = [...newGames, ...allGamesCache].sort((a, b) => b.timestamp - a.timestamp).slice(0, 250);
+                    latestTimestamp = allGamesCache.length > 0 ? Math.max(...allGamesCache.map(g => g.timestamp)) : latestTimestamp;
 
-                    // Dados do jogador da casa
-                    if (!playerGames[homePlayer]) playerGames[homePlayer] = [];
-                    gameData.goalsScored = score.homeGoals;
-                    gameData.goalsConceded = score.awayGoals;
-                    gameData.won = score.homeGoals > score.awayGoals;
-                    playerGames[homePlayer].push(gameData);
+                    const playerGames = {};
+                    allGamesCache.forEach(game => {
+                        const homePlayer = extractPlayerName(game.home);
+                        const awayPlayer = extractPlayerName(game.away);
+                        const score = parseScore(game.score);
+                        const gameData = {
+                            goalsScored: 0,
+                            goalsConceded: 0,
+                            totalGoals: score.totalGoals,
+                            won: false,
+                            timestamp: game.timestamp
+                        };
 
-                    // Dados do jogador visitante
-                    if (!playerGames[awayPlayer]) playerGames[awayPlayer] = [];
-                    gameData.goalsScored = score.awayGoals;
-                    gameData.goalsConceded = score.homeGoals;
-                    gameData.won = score.awayGoals > score.homeGoals;
-                    playerGames[awayPlayer].push(gameData);
-                });
+                        if (!playerGames[homePlayer]) playerGames[homePlayer] = [];
+                        gameData.goalsScored = score.homeGoals;
+                        gameData.goalsConceded = score.awayGoals;
+                        gameData.won = score.homeGoals > score.awayGoals;
+                        playerGames[homePlayer].push(gameData);
 
-                // Limitar a 5 jogos mais recentes por jogador
-                for (const player in playerGames) {
-                    playerGames[player] = playerGames[player]
-                        .sort((a, b) => b.timestamp - a.timestamp)
-                        .slice(0, 5);
+                        if (!playerGames[awayPlayer]) playerGames[awayPlayer] = [];
+                        gameData.goalsScored = score.awayGoals;
+                        gameData.goalsConceded = score.homeGoals;
+                        gameData.won = score.awayGoals > score.homeGoals;
+                        playerGames[awayPlayer].push(gameData);
+                    });
+
+                    for (const player in playerGames) {
+                        playerGames[player] = playerGames[player]
+                            .sort((a, b) => b.timestamp - a.timestamp)
+                            .slice(0, 5);
+                        console.log(`Jogador: ${player}, Últimos 5 jogos:`, playerGames[player]);
+                    }
+
+                    pastGamesData = playerGames;
+                    bestPlayersCache = {};
                 }
 
-                pastGamesData = playerGames;
-                return allGames;
+                return allGamesCache;
             }
 
             function getBestPlayerForLeague(leagueName, games) {
+                if (bestPlayersCache[leagueName]) {
+                    console.log(`Melhor jogador para ${leagueName} recuperado do cache:`, bestPlayersCache[leagueName]);
+                    return bestPlayersCache[leagueName];
+                }
+
                 const playerStats = {};
 
-                // Gather stats for each player in the league
                 games.forEach(game => {
                     if (game.leagueName !== leagueName) return;
                     const homePlayer = extractPlayerName(game.home);
@@ -855,7 +889,6 @@
                     }
                 });
 
-                // Calculate over-goals stats and filter based on league-specific criteria
                 const leagueCriteria = {
                     "Esoccer GT Leagues – 12 mins play": { over1_5: 100, over2_5: 100, over3_5: 70 },
                     "Esoccer Battle - 8 mins play": { over1_5: 100, over2_5: 88 },
@@ -896,10 +929,12 @@
                 }
 
                 if (eligiblePlayers.length === 0) {
-                    return { name: "Nenhum jogador destacado", wins: 0, goalsScored: 0, goalsConceded: 0 };
+                    const result = { name: "Nenhum jogador destacado", wins: 0, goalsScored: 0, goalsConceded: 0 };
+                    bestPlayersCache[leagueName] = result;
+                    console.log(`Melhor jogador para ${leagueName}:`, result);
+                    return result;
                 }
 
-                // Find the best player based on wins, goals scored, and goals conceded
                 let maxWins = Math.max(...eligiblePlayers.map(p => p.wins));
                 let candidatesByWins = eligiblePlayers.filter(p => p.wins === maxWins);
 
@@ -912,23 +947,33 @@
                         let finalCandidates = candidatesByGoalsScored.filter(p => p.goalsConceded === minGoalsConceded);
 
                         if (finalCandidates.length !== 1) {
-                            return { name: "Nenhum jogador destacado", wins: 0, goalsScored: 0, goalsConceded: 0 };
+                            const result = { name: "Nenhum jogador destacado", wins: 0, goalsScored: 0, goalsConceded: 0 };
+                            bestPlayersCache[leagueName] = result;
+                            console.log(`Melhor jogador para ${leagueName}:`, result);
+                            return result;
                         }
 
+                        bestPlayersCache[leagueName] = finalCandidates[0];
+                        console.log(`Melhor jogador para ${leagueName}:`, finalCandidates[0]);
                         return finalCandidates[0];
                     } else {
                         let minGoalsConceded = Math.min(...candidatesByGoalsScored.map(p => p.goalsConceded));
                         let finalCandidates = candidatesByGoalsScored.filter(p => p.goalsConceded === minGoalsConceded);
 
                         if (finalCandidates.length !== 1) {
-                            return { name: "Nenhum jogador destacado", wins: 0, goalsScored: 0, goalsConceded: 0 };
+                            const result = { name: "Nenhum jogador destacado", wins: 0, goalsScored: 0, goalsConceded: 0 };
+                            bestPlayersCache[leagueName] = result;
+                            console.log(`Melhor jogador para ${leagueName}:`, result);
+                            return result;
                         }
 
+                        bestPlayersCache[leagueName] = finalCandidates[0];
+                        console.log(`Melhor jogador para ${leagueName}:`, finalCandidates[0]);
                         return finalCandidates[0];
                     }
                 } else {
-                    let maxGoalsScored = candidatesByWins[0].goalsScored;
-                    let minGoalsConceded = candidatesByWins[0].goalsConceded;
+                    bestPlayersCache[leagueName] = candidatesByWins[0];
+                    console.log(`Melhor jogador para ${leagueName}:`, candidatesByWins[0]);
                     return candidatesByWins[0];
                 }
             }
@@ -956,7 +1001,6 @@
             }
 
             function getMetrics(leagueName, homePlayer, awayPlayer, allGames) {
-                // Filtrar jogos da liga específica
                 const leagueGames = allGames.filter(game => game.leagueName === leagueName).slice(0, 30);
                 if (leagueGames.length === 0) {
                     return [
@@ -966,7 +1010,6 @@
                     ];
                 }
 
-                // Calcular métricas da liga
                 const over1_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 1.5).length;
                 const over2_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 2.5).length;
                 const over3_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 3.5).length;
@@ -1030,10 +1073,8 @@
                 }
 
                 try {
-                    // Buscar jogos finalizados para calcular estatísticas
                     const allGames = await fetchPastGames();
 
-                    // Filtrar jogos das 4 ligas desejadas e pegar os mais recentes
                     const targetLeagues = [
                         "Esoccer GT Leagues – 12 mins play",
                         "Esoccer Battle - 8 mins play",
@@ -1045,10 +1086,9 @@
                         gamesByLeague[league] = allGames
                             .filter(game => game.leagueName === league)
                             .sort((a, b) => b.timestamp - a.timestamp)
-                            .slice(0, 3); // Pegar até 3 jogos por liga
+                            .slice(0, 3);
                     });
 
-                    // Montar gamesData com os jogos filtrados
                     gamesData = [];
                     for (const league in gamesByLeague) {
                         gamesData = gamesData.concat(gamesByLeague[league].map(game => ({
@@ -1185,7 +1225,6 @@
             function applyFilters() {
                 if (!gamesData) return;
 
-                const selectedLeague = leagueFilter.value;
                 const searchTerm = searchFilter.value.toLowerCase();
                 const leagueSections = gamesContainer.getElementsByClassName('league-section');
 
@@ -1227,50 +1266,65 @@
                     clearInterval(updateInterval);
                 }
                 updateInterval = setInterval(() => {
-                    if (viewUpcomingButton.classList.contains('active')) {
-                        updateGames();
-                    }
+                    updateGames();
                 }, 30000);
             }
 
+            function setActiveMainNavButton(button) {
+                document.querySelectorAll('.main-nav-button').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+            }
+
+            topNavButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    topNavButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    selectedLeague = button.dataset.league;
+                    applyFilters();
+                });
+            });
+
+            searchFilter.addEventListener('input', applyFilters);
+
             viewUpcomingButton.addEventListener('click', () => {
-                viewUpcomingButton.classList.add('active');
-                viewResultsButton.classList.remove('active');
-                viewLiveButton.classList.remove('active');
-                updateGames();
-                startUpdateInterval();
+                setActiveMainNavButton(viewUpcomingButton);
+                window.location.href = 'index.html';
             });
 
             viewResultsButton.addEventListener('click', () => {
+                setActiveMainNavButton(viewResultsButton);
                 window.location.href = 'results.html';
             });
 
             viewLiveButton.addEventListener('click', () => {
+                setActiveMainNavButton(viewLiveButton);
                 window.location.href = 'live.html';
             });
 
-            viewLeagueStatsButton.addEventListener('click', () => {
-                window.location.href = 'statistics.html';
+            viewStatsButton.addEventListener('click', () => {
+                setActiveMainNavButton(viewStatsButton);
+                window.location.href = 'league_stats.html';
             });
 
             registerBetsButton.addEventListener('click', () => {
-                window.location.href = 'formularioApostas.html';
+                setActiveMainNavButton(registerBetsButton);
+                window.location.href = 'register_bets.html';
             });
 
-            viewPlayerAnalysisButton.addEventListener('click', () => {
-                window.location.href = 'players.html';
+            playerAnalysisButton.addEventListener('click', () => {
+                setActiveMainNavButton(playerAnalysisButton);
+                window.location.href = 'player_analysis.html';
             });
 
             dashboardButton.addEventListener('click', () => {
+                setActiveMainNavButton(dashboardButton);
                 window.location.href = 'dashboard.html';
             });
 
             nbaStatsButton.addEventListener('click', () => {
-                window.location.href = 'nba.html';
+                setActiveMainNavButton(nbaStatsButton);
+                window.location.href = 'nba_stats.html';
             });
-
-            leagueFilter.addEventListener('change', applyFilters);
-            searchFilter.addEventListener('input', applyFilters);
 
             updateGames();
             startUpdateInterval();
