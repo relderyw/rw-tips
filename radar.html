@@ -34,7 +34,7 @@
             line-height: 1.6;
             display: flex;
             flex-direction: column;
-            align-items: center; /* Centraliza o conteúdo horizontalmente */
+            align-items: center;
         }
 
         .header {
@@ -48,7 +48,7 @@
             z-index: 100;
             height: var(--header-height);
             width: 100%;
-            max-width: 1200px; /* Limita a largura máxima do header */
+            max-width: 1200px;
         }
 
         .logo-container {
@@ -88,9 +88,27 @@
             padding: 40px 20px;
             display: flex;
             flex-direction: column;
-            align-items: center; /* Centraliza os filhos horizontalmente */
+            align-items: center;
             width: 100%;
-            max-width: 1200px; /* Limita a largura máxima do conteúdo */
+            max-width: 1200px;
+        }
+
+        .back-button {
+            margin-bottom: 20px; /* Espaço abaixo do botão */
+            padding: 10px 20px;
+            background: var(--primary-color);
+            color: var(--text-primary);
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .back-button:hover {
+            background: var(--secondary-color);
         }
 
         .title {
@@ -112,8 +130,8 @@
             gap: 20px;
             margin-bottom: 30px;
             border-bottom: 2px solid var(--border-color);
-            justify-content: center; /* Centraliza as abas */
-            flex-wrap: wrap; /* Permite quebra de linha em telas pequenas */
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         .tab {
@@ -160,7 +178,7 @@
             gap: 20px;
             margin-bottom: 30px;
             flex-wrap: wrap;
-            justify-content: center; /* Já está correto, mas reforçado */
+            justify-content: center;
         }
 
         .filters select {
@@ -191,9 +209,9 @@
             font-size: 1rem;
             cursor: pointer;
             transition: transform 0.2s ease, box-shadow 0.3s ease;
-            margin: 0 auto 20px; /* Centraliza o botão */
+            margin: 0 auto 20px;
             box-shadow: 0 2px 8px rgba(0, 255, 136, 0.3);
-            display: block; /* Garante que o margin: 0 auto funcione */
+            display: block;
         }
 
         .sort-button:hover {
@@ -217,7 +235,7 @@
 
         .table-container {
             width: 100%;
-            max-width: 100%; /* Garante que a tabela não exceda o contêiner */
+            max-width: 100%;
             overflow-x: auto;
         }
 
@@ -252,24 +270,6 @@
 
         td.red {
             color: #FF4C4C;
-        }
-
-        .back-button {
-            margin: 20px auto; /* Centraliza o botão */
-            padding: 10px 20px;
-            background: var(--primary-color);
-            color: var(--text-primary);
-            border: none;
-            border-radius: 8px;
-            font-weight: 500;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: block; /* Garante que o margin: 0 auto funcione */
-        }
-
-        .back-button:hover {
-            background: var(--secondary-color);
         }
 
         @media (max-width: 768px) {
@@ -392,6 +392,8 @@
     </header>
 
     <div class="content">
+        <button class="back-button" onclick="window.location.href='visualization.html'">Voltar</button>
+
         <h1 class="title">Análise de Estatísticas</h1>
         <p class="subtitle">Estatísticas detalhadas de jogadores e confrontos</p>
 
@@ -458,8 +460,6 @@
                 </table>
             </div>
         </div>
-
-        <button class="back-button" onclick="window.location.href='visualization.html'">Voltar para Próximos Jogos</button>
     </div>
 
     <script>
@@ -477,11 +477,10 @@
             let playerStats = {};
             let matchups = [];
             let leagues = new Set();
-            let sortOrderMatches = 'desc'; // Inicialmente do melhor para o pior
+            let sortOrderMatches = 'desc';
 
-            // Função para buscar jogos da API (múltiplas páginas)
             async function fetchGames() {
-                const pagesToFetch = 5; // Buscar 5 páginas (250 jogos)
+                const pagesToFetch = 5;
                 let games = [];
                 for (let page = 1; page <= pagesToFetch; page++) {
                     try {
@@ -495,13 +494,11 @@
                 return games;
             }
 
-            // Função para extrair o nome do jogador
             function extractPlayerName(text) {
                 const match = text.match(/\(([^)]+)\)/);
                 return match ? match[1] : text;
             }
 
-            // Função para calcular estatísticas dos jogadores
             function calculatePlayerStats() {
                 playerStats = {};
                 allGames.forEach(game => {
@@ -591,7 +588,6 @@
                 }
             }
 
-            // Função para calcular estatísticas dos confrontos
             function calculateMatchups() {
                 const matchupGames = {};
                 allGames.forEach(game => {
@@ -640,7 +636,6 @@
                 }
             }
 
-            // Função para popular o dropdown de ligas
             function populateLeagues() {
                 leagues.forEach(league => {
                     const option = document.createElement('option');
@@ -650,7 +645,6 @@
                 });
             }
 
-            // Função para renderizar a tabela de jogadores
             function renderPlayersTable() {
                 playersTable.innerHTML = '';
                 const selectedLeague = leagueFilter.value;
@@ -692,7 +686,6 @@
                 });
             }
 
-            // Função para renderizar a tabela de confrontos
             function renderMatchesTable() {
                 matchesTable.innerHTML = '';
 
@@ -716,7 +709,6 @@
                 });
             }
 
-            // Carregar dados e inicializar
             allGames = await fetchGames();
             calculatePlayerStats();
             calculateMatchups();
@@ -724,7 +716,6 @@
             renderPlayersTable();
             renderMatchesTable();
 
-            // Eventos para as guias
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     tabs.forEach(t => t.classList.remove('active'));
@@ -735,7 +726,6 @@
                 });
             });
 
-            // Eventos para filtros e ordenação
             leagueFilter.addEventListener('change', renderPlayersTable);
             sortOrder.addEventListener('change', renderPlayersTable);
 
