@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RW TIPS - Visualização de Jogos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Mantive a maior parte do CSS original */
         :root {
             --primary-color: #6c5ce7;
             --secondary-color: #a29bfe;
@@ -21,13 +22,20 @@
             --active-bg: #2ecc71;
             --header-height: 80px;
             --highlight-border: #ffd700;
+            
+            /* Cores específicas das ligas */
+            --battle-8m-color: #FF4C4C;
+            --battle-volta-6m-color: #FFD700;
+            --gt-leagues-12m-color: #32CD32;
+            --h2h-gg-8m-color: #8A2BE2;
+            --adriatic-10m-color: #1E90FF;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
@@ -79,13 +87,8 @@
         }
 
         @keyframes neonPulse {
-            from {
-                text-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
-            }
-
-            to {
-                text-shadow: 0 0 15px rgba(0, 255, 136, 0.8);
-            }
+            from { text-shadow: 0 0 5px rgba(0, 255, 136, 0.5); }
+            to { text-shadow: 0 0 15px rgba(0, 255, 136, 0.8); }
         }
 
         .main-nav {
@@ -187,17 +190,15 @@
             border-color: var(--primary-color);
         }
 
-        /* MODIFICAÇÃO PRINCIPAL: Alteração do layout para exibir as ligas em grid */
+        /* Layout de grid melhorado */
         #gamesContainer {
             width: 100%;
             max-width: 1600px;
-            /* Aumentado para acomodar as ligas lado a lado */
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(4, 1fr); /* Forçar 4 colunas */
             gap: 20px;
         }
 
-        /* MODIFICAÇÃO: Ajuste da league-section para se encaixar no grid */
         .league-section {
             margin-bottom: 30px;
             width: 100%;
@@ -208,11 +209,10 @@
         .league-header {
             font-size: 1.6rem;
             font-weight: 600;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
             padding: 12px;
             color: var(--text-primary);
             background: var(--card-bg);
-            border: 2px solid var(--accent-color);
             border-radius: 8px;
             height: 54px;
             line-height: 30px;
@@ -220,16 +220,43 @@
             overflow: hidden;
             text-overflow: ellipsis;
             text-align: center;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Bordas coloridas específicas para cada liga */
+        .league-header.battle-8m {
+            border-left: 4px solid var(--battle-8m-color);
+        }
+        
+        .league-header.battle-volta-6m {
+            border-left: 4px solid var(--battle-volta-6m-color);
+        }
+        
+        .league-header.gt-leagues-12m {
+            border-left: 4px solid var(--gt-leagues-12m-color);
+        }
+        
+        .league-header.h2h-gg-8m {
+            border-left: 4px solid var(--h2h-gg-8m-color);
         }
 
         .best-player-card {
             background: var(--card-bg);
             border-radius: 8px;
             padding: 15px;
-            margin-bottom: 25px;
-            border: 2px solid var(--accent-color);
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             text-align: left;
+            transition: all 0.3s ease;
+        }
+
+        .best-player-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .best-player-card .last-games-header {
@@ -261,7 +288,6 @@
             line-height: 1.3;
         }
 
-        /* MODIFICAÇÃO: Ajuste do games-grid para se encaixar no layout */
         .games-grid {
             display: flex;
             flex-direction: column;
@@ -271,15 +297,37 @@
         .card {
             background: var(--card-bg);
             border-radius: 8px;
-            padding: 25px;
-            border: 2px solid var(--accent-color);
+            padding: 20px;
+            border: 1px solid var(--border-color);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
         }
 
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Bordas coloridas específicas para cada liga */
+        .card.battle-8m {
+            border-left: 4px solid var(--battle-8m-color);
+        }
+        
+        .card.battle-volta-6m {
+            border-left: 4px solid var(--battle-volta-6m-color);
+        }
+        
+        .card.gt-leagues-12m {
+            border-left: 4px solid var(--gt-leagues-12m-color);
+        }
+        
+        .card.h2h-gg-8m {
+            border-left: 4px solid var(--h2h-gg-8m-color);
+        }
+
         .highlight-card {
-            border: 2px solid var(--highlight-border);
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            border: 2px solid var(--highlight-border) !important;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
         }
 
         .card-placeholder {
@@ -294,11 +342,6 @@
             justify-content: center;
             color: var(--text-secondary);
             font-size: 1rem;
-        }
-
-        .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
         .teams {
@@ -320,6 +363,8 @@
             border-radius: 50%;
             margin-bottom: 10px;
             border: 1px solid var(--border-color);
+            object-fit: cover;
+            background-color: #2a2a35;
         }
 
         .team span {
@@ -391,14 +436,75 @@
             font-size: 1.1rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .h2h-button:hover {
             background: var(--secondary-color);
         }
 
-        /* MODIFICAÇÃO: Ajustes responsivos para o novo layout */
-        @media (max-width: 1400px) {
+        /* Botão Ver Mais melhorado */
+        .view-more-button {
+            width: 100%;
+            padding: 14px;
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .view-more-button:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent-color);
+        }
+
+        /* Cores específicas para os botões Ver Mais */
+        .view-more-button.battle-8m {
+            color: var(--battle-8m-color);
+        }
+        
+        .view-more-button.battle-volta-6m {
+            color: var(--battle-volta-6m-color);
+        }
+        
+        .view-more-button.gt-leagues-12m {
+            color: var(--gt-leagues-12m-color);
+        }
+        
+        .view-more-button.h2h-gg-8m {
+            color: var(--h2h-gg-8m-color);
+        }
+
+        /* Indicador de carregamento */
+        .loading-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--accent-color);
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsividade melhorada */
+        @media (max-width: 1600px) {
             #gamesContainer {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -665,12 +771,10 @@
         }
     </style>
 </head>
-
 <body>
     <header class="header">
         <div class="logo-container">
-            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo"
-                class="logo-img">
+            <img src="https://i.ibb.co/v6MhLNJX/11zon-cropped.png" alt="RW Tips Logo" class="logo-img">
             <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
         </div>
     </header>
@@ -683,7 +787,7 @@
             <span>🏁</span> Últimos Resultados
         </button>
         <button class="main-nav-button" id="viewLiveButton">
-            <span>🛑AO VIVO </span>
+            <span>🔴</span> AO VIVO
         </button>
         <button class="main-nav-button" id="viewStatsButton">
             <span>📊</span> Estatísticas das Ligas
@@ -743,6 +847,16 @@
             let bestPlayersCache = {};
             let updateInterval = null;
             let selectedLeague = '';
+            let expandedLeagues = {};
+
+            // Mapeamento de ligas para classes CSS
+            const leagueClasses = {
+                "Esoccer Battle - 8 mins play": "battle-8m",
+                "Esoccer Battle Volta - 6 mins play": "battle-volta-6m",
+                "Esoccer GT Leagues – 12 mins play": "gt-leagues-12m",
+                "Esoccer H2H GG League - 8 mins play": "h2h-gg-8m",
+                "Esoccer Adriatic League - 10 mins play": "adriatic-10m"
+            };
 
             function extractPlayerName(text) {
                 if (!text || typeof text !== 'string') return 'Desconhecido';
@@ -825,13 +939,14 @@
                         gameData.goalsScored = score.homeGoals;
                         gameData.goalsConceded = score.awayGoals;
                         gameData.won = score.homeGoals > score.awayGoals;
-                        playerGames[homePlayer].push(gameData);
+                        playerGames[homePlayer].push({...gameData});
 
                         if (!playerGames[awayPlayer]) playerGames[awayPlayer] = [];
-                        gameData.goalsScored = score.awayGoals;
-                        gameData.goalsConceded = score.homeGoals;
-                        gameData.won = score.awayGoals > score.homeGoals;
-                        playerGames[awayPlayer].push(gameData);
+                        const awayGameData = {...gameData};
+                        awayGameData.goalsScored = score.awayGoals;
+                        awayGameData.goalsConceded = score.homeGoals;
+                        awayGameData.won = score.awayGoals > score.homeGoals;
+                        playerGames[awayPlayer].push(awayGameData);
                     });
 
                     for (const player in playerGames) {
@@ -850,11 +965,11 @@
             async function fetchUpcomingGames() {
                 try {
                     const response = await fetch('https://api.green365.com.br/api/league/upcoming?sport=fifa&leagueId=&page=1');
-
+                    
                     if (!response.ok) {
                         throw new Error(`Erro na API: ${response.status} - ${response.statusText}`);
                     }
-
+                    
                     const data = await response.json();
                     console.log("Jogos futuros obtidos:", data.data.length);
                     return data.data;
@@ -1067,23 +1182,29 @@
                 return metrics;
             }
 
+            // Função para expandir/colapsar uma liga
+            function toggleLeagueExpansion(leagueName) {
+                expandedLeagues[leagueName] = !expandedLeagues[leagueName];
+                renderGames(allGamesCache);
+            }
+
             async function updateGames() {
                 gamesContainer.innerHTML = '';
-                const placeholderCount = 4; // Reduzido para 4 placeholders (um para cada liga)
+                const placeholderCount = 4; // Um placeholder para cada liga
                 for (let i = 0; i < placeholderCount; i++) {
                     const placeholder = document.createElement('div');
                     placeholder.className = 'card-placeholder';
-                    placeholder.innerText = 'Carregando...';
+                    placeholder.innerHTML = '<div class="loading-indicator"></div> Carregando...';
                     gamesContainer.appendChild(placeholder);
                 }
 
                 try {
                     // Buscar jogos passados para estatísticas
                     const allGames = await fetchPastGames();
-
+                    
                     // Buscar jogos futuros para exibição
                     const upcomingGames = await fetchUpcomingGames();
-
+                    
                     // Filtrar por ligas relevantes
                     const targetLeagues = [
                         "Esoccer GT Leagues – 12 mins play",
@@ -1091,7 +1212,7 @@
                         "Esoccer Battle Volta - 6 mins play",
                         "Esoccer H2H GG League - 8 mins play"
                     ];
-
+                    
                     // Agrupar jogos futuros por liga
                     const gamesByLeague = {};
                     upcomingGames.forEach(game => {
@@ -1103,7 +1224,7 @@
                             gamesByLeague[leagueName].push(game);
                         }
                     });
-
+                    
                     // Preparar dados para renderização
                     upcomingGamesData = [];
                     for (const league in gamesByLeague) {
@@ -1134,7 +1255,6 @@
                     return acc;
                 }, {});
 
-                // MODIFICAÇÃO: Garantir que todas as ligas sejam exibidas lado a lado
                 // Criar um array com as ligas para garantir a ordem
                 const targetLeagues = [
                     "Esoccer GT Leagues – 12 mins play",
@@ -1146,14 +1266,14 @@
                 // Renderizar as ligas na ordem definida
                 for (const leagueName of targetLeagues) {
                     if (!gamesByLeague[leagueName]) continue;
-
+                    
                     const leagueSection = document.createElement('div');
                     leagueSection.className = 'league-section';
                     leagueSection.dataset.leagueName = getShortLeagueName(leagueName);
 
                     const leagueInfo = getLeagueDisplayName(leagueName);
                     const leagueHeader = document.createElement('h2');
-                    leagueHeader.className = 'league-header';
+                    leagueHeader.className = `league-header ${leagueClasses[leagueName] || ''}`;
                     leagueHeader.innerText = leagueInfo.name;
                     leagueHeader.style.color = leagueInfo.color;
                     leagueSection.appendChild(leagueHeader);
@@ -1174,12 +1294,13 @@
                     const leagueGamesGrid = document.createElement('div');
                     leagueGamesGrid.className = 'games-grid';
 
-                    // Limitar a 2 jogos por liga para melhor visualização
-                    const gamesToShow = gamesByLeague[leagueName].slice(0, 2);
-
+                    // Determinar quantos jogos mostrar com base no estado de expansão
+                    const isExpanded = expandedLeagues[leagueName] || false;
+                    const gamesToShow = isExpanded ? gamesByLeague[leagueName] : gamesByLeague[leagueName].slice(0, 2);
+                    
                     for (const game of gamesToShow) {
                         const card = document.createElement('div');
-                        card.className = 'card';
+                        card.className = `card ${leagueClasses[leagueName] || ''}`;
 
                         const homePlayer = extractPlayerName(game.home);
                         const awayPlayer = extractPlayerName(game.away);
@@ -1224,7 +1345,7 @@
 
                         const h2hButton = document.createElement('button');
                         h2hButton.className = 'h2h-button';
-                        h2hButton.innerText = 'Ver H2H';
+                        h2hButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg> Ver H2H';
                         h2hButton.onclick = () => {
                             window.location.href = `h2h_analysis.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${game.homeID || ''}&awayID=${game.awayID || ''}&leagueID=${game.leagueID || ''}`;
                         };
@@ -1236,24 +1357,23 @@
                         leagueGamesGrid.appendChild(card);
                     }
 
-                    // Adicionar link para ver mais jogos se houver mais de 2
+                    // Adicionar botão "Ver mais" se houver mais jogos
                     if (gamesByLeague[leagueName].length > 2) {
-                        const viewMoreLink = document.createElement('div');
-                        viewMoreLink.className = 'card';
-                        viewMoreLink.style.textAlign = 'center';
-                        viewMoreLink.style.padding = '15px';
-                        viewMoreLink.style.cursor = 'pointer';
-                        viewMoreLink.innerHTML = `<span style="color: ${leagueInfo.color}; font-weight: bold;">Ver mais ${gamesByLeague[leagueName].length - 2} jogos</span>`;
-                        viewMoreLink.onclick = () => {
-                            // Filtrar por esta liga
-                            selectedLeague = getShortLeagueName(leagueName);
-                            topNavButtons.forEach(btn => {
-                                if (btn.dataset.league === selectedLeague) {
-                                    btn.click();
-                                }
-                            });
+                        const viewMoreButton = document.createElement('button');
+                        viewMoreButton.className = `view-more-button ${leagueClasses[leagueName] || ''}`;
+                        
+                        if (isExpanded) {
+                            viewMoreButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg> Mostrar menos';
+                        } else {
+                            const remainingGames = gamesByLeague[leagueName].length - 2;
+                            viewMoreButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg> Ver mais ${remainingGames} jogos`;
+                        }
+                        
+                        viewMoreButton.onclick = () => {
+                            toggleLeagueExpansion(leagueName);
                         };
-                        leagueGamesGrid.appendChild(viewMoreLink);
+                        
+                        leagueGamesGrid.appendChild(viewMoreButton);
                     }
 
                     leagueSection.appendChild(leagueGamesGrid);
@@ -1276,6 +1396,9 @@
                     let hasVisibleCards = false;
 
                     for (let j = 0; j < cards.length; j++) {
+                        // Pular o botão "Ver mais"
+                        if (cards[j].classList.contains('view-more-button')) continue;
+                        
                         const teams = cards[j].getElementsByClassName('team');
                         let homePlayer = '', awayPlayer = '', homeTeam = '', awayTeam = '';
                         if (teams.length >= 2) {
@@ -1286,10 +1409,10 @@
                         }
 
                         const leagueMatch = selectedLeague === "" || selectedLeague === leagueName;
-                        const searchMatch = searchTerm === "" ||
-                            homePlayer.includes(searchTerm) ||
-                            awayPlayer.includes(searchTerm) ||
-                            homeTeam.includes(searchTerm) ||
+                        const searchMatch = searchTerm === "" || 
+                            homePlayer.includes(searchTerm) || 
+                            awayPlayer.includes(searchTerm) || 
+                            homeTeam.includes(searchTerm) || 
                             awayTeam.includes(searchTerm);
 
                         cards[j].style.display = leagueMatch && searchMatch ? '' : 'none';
@@ -1308,7 +1431,7 @@
                 }
                 updateInterval = setInterval(() => {
                     updateGames();
-                }, 30000);
+                }, 60000); // Atualizar a cada minuto
             }
 
             function setActiveMainNavButton(button) {
@@ -1377,5 +1500,4 @@
         });
     </script>
 </body>
-
 </html>
