@@ -34,6 +34,7 @@
             line-height: 1.6;
             display: flex;
             flex-direction: column;
+            align-items: center; /* Centraliza o conteúdo horizontalmente */
         }
 
         .header {
@@ -46,6 +47,8 @@
             position: relative;
             z-index: 100;
             height: var(--header-height);
+            width: 100%;
+            max-width: 1200px; /* Limita a largura máxima do header */
         }
 
         .logo-container {
@@ -83,10 +86,11 @@
         .content {
             flex: 1;
             padding: 40px 20px;
-            overflow-y: auto;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: center; /* Centraliza os filhos horizontalmente */
+            width: 100%;
+            max-width: 1200px; /* Limita a largura máxima do conteúdo */
         }
 
         .title {
@@ -108,6 +112,8 @@
             gap: 20px;
             margin-bottom: 30px;
             border-bottom: 2px solid var(--border-color);
+            justify-content: center; /* Centraliza as abas */
+            flex-wrap: wrap; /* Permite quebra de linha em telas pequenas */
         }
 
         .tab {
@@ -154,7 +160,7 @@
             gap: 20px;
             margin-bottom: 30px;
             flex-wrap: wrap;
-            justify-content: center;
+            justify-content: center; /* Já está correto, mas reforçado */
         }
 
         .filters select {
@@ -185,8 +191,9 @@
             font-size: 1rem;
             cursor: pointer;
             transition: transform 0.2s ease, box-shadow 0.3s ease;
-            margin-bottom: 20px;
+            margin: 0 auto 20px; /* Centraliza o botão */
             box-shadow: 0 2px 8px rgba(0, 255, 136, 0.3);
+            display: block; /* Garante que o margin: 0 auto funcione */
         }
 
         .sort-button:hover {
@@ -210,7 +217,7 @@
 
         .table-container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 100%; /* Garante que a tabela não exceda o contêiner */
             overflow-x: auto;
         }
 
@@ -248,7 +255,7 @@
         }
 
         .back-button {
-            margin-top: 20px;
+            margin: 20px auto; /* Centraliza o botão */
             padding: 10px 20px;
             background: var(--primary-color);
             color: var(--text-primary);
@@ -258,6 +265,7 @@
             font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            display: block; /* Garante que o margin: 0 auto funcione */
         }
 
         .back-button:hover {
@@ -267,6 +275,19 @@
         @media (max-width: 768px) {
             .content {
                 padding: 20px 10px;
+            }
+
+            .header {
+                padding: 15px 10px;
+            }
+
+            .logo-img {
+                width: 40px;
+                height: 40px;
+            }
+
+            .logo-text {
+                font-size: 1.2rem;
             }
 
             .title {
@@ -308,6 +329,56 @@
             .back-button {
                 font-size: 0.9rem;
                 padding: 8px 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 10px 10px;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .logo-text {
+                font-size: 1rem;
+            }
+
+            .logo-img {
+                width: 35px;
+                height: 35px;
+            }
+
+            .title {
+                font-size: 1.3rem;
+            }
+
+            .subtitle {
+                font-size: 0.85rem;
+            }
+
+            .tab {
+                font-size: 0.9rem;
+                padding: 6px 12px;
+            }
+
+            .filters select {
+                font-size: 0.85rem;
+                padding: 6px 10px;
+            }
+
+            .sort-button {
+                font-size: 0.85rem;
+                padding: 6px 12px;
+            }
+
+            th, td {
+                padding: 8px;
+                font-size: 0.8rem;
+            }
+
+            .back-button {
+                font-size: 0.85rem;
+                padding: 6px 12px;
             }
         }
     </style>
