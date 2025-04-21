@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RW TIPS - Visualização de Jogos</title>
     <style>
+        /* Mantive todo o CSS original */
         :root {
             --primary-color: #6c5ce7;
             --secondary-color: #a29bfe;
@@ -736,7 +737,7 @@
             const nbaStatsButton = document.getElementById('nbaStatsButton');
             const radarButton = document.getElementById('radarButton');
 
-            let gamesData = null;
+            let upcomingGamesData = [];
             let pastGamesData = {};
             let allGamesCache = [];
             let latestTimestamp = 0;
@@ -746,7 +747,7 @@
 
             function extractPlayerName(text) {
                 if (!text || typeof text !== 'string') return 'Desconhecido';
-                const match = text.match(/\(([^)]+)\)/);
+                const match = text.match(/$$([^)]+)$$/);
                 return match ? match[1] : text;
             }
 
@@ -774,6 +775,7 @@
             }
 
             function parseScore(score) {
+                if (!score) return { homeGoals: 0, awayGoals: 0, totalGoals: 0 };
                 const [homeGoals, awayGoals] = score.split('-').map(Number);
                 return { homeGoals, awayGoals, totalGoals: homeGoals + awayGoals };
             }
@@ -837,7 +839,6 @@
                         playerGames[player] = playerGames[player]
                             .sort((a, b) => b.timestamp - a.timestamp)
                             .slice(0, 5);
-                        console.log(`Jogador: ${player}, Últimos 5 jogos:`, playerGames[player]);
                     }
 
                     pastGamesData = playerGames;
@@ -847,9 +848,27 @@
                 return allGamesCache;
             }
 
+            // Função para buscar jogos futuros - CORREÇÃO PRINCIPAL
+            async function fetchUpcomingGames() {
+                try {
+                    // Usar o endpoint correto para jogos futuros
+                    const response = await fetch('https://api.green365.com.br/api/league/upcoming?sport=fifa&leagueId=&page=1');
+                    
+                    if (!response.ok) {
+                        throw new Error(`Erro na API: ${response.status} - ${response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    console.log("Jogos futuros obtidos:", data.data.length);
+                    return data.data;
+                } catch (error) {
+                    console.error('Erro ao buscar jogos futuros:', error.message);
+                    return [];
+                }
+            }
+
             function getBestPlayerForLeague(leagueName, games) {
                 if (bestPlayersCache[leagueName]) {
-                    console.log(`Melhor jogador para ${leagueName} recuperado do cache:`, bestPlayersCache[leagueName]);
                     return bestPlayersCache[leagueName];
                 }
 
@@ -935,7 +954,6 @@
                 if (eligiblePlayers.length === 0) {
                     const result = { name: "Nenhum jogador destacado", wins: 0, goalsScored: 0, goalsConceded: 0 };
                     bestPlayersCache[leagueName] = result;
-                    console.log(`Melhor jogador para ${leagueName}:`, result);
                     return result;
                 }
 
@@ -953,31 +971,17 @@
                         if (finalCandidates.length !== 1) {
                             const result = { name: "Nenhum jogador destacado", wins: 0, goalsScored: 0, goalsConceded: 0 };
                             bestPlayersCache[leagueName] = result;
-                            console.log(`Melhor jogador para ${leagueName}:`, result);
                             return result;
                         }
 
                         bestPlayersCache[leagueName] = finalCandidates[0];
-                        console.log(`Melhor jogador para ${leagueName}:`, finalCandidates[0]);
                         return finalCandidates[0];
                     } else {
-                        let minGoalsConceded = Math.min(...candidatesByGoalsScored.map(p => p.goalsConceded));
-                        let finalCandidates = candidatesByGoalsScored.filter(p => p.goalsConceded === minGoalsConceded);
-
-                        if (finalCandidates.length !== 1) {
-                            const result = { name: "Nenhum jogador destacado", wins: 0, goalsScored: 0, goalsConceded: 0 };
-                            bestPlayersCache[leagueName] = result;
-                            console.log(`Melhor jogador para ${leagueName}:`, result);
-                            return result;
-                        }
-
-                        bestPlayersCache[leagueName] = finalCandidates[0];
-                        console.log(`Melhor jogador para ${leagueName}:`, finalCandidates[0]);
-                        return finalCandidates[0];
+                        bestPlayersCache[leagueName] = candidatesByGoalsScored[0];
+                        return candidatesByGoalsScored[0];
                     }
                 } else {
                     bestPlayersCache[leagueName] = candidatesByWins[0];
-                    console.log(`Melhor jogador para ${leagueName}:`, candidatesByWins[0]);
                     return candidatesByWins[0];
                 }
             }
@@ -1044,14 +1048,14 @@
                     metrics.splice(2, 0, {
                         name: `${featuredPlayer} Over 1.5 FT`,
                         value: featuredStats.over15Rate,
-                        raw: `(${(featuredStats.over15Rate / 100 * 30).toFixed(0)}/30)`,
+                        raw: `(${Math.round((featuredStats.over15Rate / 100) * 30)}/30)`,
                         isSpecial: true
                     });
                 } else {
                     metrics.splice(2, 0, {
                         name: `${featuredPlayer} Over 2.5 FT`,
                         value: featuredStats.over25Rate,
-                        raw: `(${(featuredStats.over25Rate / 100 * 30).toFixed(0)}/30)`,
+                        raw: `(${Math.round((featuredStats.over25Rate / 100) * 30)}/30)`,
                         isSpecial: true
                     });
                 }
@@ -1077,35 +1081,36 @@
                 }
 
                 try {
+                    // Buscar jogos passados para estatísticas
                     const allGames = await fetchPastGames();
-
+                    
+                    // CORREÇÃO: Buscar jogos futuros para exibição
+                    const upcomingGames = await fetchUpcomingGames();
+                    
+                    // Filtrar por ligas relevantes
                     const targetLeagues = [
                         "Esoccer GT Leagues – 12 mins play",
                         "Esoccer Battle - 8 mins play",
                         "Esoccer Battle Volta - 6 mins play",
                         "Esoccer H2H GG League - 8 mins play"
                     ];
+                    
+                    // Agrupar jogos futuros por liga
                     const gamesByLeague = {};
-                    targetLeagues.forEach(league => {
-                        gamesByLeague[league] = allGames
-                            .filter(game => game.leagueName === league)
-                            .sort((a, b) => b.timestamp - a.timestamp)
-                            .slice(0, 3);
+                    upcomingGames.forEach(game => {
+                        const leagueName = game.leagueName;
+                        if (targetLeagues.includes(leagueName)) {
+                            if (!gamesByLeague[leagueName]) {
+                                gamesByLeague[leagueName] = [];
+                            }
+                            gamesByLeague[leagueName].push(game);
+                        }
                     });
-
-                    gamesData = [];
+                    
+                    // Preparar dados para renderização
+                    upcomingGamesData = [];
                     for (const league in gamesByLeague) {
-                        gamesData = gamesData.concat(gamesByLeague[league].map(game => ({
-                            leagueName: game.leagueName,
-                            home: game.home,
-                            away: game.away,
-                            home_team_name: game.home.split(' (')[0],
-                            away_team_name: game.away.split(' (')[0],
-                            homeImage: game.homeImage,
-                            awayImage: game.awayImage,
-                            day: new Date(game.timestamp * 1000).toLocaleDateString('pt-BR'),
-                            hour: new Date(game.timestamp * 1000).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-                        })));
+                        upcomingGamesData = upcomingGamesData.concat(gamesByLeague[league]);
                     }
 
                     renderGames(allGames);
@@ -1118,12 +1123,12 @@
             function renderGames(allGames) {
                 gamesContainer.innerHTML = '';
 
-                if (!gamesData || gamesData.length === 0) {
+                if (!upcomingGamesData || upcomingGamesData.length === 0) {
                     gamesContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Nenhum jogo disponível no momento.</div>';
                     return;
                 }
 
-                const gamesByLeague = gamesData.reduce((acc, game) => {
+                const gamesByLeague = upcomingGamesData.reduce((acc, game) => {
                     const leagueName = game.leagueName || 'Desconhecida';
                     if (!acc[leagueName]) {
                         acc[leagueName] = [];
@@ -1144,7 +1149,7 @@
                     leagueHeader.style.color = leagueInfo.color;
                     leagueSection.appendChild(leagueHeader);
 
-                    const bestPlayer = getBestPlayerForLeague(leagueName, gamesByLeague[leagueName]);
+                    const bestPlayer = getBestPlayerForLeague(leagueName, allGames);
                     const bestPlayerCard = document.createElement('div');
                     bestPlayerCard.className = 'best-player-card';
                     bestPlayerCard.innerHTML = `
@@ -1227,7 +1232,7 @@
             }
 
             function applyFilters() {
-                if (!gamesData) return;
+                if (!upcomingGamesData) return;
 
                 const searchTerm = searchFilter.value.toLowerCase();
                 const leagueSections = gamesContainer.getElementsByClassName('league-section');
