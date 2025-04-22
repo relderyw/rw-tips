@@ -455,6 +455,27 @@
             opacity: 0.8;
         }
 
+        /* Ajustar a exibição dos times em telas menores */
+        @media (max-width: 768px) {
+            .team span:first-of-type {
+                display: none; /* Esconder o nome do jogador */
+            }
+
+            .team span.team-name {
+                font-size: 1rem; /* Aumentar o tamanho da fonte do nome do time */
+                font-weight: 600; /* Deixar o nome do time em negrito */
+                color: var(--accent-color); /* Usar a cor de destaque para o nome do time */
+                opacity: 1; /* Garantir que o nome do time seja totalmente visível */
+                margin-bottom: 0; /* Remover margem inferior */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .team span.team-name {
+                font-size: 0.9rem; /* Ajustar o tamanho da fonte para telas ainda menores */
+            }
+        }
+
         .match-time {
             text-align: center;
             font-size: 0.95rem;
@@ -962,7 +983,7 @@
             function extractTeamName(text) {
                 if (!text || typeof text !== 'string') return 'N/A';
                 // Remove o nome do jogador entre parênteses para obter apenas o nome do time
-                return text.replace(/\s*$$[^)]*$$\s*/, '').trim();
+                return text.replace(/\s*\([^)]*\)\s*/, '').trim();
             }
 
             function getShortLeagueName(leagueName) {
