@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <style>
         :root {
             --primary-color: #6c5ce7;
@@ -26,6 +27,7 @@
             --glass-bg: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.05);
             --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            --text-primary: #ffffff;
         }
 
         * {
@@ -40,6 +42,7 @@
             color: var(--text-primary);
             min-height: 100vh;
             padding: 20px;
+            overflow-x: hidden;
         }
 
         .dashboard-container {
@@ -51,15 +54,70 @@
         }
 
         .sidebar {
-            background: var(--glass-bg);
+            background: var(--card-bg);
             border-radius: 15px;
             padding: 20px;
-            border: 1px solid var(--glass-border);
             height: calc(100vh - 40px);
             position: sticky;
             top: 20px;
             display: flex;
             flex-direction: column;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--glass-border);
+        }
+
+        .sidebar h2 {
+            font-size: 2rem;
+            background: linear-gradient(45deg, #00ff88, #00ffaa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            animation: neonPulse 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes neonPulse {
+            from {
+                text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            }
+
+            to {
+                text-shadow: 0 0 15px rgba(0, 255, 136, 0.7);
+            }
+        }
+
+        .sidebar nav ul {
+            list-style: none;
+            flex-grow: 1;
+        }
+
+        .sidebar nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: block;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            background: rgba(0, 255, 136, 0.05);
+            border: 1px solid rgba(0, 255, 136, 0.1);
+        }
+
+        .sidebar nav a:hover {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--neon-green);
+            transform: translateX(5px);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+        }
+
+        .sidebar nav a.active {
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--neon-green);
+            border: 1px solid rgba(0, 255, 136, 0.3);
         }
 
         .main-content {
@@ -78,7 +136,7 @@
             border-radius: 15px;
             padding: 20px;
             border: 1px solid var(--glass-border);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease;
         }
 
         .stat-card:hover {
@@ -101,19 +159,18 @@
             border-radius: 15px;
             padding: 20px;
             border: 1px solid var(--glass-border);
-            margin-top: 20px;
             box-shadow: var(--card-shadow);
         }
 
         .filters-bar {
             display: flex;
-            gap: 15px;
             flex-wrap: wrap;
-            margin-bottom: 20px;
+            gap: 15px;
             background: var(--glass-bg);
             border-radius: 15px;
             padding: 15px;
             border: 1px solid var(--glass-border);
+            align-items: center;
         }
 
         .filter-control {
@@ -126,9 +183,10 @@
             background: rgba(0, 0, 0, 0.2);
             color: var(--text-primary);
             border: 1px solid var(--glass-border);
-            padding: 8px 10px;
+            padding: 8px 12px;
             border-radius: 8px;
             font-size: 0.9rem;
+            min-width: 150px;
         }
 
         .player-card {
@@ -136,7 +194,7 @@
             border-radius: 15px;
             padding: 15px;
             border: 1px solid var(--glass-border);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease;
             position: relative;
             overflow: hidden;
         }
@@ -147,27 +205,43 @@
         }
 
         .player-card.recommended {
-            border: 1px solid var(--neon-green);
+            border: 2px solid var(--neon-green);
         }
 
         .player-card.recommended::before {
-            content: "Recomendado";
+            content: "✔";
             position: absolute;
             top: 10px;
-            right: -30px;
+            right: 10px;
             background: var(--neon-green);
             color: #000;
-            padding: 5px 30px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            transform: rotate(45deg);
+            padding: 5px;
+            border-radius: 50%;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .player-card.not-recommended {
+            border: 2px solid var(--danger-color);
+        }
+
+        .player-card.not-recommended::before {
+            content: "✖";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--danger-color);
+            color: #fff;
+            padding: 5px;
+            border-radius: 50%;
+            font-size: 1rem;
+            font-weight: bold;
         }
 
         .player-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 20px;
-            margin-top: 20px;
         }
 
         .player-header {
@@ -182,6 +256,11 @@
         .player-name {
             font-size: 1.2rem;
             font-weight: 700;
+        }
+
+        .player-league {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
         }
 
         .player-stats {
@@ -252,29 +331,15 @@
             color: var(--neon-green);
         }
 
-        .keyboard-shortcuts {
-            margin-top: auto;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-        }
-
-        .shortcut-item {
-            display: flex;
-            justify-content: space-between;
-            margin: 8px 0;
-            font-size: 0.9rem;
-        }
-
-        .key {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-family: monospace;
+        .prediction-chip.low {
+            background: rgba(255, 77, 77, 0.2);
+            color: var(--danger-color);
         }
 
         .refresh-btn,
-        .page-btn {
+        .page-btn,
+        .reset-btn,
+        .best-players-btn {
             background: linear-gradient(45deg, var(--accent-purple), var(--accent-pink));
             border: none;
             color: white;
@@ -286,7 +351,9 @@
         }
 
         .refresh-btn:hover,
-        .page-btn:hover {
+        .page-btn:hover,
+        .reset-btn:hover,
+        .best-players-btn:hover {
             opacity: 0.9;
         }
 
@@ -296,55 +363,66 @@
             justify-content: center;
             margin-top: 20px;
         }
+
+        .logo-container {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 255, 136, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(0, 255, 136, 0.1);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
+            position: absolute;
+            top: -150px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+        }
+
+        .logo {
+            width: 80px;
+            height: auto;
+            filter: drop-shadow(0 0 10px rgba(0, 255, 136, 0.5));
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.1);
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #00ff88, #00ffaa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
     </style>
 </head>
 
 <body>
+    <div class="logo-container">
+        <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW TIPS Logo" class="logo">
+        <div class="logo-text">RW TIPS</div>
+    </div>
     <div class="dashboard-container">
         <aside class="sidebar">
             <h2>RW TIPS</h2>
             <nav>
-                <ul style="list-style: none; margin-top: 20px;">
-                    <li><a href="dashboard"
-                            style="color: var(--text-primary); text-decoration: none; display: block; padding: 10px; margin: 5px 0; border-radius: 8px; background: rgba(255,255,255,0.05);">Dashboard</a>
-                    </li>
-                    <li><a href="h2h_analysis"
-                            style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Análise
-                            H2H</a></li>
-                    <li><a href="statistics"
-                            style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Estatísticas</a>
-                    </li>
-                    <li><a href="results"
-                            style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Resultados</a>
-                    </li>
-                    <li><a href="live"
-                            style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Ao
-                            Vivo</a></li>
-                    <li><a href="players"
-                            style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Jogadores</a>
-                    </li>
-                    <li><a href="visualization"
-                            style="color: var(--text-secondary); text-decoration: none; display: block; padding: 10px; margin: 5px 0;">Visualização</a>
-                    </li>
+                <ul>
+                    <li><a href="#" data-page="dashboard" class="active">Dashboard</a></li>
+                    <li><a href="#" data-page="h2h_analysis">Análise H2H</a></li>
+                    <li><a href="#" data-page="statistics">Estatísticas</a></li>
+                    <li><a href="#" data-page="results">Resultados</a></li>
+                    <li><a href="#" data-page="live">Ao Vivo</a></li>
+                    <li><a href="#" data-page="players">Jogadores</a></li>
+                    <li><a href="#" data-page="visualization">Próximos</a></li>
                 </ul>
             </nav>
-            <div class="keyboard-shortcuts">
-                <h3 style="margin-bottom: 10px; color: var(--text-secondary);">Atalhos</h3>
-                <div class="shortcut-item"><span>Atualizar dados</span><span class="key">F5</span></div>
-                <div class="shortcut-item"><span>Filtrar por gols</span><span class="key">G</span></div>
-                <div class="shortcut-item"><span>Filtrar por vitórias</span><span class="key">V</span></div>
-                <div class="shortcut-item"><span>Mostrar recomendados</span><span class="key">R</span></div>
-            </div>
         </aside>
 
         <main class="main-content">
             <div class="quick-stats" id="quickStats"></div>
-
-            <div class="chart-container">
-                <h3 style="margin-bottom: 15px; color: var(--text-primary)">Distribuição de Gols FT</h3>
-                <canvas id="goalsDistributionChart"></canvas>
-            </div>
-
             <div class="filters-bar">
                 <div class="filter-control">
                     <label for="leagueFilter">Liga:</label>
@@ -363,16 +441,22 @@
                 <div class="filter-control">
                     <label for="sortBy">Ordenar por:</label>
                     <select id="sortBy" class="filter-select">
-                        <option value="goalsFT">Gols FT</option>
+                        <option value="over2_5">Over 2.5</option>
                         <option value="wins">Vitórias</option>
-                        <option value="goalsScored">Gols Feitos</option>
+                        <option value="under2_5">Under 2.5</option>
                     </select>
                 </div>
                 <button id="refreshData" class="refresh-btn">Atualizar</button>
+                <button id="resetFilters" class="reset-btn">Reset</button>
+                <button id="bestPlayers" class="best-players-btn">Melhores Players</button>
             </div>
-
+            <div class="chart-container">
+                <h3 style="margin-bottom: 10px; color: var(--text-primary)">Distribuição de Gols por Jogo (FT)</h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 15px;">Mostra a frequência de
+                    jogos com 0, 1, 2, 3, 4 ou 5+ gols no placar final.</p>
+                <canvas id="goalsDistributionChart"></canvas>
+            </div>
             <div class="player-grid" id="playersContainer"></div>
-
             <div class="pagination">
                 <button id="prevPage" class="page-btn">Anterior</button>
                 <span id="pageIndicator">Página 1</span>
@@ -385,14 +469,25 @@
         let currentPage = 1;
         let eventsData = [];
         let playerStats = {};
-        let chartInstance = null;
+        let distributionChart = null;
 
-        // Buscar eventos de uma página específica
+        // Função para abreviar nomes das ligas
+        function abbreviateLeagueName(ligaNome) {
+            if (!ligaNome) return "Desconhecida";
+            if (ligaNome.includes("8 mins") && ligaNome.includes("H2H")) return "Battle 8 min (H2H)";
+            if (ligaNome.includes("6 mins")) return "Battle 6 min";
+            if (ligaNome.includes("8 mins")) return "Battle 8 min";
+            if (ligaNome.includes("10 mins")) return "Adriact 10 min";
+            if (ligaNome.includes("12 mins")) return "GT 12 min";
+            return ligaNome;
+        }
+
+        // Buscar dados da API
         async function fetchEvents(page) {
             try {
                 const response = await fetch(`https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=${page}`);
                 const data = await response.json();
-                return data.data;
+                return data.data || [];
             } catch (error) {
                 console.error(`Erro ao buscar página ${page}:`, error);
                 return [];
@@ -406,18 +501,22 @@
                 const [homeGoals, awayGoals] = event.score.split('-').map(Number);
                 const homePlayer = event.home.match(/\((.*?)\)/)?.[1] || event.home;
                 const awayPlayer = event.away.match(/\((.*?)\)/)?.[1] || event.away;
+                const totalGoals = homeGoals + awayGoals;
 
-                if (!stats[homePlayer]) stats[homePlayer] = { games: [], wins: 0, draws: 0, losses: 0, goalsScored: 0, goalsConceded: 0, leagueID: event.leagueID };
-                if (!stats[awayPlayer]) stats[awayPlayer] = { games: [], wins: 0, draws: 0, losses: 0, goalsScored: 0, goalsConceded: 0, leagueID: event.leagueID };
+                if (!stats[homePlayer]) stats[homePlayer] = { games: [], wins: 0, draws: 0, losses: 0, over2_5: 0, under2_5: 0, leagueID: event.leagueID, leagueName: event.leagueName };
+                if (!stats[awayPlayer]) stats[awayPlayer] = { games: [], wins: 0, draws: 0, losses: 0, over2_5: 0, under2_5: 0, leagueID: event.leagueID, leagueName: event.leagueName };
 
-                const gameData = { ...event, date: new Date(event.timestamp * 1000).toLocaleString() };
+                const gameData = { ...event, date: new Date(event.timestamp * 1000).toLocaleString(), totalGoals };
                 stats[homePlayer].games.push(gameData);
                 stats[awayPlayer].games.push(gameData);
 
-                stats[homePlayer].goalsScored += homeGoals;
-                stats[homePlayer].goalsConceded += awayGoals;
-                stats[awayPlayer].goalsScored += awayGoals;
-                stats[awayPlayer].goalsConceded += homeGoals;
+                if (totalGoals > 2.5) {
+                    stats[homePlayer].over2_5++;
+                    stats[awayPlayer].over2_5++;
+                } else {
+                    stats[homePlayer].under2_5++;
+                    stats[awayPlayer].under2_5++;
+                }
 
                 if (homeGoals > awayGoals) {
                     stats[homePlayer].wins++;
@@ -433,63 +532,63 @@
 
             Object.values(stats).forEach(player => {
                 player.games = player.games.slice(0, gamesLimit);
-                player.goalsFT = player.games.reduce((sum, g) => sum + parseInt(g.score.split('-')[0]) + parseInt(g.score.split('-')[1]), 0) / player.games.length || 0;
+                const totalGames = player.games.length;
+                player.over2_5 = totalGames ? (player.over2_5 / totalGames) * 100 : 0;
+                player.under2_5 = totalGames ? (player.under2_5 / totalGames) * 100 : 0;
+                player.winPercentage = totalGames ? (player.wins / totalGames) * 100 : 0;
             });
 
             return stats;
         }
 
-        // Preencher filtro de ligas
-        function populateLeagueFilter(events) {
-            const leagues = [...new Set(events.map(event => `${event.leagueID}|${event.leagueName}`))];
-            const select = document.getElementById('leagueFilter');
-            select.innerHTML = '<option value="all">Todas as Ligas</option>';
-            leagues.forEach(league => {
-                const [id, name] = league.split('|');
-                const option = document.createElement('option');
-                option.value = id;
-                option.textContent = name;
-                select.appendChild(option);
-            });
-        }
+        // Atualizar estatísticas rápidas com filtros
+        function updateQuickStats(stats, leagueFilter) {
+            let filteredPlayers = Object.values(stats);
+            if (leagueFilter !== 'all') {
+                filteredPlayers = filteredPlayers.filter(player => player.leagueID === leagueFilter);
+            }
 
-        // Renderizar estatísticas rápidas
-        function renderQuickStats(stats) {
-            const container = document.getElementById('quickStats');
-            const totalGames = eventsData.length;
-            const totalGoals = eventsData.reduce((sum, event) => {
-                const [home, away] = event.score.split('-').map(Number);
-                return sum + home + away;
-            }, 0);
-            const avgGoalsFT = totalGoals / totalGames || 0;
-            const avgWins = Object.values(stats).reduce((sum, p) => sum + p.wins, 0) / Object.keys(stats).length || 0;
+            const totalGames = filteredPlayers.reduce((sum, player) => sum + player.games.length, 0);
+            const totalGoals = filteredPlayers.reduce((sum, player) => sum + player.games.reduce((gSum, game) => gSum + game.totalGoals, 0), 0);
+            const avgGoalsFT = totalGames ? totalGoals / totalGames : 0;
+            const totalWins = filteredPlayers.reduce((sum, player) => sum + player.wins, 0);
+            const avgWins = filteredPlayers.length ? totalWins / filteredPlayers.length : 0;
 
-            container.innerHTML = `
+            document.getElementById('quickStats').innerHTML = `
                 <div class="stat-card"><h3>Jogos</h3><div class="stat-value">${totalGames}</div></div>
                 <div class="stat-card"><h3>Média Gols FT</h3><div class="stat-value">${avgGoalsFT.toFixed(2)}</div></div>
                 <div class="stat-card"><h3>Média Vitórias</h3><div class="stat-value">${avgWins.toFixed(1)}</div></div>
             `;
         }
 
-        // Renderizar gráfico
-        function renderGoalsChart(events) {
-            const ctx = document.getElementById('goalsDistributionChart').getContext('2d');
-            const totalGames = events.length;
-            const totalGoals = events.reduce((sum, event) => {
-                const [home, away] = event.score.split('-').map(Number);
-                return sum + home + away;
-            }, 0);
-            const avgGoalsFT = totalGoals / totalGames || 0;
+        // Atualizar gráfico
+        // Atualizar gráfico
+        function updateChart(events, leagueFilter) {
+            let filteredEvents = events;
+            if (leagueFilter !== 'all') {
+                filteredEvents = events.filter(event => event.leagueID === leagueFilter);
+            }
 
-            if (chartInstance) chartInstance.destroy();
+            const goalsDist = [0, 0, 0, 0, 0, 0]; // 0, 1, 2, 3, 4, 5+
+            filteredEvents.forEach(event => {
+                const totalGoals = parseInt(event.score.split('-')[0]) + parseInt(event.score.split('-')[1]);
+                if (totalGoals >= 5) goalsDist[5]++;
+                else goalsDist[totalGoals]++;
+            });
 
-            chartInstance = new Chart(ctx, {
+            // Definir configurações globais antes de criar o gráfico
+            Chart.defaults.color = '#ffffff';
+            Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+
+            if (distributionChart) distributionChart.destroy();
+            const distCtx = document.getElementById('goalsDistributionChart').getContext('2d');
+            distributionChart = new Chart(distCtx, {
                 type: 'bar',
                 data: {
-                    labels: ['Full Time (FT)'],
+                    labels: ['0', '1', '2', '3', '4', '5+'],
                     datasets: [{
-                        label: 'Média de Gols',
-                        data: [avgGoalsFT],
+                        label: 'Distribuição de Gols FT',
+                        data: goalsDist,
                         backgroundColor: 'rgba(139, 92, 246, 0.5)',
                         borderColor: 'rgba(139, 92, 246, 1)',
                         borderWidth: 1
@@ -498,57 +597,82 @@
                 options: {
                     responsive: true,
                     scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: 'var(--text-secondary)' } },
-                        x: { grid: { display: false }, ticks: { color: 'var(--text-primary)' } }
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#ffffff' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#ffffff' }
+                        }
                     },
                     plugins: {
-                        legend: { labels: { color: 'var(--text-primary)' } },
-                        tooltip: { backgroundColor: 'rgba(0, 0, 0, 0.8)', titleColor: 'var(--text-primary)', bodyColor: 'var(--text-secondary)' }
+                        legend: {
+                            labels: {
+                                color: '#ffffff',
+                                font: { weight: 'bold' }
+                            }
+                        },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            color: '#ffffff',
+                            font: { weight: 'bold' }
+                        },
+                        tooltip: {
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                            borderColor: 'rgba(255, 255, 255, 0.2)',
+                            borderWidth: 1
+                        }
                     }
-                }
+                },
+                plugins: [ChartDataLabels]
             });
         }
 
-        // Renderizar cards dos jogadores
-        function renderPlayerCards(stats, gamesLimit, leagueFilter, sortBy, showRecommendedOnly = false) {
+        // Atualizar cards dos jogadores
+        function updatePlayerCards(stats, leagueFilter, sortBy, showRecommendedOnly = false) {
             const container = document.getElementById('playersContainer');
             container.innerHTML = '';
 
             let filteredPlayers = Object.entries(stats)
                 .filter(([_, stats]) => leagueFilter === 'all' || stats.leagueID === leagueFilter);
 
-            filteredPlayers.sort((a, b) => {
-                if (sortBy === 'goalsFT') return b[1].goalsFT - a[1].goalsFT;
-                if (sortBy === 'wins') return b[1].wins - a[1].wins;
-                if (sortBy === 'goalsScored') return b[1].goalsScored - a[1].goalsScored;
-                return 0;
-            });
+            filteredPlayers.sort((a, b) => b[1][sortBy] - a[1][sortBy]);
 
             filteredPlayers.forEach(([name, stats]) => {
-                const recommended = stats.goalsFT > 5 && stats.wins / gamesLimit > 0.5;
-                if (showRecommendedOnly && !recommended) return;
+                const isRecommended = stats.over2_5 >= 90 && stats.winPercentage > 55;
+                const isNotRecommended = stats.under2_5 > stats.over2_5;
+
+                if (showRecommendedOnly && !isRecommended) return;
+
+                const abbreviatedLeague = abbreviateLeagueName(stats.leagueName);
 
                 const card = document.createElement('div');
-                card.className = `player-card ${recommended ? 'recommended' : ''}`;
+                card.className = `player-card ${isRecommended ? 'recommended' : isNotRecommended ? 'not-recommended' : ''}`;
                 card.innerHTML = `
                     <div class="player-header">
                         <span class="player-name">${name}</span>
+                        <span class="player-league">${abbreviatedLeague}</span>
                     </div>
                     <div class="player-stats">
                         <div class="stat-group">
                             <div class="stat-item">
-                                <span class="stat-label">Média Gols FT:</span>
-                                <span class="stat-item-value ${stats.goalsFT > 5 ? 'high-value' : stats.goalsFT > 3 ? 'medium-value' : 'low-value'}">${stats.goalsFT.toFixed(2)}</span>
+                                <span class="stat-label">Over 2.5:</span>
+                                <span class="stat-item-value ${stats.over2_5 >= 90 ? 'high-value' : stats.over2_5 >= 50 ? 'medium-value' : 'low-value'}">${stats.over2_5.toFixed(1)}%</span>
                             </div>
                             <div class="stat-item">
-                                <span class="stat-label">Gols Feitos:</span>
-                                <span class="stat-item-value">${stats.goalsScored}</span>
+                                <span class="stat-label">Under 2.5:</span>
+                                <span class="stat-item-value ${stats.under2_5 >= 90 ? 'high-value' : stats.under2_5 >= 50 ? 'medium-value' : 'low-value'}">${stats.under2_5.toFixed(1)}%</span>
                             </div>
                         </div>
                         <div class="stat-group">
                             <div class="stat-item">
-                                <span class="stat-label">Vitórias:</span>
-                                <span class="stat-item-value ${stats.wins / gamesLimit > 0.5 ? 'high-value' : 'medium-value'}">${stats.wins}</span>
+                                <span class="stat-label">% Vitórias:</span>
+                                <span class="stat-item-value ${stats.winPercentage > 55 ? 'high-value' : stats.winPercentage >= 30 ? 'medium-value' : 'low-value'}">${stats.winPercentage.toFixed(1)}%</span>
                             </div>
                             <div class="stat-item">
                                 <span class="stat-label">Emp/Der:</span>
@@ -559,12 +683,30 @@
                     <div class="player-prediction">
                         <div class="prediction-title">Recomendações:</div>
                         <div class="prediction-values">
-                            ${stats.goalsFT > 5 ? '<div class="prediction-chip high">Over 4.5 FT (75%)</div>' : '<div class="prediction-chip">Under 4.5 FT (60%)</div>'}
+                            <div class="prediction-chip ${isRecommended ? 'high' : isNotRecommended ? 'low' : ''}">
+                                ${isRecommended ? 'Over 2.5' : isNotRecommended ? 'Under 2.5' : 'Neutro'}
+                            </div>
                         </div>
                     </div>
                 `;
                 container.appendChild(card);
             });
+        }
+
+        // Preencher filtro de ligas
+        function populateLeagueFilter(events) {
+            const currentValue = document.getElementById('leagueFilter').value;
+            const leagues = [...new Set(events.map(event => `${event.leagueID}|${event.leagueName}`))];
+            const select = document.getElementById('leagueFilter');
+            select.innerHTML = '<option value="all">Todas as Ligas</option>';
+            leagues.forEach(league => {
+                const [id, name] = league.split('|');
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = name;
+                select.appendChild(option);
+            });
+            select.value = currentValue;
         }
 
         // Atualizar dashboard
@@ -576,23 +718,29 @@
             const sortBy = document.getElementById('sortBy').value;
 
             playerStats = processPlayerStats(eventsData, gamesLimit);
-            populateLeagueFilter(eventsData); // Atualiza as ligas com base na página
-            renderQuickStats(playerStats);
-            renderGoalsChart(eventsData);
-            renderPlayerCards(playerStats, gamesLimit, leagueFilter, sortBy, showRecommendedOnly);
+            populateLeagueFilter(eventsData);
+            updateQuickStats(playerStats, leagueFilter);
+            updateChart(eventsData, leagueFilter);
+            updatePlayerCards(playerStats, leagueFilter, sortBy, showRecommendedOnly);
+        }
+
+        // Resetar filtros e página
+        function resetFilters() {
+            currentPage = 1;
+            document.getElementById('leagueFilter').value = 'all';
+            document.getElementById('gamesFilter').value = '10';
+            document.getElementById('sortBy').value = 'over2_5';
+            updateDashboard();
         }
 
         // Inicializar
-        async function init() {
-            await updateDashboard();
+        document.addEventListener('DOMContentLoaded', () => {
+            updateDashboard();
 
-            // Eventos dos filtros
+            document.getElementById('refreshData').addEventListener('click', () => updateDashboard());
             document.getElementById('gamesFilter').addEventListener('change', () => updateDashboard());
             document.getElementById('leagueFilter').addEventListener('change', () => updateDashboard());
             document.getElementById('sortBy').addEventListener('change', () => updateDashboard());
-            document.getElementById('refreshData').addEventListener('click', () => updateDashboard());
-
-            // Navegação entre páginas
             document.getElementById('prevPage').addEventListener('click', () => {
                 if (currentPage > 1) {
                     currentPage--;
@@ -603,41 +751,52 @@
                 currentPage++;
                 updateDashboard();
             });
+            document.getElementById('resetFilters').addEventListener('click', resetFilters);
+            document.getElementById('bestPlayers').addEventListener('click', () => updateDashboard(true));
 
-            // Atalhos de teclado
-            document.addEventListener('keydown', async (e) => {
-                if (e.key.toLowerCase() === 'f5') {
-                    await updateDashboard();
-                } else {
-                    switch (e.key.toLowerCase()) {
-                        case 'g':
-                            document.getElementById('sortBy').value = 'goalsFT';
-                            await updateDashboard();
-                            break;
-                        case 'v':
-                            document.getElementById('sortBy').value = 'wins';
-                            await updateDashboard();
-                            break;
-                        case 'r':
-                            await updateDashboard(true);
-                            break;
-                    }
-                }
-            });
-
-            // Adicionar navegação entre guias
-            document.querySelectorAll('nav a').forEach(link => {
+            document.querySelectorAll('.sidebar nav a').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
-                    const href = link.getAttribute('href').replace('#', '');
-                    if (href) {
-                        window.location.href = `${href}.html`;
+                    document.querySelector('.sidebar nav a.active')?.classList.remove('active');
+                    link.classList.add('active');
+                    const page = link.getAttribute('data-page');
+                    if (page !== 'dashboard') {
+                        window.location.href = `${page}.html`;
                     }
                 });
             });
-        }
 
-        document.addEventListener('DOMContentLoaded', init);
+            // Update chart text color and styling
+            Chart.defaults.color = '#ffffff';
+            Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+            Chart.defaults.font.family = 'Inter';
+
+            // Configure default chart options for better text visibility
+            Chart.defaults.plugins.legend.labels.color = '#ffffff';
+            Chart.defaults.plugins.tooltip.titleColor = '#ffffff';
+            Chart.defaults.plugins.tooltip.bodyColor = '#ffffff';
+            Chart.defaults.plugins.tooltip.footerColor = '#ffffff';
+            Chart.defaults.scale.grid.color = 'rgba(255, 255, 255, 0.1)';
+            Chart.defaults.scale.x = {
+                ticks: {
+                    color: '#ffffff'
+                }
+            };
+            Chart.defaults.scale.y = {
+                ticks: {
+                    color: '#ffffff'
+                }
+            };
+
+            // Add logo at the bottom of sidebar
+            const sidebarNav = document.querySelector('.sidebar nav');
+            const logoDiv = document.createElement('div');
+            logoDiv.className = 'sidebar-logo';
+            logoDiv.innerHTML = `
+                <img src="favicon.png" alt="RW TIPS Logo" style="width: 80px; height: 80px; display: block; margin: 20px auto;">
+            `;
+            sidebarNav.appendChild(logoDiv);
+        });
     </script>
 </body>
 
