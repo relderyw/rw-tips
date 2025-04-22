@@ -455,7 +455,7 @@
             opacity: 0.8;
         }
 
-        /* Ajustar a exibição dos times em telas menores */
+        /* Ajustar a{exibição dos times em telas menores */
         @media (max-width: 768px) {
             .team span:first-of-type {
                 display: none; /* Esconder o nome do jogador */
@@ -1477,9 +1477,12 @@
                             // Usar ícone especial para métricas destacadas
                             if (metric.isSpecial) icon = '👑';
                             
+                            // Preservar o nome completo da métrica (incluindo o nome do jogador)
+                            const displayName = metric.isSpecial ? metric.name : metric.name.replace(/^.*?\s/, '');
+                            
                             return `
                                 <div class="metric-item ${metric.isSpecial ? 'special' : ''}">
-                                    <span class="metric-name"><span class="metric-icon">${icon}</span>${metric.name.replace(/^.*?\s/, '')}</span>
+                                    <span class="metric-name"><span class="metric-icon">${icon}</span>${displayName}</span>
                                     <span class="metric-value">${metric.value}${metric.name.includes('Form') || metric.name.includes('Avg Goals') ? '' : '%'} <span class="metric-raw">${metric.raw}</span></span>
                                 </div>
                             `;
