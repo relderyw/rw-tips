@@ -950,7 +950,7 @@
             function extractPlayerName(text) {
                 if (!text || typeof text !== 'string') return 'Desconhecido';
                 // Corrigir a expressão regular para capturar o nome entre parênteses
-                const match = text.match(/$$([^)]+)$$/);
+                const match = text.match(/\(([^)]+)\)/);
                 if (match) {
                     return match[1]; // Retorna apenas o nome do jogador (sem parênteses)
                 } else {
