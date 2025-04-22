@@ -325,9 +325,66 @@
             border-left: 4px solid var(--h2h-gg-8m-color);
         }
 
+        /* Substitua o estilo atual do highlight-card por este estilo melhorado */
         .highlight-card {
-            border: 2px solid var(--highlight-border) !important;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+            border: 3px solid var(--highlight-border) !important;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            transform: translateY(-5px);
+            transition: all 0.3s ease;
+        }
+
+        .highlight-card::before {
+            content: "⭐ DESTAQUE";
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--highlight-border);
+            color: #000;
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 3px 10px;
+            border-bottom-left-radius: 8px;
+            z-index: 10;
+        }
+
+        .highlight-card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 65%, rgba(255, 215, 0, 0.2) 75%, transparent 85%);
+            background-size: 200% 200%;
+            animation: shine 3s infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .highlight-card .teams {
+            position: relative;
+            z-index: 2;
+        }
+
+        .highlight-card .team span:first-of-type {
+            color: var(--highlight-border);
+            font-weight: 700;
+        }
+
+        @keyframes shine {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .highlight-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
         }
 
         .card-placeholder {
