@@ -951,7 +951,18 @@
                 if (!text || typeof text !== 'string') return 'Desconhecido';
                 // Corrigir a expressão regular para capturar o nome entre parênteses
                 const match = text.match(/$$([^)]+)$$/);
-                return match ? match[1] : text;
+                if (match) {
+                    return match[1]; // Retorna apenas o nome do jogador (sem parênteses)
+                } else {
+                    return text;
+                }
+            }
+
+            // Também precisamos extrair o nome do time separadamente
+            function extractTeamName(text) {
+                if (!text || typeof text !== 'string') return 'N/A';
+                // Remove o nome do jogador entre parênteses para obter apenas o nome do time
+                return text.replace(/\s*$$[^)]*$$\s*/, '').trim();
             }
 
             function getShortLeagueName(leagueName) {
@@ -1328,6 +1339,7 @@
                 }
             }
 
+            // Atualizar a renderização dos cards para usar a nova função
             function renderGames(allGames) {
                 gamesContainer.innerHTML = '';
 
@@ -1393,8 +1405,11 @@
                         const card = document.createElement('div');
                         card.className = `card ${leagueClasses[leagueName] || ''}`;
 
+                        // Extrair corretamente o nome do jogador e do time
                         const homePlayer = extractPlayerName(game.home);
                         const awayPlayer = extractPlayerName(game.away);
+                        const homeTeam = extractTeamName(game.home);
+                        const awayTeam = extractTeamName(game.away);
 
                         if (homePlayer === bestPlayer.name || awayPlayer === bestPlayer.name) {
                             card.classList.add('highlight-card');
@@ -1404,22 +1419,22 @@
                         const teams = document.createElement('div');
                         teams.className = 'teams';
 
-                        const homeTeam = document.createElement('div');
-                        homeTeam.className = 'team';
-                        homeTeam.innerHTML = `
-                            <img src="${game.homeImage || 'https://via.placeholder.com/40?text=🏠'}" alt="${game.home_team_name || 'Time Desconhecido'}">
+                        const homeTeamElement = document.createElement('div');
+                        homeTeamElement.className = 'team';
+                        homeTeamElement.innerHTML = `
+                            <img src="${game.homeImage || 'https://via.placeholder.com/40?text=🏠'}" alt="${homeTeam || 'Time Desconhecido'}">
                             <span>${homePlayer}</span>
-                            <span class="team-name">${game.home_team_name || 'N/A'}</span>`;
+                            <span class="team-name">${homeTeam}</span>`;
 
-                        const awayTeam = document.createElement('div');
-                        awayTeam.className = 'team';
-                        awayTeam.innerHTML = `
-                            <img src="${game.awayImage || 'https://via.placeholder.com/40?text=🛡️'}" alt="${game.away_team_name || 'Time Desconhecido'}">
+                        const awayTeamElement = document.createElement('div');
+                        awayTeamElement.className = 'team';
+                        awayTeamElement.innerHTML = `
+                            <img src="${game.awayImage || 'https://via.placeholder.com/40?text=🛡️'}" alt="${awayTeam || 'Time Desconhecido'}">
                             <span>${awayPlayer}</span>
-                            <span class="team-name">${game.away_team_name || 'N/A'}</span>`;
+                            <span class="team-name">${awayTeam}</span>`;
 
-                        teams.appendChild(homeTeam);
-                        teams.appendChild(awayTeam);
+                        teams.appendChild(homeTeamElement);
+                        teams.appendChild(awayTeamElement);
 
                         const matchTime = document.createElement('div');
                         matchTime.className = 'match-time';
@@ -1489,6 +1504,7 @@
                 applyFilters();
             }
 
+            // Atualizar a função applyFilters para usar as novas funções de extração
             function applyFilters() {
                 if (!upcomingGamesData) return;
 
