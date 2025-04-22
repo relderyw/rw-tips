@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,7 +23,7 @@
             --active-bg: #2ecc71;
             --header-height: 80px;
             --highlight-border: #ffd700;
-            
+
             /* Cores específicas das ligas */
             --battle-8m-color: #FF4C4C;
             --battle-volta-6m-color: #FFD700;
@@ -87,8 +88,13 @@
         }
 
         @keyframes neonPulse {
-            from { text-shadow: 0 0 5px rgba(0, 255, 136, 0.5); }
-            to { text-shadow: 0 0 15px rgba(0, 255, 136, 0.8); }
+            from {
+                text-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
+            }
+
+            to {
+                text-shadow: 0 0 15px rgba(0, 255, 136, 0.8);
+            }
         }
 
         .main-nav {
@@ -195,7 +201,8 @@
             width: 100%;
             max-width: 1600px;
             display: grid;
-            grid-template-columns: repeat(4, 1fr); /* Forçar 4 colunas */
+            grid-template-columns: repeat(4, 1fr);
+            /* Forçar 4 colunas */
             gap: 20px;
         }
 
@@ -230,15 +237,15 @@
         .league-header.battle-8m {
             border-left: 4px solid var(--battle-8m-color);
         }
-        
+
         .league-header.battle-volta-6m {
             border-left: 4px solid var(--battle-volta-6m-color);
         }
-        
+
         .league-header.gt-leagues-12m {
             border-left: 4px solid var(--gt-leagues-12m-color);
         }
-        
+
         .league-header.h2h-gg-8m {
             border-left: 4px solid var(--h2h-gg-8m-color);
         }
@@ -313,22 +320,23 @@
             height: 100%;
             display: flex;
             flex-direction: column;
-            min-height: 320px; /* Altura mínima para padronizar os cards */
+            min-height: 320px;
+            /* Altura mínima para padronizar os cards */
         }
 
         /* Bordas coloridas específicas para cada liga */
         .card.battle-8m {
             border-left: 4px solid var(--battle-8m-color);
         }
-        
+
         .card.battle-volta-6m {
             border-left: 4px solid var(--battle-volta-6m-color);
         }
-        
+
         .card.gt-leagues-12m {
             border-left: 4px solid var(--gt-leagues-12m-color);
         }
-        
+
         .card.h2h-gg-8m {
             border-left: 4px solid var(--h2h-gg-8m-color);
         }
@@ -385,6 +393,7 @@
             0% {
                 background-position: 200% 0;
             }
+
             100% {
                 background-position: -200% 0;
             }
@@ -465,7 +474,8 @@
         /* Substitua o estilo atual do metrics-container por este estilo melhorado */
         .metrics-container {
             margin-bottom: 20px;
-            flex-grow: 1; /* Faz com que esta seção ocupe o espaço disponível */
+            flex-grow: 1;
+            /* Faz com que esta seção ocupe o espaço disponível */
         }
 
         /* Substitua o estilo atual do metric-item por este estilo melhorado */
@@ -518,7 +528,8 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            margin-top: auto; /* Empurra o botão para o final do card */
+            margin-top: auto;
+            /* Empurra o botão para o final do card */
         }
 
         .h2h-button:hover {
@@ -553,15 +564,15 @@
         .view-more-button.battle-8m {
             color: var(--battle-8m-color);
         }
-        
+
         .view-more-button.battle-volta-6m {
             color: var(--battle-volta-6m-color);
         }
-        
+
         .view-more-button.gt-leagues-12m {
             color: var(--gt-leagues-12m-color);
         }
-        
+
         .view-more-button.h2h-gg-8m {
             color: var(--h2h-gg-8m-color);
         }
@@ -579,7 +590,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* Responsividade melhorada */
@@ -859,10 +872,12 @@
         }
     </style>
 </head>
+
 <body>
     <header class="header">
         <div class="logo-container">
-            <img src="https://i.ibb.co/v6MhLNJX/11zon-cropped.png" alt="RW Tips Logo" class="logo-img">
+            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo"
+                class="logo-img">
             <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
         </div>
     </header>
@@ -959,10 +974,18 @@
             }
 
             // Também precisamos extrair o nome do time separadamente
-            function extractTeamName(text) {
-                if (!text || typeof text !== 'string') return 'N/A';
-                // Remove o nome do jogador entre parênteses para obter apenas o nome do time
-                return text.replace(/\s*$$[^)]*$$\s*/, '').trim();
+            function extractPlayerAndTeam(text) {
+                if (!text || typeof text !== 'string') return { player: 'Desconhecido', team: 'Desconhecido' };
+
+                const match = text.match(/^(.*?)\s*\(([^)]+)\)$/); // Captura "Inter" e "Romeo" de "Inter (Romeo)"
+
+                if (match) {
+                    const team = `(${match[1].trim()})`; // Inter → (Inter)
+                    const player = match[2].trim();      // Romeo
+                    return { player, team };
+                }
+
+                return { player: 'Desconhecido', team: 'Desconhecido' };
             }
 
             function getShortLeagueName(leagueName) {
@@ -1040,10 +1063,10 @@
                         gameData.goalsScored = score.homeGoals;
                         gameData.goalsConceded = score.awayGoals;
                         gameData.won = score.homeGoals > score.awayGoals;
-                        playerGames[homePlayer].push({...gameData});
+                        playerGames[homePlayer].push({ ...gameData });
 
                         if (!playerGames[awayPlayer]) playerGames[awayPlayer] = [];
-                        const awayGameData = {...gameData};
+                        const awayGameData = { ...gameData };
                         awayGameData.goalsScored = score.awayGoals;
                         awayGameData.goalsConceded = score.homeGoals;
                         awayGameData.won = score.awayGoals > score.homeGoals;
@@ -1066,11 +1089,11 @@
             async function fetchUpcomingGames() {
                 try {
                     const response = await fetch('https://api.green365.com.br/api/league/upcoming?sport=fifa&leagueId=&page=1');
-                    
+
                     if (!response.ok) {
                         throw new Error(`Erro na API: ${response.status} - ${response.statusText}`);
                     }
-                    
+
                     const data = await response.json();
                     console.log("Jogos futuros obtidos:", data.data.length);
                     return data.data;
@@ -1302,10 +1325,10 @@
                 try {
                     // Buscar jogos passados para estatísticas
                     const allGames = await fetchPastGames();
-                    
+
                     // Buscar jogos futuros para exibição
                     const upcomingGames = await fetchUpcomingGames();
-                    
+
                     // Filtrar por ligas relevantes
                     const targetLeagues = [
                         "Esoccer GT Leagues – 12 mins play",
@@ -1313,7 +1336,7 @@
                         "Esoccer Battle Volta - 6 mins play",
                         "Esoccer H2H GG League - 8 mins play"
                     ];
-                    
+
                     // Agrupar jogos futuros por liga
                     const gamesByLeague = {};
                     upcomingGames.forEach(game => {
@@ -1325,7 +1348,7 @@
                             gamesByLeague[leagueName].push(game);
                         }
                     });
-                    
+
                     // Preparar dados para renderização
                     upcomingGamesData = [];
                     for (const league in gamesByLeague) {
@@ -1368,7 +1391,7 @@
                 // Renderizar as ligas na ordem definida
                 for (const leagueName of targetLeagues) {
                     if (!gamesByLeague[leagueName]) continue;
-                    
+
                     const leagueSection = document.createElement('div');
                     leagueSection.className = 'league-section';
                     leagueSection.dataset.leagueName = getShortLeagueName(leagueName);
@@ -1400,7 +1423,7 @@
                     // Determinar quantos jogos mostrar com base no estado de expansão
                     const isExpanded = expandedLeagues[leagueName] || false;
                     const gamesToShow = isExpanded ? gamesByLeague[leagueName] : gamesByLeague[leagueName].slice(0, 2);
-                    
+
                     for (const game of gamesToShow) {
                         const card = document.createElement('div');
                         card.className = `card ${leagueClasses[leagueName] || ''}`;
@@ -1452,10 +1475,10 @@
                             else if (metric.name.includes('Over 3.5')) icon = '📉';
                             else if (metric.name.includes('Avg Goals')) icon = '⚽';
                             else if (metric.name.includes('Form')) icon = '📋';
-                            
+
                             // Usar ícone especial para métricas destacadas
                             if (metric.isSpecial) icon = '👑';
-                            
+
                             return `
                                 <div class="metric-item ${metric.isSpecial ? 'special' : ''}">
                                     <span class="metric-name"><span class="metric-icon">${icon}</span>${metric.name.replace(/^.*?\s/, '')}</span>
@@ -1482,18 +1505,18 @@
                     if (gamesByLeague[leagueName].length > 2) {
                         const viewMoreButton = document.createElement('button');
                         viewMoreButton.className = `view-more-button ${leagueClasses[leagueName] || ''}`;
-                        
+
                         if (isExpanded) {
                             viewMoreButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg> Mostrar menos';
                         } else {
                             const remainingGames = gamesByLeague[leagueName].length - 2;
                             viewMoreButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg> Ver mais ${remainingGames} jogos`;
                         }
-                        
+
                         viewMoreButton.onclick = () => {
                             toggleLeagueExpansion(leagueName);
                         };
-                        
+
                         leagueGamesGrid.appendChild(viewMoreButton);
                     }
 
@@ -1520,7 +1543,7 @@
                     for (let j = 0; j < cards.length; j++) {
                         // Pular o botão "Ver mais"
                         if (cards[j].classList.contains('view-more-button')) continue;
-                        
+
                         const teams = cards[j].getElementsByClassName('team');
                         let homePlayer = '', awayPlayer = '', homeTeam = '', awayTeam = '';
                         if (teams.length >= 2) {
@@ -1531,10 +1554,10 @@
                         }
 
                         const leagueMatch = selectedLeague === "" || selectedLeague === leagueName;
-                        const searchMatch = searchTerm === "" || 
-                            homePlayer.includes(searchTerm) || 
-                            awayPlayer.includes(searchTerm) || 
-                            homeTeam.includes(searchTerm) || 
+                        const searchMatch = searchTerm === "" ||
+                            homePlayer.includes(searchTerm) ||
+                            awayPlayer.includes(searchTerm) ||
+                            homeTeam.includes(searchTerm) ||
                             awayTeam.includes(searchTerm);
 
                         cards[j].style.display = leagueMatch && searchMatch ? '' : 'none';
@@ -1622,4 +1645,5 @@
         });
     </script>
 </body>
+
 </html>
