@@ -1,33 +1,28 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Controle de cache -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-
-    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
-
-    <title>RW Tips - Login</title>
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>RW Tips - A Melhor Plataforma de Análise de eSoccer</title>
     <!-- Firebase SDK -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-app-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-auth-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-firestore-compat.min.js"></script>
-
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
@@ -35,12 +30,8 @@
             background-image:
                 radial-gradient(circle at 10% 20%, rgba(6, 212, 233, 0.1) 0%, rgba(0, 0, 0, 0) 20%),
                 radial-gradient(circle at 80% 30%, rgba(233, 6, 233, 0.1) 0%, rgba(0, 0, 0, 0) 20%);
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
+            color: #fff;
+            overflow-x: hidden;
         }
 
         body::before {
@@ -59,11 +50,61 @@
         .container {
             position: relative;
             z-index: 10;
-            width: 90%;
-            max-width: 900px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header with Logo */
+        .header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+            background: linear-gradient(45deg, rgba(6, 212, 233, 0.2), rgba(90, 0, 223, 0.2));
+            border-bottom: 1px solid rgba(6, 212, 233, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid #06d4e9;
+            padding: 2px;
+            box-shadow: 0 0 10px rgba(6, 212, 233, 0.5);
+        }
+
+        .logo-text {
+            font-size: 28px;
+            background: linear-gradient(45deg, #06d4e9, #e906e9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(6, 212, 233, 0.7);
+            animation: neonPulse 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes neonPulse {
+            from { text-shadow: 0 0 5px rgba(6, 212, 233, 0.5); }
+            to { text-shadow: 0 0 15px rgba(6, 212, 233, 0.8); }
+        }
+
+        /* Login Section */
+        .login-section {
+            padding: 20px 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+            margin-bottom: 40px;
         }
 
         .login-container {
@@ -86,33 +127,6 @@
                 0 0 25px rgba(6, 212, 233, 0.3),
                 0 0 70px rgba(6, 212, 233, 0.15);
             border: 1px solid rgba(6, 212, 233, 0.5);
-        }
-
-        .logo-container {
-            margin-bottom: 30px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo {
-            width: 120px;
-            height: auto;
-            margin-bottom: 15px;
-            border-radius: 10px;
-            border: 2px solid rgba(6, 212, 233, 0.3);
-            box-shadow: 0 0 15px rgba(6, 212, 233, 0.5);
-        }
-
-        .logo-text {
-            color: #fff;
-            text-shadow:
-                0 0 5px #06d4e9,
-                0 0 10px rgba(6, 212, 233, 0.5);
-            font-size: 24px;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
         }
 
         .input-group {
@@ -139,26 +153,6 @@
             border: 1px solid rgba(6, 212, 233, 0.5);
         }
 
-        .input-group select {
-            width: 100%;
-            padding: 15px 15px 15px 45px;
-            border: none;
-            border-radius: 8px;
-            background-color: rgba(30, 30, 40, 0.7);
-            color: #fff;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(6, 212, 233, 0.1);
-            appearance: none;
-        }
-
-        .input-group select:focus {
-            background-color: rgba(30, 30, 40, 0.9);
-            box-shadow: 0 0 0 2px rgba(6, 212, 233, 0.3);
-            outline: none;
-            border: 1px solid rgba(6, 212, 233, 0.5);
-        }
-
         .input-group i {
             position: absolute;
             left: 15px;
@@ -179,8 +173,6 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
             box-shadow: 0 0 10px rgba(6, 212, 233, 0.5);
             margin-bottom: 15px;
         }
@@ -190,25 +182,6 @@
             box-shadow:
                 0 5px 15px rgba(6, 212, 233, 0.5),
                 0 0 30px rgba(6, 212, 233, 0.3);
-        }
-
-        button::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(transparent,
-                    transparent,
-                    transparent,
-                    rgba(255, 255, 255, 0.1));
-            transform: rotate(30deg);
-            transition: all 0.5s ease;
-        }
-
-        button:hover::after {
-            transform: rotate(30deg) translate(10%, 10%);
         }
 
         .loader {
@@ -223,13 +196,8 @@
         }
 
         @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .error-message {
@@ -255,96 +223,14 @@
             text-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
         }
 
-        /* Efeito neon pulsante sutil */
-        @keyframes pulse {
-            0% {
-                opacity: 0.7;
-            }
-
-            50% {
-                opacity: 1;
-            }
-
-            100% {
-                opacity: 0.7;
-            }
-        }
-
-        .neon-pulse {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(60px);
-            z-index: -1;
-            animation: pulse 4s infinite;
-        }
-
-        .pulse1 {
-            top: 20%;
-            right: 20%;
-            width: 150px;
-            height: 150px;
-            background-color: rgba(6, 212, 233, 0.1);
-        }
-
-        .pulse2 {
-            bottom: 30%;
-            left: 10%;
-            width: 200px;
-            height: 200px;
-            background-color: rgba(233, 6, 233, 0.07);
-            animation-delay: 2s;
-        }
-
-        /* Efeito de partículas (pontos brilhantes) */
-        .particles {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            overflow: hidden;
-            top: 0;
-            left: 0;
-        }
-
-        .particle {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background-color: rgba(6, 212, 233, 0.7);
-            box-shadow: 0 0 10px 2px rgba(6, 212, 233, 0.5);
-            border-radius: 50%;
-            animation: particleFloat 20s infinite linear;
-        }
-
-        @keyframes particleFloat {
-            0% {
-                transform: translateY(0) translateX(0);
-                opacity: 0;
-            }
-
-            10% {
-                opacity: 1;
-            }
-
-            90% {
-                opacity: 1;
-            }
-
-            100% {
-                transform: translateY(-100vh) translateX(100px);
-                opacity: 0;
-            }
-        }
-
-        /* Admin Panel Styles */
+        /* Admin Button */
         .admin-button {
-            position: absolute;
+            position: fixed;
             top: 20px;
             right: 20px;
             background: transparent;
             color: rgba(6, 212, 233, 0.5);
             border: none;
-            width: auto;
             font-size: 14px;
             box-shadow: none;
             padding: 5px;
@@ -358,6 +244,7 @@
             box-shadow: none;
         }
 
+        /* Admin Panel Styles */
         .admin-panel {
             display: none;
             background-color: rgba(17, 17, 23, 0.95);
@@ -369,7 +256,7 @@
             padding: 30px;
             width: 100%;
             max-width: 800px;
-            margin-top: 30px;
+            margin: 30px auto;
             text-align: left;
             color: #fff;
         }
@@ -519,57 +406,7 @@
             cursor: pointer;
         }
 
-        /* Switch Component */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-            margin-left: 10px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(30, 30, 40, 0.7);
-            transition: .4s;
-            border-radius: 34px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked+.slider {
-            background-color: rgba(6, 212, 233, 0.8);
-        }
-
-        input:focus+.slider {
-            box-shadow: 0 0 1px rgba(6, 212, 233, 0.8);
-        }
-
-        input:checked+.slider:before {
-            transform: translateX(26px);
-        }
-
+        /* Admin Login */
         .admin-login {
             display: flex;
             flex-direction: column;
@@ -580,9 +417,423 @@
         .hidden {
             display: none;
         }
+
+        /* Hero Section */
+        .hero-section {
+            text-align: center;
+            padding: 80px 20px;
+            background: linear-gradient(45deg, rgba(6, 212, 233, 0.2), rgba(90, 0, 223, 0.2));
+            border-radius: 15px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shine 5s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .hero-section h1 {
+            font-size: 48px;
+            background: linear-gradient(45deg, #06d4e9, #e906e9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(6, 212, 233, 0.5);
+        }
+
+        .hero-section p {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 30px;
+        }
+
+        .social-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .whatsapp-button, .telegram-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .whatsapp-button {
+            background: linear-gradient(45deg, #25D366, #128C7E);
+            box-shadow: 0 0 10px rgba(37, 211, 102, 0.5);
+        }
+
+        .telegram-button {
+            background: linear-gradient(45deg, #0088cc, #005f8b);
+            box-shadow: 0 0 10px rgba(0, 136, 204, 0.5);
+        }
+
+        .whatsapp-button:hover, .telegram-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(6, 212, 233, 0.5);
+        }
+
+        .whatsapp-button i, .telegram-button i {
+            margin-right: 10px;
+            font-size: 24px;
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 40px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 40px;
+            background: linear-gradient(45deg, #06d4e9, #e906e9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(6, 212, 233, 0.5);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background-color: rgba(17, 17, 23, 0.85);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(6, 212, 233, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(6, 212, 233, 0.3);
+        }
+
+        .feature-card i {
+            font-size: 40px;
+            color: #06d4e9;
+            margin-bottom: 15px;
+        }
+
+        .feature-card h3 {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+        }
+
+        /* Analysis Types Section */
+        .analysis-section {
+            padding: 40px 0;
+            background: rgba(17, 17, 23, 0.5);
+        }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .analysis-card {
+            background-color: rgba(30, 30, 40, 0.7);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(6, 212, 233, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .analysis-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px rgba(6, 212, 233, 0.2);
+        }
+
+        .analysis-card h4 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .analysis-card p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        /* Screenshots Section */
+        .screenshots-section {
+            padding: 40px 0;
+        }
+
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .screenshot {
+            width: 100%;
+            border-radius: 10px;
+            border: 1px solid rgba(6, 212, 233, 0.3);
+            box-shadow: 0 0 15px rgba(6, 212, 233, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .screenshot:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(6, 212, 233, 0.3);
+        }
+
+        /* Stats Section */
+        .stats-section {
+            padding: 40px 0;
+            background: linear-gradient(45deg, rgba(6, 212, 233, 0.1), rgba(90, 0, 223, 0.1));
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat {
+            padding: 20px;
+        }
+
+        .stat h3 {
+            font-size: 48px;
+            color: #06d4e9;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(6, 212, 233, 0.5);
+        }
+
+        .stat p {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Testimonials Section */
+        .testimonials-section {
+            padding: 40px 0;
+        }
+
+        .testimonials-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .testimonial {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            background-color: rgba(17, 17, 23, 0.85);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid rgba(6, 212, 233, 0.3);
+            transition: all 0.3s ease;
+            max-width: 600px;
+        }
+
+        .testimonial:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(6, 212, 233, 0.3);
+        }
+
+        .testimonial .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #25D366;
+            object-fit: cover;
+        }
+
+        .testimonial .message-content {
+            flex: 1;
+        }
+
+        .testimonial .user-name {
+            font-size: 16px;
+            color: #25D366;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .testimonial .message {
+            background-color: #075E54;
+            padding: 15px;
+            border-radius: 0 15px 15px 15px;
+            color: #fff;
+            font-size: 16px;
+            line-height: 1.5;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .testimonial .message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -10px;
+            width: 0;
+            height: 0;
+            border-top: 10px solid #075E54;
+            border-left: 10px solid transparent;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(45deg, rgba(6, 212, 233, 0.2), rgba(90, 0, 223, 0.2));
+            border-radius: 15px;
+            margin: 40px 0;
+        }
+
+        .cta-section h2 {
+            font-size: 36px;
+            background: linear-gradient(45deg, #06d4e9, #e906e9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .cta-section p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 30px;
+        }
+
+        /* Particles Effect */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+            top: 0;
+            left: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: rgba(6, 212, 233, 0.7);
+            box-shadow: 0 0 10px 2px rgba(6, 212, 233, 0.5);
+            border-radius: 50%;
+            animation: particleFloat 20s infinite linear;
+        }
+
+        @keyframes particleFloat {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+        }
+
+        /* Neon Pulse Effect */
+        .neon-pulse {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            z-index: -1;
+            animation: pulse 4s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        .pulse1 {
+            top: 20%;
+            right: 20%;
+            width: 150px;
+            height: 150px;
+            background-color: rgba(6, 212, 233, 0.1);
+        }
+
+        .pulse2 {
+            bottom: 30%;
+            left: 10%;
+            width: 200px;
+            height: 200px;
+            background-color: rgba(233, 6, 233, 0.07);
+            animation-delay: 2s;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header { padding: 15px 0; }
+            .logo-img { width: 50px; height: 50px; }
+            .logo-text { font-size: 24px; }
+            .hero-section h1 { font-size: 36px; }
+            .hero-section p { font-size: 16px; }
+            .section-title { font-size: 28px; }
+            .feature-card h3 { font-size: 18px; }
+            .feature-card p { font-size: 14px; }
+            .analysis-card h4 { font-size: 16px; }
+            .stat h3 { font-size: 36px; }
+            .testimonial { padding: 15px; }
+            .testimonial .avatar { width: 40px; height: 40px; }
+            .testimonial .message { font-size: 14px; padding: 10px; }
+            .whatsapp-button, .telegram-button { padding: 12px 20px; font-size: 16px; }
+            .admin-button { font-size: 12px; }
+            .cta-section h2 { font-size: 28px; }
+        }
+
+        @media (max-width: 480px) {
+            .header { padding: 10px 0; }
+            .logo-img { width: 40px; height: 40px; }
+            .logo-text { font-size: 20px; }
+            .hero-section h1 { font-size: 28px; }
+            .hero-section p { font-size: 14px; }
+            .section-title { font-size: 24px; }
+            .feature-card { padding: 15px; }
+            .stat h3 { font-size: 28px; }
+            .stat p { font-size: 14px; }
+            .testimonial .avatar { width: 35px; height: 35px; }
+            .testimonial .message { font-size: 13px; }
+            .whatsapp-button, .telegram-button { padding: 10px 15px; font-size: 14px; }
+            .admin-button { font-size: 10px; }
+            .cta-section h2 { font-size: 24px; }
+            .cta-section p { font-size: 16px; }
+        }
     </style>
 </head>
-
 <body>
     <!-- Efeitos de background -->
     <div class="neon-pulse pulse1"></div>
@@ -593,152 +844,314 @@
     <button class="admin-button" id="show-admin-login">Admin</button>
 
     <div class="container">
-        <!-- Container de Login -->
-        <div class="login-container" id="login-form">
+        <!-- Header with Logo -->
+        <header class="header">
             <div class="logo-container">
-                <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo">
+                <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
                 <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
             </div>
+        </header>
 
-            <div class="input-group">
-                <i>📧</i>
-                <input type="email" id="login-email" placeholder="Seu e-mail" required>
-            </div>
-
-            <div class="input-group">
-                <i>🔒</i>
-                <input type="password" id="login-password" placeholder="Sua senha" required>
-            </div>
-
-            <button id="login-button">
-                <span id="login-text">ENTRAR</span>
-                <div class="loader" id="login-loader"></div>
-            </button>
-
-            <div class="error-message" id="login-error"></div>
-            <div class="success-message" id="login-success"></div>
-            <div class="warning-message" id="login-warning" style="display: none;"></div>
-        </div>
-
-        <!-- Painel Admin (escondido inicialmente) -->
-        <div class="admin-panel" id="admin-panel">
-            <h2>Painel Administrativo</h2>
-
-            <div class="admin-tabs">
-                <button class="admin-tab active" data-tab="create-user">Criar Usuário</button>
-                <button class="admin-tab" data-tab="manage-users">Gerenciar Usuários</button>
-            </div>
-
-            <div class="tab-content active" id="create-user-tab">
-                <div class="input-group">
-                    <i>👤</i>
-                    <input type="text" id="new-user-name" placeholder="Nome completo" required>
+        <!-- Login Section -->
+        <section class="login-section">
+            <!-- Container de Login -->
+            <div class="login-container" id="login-form">
+                <div class="logo-container">
+                    <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
+                    <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
                 </div>
 
                 <div class="input-group">
                     <i>📧</i>
-                    <input type="email" id="new-user-email" placeholder="Email" required>
+                    <input type="email" id="login-email" placeholder="Seu e-mail" required>
                 </div>
 
                 <div class="input-group">
                     <i>🔒</i>
-                    <input type="password" id="new-user-password" placeholder="Senha" required>
+                    <input type="password" id="login-password" placeholder="Sua senha" required>
                 </div>
 
-                <div class="input-row">
+                <button id="login-button">
+                    <span id="login-text">ENTRAR</span>
+                    <div class="loader" id="login-loader"></div>
+                </button>
+
+                <div class="error-message" id="login-error"></div>
+                <div class="success-message" id="login-success"></div>
+                <div class="warning-message" id="login-warning" style="display: none;"></div>
+            </div>
+
+            <!-- Painel Admin (escondido inicialmente) -->
+            <div class="admin-panel" id="admin-panel">
+                <h2>Painel Administrativo</h2>
+
+                <div class="admin-tabs">
+                    <button class="admin-tab active" data-tab="create-user">Criar Usuário</button>
+                    <button class="admin-tab" data-tab="manage-users">Gerenciar Usuários</button>
+                </div>
+
+                <div class="tab-content active" id="create-user-tab">
                     <div class="input-group">
-                        <i>📅</i>
-                        <input type="number" id="password-validity" placeholder="Dias de validade" value="30" min="1"
-                            max="365">
+                        <i>👤</i>
+                        <input type="text" id="new-user-name" placeholder="Nome completo" required>
                     </div>
 
                     <div class="input-group">
-                        <i>🔑</i>
-                        <select id="user-role">
-                            <option value="user">Usuário</option>
-                            <option value="admin">Administrador</option>
-                        </select>
+                        <i>📧</i>
+                        <input type="email" id="new-user-email" placeholder="Email" required>
+                    </div>
+
+                    <div class="input-group">
+                        <i>🔒</i>
+                        <input type="password" id="new-user-password" placeholder="Senha" required>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <i>📅</i>
+                            <input type="number" id="password-validity" placeholder="Dias de validade" value="30" min="1" max="365">
+                        </div>
+
+                        <div class="input-group">
+                            <i>🔑</i>
+                            <select id="user-role">
+                                <option value="user">Usuário</option>
+                                <option value="admin">Administrador</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button id="create-user-button">
+                        <span id="create-user-text">CRIAR USUÁRIO</span>
+                        <div class="loader" id="create-user-loader"></div>
+                    </button>
+
+                    <div class="error-message" id="create-user-error"></div>
+                    <div class="success-message" id="create-user-success"></div>
+                </div>
+
+                <div class="tab-content" id="manage-users-tab">
+                    <button id="refresh-users-button">
+                        <span id="refresh-users-text">ATUALIZAR LISTA</span>
+                        <div class="loader" id="refresh-users-loader"></div>
+                    </button>
+
+                    <div class="user-list" id="user-list">
+                        <p style="text-align: center; padding: 20px;">Carregando usuários...</p>
                     </div>
                 </div>
-
-                <button id="create-user-button">
-                    <span id="create-user-text">CRIAR USUÁRIO</span>
-                    <div class="loader" id="create-user-loader"></div>
-                </button>
-
-                <div class="error-message" id="create-user-error"></div>
-                <div class="success-message" id="create-user-success"></div>
             </div>
 
-            <div class="tab-content" id="manage-users-tab">
-                <button id="refresh-users-button">
-                    <span id="refresh-users-text">ATUALIZAR LISTA</span>
-                    <div class="loader" id="refresh-users-loader"></div>
-                </button>
-
-                <div class="user-list" id="user-list">
-                    <p style="text-align: center; padding: 20px;">Carregando usuários...</p>
+            <!-- Login Admin (escondido inicialmente) -->
+            <div class="login-container admin-login hidden" id="admin-login-form">
+                <div class="logo-container">
+                    <h2 class="logo-text">🔐 Admin</h2>
                 </div>
-            </div>
-        </div>
 
-        <!-- Login Admin (escondido inicialmente) -->
-        <div class="login-container admin-login hidden" id="admin-login-form">
-            <div class="logo-container">
-                <h2 class="logo-text">🔐 Admin</h2>
-            </div>
-
-            <div class="input-group">
-                <i>👤</i>
-                <input type="text" id="admin-username" placeholder="Nome de usuário" required>
-            </div>
-
-            <div class="input-group">
-                <i>🔒</i>
-                <input type="password" id="admin-password" placeholder="Senha" required>
-            </div>
-
-            <button id="admin-login-button">
-                <span id="admin-login-text">ENTRAR</span>
-                <div class="loader" id="admin-login-loader"></div>
-            </button>
-
-            <div class="error-message" id="admin-login-error"></div>
-
-            <button id="back-to-login"
-                style="background: transparent; box-shadow: none; color: rgba(6, 212, 233, 0.8);">
-                VOLTAR
-            </button>
-        </div>
-    </div>
-
-    <!-- Modal para renovação de senha -->
-    <div class="modal" id="renew-password-modal">
-        <div class="modal-content">
-            <span class="close-modal" id="close-renew-modal">&times;</span>
-            <h2 style="margin-bottom: 20px; text-align: center; color: #fff;">Renovar Senha</h2>
-
-            <div class="input-group">
-                <i>👤</i>
-                <input type="text" id="renew-user-email" readonly>
-            </div>
-
-            <div class="input-row">
                 <div class="input-group">
-                    <i>📅</i>
-                    <input type="number" id="renew-validity" placeholder="Dias de validade" value="30" min="1"
-                        max="365">
+                    <i>👤</i>
+                    <input type="text" id="admin-username" placeholder="Nome de usuário" required>
                 </div>
+
+                <div class="input-group">
+                    <i>🔒</i>
+                    <input type="password" id="admin-password" placeholder="Senha" required>
+                </div>
+
+                <button id="admin-login-button">
+                    <span id="admin-login-text">ENTRAR</span>
+                    <div class="loader" id="admin-login-loader"></div>
+                </button>
+
+                <div class="error-message" id="admin-login-error"></div>
+
+                <button id="back-to-login" style="background: transparent; box-shadow: none; color: rgba(6, 212, 233, 0.8);">
+                    VOLTAR
+                </button>
             </div>
 
-            <button id="renew-password-button">
-                <span id="renew-password-text">RENOVAR SENHA</span>
-                <div class="loader" id="renew-password-loader"></div>
-            </button>
+            <!-- Modal para renovação de senha -->
+            <div class="modal" id="renew-password-modal">
+                <div class="modal-content">
+                    <span class="close-modal" id="close-renew-modal">×</span>
+                    <h2 style="margin-bottom: 20px; text-align: center; color: #fff;">Renovar Senha</h2>
 
-            <div class="error-message" id="renew-password-error"></div>
-            <div class="success-message" id="renew-password-success"></div>
-        </div>
+                    <div class="input-group">
+                        <i>👤</i>
+                        <input type="text" id="renew-user-email" readonly>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <i>📅</i>
+                            <input type="number" id="renew-validity" placeholder="Dias de validade" value="30" min="1" max="365">
+                        </div>
+                    </div>
+
+                    <button id="renew-password-button">
+                        <span id="renew-password-text">RENOVAR SENHA</span>
+                        <div class="loader" id="renew-password-loader"></div>
+                    </button>
+
+                    <div class="error-message" id="renew-password-error"></div>
+                    <div class="success-message" id="renew-password-success"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <h1>Domine o eSoccer com a RW Tips</h1>
+            <p>A melhor plataforma de análise para aumentar suas chances de vitória no eSoccer.</p>
+            <div class="social-buttons">
+                <a href="https://wa.me/5592994951771?text=Olá,+gostaria+de+conhecer+a+👑RW+TIPS🎮" class="whatsapp-button" target="_blank">
+                    <i>📱</i> WhatsApp
+                </a>
+                <a href="https://t.me/assuncaoIII" class="telegram-button" target="_blank">
+                    <i>📩</i> Telegram
+                </a>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <h2 class="section-title">Por que escolher a RW Tips?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i>📜</i>
+                    <h3>Histórico de Jogos</h3>
+                    <p>Acesse o histórico completo de partidas para análises detalhadas.</p>
+                </div>
+                <div class="feature-card">
+                    <i>⚽</i>
+                    <h3>Próximos Jogos</h3>
+                    <p>Fique por dentro dos próximos confrontos e prepare suas estratégias.</p>
+                </div>
+                <div class="feature-card">
+                    <i>📊</i>
+                    <h3>Estatísticas das Ligas</h3>
+                    <p>Análises completas das ligas para decisões mais informadas.</p>
+                </div>
+                <div class="feature-card">
+                    <i>👤</i>
+                    <h3>Estatísticas dos Players</h3>
+                    <p>Conheça o desempenho detalhado de cada jogador.</p>
+                </div>
+                <div class="feature-card">
+                    <i>💰</i>
+                    <h3>Gerenciamento de Banca</h3>
+                    <p>Controle sua banca de forma eficiente e segura.</p>
+                </div>
+                <div class="feature-card">
+                    <i>⚔️</i>
+                    <h3>Análise de Confrontos</h3>
+                    <p>Estudo detalhado de confrontos diretos para prever resultados.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analysis Types Section -->
+        <section class="analysis-section">
+            <h2 class="section-title">Tipos de Análises Disponíveis</h2>
+            <div class="analysis-grid">
+                <div class="analysis-card">
+                    <h4>HT</h4>
+                    <p>Análise do Primeiro Tempo</p>
+                </div>
+                <div class="analysis-card">
+                    <h4>FT</h4>
+                    <p>Análise do Tempo Completo</p>
+                </div>
+                <div class="analysis-card">
+                    <h4>BTTS</h4>
+                    <p>Ambas as Equipes Marcam</p>
+                </div>
+                <div class="analysis-card">
+                    <h4>ML Jogador</h4>
+                    <p>Análise de Desempenho de Jogador</p>
+                </div>
+                <div class="analysis-card">
+                    <h4>Over Gols</h4>
+                    <p>Análise de Total de Gols</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Screenshots Section -->
+        <section class="screenshots-section">
+            <h2 class="section-title">Veja a RW Tips em Ação</h2>
+            <div class="screenshots-grid">
+                <img src="https://i.ibb.co/20qZqJMZ/TELA-1.png" alt="Screenshot 1" class="screenshot">
+                <img src="https://i.ibb.co/b5RhBpBH/TELA-2.png" alt="Screenshot 2" class="screenshot">
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <h2 class="section-title">Nossos Números</h2>
+            <div class="stats-grid">
+                <div class="stat">
+                    <h3>250+</h3>
+                    <p>Usuários Ativos</p>
+                </div>
+                <div class="stat">
+                    <h3>50K+</h3>
+                    <p>Jogos Analisados</p>
+                </div>
+                <div class="stat">
+                    <h3>90%</h3>
+                    <p>Taxa de Acerto</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="testimonials-section">
+            <h2 class="section-title">O que Nossos Usuários Dizem</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial">
+                    <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="João Silva" class="avatar">
+                    <div class="message-content">
+                        <div class="user-name">João Silva</div>
+                        <div class="message">
+                            A RW Tips transformou minha experiência no eSoccer! As análises são precisas e me ajudaram a melhorar meu desempenho. Minha taxa de acerto subiu de 60% para 85% em apenas 2 meses! 🚀
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial" style="margin-left: auto;">
+                    <img src="https://randomuser.me/api/portraits/women/2.jpg" alt="Maria Oliveira" class="avatar">
+                    <div class="message-content">
+                        <div class="user-name">Maria Oliveira</div>
+                        <div class="message">
+                            Nunca vi uma plataforma tão completa! O gerenciamento de banca e as estatísticas detalhadas fazem toda a diferença. Já economizei mais de R$500 com decisões melhores. 💰
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <img src="https://randomuser.me/api/portraits/men/3.jpg" alt="Carlos Souza" class="avatar">
+                    <div class="message-content">
+                        <div class="user-name">Carlos Souza</div>
+                        <div class="message">
+                            As análises de confrontos me ajudaram a prever resultados com mais confiança. Minha última aposta rendeu um lucro de 300%! Recomendo a todos! ⚽
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <h2>Faça Parte da Comunidade RW Tips</h2>
+            <p>Junte-se a milhares de usuários e leve suas apostas no eSoccer para o próximo nível.</p>
+            <div class="social-buttons">
+                <a href="https://wa.me/5592994951771?text=Olá,+gostaria+de+conhecer+a+👑RW+TIPS🎮" class="whatsapp-button" target="_blank">
+                    <i>📱</i> WhatsApp
+                </a>
+                <a href="https://t.me/assuncaoIII" class="telegram-button" target="_blank">
+                    <i>📩</i> Telegram
+                </a>
+            </div>
+        </section>
     </div>
 
     <script>
@@ -814,9 +1227,8 @@
                 const particle = document.createElement('div');
                 particle.classList.add('particle');
 
-                // Posicionamento aleatório
                 const posX = Math.random() * 100;
-                const posY = Math.random() * 100 + 100; // Começar abaixo da tela
+                const posY = Math.random() * 100 + 100;
                 const size = Math.random() * 2 + 1;
                 const duration = Math.random() * 10 + 10;
                 const delay = Math.random() * 5;
@@ -842,18 +1254,14 @@
                 return;
             }
 
-            // Mostrar loader
             loginText.style.display = 'none';
             loginLoader.style.display = 'block';
             loginButton.disabled = true;
 
-            // Tentar login
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    // Login bem-sucedido
                     const user = userCredential.user;
 
-                    // Verificar se o usuário existe no Firestore e se a senha não expirou
                     db.collection('users').doc(user.uid).get()
                         .then((doc) => {
                             if (doc.exists) {
@@ -862,7 +1270,6 @@
                                 const expirationDate = userData.expirationDate.toDate();
 
                                 if (currentDate > expirationDate) {
-                                    // Senha expirada
                                     auth.signOut().then(() => {
                                         showError(loginError, 'Sua senha expirou. Entre em contato com o administrador.');
                                         loginText.style.display = 'block';
@@ -870,14 +1277,12 @@
                                         loginButton.disabled = false;
                                     });
                                 } else {
-                                    // Senha válida, armazenar informações do usuário e redirecionar
-                                    localStorage.setItem('currentUser', userData.email); // Armazenar apenas o email
-                                    localStorage.setItem('currentUserKey', user.uid);   // Armazenar o UID do usuário
+                                    localStorage.setItem('currentUser', userData.email);
+                                    localStorage.setItem('currentUserKey', user.uid);
                                     sessionStorage.setItem('loggedIn', 'true');
-                                    window.location.href = 'visualization.html'
-                                }      // Redirecionar apenas uma vez
+                                    window.location.href = 'visualization.html';
+                                }
                             } else {
-                                // Usuário não encontrado no Firestore
                                 auth.signOut().then(() => {
                                     showError(loginError, 'Usuário não encontrado.');
                                     loginText.style.display = 'block';
@@ -894,7 +1299,6 @@
                         });
                 })
                 .catch((error) => {
-                    // Erro no login
                     showError(loginError, 'Erro ao fazer login: ' + error.message);
                     loginText.style.display = 'block';
                     loginLoader.style.display = 'none';
@@ -924,6 +1328,7 @@
         showAdminLoginBtn.addEventListener('click', () => {
             loginForm.style.display = 'none';
             adminLoginForm.classList.remove('hidden');
+            adminPanel.style.display = 'none';
         });
 
         // Voltar para o formulário de login normal
@@ -938,7 +1343,6 @@
             const password = document.getElementById('admin-password').value;
 
             if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-                // Login bem-sucedido, mostrar painel admin
                 adminLoginForm.classList.add('hidden');
                 adminPanel.style.display = 'block';
             } else {
@@ -951,11 +1355,9 @@
             tab.addEventListener('click', () => {
                 const tabId = tab.getAttribute('data-tab');
 
-                // Remover a classe 'active' de todas as abas e conteúdos
                 adminTabs.forEach(t => t.classList.remove('active'));
                 tabContents.forEach(content => content.classList.remove('active'));
 
-                // Adicionar a classe 'active' à aba e conteúdo selecionados
                 tab.classList.add('active');
                 document.getElementById(`${tabId}-tab`).classList.add('active');
             });
@@ -974,21 +1376,17 @@
                 return;
             }
 
-            // Mostrar loader
             createUserText.style.display = 'none';
             createUserLoader.style.display = 'block';
             createUserButton.disabled = true;
 
-            // Calcular a data de expiração
             const expirationDate = new Date();
             expirationDate.setDate(expirationDate.getDate() + validityDays);
 
-            // Criar usuário no Firebase Auth
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
                     const user = userCredential.user;
 
-                    // Salvar informações adicionais no Firestore
                     db.collection('users').doc(user.uid).set({
                         name: name,
                         email: email,
@@ -1103,7 +1501,6 @@
             renewPasswordButton.querySelector('.loader').style.display = 'block';
             renewPasswordButton.querySelector('span').style.display = 'none';
 
-            // Atualizar a data de expiração no Firestore
             db.collection('users').where('email', '==', email).get()
                 .then((querySnapshot) => {
                     if (!querySnapshot.empty) {
@@ -1120,7 +1517,7 @@
                                 renewPasswordButton.querySelector('.loader').style.display = 'none';
                                 renewPasswordButton.querySelector('span').style.display = 'block';
                                 renewPasswordModal.style.display = 'none';
-                                refreshUsersButton.click(); // Atualizar a lista de usuários
+                                refreshUsersButton.click();
                             })
                             .catch((error) => {
                                 showError(document.getElementById('renew-password-error'), 'Erro ao renovar senha: ' + error.message);
@@ -1144,5 +1541,4 @@
         });
     </script>
 </body>
-
 </html>
