@@ -7,6 +7,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Firebase SDK -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-firestore-compat.min.js"></script>
     <style>
         :root {
             --primary-color: #6c5ce7;
@@ -89,6 +93,22 @@
         @keyframes neonPulse {
             from { text-shadow: 0 0 5px rgba(0, 255, 136, 0.5); }
             to { text-shadow: 0 0 15px rgba(0, 255, 136, 0.8); }
+        }
+
+        .user-counter {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 1rem;
+            color: var(--accent-color);
+            background: var(--card-bg);
+            padding: 5px 15px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .user-counter span {
+            font-weight: 600;
         }
 
         .main-nav {
@@ -228,7 +248,7 @@
 
         /* Bordas coloridas específicas para cada liga */
         .league-header.battle-8m {
-            border-left: 4px solid var(--battle-8m-color);
+            border-left: 4pxVAT solid var(--battle-8m-color);
         }
         
         .league-header.battle-volta-6m {
@@ -886,6 +906,9 @@
             <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
             <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
         </div>
+        <div class="user-counter">
+            <span id="activeUsersCount">0</span> Usuários Online
+        </div>
     </header>
 
     <div class="main-nav">
@@ -935,6 +958,30 @@
     </div>
 
     <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyALiAKWq7Z6B9ut6KCHt9L4g8Vt8VHF6iM",
+            authDomain: "rw-tips.firebaseapp.com",
+            projectId: "rw-tips",
+            storageBucket: "rw-tips.appspot.com",
+            messagingSenderId: "806941219354",
+            appId: "1:806941219354:web:6f904532b6884251444fa3",
+            measurementId: "G-64HF8TWQV4",
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Contador de usuários ativos
+        const activeUsersCountElement = document.getElementById('activeUsersCount');
+
+        // Escutar mudanças na coleção activeUsers em tempo real
+        db.collection('activeUsers').onSnapshot((snapshot) => {
+            const count = snapshot.size;
+            activeUsersCountElement.textContent = count;
+        });
+
         document.addEventListener('DOMContentLoaded', function () {
             const gamesContainer = document.getElementById('gamesContainer');
             const searchFilter = document.getElementById('searchFilter');
