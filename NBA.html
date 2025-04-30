@@ -1492,7 +1492,9 @@
         // Importar e inicializar o módulo de scraping da NBA
         import('./js/nbaScraper.js')
             .then(module => {
-                module.default.init();
+                const nbaScraperService = module.default;
+                nbaScraperService.init();
+                console.log('Módulo de scraping da NBA inicializado com sucesso');
             })
             .catch(error => console.error('Erro ao carregar o módulo de scraping da NBA:', error));
 
