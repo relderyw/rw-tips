@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NBA Stats - RW Tips</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Orbitron:wght@400;700&display=swap"
+        rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -45,10 +48,23 @@
         }
 
         @keyframes particleFloat {
-            0% { transform: translateY(0) translateX(0); opacity: 0; }
-            10% { opacity: 0.8; }
-            90% { opacity: 0.8; }
-            100% { transform: translateY(-100vh) translateX(30px); opacity: 0; }
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.8;
+            }
+
+            90% {
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: translateY(-100vh) translateX(30px);
+                opacity: 0;
+            }
         }
 
         .container {
@@ -175,9 +191,17 @@
         }
 
         @keyframes livePulse {
-            0% { box-shadow: 0 0 4px rgba(239, 68, 68, 0.3); }
-            50% { box-shadow: 0 0 12px rgba(239, 68, 68, 0.5); }
-            100% { box-shadow: 0 0 4px rgba(239, 68, 68, 0.3); }
+            0% {
+                box-shadow: 0 0 4px rgba(239, 68, 68, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
+            }
+
+            100% {
+                box-shadow: 0 0 4px rgba(239, 68, 68, 0.3);
+            }
         }
 
         .live-badge {
@@ -209,15 +233,31 @@
         }
 
         @keyframes pulse {
-            0% { opacity: 0.7; }
-            50% { opacity: 1; }
-            100% { opacity: 0.7; }
+            0% {
+                opacity: 0.7;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.7;
+            }
         }
 
         @keyframes blink {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
 
         .match-header {
@@ -631,13 +671,15 @@
             color: #06B6D4;
         }
 
-        .injuries-grid, .bets-grid {
+        .injuries-grid,
+        .bets-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 16px;
         }
 
-        .injury-team, .bet-item {
+        .injury-team,
+        .bet-item {
             display: flex;
             align-items: center;
             gap: 12px;
@@ -648,13 +690,15 @@
             box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
         }
 
-        .injury-team:hover, .bet-item:hover {
+        .injury-team:hover,
+        .bet-item:hover {
             background: linear-gradient(45deg, #2A2A2A, #333333);
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(107, 33, 168, 0.2);
         }
 
-        .injury-icon, .bet-icon {
+        .injury-icon,
+        .bet-icon {
             font-size: 20px;
         }
 
@@ -666,11 +710,13 @@
             color: #06B6D4;
         }
 
-        .injury-info, .bet-info {
+        .injury-info,
+        .bet-info {
             flex-grow: 1;
         }
 
-        .injury-info .name, .bet-info .type {
+        .injury-info .name,
+        .bet-info .type {
             display: block;
             font-size: 14px;
             font-weight: 600;
@@ -682,7 +728,8 @@
             color: #EF4444;
         }
 
-        .injury-info .date, .bet-info .value {
+        .injury-info .date,
+        .bet-info .value {
             font-size: 12px;
             color: #A1A1AA;
         }
@@ -743,8 +790,59 @@
             box-shadow: 0 4px 12px rgba(107, 33, 168, 0.5);
             transform: translateY(-2px);
         }
+
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            gap: 20px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(107, 33, 168, 0.3);
+            border-radius: 50%;
+            border-top-color: #6B21A8;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .description-container {
+            margin-top: 20px;
+            padding: 15px;
+            background: #222222;
+            border-radius: 8px;
+            border-left: 4px solid #6B21A8;
+        }
+
+        .description-container h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            color: #06B6D4;
+            margin-bottom: 10px;
+        }
+
+        .description-container p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #E5E7EB;
+        }
+
+        .source-link {
+            margin-top: 15px;
+            text-align: center;
+        }
     </style>
 </head>
+
 <body>
     <div class="particles" id="particles"></div>
 
@@ -1382,8 +1480,17 @@
             }
         });
 
+        // Importar e inicializar o módulo de scraping de apostas
+        import('./js/betScraper.js')
+            .then(module => {
+                const betScraperService = module.default;
+                betScraperService.init();
+            })
+            .catch(error => console.error('Erro ao carregar o módulo de dicas de apostas:', error));
+
         renderTabs();
     </script>
 </body>
+
 </html>
 </xaiArtifact
