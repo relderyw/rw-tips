@@ -892,6 +892,7 @@
         </div>
     </div>
 
+    <script src="js/nbaScraper.js"></script>
     <script>
         const tabsDiv = document.querySelector('#tabs');
         const categoryTabsDiv = document.querySelector('#categoryTabs');
@@ -1487,6 +1488,13 @@
                 betScraperService.init();
             })
             .catch(error => console.error('Erro ao carregar o módulo de dicas de apostas:', error));
+
+        // Importar e inicializar o módulo de scraping da NBA
+        import('./js/nbaScraper.js')
+            .then(module => {
+                module.default.init();
+            })
+            .catch(error => console.error('Erro ao carregar o módulo de scraping da NBA:', error));
 
         renderTabs();
     </script>
