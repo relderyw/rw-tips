@@ -631,13 +631,13 @@
             color: #06B6D4;
         }
 
-        .injuries-grid, .bets-grid, .betting-tips-grid {
+        .injuries-grid, .bets-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 16px;
         }
 
-        .injury-team, .bet-item, .betting-tip-item {
+        .injury-team, .bet-item {
             display: flex;
             align-items: center;
             gap: 12px;
@@ -648,13 +648,13 @@
             box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
         }
 
-        .injury-team:hover, .bet-item:hover, .betting-tip-item:hover {
+        .injury-team:hover, .bet-item:hover {
             background: linear-gradient(45deg, #2A2A2A, #333333);
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(107, 33, 168, 0.2);
         }
 
-        .injury-icon, .bet-icon, .betting-tip-icon {
+        .injury-icon, .bet-icon {
             font-size: 20px;
         }
 
@@ -662,15 +662,15 @@
             color: #EF4444;
         }
 
-        .bet-icon, .betting-tip-icon {
+        .bet-icon {
             color: #06B6D4;
         }
 
-        .injury-info, .bet-info, .betting-tip-info {
+        .injury-info, .bet-info {
             flex-grow: 1;
         }
 
-        .injury-info .name, .bet-info .type, .betting-tip-info .type {
+        .injury-info .name, .bet-info .type {
             display: block;
             font-size: 14px;
             font-weight: 600;
@@ -682,47 +682,9 @@
             color: #EF4444;
         }
 
-        .injury-info .date, .bet-info .value, .betting-tip-info .value {
+        .injury-info .date, .bet-info .value {
             font-size: 12px;
             color: #A1A1AA;
-        }
-
-        .betting-tip-description {
-            font-size: 12px;
-            color: #E5E7EB;
-            margin-top: 8px;
-        }
-
-        .betting-tip-button {
-            background: linear-gradient(45deg, #14805e, #1a9c6e);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            color: #FFFFFF;
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(20, 128, 94, 0.3);
-            text-align: center;
-            margin-top: 12px;
-            display: inline-block;
-            text-decoration: none;
-        }
-
-        .betting-tip-button:hover {
-            background: linear-gradient(45deg, #1a9c6e, #14805e);
-            box-shadow: 0 4px 12px rgba(20, 128, 94, 0.5);
-            transform: translateY(-2px);
-        }
-
-        .tc-content {
-            font-size: 12px;
-            color: #A1A1AA;
-            text-align: center;
-            margin-top: 12px;
         }
 
         .error-details {
@@ -829,10 +791,6 @@
                 <div class="section-title">Possíveis Entradas</div>
                 <div class="bets-grid" id="betsGrid"></div>
             </div>
-            <div class="section-container" id="bettingTipsContainer">
-                <div class="section-title">Dicas de Apostas</div>
-                <div class="betting-tips-grid" id="bettingTipsGrid"></div>
-            </div>
         </div>
     </div>
 
@@ -842,7 +800,6 @@
         const leadersGrid = document.querySelector('#leadersGrid');
         const injuriesGrid = document.querySelector('#injuriesGrid');
         const betsGrid = document.querySelector('#betsGrid');
-        const bettingTipsGrid = document.querySelector('#bettingTipsGrid');
         const scheduleDiv = document.querySelector('#schedule');
         let currentDate = null;
         let autoUpdateInterval = null;
@@ -856,7 +813,6 @@
         const statsContent = document.querySelector('#statsContent');
         const injuriesContainer = document.querySelector('#injuriesContainer');
         const betsContainer = document.querySelector('#betsContainer');
-        const bettingTipsContainer = document.querySelector('#bettingTipsContainer');
         const closeModalBtn = document.querySelector('#closeModal');
 
         function createParticles() {
@@ -1143,40 +1099,6 @@
             }, 30000);
         }
 
-        function renderBettingTips(homeName, awayName) {
-            // Dados estáticos para o jogo Boston Celtics vs Orlando Magic
-            const isCelticsVsMagic = (homeName === "Orlando Magic" && awayName === "Boston Celtics") || (homeName === "Boston Celtics" && awayName === "Orlando Magic");
-            if (isCelticsVsMagic) {
-                const bettingTips = [
-                    { type: "Totais", value: "Over 199.5" },
-                    { type: "Spread", value: "Magic +7.5" },
-                    { type: "Pontos do Jogador", value: "Paolo Banchero Under 29.5" }
-                ];
-
-                bettingTipsGrid.innerHTML = `
-                    ${bettingTips.map(tip => `
-                        <div class="betting-tip-item">
-                            <span class="betting-tip-icon">🎰</span>
-                            <div class="betting-tip-info">
-                                <span class="type">${tip.type}</span>
-                                <span class="value">${tip.value}</span>
-                            </div>
-                        </div>
-                    `).join('')}
-                    <div style="grid-column: 1 / -1;">
-                        <div class="betting-tip-description">
-                            Nós preparamos uma aposta combinada com as escolhas de Over 199.5, Magic +7.5 e Paolo Banchero (Magic) marcando Under 29.5 pontos.<br>
-                            Recomendamos uma aposta combinada, pois é uma forma emocionante de apostar em um único evento. Muitos apostadores gostam de criar uma aposta personalizada que reflete suas previsões para o jogo.
-                        </div>
-                        <a href="https://www.sportsgambler.com/betting-sites/go/bet365/sport?utm_campaign=sgc" class="betting-tip-button">Bet Boosts</a>
-                        <div class="tc-content">T&C aplicáveis. Jogue com responsabilidade 18+</div>
-                    </div>
-                `;
-            } else {
-                bettingTipsGrid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #A1A1AA;">Dicas de apostas não disponíveis para este jogo.</div>';
-            }
-        }
-
         async function showGameStats(eventId, homeName, awayName, homeSeoIdentifier, awaySeoIdentifier) {
             try {
                 const scheduleData = await fetchSchedule(currentDate);
@@ -1380,9 +1302,6 @@
                     </div>
                 `).join('');
 
-                // Render betting tips for the specific game
-                renderBettingTips(homeName, awayName);
-
                 // Render game stats
                 if ((statsData && (statsData.away || statsData.home)) || (playerData && (playerData.away || playerData.home))) {
                     const stats = isLiveOrFinished ? [
@@ -1441,7 +1360,6 @@
                 teamLeadersContainer.innerHTML = '';
                 injuriesContainer.innerHTML = '';
                 betsContainer.innerHTML = '';
-                bettingTipsContainer.innerHTML = '';
                 statsContent.innerHTML = `
                     <div class="error">Erro ao carregar estatísticas</div>
                     <div class="error-details">${error.message}</div>
@@ -1468,3 +1386,4 @@
     </script>
 </body>
 </html>
+</xaiArtifact
