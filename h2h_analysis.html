@@ -291,13 +291,13 @@
         }
 
         .history-dot.home {
-            background: var(--accent-pink);
-            box-shadow: 0 0 10px var(--accent-pink);
+            background: var(--accent-purple);
+            box-shadow: 0 0 10px var(--accent-purple);
         }
 
         .history-dot.away {
-            background: var(--accent-purple);
-            box-shadow: 0 0 10px var(--accent-purple);
+            background: var(--accent-pink);
+            box-shadow: 0 0 10px var(--accent-pink);
         }
 
         .history-dot.draw {
@@ -335,24 +335,6 @@
             width: 100%;
         }
 
-        .h2h-stat-value {
-            font-size: clamp(2rem, 5vw, 3.5rem);
-        }
-
-        @media (max-width: 768px) {
-            .h2h-analysis {
-                padding: 15px;
-                margin: 10px;
-            }
-            
-            .h2h-stat-card h4 {
-                font-size: 1.2rem;
-            }
-            
-            .h2h-stat-card p {
-                font-size: 1rem;
-            }
-        }
         .h2h-stat-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 30px rgba(139, 92, 246, 0.1);
@@ -589,7 +571,6 @@
         .history-dot:hover .game-tooltip {
             opacity: 1;
         }
-
 
         .history-dot::before {
             content: '';
@@ -1066,6 +1047,9 @@
             const awayWinPercent = ((h2hStats.winAway / totalGames) * 100).toFixed(1);
             const drawPercent = ((h2hStats.draw / totalGames) * 100).toFixed(1);
 
+            // Determina o número de jogos exibidos (máximo de 10)
+            const gamesToShow = Math.min(h2hStats.lastGames.length, 10);
+
             const probabilityHTML = `
                 <div class="confronto-resumo">
                     <div class="confronto-stats">
@@ -1086,7 +1070,7 @@
                         </div>
                     </div>
                     <div class="game-history-container">
-                        <div class="game-history-title">Últimos 10 Confrontos</div>
+                        <div class="game-history-title">Últimos ${gamesToShow} Confrontos</div>
                         <div class="game-history">
                             ${generateGameHistory(h2hStats.lastGames, 10)}
                         </div>
@@ -1101,35 +1085,36 @@
             const recentGames = games.slice(0, limit).reverse();
             return recentGames.map(game => {
                 const [homeGoals, awayGoals] = game.score.split('-').map(Number);
-                const [homeHT, awayHT] = game.scoreHT.split('-').map(Number);
 
-                // Verifica se o time da casa é o playerA (primeiro jogador)
-                const isHomePlayerA = game.home.toLowerCase().includes(homePlayer.toLowerCase());
+                // Verifica se o time da casa (home) é o primeiro jogador (homePlayer - Arthur)
+                const isHomeFirst = game.home.toLowerCase().includes(homePlayer.toLowerCase());
 
                 let result;
                 if (homeGoals > awayGoals) {
-                    // Se o time da casa ganhou e é o playerA, então é 'home', senão é 'away'
-                    result = isHomePlayerA ? 'home' : 'away';
+                    // Se o time da casa ganhou e é o homePlayer (Arthur), o resultado é 'home'.
+                    // Se o time da casa ganhou, mas não é o homePlayer, o resultado é 'away' (Thor venceu).
+                    result = isHomeFirst ? 'home' : 'away';
                 } else if (awayGoals > homeGoals) {
-                    // Se o time visitante ganhou e não é o playerA, então é 'home', senão é 'away'
-                    result = isHomePlayerA ? 'away' : 'home';
+                    // Se o time visitante ganhou e é o homePlayer (Arthur), o resultado é 'away'.
+                    // Se o time visitante ganhou e não é o homePlayer, o resultado é 'home' (Thor venceu).
+                    result = isHomeFirst ? 'away' : 'home';
                 } else {
+                    // Empate
                     result = 'draw';
                 }
 
-                // Tooltip simplificado sem a data
                 const tooltipContent = `
-            <div>
-                <strong>${game.home}</strong> vs <strong>${game.away}</strong><br>
-                HT: ${game.scoreHT} | FT: ${game.score}
-            </div>
-        `;
+                    <div>
+                        <strong>${game.home}</strong> vs <strong>${game.away}</strong><br>
+                        HT: ${game.scoreHT} | FT: ${game.score}
+                    </div>
+                `;
 
                 return `
-            <div class="history-dot ${result}">
-                <div class="game-tooltip">${tooltipContent}</div>
-            </div>
-        `;
+                    <div class="history-dot ${result}">
+                        <div class="game-tooltip">${tooltipContent}</div>
+                    </div>
+                `;
             }).join('');
         }
 
@@ -1268,39 +1253,7 @@
 
             h2hAnalysis.appendChild(overComparisonContainer);
         }
-        function generateGameHistory(games, limit) {
-            const recentGames = games.slice(0, limit).reverse();
-            return recentGames.map(game => {
-                const [homeGoals, awayGoals] = game.score.split('-').map(Number);
 
-                // Verifica se o time da casa é o primeiro jogador (homePlayer)
-                const isHomeFirst = game.home.toLowerCase().includes(homePlayer.toLowerCase());
-
-                let result;
-                if (homeGoals > awayGoals) {
-                    // Se o time da casa ganhou e é o primeiro jogador, ou se o time visitante ganhou e é o segundo jogador
-                    result = isHomeFirst ? 'home' : 'away';
-                } else if (awayGoals > homeGoals) {
-                    // Se o time visitante ganhou e é o primeiro jogador, ou se o time da casa ganhou e é o segundo jogador
-                    result = isHomeFirst ? 'away' : 'home';
-                } else {
-                    result = 'draw';
-                }
-
-                const tooltipContent = `
-            <div>
-                <strong>${game.home}</strong> vs <strong>${game.away}</strong><br>
-                HT: ${game.scoreHT} | FT: ${game.score}
-            </div>
-        `;
-
-                return `
-            <div class="history-dot ${result}">
-                <div class="game-tooltip">${tooltipContent}</div>
-            </div>
-        `;
-            }).join('');
-        }
         function renderPlayerSection(player, playerKey) {
             const container = document.getElementById(playerKey);
             const last10Games = player.stats.games.slice(0, 10);
