@@ -868,7 +868,7 @@
 <body>
     <header class="header">
         <div class="logo-container">
-            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
+            <img src="https://i.ibb.co/G4Y8sHM/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
             <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
         </div>
     </header>
@@ -943,7 +943,9 @@
             let selectedLeague = '';
             let expandedLeagues = {};
 
-            // Mapeamento de ligas para classes CSS
+            const botToken = '6569266928:AAHm7pOJVsd3WKzJEgdVDez4ZYdCAlRoYO8';
+            const chatId = '-1001981134607';
+
             const leagueClasses = {
                 "Esoccer Battle - 8 mins play": "battle-8m",
                 "Esoccer Battle Volta - 6 mins play": "battle-volta-6m",
@@ -1279,6 +1281,68 @@
                 return metrics;
             }
 
+            async function sendTelegramMessage(message) {
+                const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+                const payload = {
+                    chat_id: chatId,
+                    text: message,
+                    parse_mode: 'Markdown'
+                };
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    if (!result.ok) {
+                        console.error('Erro ao enviar mensagem para o Telegram:', result.description);
+                    }
+                } catch (error) {
+                    console.error('Erro ao enviar mensagem para o Telegram:', error.message);
+                }
+            }
+
+            function formatTelegramMessage(leagueName, homePlayer, awayPlayer, metrics, game) {
+                const leagueInfo = getLeagueDisplayName(leagueName);
+                const homeStats = getPlayerStats(homePlayer);
+                const awayStats = getPlayerStats(awayPlayer);
+
+                let message = `*⚽ Jogo Destaque ⚽*\n\n`;
+                message += `*${homePlayer} 🆚 ${awayPlayer}*\n`;
+                message += `🏆 *Liga:* ${leagueInfo.name}\n`;
+                message += `⏰ *Horário:* ${game.day || 'N/A'} ${game.hour || 'N/A'}\n\n`;
+
+                message += `*📊 Estatísticas:*\n`;
+                metrics.forEach(metric => {
+                    let icon = '';
+                    if (metric.name.includes('Over 1.5')) icon = '📈';
+                    else if (metric.name.includes('Over 2.5')) icon = '📊';
+                    else if (metric.name.includes('Over 3.5')) icon = '📉';
+                    else if (metric.name.includes('Avg Goals')) icon = '⚽';
+                    else if (metric.name.includes('Form')) icon = '📋';
+                    if (metric.isSpecial) icon = '👑';
+                    const displayName = metric.isSpecial ? metric.name : metric.name.replace(/^.*?\s/, '');
+                    message += `${icon} *${displayName}:* ${metric.value}${metric.name.includes('Form') || metric.name.includes('Avg Goals') ? '' : '%'} ${metric.raw}\n`;
+                });
+
+                message += `\n*Forma Recente:*\n`;
+                message += `🏠 *${homePlayer}:* ${homeStats.winRate}% (Vitórias: ${homeStats.last5Wins}/5)\n`;
+                message += `🛡️ *${awayPlayer}:* ${awayStats.winRate}% (Vitórias: ${awayStats.last5Wins}/5)\n`;
+
+                message += `\n🎯 *Previsão de Gols:*\n`;
+                message += `📈 Over 1.5: ${homeStats.over15Rate}% / ${awayStats.over15Rate}%\n`;
+                message += `📊 Over 2.5: ${homeStats.over25Rate}% / ${awayStats.over25Rate}%\n`;
+                if (leagueName !== "Esoccer Battle - 8 mins play" && leagueName !== "Esoccer H2H GG League - 8 mins play") {
+                    message += `📉 Over 3.5: ${homeStats.over35Rate}% / ${awayStats.over35Rate}%\n`;
+                }
+
+                return message;
+            }
+
             function toggleLeagueExpansion(leagueName) {
                 expandedLeagues[leagueName] = !expandedLeagues[leagueName];
                 renderGames(allGamesCache);
@@ -1327,7 +1391,7 @@
                 }
             }
 
-            function renderGames(allGames) {
+            async function renderGames(allGames) {
                 gamesContainer.innerHTML = '';
 
                 if (!upcomingGamesData || upcomingGamesData.length === 0) {
@@ -1418,8 +1482,14 @@
                         const card = document.createElement('div');
                         card.className = `card ${leagueClasses[leagueName] || ''}`;
 
-                        if (homePlayer === bestPlayer.name || awayPlayer === bestPlayer.name) {
+                        const bothMeetCriteria = meetsCriteria(homeStats) && meetsCriteria(awayStats);
+                        const isBestPlayerMatch = homePlayer === bestPlayer.name || awayPlayer === bestPlayer.name;
+                        if (bothMeetCriteria || isBestPlayerMatch) {
                             card.classList.add('highlight-card');
+
+                            const metrics = getMetrics(leagueName, homePlayer, awayPlayer, allGames);
+                            const message = formatTelegramMessage(leagueName, homePlayer, awayPlayer, metrics, game);
+                            sendTelegramMessage(message);
                         }
 
                         const teams = document.createElement('div');
