@@ -1226,9 +1226,9 @@
                 const leagueGames = allGames.filter(game => game.leagueName === leagueName).slice(0, 30);
                 if (leagueGames.length === 0) {
                     return [
-                        { name: "Over 2.5 FT", value: 0, raw: "(0/0)" },
-                        { name: "Over 3.5 FT", value: 0, raw: "(0/0)" },
-                        { name: "League Avg Goals", value: 0, raw: "(Over 2.5: 0%)" }
+                        { name: "1.5 FT", value: 0, raw: "(0/0)" },
+                        { name: "2.5 FT", value: 0, raw: "(0/0)" },
+                        { name: "League Avg Goals", value: 0, raw: "(Over 1.5: 0%)" }
                     ];
                 }
 
@@ -1239,16 +1239,17 @@
                 const avgGoals = (totalGoals / leagueGames.length).toFixed(1);
 
                 let metrics = [];
-                if (leagueName === "Esoccer Battle - 8 mins play" || leagueName === "Esoccer H2H GG League - 8 mins play") {
+                const is8MinLeague = ["Esoccer Battle - 8 mins play", "Esoccer H2H GG League - 8 mins play"].includes(leagueName);
+                if (is8MinLeague) {
                     metrics = [
-                        { name: "Over 1.5 FT", value: Math.round((over1_5Games / leagueGames.length) * 100), raw: `(${over1_5Games}/${leagueGames.length})` },
-                        { name: "Over 2.5 FT", value: Math.round((over2_5Games / leagueGames.length) * 100), raw: `(${over2_5Games}/${leagueGames.length})` },
+                        { name: "1.5 FT", value: Math.round((over1_5Games / leagueGames.length) * 100), raw: `(${over1_5Games}/${leagueGames.length})` },
+                        { name: "2.5 FT", value: Math.round((over2_5Games / leagueGames.length) * 100), raw: `(${over2_5Games}/${leagueGames.length})` },
                         { name: "League Avg Goals", value: avgGoals, raw: `(Over 1.5: ${Math.round((over1_5Games / leagueGames.length) * 100)}%)` }
                     ];
                 } else {
                     metrics = [
-                        { name: "Over 2.5 FT", value: Math.round((over2_5Games / leagueGames.length) * 100), raw: `(${over2_5Games}/${leagueGames.length})` },
-                        { name: "Over 3.5 FT", value: Math.round((over3_5Games / leagueGames.length) * 100), raw: `(${over3_5Games}/${leagueGames.length})` },
+                        { name: "2.5 FT", value: Math.round((over2_5Games / leagueGames.length) * 100), raw: `(${over2_5Games}/${leagueGames.length})` },
+                        { name: "3.5 FT", value: Math.round((over3_5Games / leagueGames.length) * 100), raw: `(${over3_5Games}/${leagueGames.length})` },
                         { name: "League Avg Goals", value: avgGoals, raw: `(Over 2.5: ${Math.round((over2_5Games / leagueGames.length) * 100)}%)` }
                     ];
                 }
@@ -1258,7 +1259,7 @@
                 const featuredPlayer = homeStats.winRate >= awayStats.winRate ? homePlayer : awayPlayer;
                 const featuredStats = homeStats.winRate >= awayStats.winRate ? homeStats : awayStats;
 
-                if (leagueName === "Esoccer Battle - 8 mins play" || leagueName === "Esoccer H2H GG League - 8 mins play") {
+                if (is8MinLeague) {
                     metrics.splice(2, 0, {
                         name: `${featuredPlayer} Over 1.5 FT`,
                         value: featuredStats.over15Rate,
@@ -1311,8 +1312,6 @@
 
             function formatTelegramMessage(leagueName, homePlayer, awayPlayer, metrics, game) {
                 const leagueInfo = getLeagueDisplayName(leagueName);
-                const homeStats = getPlayerStats(homePlayer);
-                const awayStats = getPlayerStats(awayPlayer);
 
                 let message = `*⚽ Jogo Destaque ⚽*\n\n`;
                 message += `*${homePlayer} 🆚 ${awayPlayer}*\n`;
@@ -1322,43 +1321,32 @@
                 message += `*📊 Estatísticas:*\n`;
                 metrics.forEach(metric => {
                     let icon = '';
-                    if (metric.name.includes('Over 1.5')) icon = '📈';
-                    else if (metric.name.includes('Over 2.5')) icon = '📊';
-                    else if (metric.name.includes('Over 3.5')) icon = '📉';
+                    if (metric.name.includes('1.5 FT')) icon = '📈';
+                    else if (metric.name.includes('2.5 FT')) icon = '📊';
+                    else if (metric.name.includes('3.5 FT')) icon = '📉';
                     else if (metric.name.includes('Avg Goals')) icon = '⚽';
                     else if (metric.name.includes('Form')) icon = '👑';
                     if (metric.isSpecial) icon = '👑';
-                    const displayName = metric.isSpecial ? metric.name : metric.name.replace(/^.*?\s/, '');
+                    const displayName = metric.name.includes('FT') || metric.name.includes('Form') ? metric.name : metric.name;
                     message += `${icon}\n${displayName}\n${metric.value}% (${metric.raw})\n`;
                 });
-
-                message += `\n*Forma Recente:*\n`;
-                message += `🏠 *${homePlayer}:* ${homeStats.winRate}% (Vitórias: ${homeStats.last5Wins}/5)\n`;
-                message += `🛡️ *${awayPlayer}:* ${awayStats.winRate}% (Vitórias: ${awayStats.last5Wins}/5)\n`;
-
-                message += `\n*🎯 Previsão de Gols:*\n`;
-                message += `📈 Over 1.5: ${homeStats.over15Rate}% / ${awayStats.over15Rate}%\n`;
-                message += `📊 Over 2.5: ${homeStats.over25Rate}% / ${awayStats.over25Rate}%\n`;
-                if (leagueName !== "Esoccer Battle - 8 mins play" && leagueName !== "Esoccer H2H GG League - 8 mins play") {
-                    message += `📉 Over 3.5: ${homeStats.over35Rate}% / ${awayStats.over35Rate}%\n`;
-                }
 
                 return message;
             }
 
-            function meetsCriteria(leagueName, metrics, homeStats, awayStats) {
-                const over15Metric = metrics.find(m => m.name === "Over 1.5 FT");
-                const over25Metric = metrics.find(m => m.name === "Over 2.5 FT");
-                const avgGoalsMetric = metrics.find(m => m.name === "League Avg Goals");
-                const formMetric = metrics.find(m => m.name.endsWith("Form"));
-
+            function meetsCriteria(leagueName, metrics) {
                 const is8MinLeague = ["Esoccer Battle - 8 mins play", "Esoccer H2H GG League - 8 mins play"].includes(leagueName);
                 const isLongerLeague = ["Esoccer GT Leagues – 12 mins play", "Esoccer Adriatic League - 10 mins play", "Esoccer Battle Volta - 6 mins play"].includes(leagueName);
 
-                if (is8MinLeague && over15Metric.value !== 100) return false;
-                if (isLongerLeague && over25Metric.value !== 100) return false;
-                if (avgGoalsMetric.raw.includes("Over 1.5: 100%") === false) return false;
-                if (formMetric.value <= 45) return false;
+                const over15Metric = metrics.find(m => m.name === "1.5 FT");
+                const over25Metric = metrics.find(m => m.name === "2.5 FT");
+                const avgGoalsMetric = metrics.find(m => m.name === "League Avg Goals");
+                const formMetric = metrics.find(m => m.name.endsWith("Form"));
+
+                if (is8MinLeague && (!over15Metric || over15Metric.value !== 100)) return false;
+                if (isLongerLeague && (!over25Metric || over25Metric.value !== 100)) return false;
+                if (!avgGoalsMetric || (is8MinLeague && !avgGoalsMetric.raw.includes("Over 1.5: 100%")) || (!is8MinLeague && !avgGoalsMetric.raw.includes("Over 2.5: 100%"))) return false;
+                if (!formMetric || formMetric.value <= 45) return false;
 
                 return true;
             }
@@ -1468,25 +1456,9 @@
                     const isExpanded = expandedLeagues[leagueName] || false;
                     const gamesToShow = isExpanded ? gamesByLeague[leagueName] : gamesByLeague[leagueName].slice(0, 2);
 
-                    const leagueCriteria = {
-                        "Esoccer GT Leagues – 12 mins play": { over1_5: 100, over2_5: 100, over3_5: 70, minWins: 1 },
-                        "Esoccer Battle - 8 mins play": { over1_5: 100, over2_5: 88, minWins: 1 },
-                        "Esoccer Battle Volta - 6 mins play": { over1_5: 100, over2_5: 100, over3_5: 70, minWins: 1 },
-                        "Esoccer H2H GG League - 8 mins play": { over1_5: 100, over2_5: 50, minWins: 1 }
-                    }[leagueName] || {};
-
-                    const meetsCriteria = (stats) => {
-                        let meets = true;
-                        if (leagueCriteria.over1_5 && stats.over15Rate < leagueCriteria.over1_5) meets = false;
-                        if (leagueCriteria.over2_5 && stats.over25Rate < leagueCriteria.over2_5) meets = false;
-                        if (leagueCriteria.over3_5 && stats.over35Rate < leagueCriteria.over3_5) meets = false;
-                        if (leagueCriteria.minWins && stats.last5Wins < leagueCriteria.minWins) meets = false;
-                        return meets;
-                    };
-
                     let hasVisibleGames = false;
                     for (const game of gamesToShow) {
-                        const gameId = game.gameID || game.id || Date.now(); // Usar gameID da API ou fallback
+                        const gameId = game.gameID || game.id || `${game.home}-${game.away}-${game.day}-${game.hour}`;
                         if (sentGameIds.includes(gameId)) continue;
 
                         const homePlayer = extractPlayerName(game.home);
@@ -1494,24 +1466,16 @@
                         const homeTeam = extractTeamName(game.home);
                         const awayTeam = extractTeamName(game.away);
 
-                        const homeStats = getPlayerStats(homePlayer);
-                        const awayStats = getPlayerStats(awayPlayer);
-
-                        if (!meetsCriteria(homeStats) && !meetsCriteria(awayStats)) {
-                            continue;
-                        }
+                        const metrics = getMetrics(leagueName, homePlayer, awayPlayer, allGames);
+                        if (!meetsCriteria(leagueName, metrics)) continue;
 
                         hasVisibleGames = true;
                         const card = document.createElement('div');
                         card.className = `card ${leagueClasses[leagueName] || ''}`;
+                        card.classList.add('highlight-card');
 
-                        const metrics = getMetrics(leagueName, homePlayer, awayPlayer, allGames);
-                        const bothMeetCriteria = meetsCriteria(homeStats) && meetsCriteria(awayStats);
-                        const isBestPlayerMatch = homePlayer === bestPlayer.name || awayPlayer === bestPlayer.name;
-                        if ((bothMeetCriteria || isBestPlayerMatch) && meetsCriteria(leagueName, metrics, homeStats, awayStats)) {
-                            card.classList.add('highlight-card');
-
-                            const message = formatTelegramMessage(leagueName, homePlayer, awayPlayer, metrics, game);
+                        const message = formatTelegramMessage(leagueName, homePlayer, awayPlayer, metrics, game);
+                        if (!sentGameIds.includes(gameId)) {
                             sendTelegramMessage(message);
                             sentGameIds.push(gameId);
                             localStorage.setItem('sentGameIds', JSON.stringify(sentGameIds));
@@ -1545,16 +1509,15 @@
                         metricsContainer.className = 'metrics-container';
                         metricsContainer.innerHTML = metrics.map(metric => {
                             let icon = '⬤';
-                            if (metric.name.includes('Over 1.5')) icon = '📈';
-                            else if (metric.name.includes('Over 2.5')) icon = '📊';
-                            else if (metric.name.includes('Over 3.5')) icon = '📉';
+                            if (metric.name.includes('1.5 FT')) icon = '📈';
+                            else if (metric.name.includes('2.5 FT')) icon = '📊';
+                            else if (metric.name.includes('3.5 FT')) icon = '📉';
                             else if (metric.name.includes('Avg Goals')) icon = '⚽';
                             else if (metric.name.includes('Form')) icon = '👑';
                             if (metric.isSpecial) icon = '👑';
-                            const displayName = metric.isSpecial ? metric.name : metric.name.replace(/^.*?\s/, '');
                             return `
                                 <div class="metric-item ${metric.isSpecial ? 'special' : ''}">
-                                    <span class="metric-name"><span class="metric-icon">${icon}</span>${displayName}</span>
+                                    <span class="metric-name"><span class="metric-icon">${icon}</span>${metric.name}</span>
                                     <span class="metric-value">${metric.value}${metric.name.includes('Form') || metric.name.includes('Avg Goals') ? '' : '%'} <span class="metric-raw">${metric.raw}</span></span>
                                 </div>
                             `;
