@@ -873,7 +873,7 @@
 
 <body>
     <div class="logo-container">
-        <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo">
+        <img src="https://i.ibb.co/G4Y8sHM/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo">
         <h2 class="logo-text">👑 RW TIPS 🎮</h2>
     </div>
 
@@ -938,7 +938,7 @@
             return metrics.sort((a, b) => b.value - a.value).slice(0, 3);
         }
 
-        function processH2HStats(lastGames) {
+        function processH2HStats(lastGames, homePlayer, awayPlayer) {
             let stats = {
                 totalGames: lastGames.length,
                 over0_5HT: 0,
@@ -953,8 +953,8 @@
                 bttsFT: 0,
                 totalGoalsHT: 0,
                 totalGoalsFT: 0,
-                winHome: 0,
-                winAway: 0,
+                winHome: 0, // Vitórias de homePlayer (Prince)
+                winAway: 0, // Vitórias de awayPlayer (Thor)
                 draw: 0,
                 lastGames: lastGames,
                 home: { total: 0, over0_5HT: 0, over1_5HT: 0, over2_5HT: 0, over0_5FT: 0, over1_5FT: 0, over2_5FT: 0 },
@@ -983,17 +983,30 @@
                 if (totalGoalsFT > 4) stats.over4_5FT++;
                 if (homeGoals > 0 && awayGoals > 0) stats.bttsFT++;
 
-                // Determinar o vencedor com base no placar final
+                // Determinar o vencedor com base no placar final e nos jogadores
+                const isHomePlayerHome = game.home.toLowerCase().includes(homePlayer.toLowerCase());
+                const isAwayPlayerAway = game.away.toLowerCase().includes(awayPlayer.toLowerCase());
+
                 if (homeGoals > awayGoals) {
-                    stats.winHome++;
+                    // Time da casa venceu
+                    if (isHomePlayerHome) {
+                        stats.winHome++; // Prince venceu
+                    } else {
+                        stats.winAway++; // Thor venceu (ele era o visitante)
+                    }
                 } else if (awayGoals > homeGoals) {
-                    stats.winAway++;
+                    // Time visitante venceu
+                    if (isAwayPlayerAway) {
+                        stats.winAway++; // Thor venceu
+                    } else {
+                        stats.winHome++; // Prince venceu (ele era o visitante)
+                    }
                 } else {
                     stats.draw++;
                 }
 
-                const isHomeMatch = game.home.toLowerCase().includes(homePlayer.toLowerCase());
-                if (isHomeMatch) {
+                // Separar estatísticas Casa vs Fora
+                if (isHomePlayerHome) {
                     stats.home.total++;
                     if (totalGoalsHT > 0) stats.home.over0_5HT++;
                     if (totalGoalsHT > 1) stats.home.over1_5HT++;
@@ -1019,8 +1032,8 @@
             const container = document.getElementById('probabilityCards');
             const totalGames = h2hStats.totalGames;
 
-            const homeWinPercent = ((h2hStats.winHome / totalGames) * 100).toFixed(1); // Vitórias de Prince (home)
-            const awayWinPercent = ((h2hStats.winAway / totalGames) * 100).toFixed(1); // Vitórias de Thor (away)
+            const homeWinPercent = ((h2hStats.winHome / totalGames) * 100).toFixed(1); // Vitórias de Prince (homePlayer)
+            const awayWinPercent = ((h2hStats.winAway / totalGames) * 100).toFixed(1); // Vitórias de Thor (awayPlayer)
             const drawPercent = ((h2hStats.draw / totalGames) * 100).toFixed(1);
 
             const gamesToShow = Math.min(h2hStats.lastGames.length, 10);
@@ -1047,7 +1060,7 @@
                     <div class="game-history-container">
                         <div class="game-history-title">Últimos ${gamesToShow} Confrontos</div>
                         <div class="game-history">
-                            ${generateGameHistory(h2hStats.lastGames, 10)}
+                            ${generateGameHistory(h2hStats.lastGames, 10, homePlayer, awayPlayer)}
                         </div>
                     </div>
                 </div>
@@ -1056,16 +1069,29 @@
             container.innerHTML = probabilityHTML;
         }
 
-        function generateGameHistory(games, limit) {
+        function generateGameHistory(games, limit, homePlayer, awayPlayer) {
             const recentGames = games.slice(0, limit).reverse();
             return recentGames.map(game => {
                 const [homeGoals, awayGoals] = game.score.split('-').map(Number);
 
                 let result;
+                const isHomePlayerHome = game.home.toLowerCase().includes(homePlayer.toLowerCase());
+                const isAwayPlayerAway = game.away.toLowerCase().includes(awayPlayer.toLowerCase());
+
                 if (homeGoals > awayGoals) {
-                    result = 'home';
+                    // Time da casa venceu
+                    if (isHomePlayerHome) {
+                        result = 'home'; // Prince venceu
+                    } else {
+                        result = 'away'; // Thor venceu
+                    }
                 } else if (awayGoals > homeGoals) {
-                    result = 'away';
+                    // Time visitante venceu
+                    if (isAwayPlayerAway) {
+                        result = 'away'; // Thor venceu
+                    } else {
+                        result = 'home'; // Prince venceu
+                    }
                 } else {
                     result = 'draw';
                 }
@@ -1317,7 +1343,7 @@
                             <span class="player-name-away">${playerBName}</span>
                         </div>
                         <div class="game-history">
-                            ${generateGameHistory(recentGames, 10)}
+                            ${generateGameHistory(recentGames, 10, homePlayer, awayPlayer)}
                         </div>
                     </div>
                     <div class="games-list">
@@ -1361,7 +1387,7 @@
             .then(response => response.json())
             .then(data => {
                 const players = data.players;
-                const h2hStats = processH2HStats(data.mutualInfos.lastGames);
+                const h2hStats = processH2HStats(data.mutualInfos.lastGames, homePlayer, awayPlayer);
                 const top3Metrics = getTop3Metrics(h2hStats);
 
                 localStorage.setItem(`h2h_metrics_${homeID}_${awayID}`, JSON.stringify(top3Metrics));
