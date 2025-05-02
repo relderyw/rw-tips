@@ -946,6 +946,9 @@
             const botToken = '6569266928:AAHm7pOJVsd3WKzJEgdVDez4ZYdCAlRoYO8';
             const chatId = '-1001981134607';
 
+            // Armazenar jogos já enviados
+            let sentGameIds = JSON.parse(localStorage.getItem('sentGameIds')) || [];
+
             const leagueClasses = {
                 "Esoccer Battle - 8 mins play": "battle-8m",
                 "Esoccer Battle Volta - 6 mins play": "battle-volta-6m",
@@ -1323,17 +1326,17 @@
                     else if (metric.name.includes('Over 2.5')) icon = '📊';
                     else if (metric.name.includes('Over 3.5')) icon = '📉';
                     else if (metric.name.includes('Avg Goals')) icon = '⚽';
-                    else if (metric.name.includes('Form')) icon = '📋';
+                    else if (metric.name.includes('Form')) icon = '👑';
                     if (metric.isSpecial) icon = '👑';
                     const displayName = metric.isSpecial ? metric.name : metric.name.replace(/^.*?\s/, '');
-                    message += `${icon} *${displayName}:* ${metric.value}${metric.name.includes('Form') || metric.name.includes('Avg Goals') ? '' : '%'} ${metric.raw}\n`;
+                    message += `${icon}\n${displayName}\n${metric.value}% (${metric.raw})\n`;
                 });
 
                 message += `\n*Forma Recente:*\n`;
                 message += `🏠 *${homePlayer}:* ${homeStats.winRate}% (Vitórias: ${homeStats.last5Wins}/5)\n`;
                 message += `🛡️ *${awayPlayer}:* ${awayStats.winRate}% (Vitórias: ${awayStats.last5Wins}/5)\n`;
 
-                message += `\n🎯 *Previsão de Gols:*\n`;
+                message += `\n*🎯 Previsão de Gols:*\n`;
                 message += `📈 Over 1.5: ${homeStats.over15Rate}% / ${awayStats.over15Rate}%\n`;
                 message += `📊 Over 2.5: ${homeStats.over25Rate}% / ${awayStats.over25Rate}%\n`;
                 if (leagueName !== "Esoccer Battle - 8 mins play" && leagueName !== "Esoccer H2H GG League - 8 mins play") {
@@ -1341,6 +1344,23 @@
                 }
 
                 return message;
+            }
+
+            function meetsCriteria(leagueName, metrics, homeStats, awayStats) {
+                const over15Metric = metrics.find(m => m.name === "Over 1.5 FT");
+                const over25Metric = metrics.find(m => m.name === "Over 2.5 FT");
+                const avgGoalsMetric = metrics.find(m => m.name === "League Avg Goals");
+                const formMetric = metrics.find(m => m.name.endsWith("Form"));
+
+                const is8MinLeague = ["Esoccer Battle - 8 mins play", "Esoccer H2H GG League - 8 mins play"].includes(leagueName);
+                const isLongerLeague = ["Esoccer GT Leagues – 12 mins play", "Esoccer Adriatic League - 10 mins play", "Esoccer Battle Volta - 6 mins play"].includes(leagueName);
+
+                if (is8MinLeague && over15Metric.value !== 100) return false;
+                if (isLongerLeague && over25Metric.value !== 100) return false;
+                if (avgGoalsMetric.raw.includes("Over 1.5: 100%") === false) return false;
+                if (formMetric.value <= 45) return false;
+
+                return true;
             }
 
             function toggleLeagueExpansion(leagueName) {
@@ -1466,6 +1486,9 @@
 
                     let hasVisibleGames = false;
                     for (const game of gamesToShow) {
+                        const gameId = game.gameID || game.id || Date.now(); // Usar gameID da API ou fallback
+                        if (sentGameIds.includes(gameId)) continue;
+
                         const homePlayer = extractPlayerName(game.home);
                         const awayPlayer = extractPlayerName(game.away);
                         const homeTeam = extractTeamName(game.home);
@@ -1482,14 +1505,16 @@
                         const card = document.createElement('div');
                         card.className = `card ${leagueClasses[leagueName] || ''}`;
 
+                        const metrics = getMetrics(leagueName, homePlayer, awayPlayer, allGames);
                         const bothMeetCriteria = meetsCriteria(homeStats) && meetsCriteria(awayStats);
                         const isBestPlayerMatch = homePlayer === bestPlayer.name || awayPlayer === bestPlayer.name;
-                        if (bothMeetCriteria || isBestPlayerMatch) {
+                        if ((bothMeetCriteria || isBestPlayerMatch) && meetsCriteria(leagueName, metrics, homeStats, awayStats)) {
                             card.classList.add('highlight-card');
 
-                            const metrics = getMetrics(leagueName, homePlayer, awayPlayer, allGames);
                             const message = formatTelegramMessage(leagueName, homePlayer, awayPlayer, metrics, game);
                             sendTelegramMessage(message);
+                            sentGameIds.push(gameId);
+                            localStorage.setItem('sentGameIds', JSON.stringify(sentGameIds));
                         }
 
                         const teams = document.createElement('div');
@@ -1518,14 +1543,13 @@
 
                         const metricsContainer = document.createElement('div');
                         metricsContainer.className = 'metrics-container';
-                        const metrics = getMetrics(leagueName, homePlayer, awayPlayer, allGames);
                         metricsContainer.innerHTML = metrics.map(metric => {
                             let icon = '⬤';
                             if (metric.name.includes('Over 1.5')) icon = '📈';
                             else if (metric.name.includes('Over 2.5')) icon = '📊';
                             else if (metric.name.includes('Over 3.5')) icon = '📉';
                             else if (metric.name.includes('Avg Goals')) icon = '⚽';
-                            else if (metric.name.includes('Form')) icon = '📋';
+                            else if (metric.name.includes('Form')) icon = '👑';
                             if (metric.isSpecial) icon = '👑';
                             const displayName = metric.isSpecial ? metric.name : metric.name.replace(/^.*?\s/, '');
                             return `
