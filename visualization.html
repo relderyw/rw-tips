@@ -22,6 +22,8 @@
             --active-bg: #2ecc71;
             --header-height: 80px;
             --highlight-border: #ffd700;
+            
+            /* Cores específicas das ligas */
             --battle-8m-color: #FF4C4C;
             --battle-volta-6m-color: #FFD700;
             --gt-leagues-12m-color: #32CD32;
@@ -374,8 +376,12 @@
         }
 
         @keyframes shine {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
         }
 
         .highlight-card:hover {
@@ -862,7 +868,7 @@
 <body>
     <header class="header">
         <div class="logo-container">
-            <img src="https://i.ibb.co/G4Y8sHM/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
+            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
             <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
         </div>
     </header>
@@ -1024,9 +1030,7 @@
                             goalsConceded: 0,
                             totalGoals: score.totalGoals,
                             won: false,
-                            timestamp: game.timestamp,
-                            btts: score.homeGoals > 0 && score.awayGoals > 0,
-                            halftimeScore: game.halftimeScore || '0-0'
+                            timestamp: game.timestamp
                         };
 
                         if (!playerGames[homePlayer]) playerGames[homePlayer] = [];
@@ -1193,7 +1197,7 @@
             function getPlayerStats(playerName) {
                 const games = pastGamesData[playerName] || [];
                 if (games.length === 0) {
-                    return { winRate: 0, last5Wins: 0, over15Rate: 0, over25Rate: 0, over35Rate: 0, bttsRate: 0 };
+                    return { winRate: 0, last5Wins: 0, over15Rate: 0, over25Rate: 0, over35Rate: 0 };
                 }
 
                 const wins = games.filter(g => g.won).length;
@@ -1202,238 +1206,93 @@
                 const over1_5Games = games.filter(g => g.totalGoals > 1.5).length;
                 const over2_5Games = games.filter(g => g.totalGoals > 2.5).length;
                 const over3_5Games = games.filter(g => g.totalGoals > 3.5).length;
-                const bttsGames = games.filter(g => g.btts).length;
 
                 return {
                     winRate: Math.round(winRate),
                     last5Wins: wins,
                     over15Rate: Math.round((over1_5Games / games.length) * 100),
                     over25Rate: Math.round((over2_5Games / games.length) * 100),
-                    over35Rate: Math.round((over3_5Games / games.length) * 100),
-                    bttsRate: Math.round((bttsGames / games.length) * 100)
+                    over35Rate: Math.round((over3_5Games / games.length) * 100)
                 };
             }
 
-            function getH2HStats(homePlayer, awayPlayer, allGames) {
-                const h2hGames = allGames.filter(game => 
-                    (extractPlayerName(game.home) === homePlayer && extractPlayerName(game.away) === awayPlayer) ||
-                    (extractPlayerName(game.home) === awayPlayer && extractPlayerName(game.away) === homePlayer)
-                ).slice(0, 10);
-
-                if (h2hGames.length === 0) {
-                    return {
-                        over25Rate: 0,
-                        over35Rate: 0,
-                        bttsRate: 0,
-                        over2HTRate: 0,
-                        gamesCount: 0
-                    };
-                }
-
-                const over2_5Games = h2hGames.filter(game => parseScore(game.score).totalGoals > 2.5).length;
-                const over3_5Games = h2hGames.filter(game => parseScore(game.score).totalGoals > 3.5).length;
-                const bttsGames = h2hGames.filter(game => {
-                    const score = parseScore(game.score);
-                    return score.homeGoals > 0 && score.awayGoals > 0;
-                }).length;
-                const over2HTGames = h2hGames.filter(game => {
-                    const htScore = parseScore(game.halftimeScore || '0-0');
-                    return htScore.totalGoals >= 2;
-                }).length;
-
-                return {
-                    over25Rate: Math.round((over2_5Games / h2hGames.length) * 100),
-                    over35Rate: Math.round((over3_5Games / h2hGames.length) * 100),
-                    bttsRate: Math.round((bttsGames / h2hGames.length) * 100),
-                    over2HTRate: Math.round((over2HTGames / h2hGames.length) * 100),
-                    gamesCount: h2hGames.length
-                };
-            }
-
-            function getLeagueCondition(leagueName, allGames) {
+            function getMetrics(leagueName, homePlayer, awayPlayer, allGames) {
                 const leagueGames = allGames.filter(game => game.leagueName === leagueName).slice(0, 30);
                 if (leagueGames.length === 0) {
-                    return {
-                        over15Rate: 0,
-                        over25Rate: 0,
-                        over35Rate: 0,
-                        bttsRate: 0,
-                        avgGoals: 0,
-                        gamesCount: 0
-                    };
+                    return [
+                        { name: "Over 2.5 FT", value: 0, raw: "(0/0)" },
+                        { name: "Over 3.5 FT", value: 0, raw: "(0/0)" },
+                        { name: "League Avg Goals", value: 0, raw: "(Over 2.5: 0%)" }
+                    ];
                 }
 
                 const over1_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 1.5).length;
                 const over2_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 2.5).length;
                 const over3_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 3.5).length;
-                const bttsGames = leagueGames.filter(game => {
-                    const score = parseScore(game.score);
-                    return score.homeGoals > 0 && score.awayGoals > 0;
-                }).length;
                 const totalGoals = leagueGames.reduce((sum, game) => sum + parseScore(game.score).totalGoals, 0);
-
-                return {
-                    over15Rate: Math.round((over1_5Games / leagueGames.length) * 100),
-                    over25Rate: Math.round((over2_5Games / leagueGames.length) * 100),
-                    over35Rate: Math.round((over3_5Games / leagueGames.length) * 100),
-                    bttsRate: Math.round((bttsGames / leagueGames.length) * 100),
-                    avgGoals: (totalGoals / leagueGames.length).toFixed(1),
-                    gamesCount: leagueGames.length
-                };
-            }
-
-            function getPredictions(leagueName, homePlayer, awayPlayer, allGames) {
-                const h2hGames = allGames.filter(game => 
-                    (extractPlayerName(game.home) === homePlayer && extractPlayerName(game.away) === awayPlayer) ||
-                    (extractPlayerName(game.home) === awayPlayer && extractPlayerName(game.away) === homePlayer)
-                ).slice(0, 10);
-
-                if (h2hGames.length < 5) return [];
-
-                const predictions = [];
-                const over2_5Games = h2hGames.filter(game => parseScore(game.score).totalGoals > 2.5).length;
-                const over3_5Games = h2hGames.filter(game => parseScore(game.score).totalGoals > 3.5).length;
-                const bttsGames = h2hGames.filter(game => {
-                    const score = parseScore(game.score);
-                    return score.homeGoals > 0 && score.awayGoals > 0;
-                }).length;
-                const over2HTGames = h2hGames.filter(game => {
-                    const htScore = parseScore(game.halftimeScore || '0-0');
-                    return htScore.totalGoals >= 2;
-                }).length;
-                const bttsHTGames = h2hGames.filter(game => {
-                    const htScore = parseScore(game.halftimeScore || '0-0');
-                    return htScore.homeGoals > 0 && htScore.awayGoals > 0;
-                }).length;
-
-                const is8MinLeague = ["Esoccer Battle - 8 mins play", "Esoccer Battle Volta - 6 mins play", "Esoccer H2H GG League - 8 mins play"].includes(leagueName);
-                const is12MinLeague = leagueName === "Esoccer GT Leagues – 12 mins play";
-
-                if (is8MinLeague && (over2_5Games / h2hGames.length) * 100 === 100) {
-                    predictions.push("Over 2.5 FT");
-                }
-                if (is12MinLeague && (over3_5Games / h2hGames.length) * 100 === 100) {
-                    predictions.push("Over 3.5 FT");
-                }
-                if ((bttsGames / h2hGames.length) * 100 === 100) {
-                    predictions.push("BTTS");
-                }
-                if ((over2HTGames / h2hGames.length) * 100 === 100) {
-                    predictions.push("Over 2.0 HT");
-                }
-                if ((bttsHTGames / h2hGames.length) * 100 === 100) {
-                    predictions.push("BTTS HT");
-                }
-
-                return predictions;
-            }
-
-            function getMetrics(leagueName, homePlayer, awayPlayer, allGames) {
-                const h2hStats = getH2HStats(homePlayer, awayPlayer, allGames);
-                const leagueCondition = getLeagueCondition(leagueName, allGames);
-                const homeStats = getPlayerStats(homePlayer);
-                const predictions = getPredictions(leagueName, homePlayer, awayPlayer, allGames);
-
-                const is8MinLeague = ["Esoccer Battle - 8 mins play", "Esoccer Battle Volta - 6 mins play", "Esoccer H2H GG League - 8 mins play"].includes(leagueName);
-                const is12MinLeague = leagueName === "Esoccer GT Leagues – 12 mins play";
+                const avgGoals = (totalGoals / leagueGames.length).toFixed(1);
 
                 let metrics = [];
-
-                // H2H Metrics
-                if (is8MinLeague) {
-                    metrics.push(
-                        { name: "H2H Over 2.5 FT", value: h2hStats.over25Rate, raw: `(${h2hStats.over25Rate}% em ${h2hStats.gamesCount})`, isSpecial: true },
-                        { name: "H2H BTTS", value: h2hStats.bttsRate, raw: `(${h2hStats.bttsRate}% em ${h2hStats.gamesCount})`, isSpecial: true },
-                        { name: "H2H Over 2.0 HT", value: h2hStats.over2HTRate, raw: `(${h2hStats.over2HTRate}% em ${h2hStats.gamesCount})`, isSpecial: true }
-                    );
-                } else if (is12MinLeague) {
-                    metrics.push(
-                        { name: "H2H Over 3.5 FT", value: h2hStats.over35Rate, raw: `(${h2hStats.over35Rate}% em ${h2hStats.gamesCount})`, isSpecial: true },
-                        { name: "H2H BTTS", value: h2hStats.bttsRate, raw: `(${h2hStats.bttsRate}% em ${h2hStats.gamesCount})`, isSpecial: true },
-                        { name: "H2H Over 2.0 HT", value: h2hStats.over2HTRate, raw: `(${h2hStats.over2HTRate}% em ${h2hStats.gamesCount})`, isSpecial: true }
-                    );
+                if (leagueName === "Esoccer Battle - 8 mins play" || leagueName === "Esoccer H2H GG League - 8 mins play") {
+                    metrics = [
+                        { name: "Over 1.5 FT", value: Math.round((over1_5Games / leagueGames.length) * 100), raw: `(${over1_5Games}/${leagueGames.length})` },
+                        { name: "Over 2.5 FT", value: Math.round((over2_5Games / leagueGames.length) * 100), raw: `(${over2_5Games}/${leagueGames.length})` },
+                        { name: "League Avg Goals", value: avgGoals, raw: `(Over 1.5: ${Math.round((over1_5Games / leagueGames.length) * 100)}%)` }
+                    ];
+                } else {
+                    metrics = [
+                        { name: "Over 2.5 FT", value: Math.round((over2_5Games / leagueGames.length) * 100), raw: `(${over2_5Games}/${leagueGames.length})` },
+                        { name: "Over 3.5 FT", value: Math.round((over3_5Games / leagueGames.length) * 100), raw: `(${over3_5Games}/${leagueGames.length})` },
+                        { name: "League Avg Goals", value: avgGoals, raw: `(Over 2.5: ${Math.round((over2_5Games / leagueGames.length) * 100)}%)` }
+                    ];
                 }
 
-                // League Condition Metrics
-                if (is8MinLeague) {
-                    metrics.push(
-                        { name: "League Over 1.5 FT", value: leagueCondition.over15Rate, raw: `(${leagueCondition.over15Rate}% em ${leagueCondition.gamesCount})` },
-                        { name: "League Over 2.5 FT", value: leagueCondition.over25Rate, raw: `(${leagueCondition.over25Rate}% em ${leagueCondition.gamesCount})` },
-                        { name: "League BTTS", value: leagueCondition.bttsRate, raw: `(${leagueCondition.bttsRate}% em ${leagueCondition.gamesCount})` }
-                    );
-                } else if (is12MinLeague) {
-                    metrics.push(
-                        { name: "League Over 2.5 FT", value: leagueCondition.over25Rate, raw: `(${leagueCondition.over25Rate}% em ${leagueCondition.gamesCount})` },
-                        { name: "League Over 3.5 FT", value: leagueCondition.over35Rate, raw: `(${leagueCondition.over35Rate}% em ${leagueCondition.gamesCount})` },
-                        { name: "League BTTS", value: leagueCondition.bttsRate, raw: `(${leagueCondition.bttsRate}% em ${leagueCondition.gamesCount})` }
-                    );
-                }
+                const homeStats = getPlayerStats(homePlayer);
+                const awayStats = getPlayerStats(awayPlayer);
+                const featuredPlayer = homeStats.winRate >= awayStats.winRate ? homePlayer : awayPlayer;
+                const featuredStats = homeStats.winRate >= awayStats.winRate ? homeStats : awayStats;
 
-                // Home Player Last 5 Games Metrics
-                metrics.push(
-                    { name: `${homePlayer} Over 1.5 FT`, value: homeStats.over15Rate, raw: `(${homeStats.over15Rate}% em 5)` },
-                    { name: `${homePlayer} Over 2.5 FT`, value: homeStats.over25Rate, raw: `(${homeStats.over25Rate}% em 5)` }
-                );
-                if (is12MinLeague) {
-                    metrics.push({ name: `${homePlayer} Over 3.5 FT`, value: homeStats.over35Rate, raw: `(${homeStats.over35Rate}% em 5)` });
-                }
-                metrics.push({ name: `${homePlayer} BTTS`, value: homeStats.bttsRate, raw: `(${homeStats.bttsRate}% em 5)` });
-
-                // League Average Goals
-                metrics.push({ name: "League Avg Goals", value: leagueCondition.avgGoals, raw: `(Over 2.5: ${leagueCondition.over25Rate}%)` });
-
-                // Predictions
-                if (predictions.length > 0) {
-                    metrics.push({
-                        name: "Previsão",
-                        value: predictions.join(", "),
-                        raw: `(Baseado em ${h2hStats.gamesCount} jogos)`,
+                if (leagueName === "Esoccer Battle - 8 mins play" || leagueName === "Esoccer H2H GG League - 8 mins play") {
+                    metrics.splice(2, 0, {
+                        name: `${featuredPlayer} Over 1.5 FT`,
+                        value: featuredStats.over15Rate,
+                        raw: `(${Math.round((featuredStats.over15Rate / 100) * 30)}/30)`,
+                        isSpecial: true
+                    });
+                } else {
+                    metrics.splice(2, 0, {
+                        name: `${featuredPlayer} Over 2.5 FT`,
+                        value: featuredStats.over25Rate,
+                        raw: `(${Math.round((featuredStats.over25Rate / 100) * 30)}/30)`,
                         isSpecial: true
                     });
                 }
+
+                metrics.push({
+                    name: `${featuredPlayer} Form`,
+                    value: featuredStats.winRate,
+                    raw: `(Wins: ${featuredStats.last5Wins}/5)`,
+                    isSpecial: true
+                });
 
                 return metrics;
             }
 
             function meetsCriteria(leagueName, metrics) {
-                const is8MinLeague = ["Esoccer Battle - 8 mins play", "Esoccer Battle Volta - 6 mins play", "Esoccer H2H GG League - 8 mins play"].includes(leagueName);
-                const is12MinLeague = leagueName === "Esoccer GT Leagues – 12 mins play";
+                const over15Metric = metrics.find(m => m.name === "Over 1.5 FT");
+                const over25Metric = metrics.find(m => m.name === "Over 2.5 FT");
+                const avgGoalsMetric = metrics.find(m => m.name === "League Avg Goals");
+                const formMetric = metrics.find(m => m.name.endsWith("Form"));
 
-                if (is8MinLeague) {
-                    const h2hOver25 = metrics.find(m => m.name === "H2H Over 2.5 FT")?.value || 0;
-                    const h2hBtts = metrics.find(m => m.name === "H2H BTTS")?.value || 0;
-                    const h2hOver2HT = metrics.find(m => m.name === "H2H Over 2.0 HT")?.value || 0;
-                    const leagueOver15 = metrics.find(m => m.name === "League Over 1.5 FT")?.value || 0;
-                    const leagueOver25 = metrics.find(m => m.name === "League Over 2.5 FT")?.value || 0;
-                    const leagueBtts = metrics.find(m => m.name === "League BTTS")?.value || 0;
+                const is8MinLeague = ["Esoccer Battle - 8 mins play", "Esoccer H2H GG League - 8 mins play"].includes(leagueName);
+                const isLongerLeague = ["Esoccer GT Leagues – 12 mins play", "Esoccer Adriatic League - 10 mins play", "Esoccer Battle Volta - 6 mins play"].includes(leagueName);
 
-                    return (
-                        h2hOver25 === 100 &&
-                        h2hBtts >= 87 &&
-                        h2hOver2HT >= 85 &&
-                        leagueOver15 === 100 &&
-                        leagueOver25 >= 95 &&
-                        leagueBtts >= 90
-                    );
-                } else if (is12MinLeague) {
-                    const h2hOver35 = metrics.find(m => m.name === "H2H Over 3.5 FT")?.value || 0;
-                    const h2hBtts = metrics.find(m => m.name === "H2H BTTS")?.value || 0;
-                    const h2hOver2HT = metrics.find(m => m.name === "H2H Over 2.0 HT")?.value || 0;
-                    const leagueOver25 = metrics.find(m => m.name === "League Over 2.5 FT")?.value || 0;
-                    const leagueOver35 = metrics.find(m => m.name === "League Over 3.5 FT")?.value || 0;
-                    const leagueBtts = metrics.find(m => m.name === "League BTTS")?.value || 0;
+                if (is8MinLeague && (!over15Metric || over15Metric.value < 100)) return false;
+                if (isLongerLeague && (!over25Metric || over25Metric.value < 100)) return false;
+                if (avgGoalsMetric.raw.includes("Over 1.5: 100%") === false) return false;
+                if (formMetric.value <= 45) return false;
 
-                    return (
-                        h2hOver35 === 100 &&
-                        h2hBtts === 100 &&
-                        h2hOver2HT === 100 &&
-                        leagueOver25 === 100 &&
-                        leagueOver35 >= 95 &&
-                        leagueBtts === 100
-                    );
-                }
-
-                return false;
+                return true;
             }
 
             function toggleLeagueExpansion(leagueName) {
@@ -1552,9 +1411,7 @@
                         card.className = `card ${leagueClasses[leagueName] || ''}`;
 
                         const metrics = getMetrics(leagueName, homePlayer, awayPlayer, allGames);
-                        const predictions = getPredictions(leagueName, homePlayer, awayPlayer, allGames);
-                        const isHighlighted = meetsCriteria(leagueName, metrics);
-                        if (isHighlighted) {
+                        if (meetsCriteria(leagueName, metrics)) {
                             card.classList.add('highlight-card');
                         }
 
@@ -1584,16 +1441,21 @@
 
                         const metricsContainer = document.createElement('div');
                         metricsContainer.className = 'metrics-container';
-                        if (isHighlighted && predictions.length > 0) {
-                            metricsContainer.innerHTML = `
-                                <div class="metric-item special">
-                                    <span class="metric-name"><span class="metric-icon">🔮</span>Previsão</span>
-                                    <span class="metric-value">${predictions.join(", ")} <span class="metric-raw">(Baseado em ${metrics.find(m => m.name === "Previsão")?.raw || ''})</span></span>
+                        metricsContainer.innerHTML = metrics.map(metric => {
+                            let icon = '⬤';
+                            if (metric.name.includes('1.5 FT')) icon = '📈';
+                            else if (metric.name.includes('2.5 FT')) icon = '📊';
+                            else if (metric.name.includes('3.5 FT')) icon = '📉';
+                            else if (metric.name.includes('Avg Goals')) icon = '⚽';
+                            else if (metric.name.includes('Form')) icon = '👑';
+                            if (metric.isSpecial) icon = '👑';
+                            return `
+                                <div class="metric-item ${metric.isSpecial ? 'special' : ''}">
+                                    <span class="metric-name"><span class="metric-icon">${icon}</span>${metric.name}</span>
+                                    <span class="metric-value">${metric.value}${metric.name.includes('Form') || metric.name.includes('Avg Goals') ? '' : '%'} <span class="metric-raw">${metric.raw}</span></span>
                                 </div>
                             `;
-                        } else {
-                            metricsContainer.innerHTML = '<div class="metric-item"><span class="metric-name">Nenhuma previsão</span></div>';
-                        }
+                        }).join('');
 
                         const h2hButton = document.createElement('button');
                         h2hButton.className = 'h2h-button';
