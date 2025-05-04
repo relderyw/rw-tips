@@ -974,18 +974,34 @@
                     return;
                 }
 
+                // Calcular média de gols dos jogadores com base nos últimos 5 jogos
+                const homeGames = pastGamesData[matchData.player1] || [];
+                const awayGames = pastGamesData[matchData.player2] || [];
+                const homeAvgGoals = homeGames.length > 0 
+                    ? (homeGames.reduce((sum, g) => sum + g.goalsScored, 0) / homeGames.length).toFixed(1) 
+                    : 'N/A';
+                const awayAvgGoals = awayGames.length > 0 
+                    ? (awayGames.reduce((sum, g) => sum + g.goalsScored, 0) / awayGames.length).toFixed(1) 
+                    : 'N/A';
+
+                // Determinar o jogador com maior forma
+                const homeStats = getPlayerStats(matchData.player1);
+                const awayStats = getPlayerStats(matchData.player2);
+                const featuredPlayer = homeStats.winRate >= awayStats.winRate ? matchData.player1 : matchData.player2;
+                const featuredForm = homeStats.winRate >= awayStats.winRate ? homeStats.winRate : awayStats.winRate;
+
                 const message = `
-⚽ *Confronto Destaque!* ⚽
-📅 *Data/Hora*: ${matchData.matchTime}
-🏆 *Liga*: ${matchData.league}
-👥 *Jogadores*: ${matchData.player1} vs ${matchData.player2}
-📊 *Métricas*:
-   - Over 1.5 Gols: ${matchData.metrics.over15 || 'N/A'}%
-   - Over 2.5 Gols: ${matchData.metrics.over25 || 'N/A'}%
-   - Over 3.5 Gols: ${matchData.metrics.over35 || 'N/A'}%
-   - Ambos Marcam: ${matchData.metrics.btts || 'N/A'}%
-   - Forma do Jogador: ${matchData.metrics.form || 'N/A'}%
-🔥 *Status*: Confronto em Destaque
+🔔 <b><i><u>CONFRONTO EM DESTAQUE</u></i></b>
+📅 <b>${matchData.matchTime}</b>
+🏆 <b>${matchData.league.toUpperCase()}</b>
+🎮 <b>${matchData.player1}</b> vs <b>${matchData.player2}</b>
+📊 <b>Métricas:</b>
+💠 +1.5 Gols: ${matchData.metrics.over15 || 'N/A'}%
+💠 +2.5 Gols: ${matchData.metrics.over25 || 'N/A'}%
+💠 +3.5 Gols: ${matchData.metrics.over35 || 'N/A'}%
+⚽ <code>BTTS (Sim): ${matchData.metrics.btts || 'N/A'}%</code>
+⭐ <b>${featuredPlayer}</b>: ${featuredForm || 'N/A'}%
+⚽ Média de Gols: ${homeAvgGoals} ⚔️ ${awayAvgGoals}
                 `.trim();
 
                 try {
@@ -997,7 +1013,7 @@
                         body: JSON.stringify({
                             chat_id: chatId,
                             text: message,
-                            parse_mode: 'Markdown'
+                            parse_mode: 'HTML'
                         })
                     });
 
