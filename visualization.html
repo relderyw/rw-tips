@@ -22,7 +22,6 @@
             --active-bg: #2ecc71;
             --header-height: 80px;
             --highlight-gradient: linear-gradient(45deg, #00ff88, #ff6b6b, #4ecdc4);
-            
             /* Cores específicas das ligas */
             --battle-8m-color: #FF4C4C;
             --battle-volta-6m-color: #FFD700;
@@ -881,7 +880,7 @@
 <body>
     <header class="header">
         <div class="logo-container">
-            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
+            <img src="https://i.ibb.co/G4Y8sHMx/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
             <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
         </div>
     </header>
@@ -956,6 +955,9 @@
             let selectedLeague = '';
             let expandedLeagues = {};
 
+            const botToken = '6569266928:AAHm7pOJVsd3WKzJEgdVDez4ZYdCAlRoYO8';
+            const chatId = '-1001981134607';
+
             const leagueClasses = {
                 "Esoccer Battle - 8 mins play": "battle-8m",
                 "Esoccer Battle Volta - 6 mins play": "battle-volta-6m",
@@ -963,6 +965,54 @@
                 "Esoccer H2H GG League - 8 mins play": "h2h-gg-8m",
                 "Esoccer Adriatic League - 10 mins play": "adriatic-10m"
             };
+
+            async function sendTelegramMessage(matchData) {
+                const matchKey = `${matchData.player1}_vs_${matchData.player2}_${matchData.matchTime}_${matchData.league}`;
+                const sentMessages = JSON.parse(localStorage.getItem('sentTelegramMessages') || '{}');
+                if (sentMessages[matchKey]) {
+                    console.log(`Mensagem para o confronto ${matchKey} já enviada. Ignorando.`);
+                    return;
+                }
+
+                const message = `
+⚽ *Confronto Destaque!* ⚽
+📅 *Data/Hora*: ${matchData.matchTime}
+🏆 *Liga*: ${matchData.league}
+👥 *Jogadores*: ${matchData.player1} vs ${matchData.player2}
+📊 *Métricas*:
+   - Over 1.5 Gols: ${matchData.metrics.over15 || 'N/A'}%
+   - Over 2.5 Gols: ${matchData.metrics.over25 || 'N/A'}%
+   - Over 3.5 Gols: ${matchData.metrics.over35 || 'N/A'}%
+   - Ambos Marcam: ${matchData.metrics.btts || 'N/A'}%
+   - Forma do Jogador: ${matchData.metrics.form || 'N/A'}%
+🔥 *Status*: Confronto em Destaque
+                `.trim();
+
+                try {
+                    const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            chat_id: chatId,
+                            text: message,
+                            parse_mode: 'Markdown'
+                        })
+                    });
+
+                    const result = await response.json();
+                    if (result.ok) {
+                        console.log('Mensagem enviada para o Telegram:', matchKey);
+                        sentMessages[matchKey] = true;
+                        localStorage.setItem('sentTelegramMessages', JSON.stringify(sentMessages));
+                    } else {
+                        console.error('Falha ao enviar mensagem para o Telegram:', result.description);
+                    }
+                } catch (error) {
+                    console.error('Erro ao enviar mensagem para o Telegram:', error);
+                }
+            }
 
             function extractPlayerName(text) {
                 if (!text || typeof text !== 'string') return 'Desconhecido';
@@ -1264,6 +1314,10 @@
                 const over1_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 1.5).length;
                 const over2_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 2.5).length;
                 const over3_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 3.5).length;
+                const bttsGames = leagueGames.filter(game => {
+                    const score = parseScore(game.score);
+                    return score.homeGoals > 0 && score.awayGoals > 0;
+                }).length;
                 const totalGoals = leagueGames.reduce((sum, game) => sum + parseScore(game.score).totalGoals, 0);
                 const avgGoals = (totalGoals / leagueGames.length).toFixed(1);
 
@@ -1310,17 +1364,22 @@
                     isSpecial: true
                 });
 
-                return metrics;
+                return {
+                    items: metrics,
+                    over15: Math.round((over1_5Games / leagueGames.length) * 100),
+                    over25: Math.round((over2_5Games / leagueGames.length) * 100),
+                    over35: Math.round((over3_5Games / leagueGames.length) * 100),
+                    btts: Math.round((bttsGames / leagueGames.length) * 100),
+                    form: featuredStats.winRate
+                };
             }
 
             function meetsCriteria(leagueName, metrics, allGames) {
                 const leagueStats = calculateLeagueStats(leagueName, allGames);
-                const formMetric = metrics.find(m => m.name.endsWith("Form"));
+                const formMetric = metrics.items.find(m => m.name.endsWith("Form"));
 
-                // Critérios gerais
                 if (!formMetric || formMetric.value <= 45) return false;
 
-                // Critérios específicos por liga
                 const is8MinLeague = [
                     "Esoccer Battle - 8 mins play",
                     "Esoccer Battle Volta - 6 mins play",
@@ -1461,8 +1520,23 @@
                         card.className = `card ${leagueClasses[leagueName] || ''}`;
 
                         const metrics = getMetrics(leagueName, homePlayer, awayPlayer, allGames);
-                        if (meetsCriteria(leagueName, metrics, allGames)) {
+                        const isHighlighted = meetsCriteria(leagueName, metrics, allGames);
+                        if (isHighlighted) {
                             card.classList.add('highlight-card');
+                            const matchData = {
+                                player1: homePlayer,
+                                player2: awayPlayer,
+                                league: getShortLeagueName(leagueName),
+                                matchTime: `${game.day || 'N/A'} ${game.hour || 'N/A'}`,
+                                metrics: {
+                                    over15: metrics.over15,
+                                    over25: metrics.over25,
+                                    over35: metrics.over35,
+                                    btts: metrics.btts,
+                                    form: metrics.form
+                                }
+                            };
+                            sendTelegramMessage(matchData);
                         }
 
                         const teams = document.createElement('div');
@@ -1491,7 +1565,7 @@
 
                         const metricsContainer = document.createElement('div');
                         metricsContainer.className = 'metrics-container';
-                        metricsContainer.innerHTML = metrics.map(metric => {
+                        metricsContainer.innerHTML = metrics.items.map(metric => {
                             let icon = '⬤';
                             if (metric.name.includes('1.5 FT')) icon = '📈';
                             else if (metric.name.includes('2.5 FT')) icon = '📊';
