@@ -21,7 +21,7 @@
             --sidebar-bg: #1a1a23;
             --active-bg: #2ecc71;
             --header-height: 80px;
-            --highlight-border: #ffd700;
+            --highlight-gradient: linear-gradient(45deg, #00ff88, #ff6b6b, #4ecdc4);
             
             /* Cores específicas das ligas */
             --battle-8m-color: #FF4C4C;
@@ -329,40 +329,43 @@
         }
 
         .highlight-card {
-            border: 3px solid var(--highlight-border) !important;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
             position: relative;
-            overflow: hidden;
-            transform: translateY(-5px);
-            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            background: var(--card-bg);
+            background-clip: padding-box;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            animation: pulseGlow 2s ease-in-out infinite;
         }
 
         .highlight-card::before {
-            content: "⭐ DESTAQUE";
+            content: "";
             position: absolute;
-            top: 0;
-            right: 0;
-            background: var(--highlight-border);
-            color: #000;
-            font-size: 0.7rem;
-            font-weight: bold;
-            padding: 3px 10px;
-            border-bottom-left-radius: 8px;
-            z-index: 10;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--highlight-gradient);
+            background-size: 300%;
+            border-radius: 10px;
+            z-index: -1;
+            animation: gradientShift 4s linear infinite;
         }
 
         .highlight-card::after {
-            content: "";
+            content: "🌟 DESTAQUE";
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, transparent 65%, rgba(255, 215, 0, 0.2) 75%, transparent 85%);
-            background-size: 200% 200%;
-            animation: shine 3s infinite;
-            pointer-events: none;
-            z-index: 1;
+            background: var(--highlight-gradient);
+            background-size: 300%;
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 0 0 8px 0;
+            z-index: 10;
+            animation: gradientShift 4s linear infinite;
         }
 
         .highlight-card .teams {
@@ -371,22 +374,32 @@
         }
 
         .highlight-card .team span:first-of-type {
-            color: var(--highlight-border);
+            color: var(--accent-color);
             font-weight: 700;
+            text-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
         }
 
-        @keyframes shine {
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 0 4px 12px rgba(0, 255, 136, 0.2);
+            }
+            50% {
+                box-shadow: 0 6px 18px rgba(0, 255, 136, 0.4);
+            }
+        }
+
+        @keyframes gradientShift {
             0% {
-                background-position: 200% 0;
+                background-position: 0% 50%;
             }
             100% {
-                background-position: -200% 0;
+                background-position: 300% 50%;
             }
         }
 
         .highlight-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 255, 136, 0.5);
         }
 
         .card-placeholder {
@@ -868,7 +881,7 @@
 <body>
     <header class="header">
         <div class="logo-container">
-            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
+            <img src="https://i.ibb.co/G4Y8sHM/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
             <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
         </div>
     </header>
@@ -1216,8 +1229,30 @@
                 };
             }
 
+            function calculateLeagueStats(leagueName, allGames) {
+                const leagueGames = allGames.filter(game => game.leagueName === leagueName).slice(0, 10);
+                if (leagueGames.length === 0) {
+                    return { over15Rate: 0, over25Rate: 0, over35Rate: 0, bttsRate: 0 };
+                }
+
+                const over1_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 1.5).length;
+                const over2_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 2.5).length;
+                const over3_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 3.5).length;
+                const bttsGames = leagueGames.filter(game => {
+                    const score = parseScore(game.score);
+                    return score.homeGoals > 0 && score.awayGoals > 0;
+                }).length;
+
+                return {
+                    over15Rate: Math.round((over1_5Games / leagueGames.length) * 100),
+                    over25Rate: Math.round((over2_5Games / leagueGames.length) * 100),
+                    over35Rate: Math.round((over3_5Games / leagueGames.length) * 100),
+                    bttsRate: Math.round((bttsGames / leagueGames.length) * 100)
+                };
+            }
+
             function getMetrics(leagueName, homePlayer, awayPlayer, allGames) {
-                const leagueGames = allGames.filter(game => game.leagueName === leagueName).slice(0, 30);
+                const leagueGames = allGames.filter(game => game.leagueName === leagueName).slice(0, 10);
                 if (leagueGames.length === 0) {
                     return [
                         { name: "Over 2.5 FT", value: 0, raw: "(0/0)" },
@@ -1256,14 +1291,14 @@
                     metrics.splice(2, 0, {
                         name: `${featuredPlayer} Over 1.5 FT`,
                         value: featuredStats.over15Rate,
-                        raw: `(${Math.round((featuredStats.over15Rate / 100) * 30)}/30)`,
+                        raw: `(${Math.round((featuredStats.over15Rate / 100) * 10)}/10)`,
                         isSpecial: true
                     });
                 } else {
                     metrics.splice(2, 0, {
                         name: `${featuredPlayer} Over 2.5 FT`,
                         value: featuredStats.over25Rate,
-                        raw: `(${Math.round((featuredStats.over25Rate / 100) * 30)}/30)`,
+                        raw: `(${Math.round((featuredStats.over25Rate / 100) * 10)}/10)`,
                         isSpecial: true
                     });
                 }
@@ -1278,21 +1313,36 @@
                 return metrics;
             }
 
-            function meetsCriteria(leagueName, metrics) {
-                const over15Metric = metrics.find(m => m.name === "Over 1.5 FT");
-                const over25Metric = metrics.find(m => m.name === "Over 2.5 FT");
-                const avgGoalsMetric = metrics.find(m => m.name === "League Avg Goals");
+            function meetsCriteria(leagueName, metrics, allGames) {
+                const leagueStats = calculateLeagueStats(leagueName, allGames);
                 const formMetric = metrics.find(m => m.name.endsWith("Form"));
 
-                const is8MinLeague = ["Esoccer Battle - 8 mins play", "Esoccer H2H GG League - 8 mins play"].includes(leagueName);
-                const isLongerLeague = ["Esoccer GT Leagues – 12 mins play", "Esoccer Adriatic League - 10 mins play", "Esoccer Battle Volta - 6 mins play"].includes(leagueName);
+                // Critérios gerais
+                if (!formMetric || formMetric.value <= 45) return false;
 
-                if (is8MinLeague && (!over15Metric || over15Metric.value < 100)) return false;
-                if (isLongerLeague && (!over25Metric || over25Metric.value < 100)) return false;
-                if (avgGoalsMetric.raw.includes("Over 1.5: 100%") === false) return false;
-                if (formMetric.value <= 45) return false;
+                // Critérios específicos por liga
+                const is8MinLeague = [
+                    "Esoccer Battle - 8 mins play",
+                    "Esoccer Battle Volta - 6 mins play",
+                    "Esoccer H2H GG League - 8 mins play"
+                ].includes(leagueName);
+                const isGtLeague = leagueName === "Esoccer GT Leagues – 12 mins play";
 
-                return true;
+                if (is8MinLeague) {
+                    return (
+                        leagueStats.over15Rate === 100 &&
+                        leagueStats.over25Rate >= 85 &&
+                        leagueStats.bttsRate >= 80
+                    );
+                } else if (isGtLeague) {
+                    return (
+                        leagueStats.over25Rate === 100 &&
+                        leagueStats.over35Rate >= 85 &&
+                        leagueStats.bttsRate >= 90
+                    );
+                }
+
+                return false;
             }
 
             function toggleLeagueExpansion(leagueName) {
@@ -1411,7 +1461,7 @@
                         card.className = `card ${leagueClasses[leagueName] || ''}`;
 
                         const metrics = getMetrics(leagueName, homePlayer, awayPlayer, allGames);
-                        if (meetsCriteria(leagueName, metrics)) {
+                        if (meetsCriteria(leagueName, metrics, allGames)) {
                             card.classList.add('highlight-card');
                         }
 
