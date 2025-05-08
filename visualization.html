@@ -913,6 +913,9 @@
         <button class="main-nav-button" id="radarButton">
             <span>📡</span> Radar
         </button>
+        <button class="main-nav-button" id="overButton">
+            <span>📈</span> Over Analysis
+        </button>
     </div>
 
     <div class="top-nav">
@@ -945,6 +948,7 @@
             const dashboardButton = document.getElementById('dashboardButton');
             const nbaStatsButton = document.getElementById('nbaStatsButton');
             const radarButton = document.getElementById('radarButton');
+            const overButton = document.getElementById('overButton');
 
             let upcomingGamesData = [];
             let pastGamesData = {};
@@ -1745,6 +1749,11 @@
             radarButton.addEventListener('click', () => {
                 setActiveMainNavButton(radarButton);
                 window.location.href = 'radar.html';
+            });
+
+            overButton.addEventListener('click', () => {
+                setActiveMainNavButton(overButton);
+                window.location.href = 'over.html';
             });
 
             updateGames();
