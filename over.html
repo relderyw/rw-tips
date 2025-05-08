@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise Over x Confronto - Green365</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #10b981;
+            --primary-dark: #059669;
+            --secondary-color: #1f2937;
+            --bg-color: #111827;
+            --card-bg: #1e293b;
+            --text-primary: #f3f4f6;
+            --text-secondary: #d1d5db;
+            --border-color: #374151;
+            --hover-color: #2dd4bf;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+        }
+
+        .logo-img {
+            width: 40px;
+            height: auto;
+            margin-right: 10px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-right: 10px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .back-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            margin-left: auto;
+        }
+
+        .back-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .back-button i {
+            margin-right: 8px;
+        }
+
+        .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        #loading {
+            display: flex;
+            align-items: center;
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin-right: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            color: #f87171;
+            background-color: rgba(248, 113, 113, 0.1);
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 4px solid #f87171;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .filters-container {
+            margin-bottom: 20px;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        details {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        details:last-child {
+            border-bottom: none;
+        }
+
+        summary {
+            padding: 12px 15px;
+            background-color: var(--secondary-color);
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background-color 0.3s ease;
+            list-style: none;
+        }
+
+        summary:hover {
+            background-color: #1e2a38;
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        summary::after {
+            content: '\f107';
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            transition: transform 0.3s ease;
+        }
+
+        details[open] summary::after {
+            transform: rotate(180deg);
+        }
+
+        .filter-group {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .filter-label {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+
+        .filter-label i {
+            margin-right: 6px;
+            color: var(--primary-color);
+            font-size: 12px;
+        }
+
+        select[multiple] {
+            padding: 12px 15px;
+            background-color: var(--secondary-color);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            min-height: 120px;
+            appearance: none;
+            outline: none;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-image: linear-gradient(to bottom, var(--secondary-color), #1e2a38);
+            width: 100%;
+        }
+
+        select[multiple] option {
+            padding: 8px 12px;
+            background-color: var(--secondary-color);
+            color: var(--text-primary);
+        }
+
+        select[multiple] option:hover {
+            background-color: var(--hover-color);
+            color: var(--text-primary);
+        }
+
+        select[multiple]:hover,
+        select[multiple]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
+        }
+
+        select[multiple]::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        select[multiple]::-webkit-scrollbar-track {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        select[multiple]::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        select[multiple]::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            background-color: var(--secondary-color);
+            color: var(--text-primary);
+            padding: 15px 12px;
+            text-align: center;
+            font-weight: 600;
+            border-bottom: 2px solid var(--primary-color);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.2s;
+        }
+
+        tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .top-match {
+            background-color: rgba(16, 185, 129, 0.8) !important;
+            color: #ffffff !important;
+            font-weight: 600;
+        }
+
+        .positive-high {
+            background-color: rgba(16, 185, 129, 0.6) !important;
+            color: #e0e0e0 !important;
+            font-weight: 600;
+        }
+
+        .positive-medium {
+            background-color: rgba(16, 185, 129, 0.4) !important;
+            color: #e0e0e0 !important;
+        }
+
+        .positive-low {
+            background-color: rgba(16, 185, 129, 0.2) !important;
+            color: #e0e0e0 !important;
+        }
+
+        .neutral {
+            background-color: rgba(107, 114, 128, 0.2) !important;
+        }
+
+        .negative-low {
+            background-color: rgba(244, 63, 94, 0.2) !important;
+            color: #e0e0e0 !important;
+        }
+
+        .negative-medium {
+            background-color: rgba(244, 63, 94, 0.4) !important;
+            color: #e0e0e0 !important;
+        }
+
+        .negative-high {
+            background-color: rgba(244, 63, 94, 0.6) !important;
+            color: #e0e0e0 !important;
+            font-weight: 600;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .team-name {
+            font-weight: 600;
+            color: white;
+        }
+
+        .stats-value {
+            font-weight: 600;
+        }
+
+        .date-time {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .date {
+            font-weight: 500;
+        }
+
+        .time {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .league-name {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .league-icon {
+            margin-right: 6px;
+            color: var(--primary-color);
+        }
+
+        .btn-reset {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-reset:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-reset i {
+            margin-right: 8px;
+        }
+
+        .stat-cell {
+            position: relative;
+        }
+
+        .stat-pill {
+            border-radius: 12px;
+            padding: 3px 8px;
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        .quality-cell {
+            font-weight: 600;
+        }
+
+        .quality-cell .top-match-icon {
+            color: #ffffff;
+            margin-left: 5px;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            h1 {
+                margin-top: 10px;
+            }
+
+            .btn-reset, .back-button {
+                margin-top: 15px;
+                margin-left: 0;
+            }
+
+            details summary {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
+                <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
+            </div>
+            <h1>Análise Over x Confronto</h1>
+            <button class="back-button" onclick="window.location.href='visualization.html'">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </button>
+            <button id="resetFilters" class="btn-reset">
+                <i class="fas fa-sync-alt"></i> Limpar Filtros
+            </button>
+        </header>
+
+        <div class="loading-container" id="loadingContainer">
+            <div id="loading">
+                <div class="spinner"></div>
+                <span>Carregando dados, por favor aguarde...</span>
+            </div>
+        </div>
+
+        <div id="filtersSection" style="display: none;">
+            <div class="filters-container">
+                <details open>
+                    <summary>Jogo <i class="fas fa-caret-down"></i></summary>
+                    <div class="filter-group">
+                        <label class="filter-label"><i class="fas fa-filter"></i>Liga</label>
+                        <select id="filterLeague" multiple>
+                            <option value="">Todos</option>
+                        </select>
+                        <label class="filter-label"><i class="fas fa-filter"></i>Time Casa</label>
+                        <select id="filterHome" multiple>
+                            <option value="">Todos</option>
+                        </select>
+                        <label class="filter-label"><i class="fas fa-filter"></i>Time Visitante</label>
+                        <select id="filterAway" multiple>
+                            <option value="">Todos</option>
+                        </select>
+                        <label class="filter-label"><i class="fas fa-filter"></i>Data</label>
+                        <select id="filterDay" multiple>
+                            <option value="">Todos</option>
+                        </select>
+                        <label class="filter-label"><i class="fas fa-filter"></i>Hora</label>
+                        <select id="filterHour" multiple>
+                            <option value="">Todos</option>
+                        </select>
+                    </div>
+                </details>
+                <details open>
+                    <summary>Estatísticas <i class="fas fa-caret-down"></i></summary>
+                    <div class="filter-group">
+                        <label class="filter-label"><i class="fas fa-filter"></i>Média de Gols</label>
+                        <select id="filterAvg" multiple>
+                            <option value="">Todos</option>
+                        </select>
+                        <label class="filter-label"><i class="fas fa-filter"></i>Média Gols Casa</label>
+                        <select id="filterHomeAvg" multiple>
+                            <option value="">Todos</option>
+                        </select>
+                        <label class="filter-label"><i class="fas fa-filter"></i>Média Gols Visitante</label>
+                        <select id="filterAwayAvg" multiple>
+                            <option value="">Todos</option>
+                        </select>
+                        <label class="filter-label"><i class="fas fa-filter"></i>BTTS</label>
+                        <select id="filterBTTS" multiple>
+                            <option value="">Todos</option>
+                            <option value="100">100</option>
+                            <option value="90">90</option>
+                            <option value="80">80</option>
+                            <option value="70">70</option>
+                            <option value="60">60</option>
+                            <option value="50">50</option>
+                            <option value=">80">Maiores que 80</option>
+                        </select>
+                        <label class="filter-label"><i class="fas fa-filter"></i>Over 2.5</label>
+                        <select id="filterOver25" multiple>
+                            <option value="">Todos</option>
+                            <option value="100">100</option>
+                            <option value="90">90</option>
+                            <option value="80">80</option>
+                            <option value="70">70</option>
+                            <option value="60">60</option>
+                            <option value="50">50</option>
+                            <option value=">80">Maiores que 80</option>
+                        </select>
+                    </div>
+                </details>
+                <details>
+                    <summary>Avançado <i class="fas fa-caret-down"></i></summary>
+                    <div class="filter-group">
+                        <label class="filter-label"><i class="fas fa-filter"></i>Casa Vence</label>
+                        <select id="filterHomeWins" multiple>
+                            <option value="">Todos</option>
+                        </select>
+                        <label class="filter-label"><i class="fas fa-filter"></i>Casa Empata</label>
+                        <select id="filterHomeDraws" multiple>
+                            <option value="">Todos</option>
+                        </select>
+                        <label class="filter-label"><i class="fas fa-filter"></i>Casa Perde</label>
+                        <select id="filterHomeLosses" multiple>
+                            <option value="">Todos</option>
+                        </select>
+                        <label class="filter-label"><i class="fas fa-filter"></i>Fora Vence</label>
+                        <select id="filterAwayWins" multiple>
+                            <option value="">Todos</option>
+                        </select>
+                        <label class="filter-label"><i class="fas fa-filter"></i>Fora Empata</label>
+                        <select id="filterAwayDraws" multiple>
+                            <option value="">Todos</option>
+                        </select>
+                        <label class="filter-label"><i class="fas fa-filter"></i>Fora Perde</label>
+                        <select id="filterAwayLosses" multiple>
+                            <option value="">Todos</option>
+                        </select>
+                        <label class="filter-label"><i class="fas fa-filter"></i>Over 1.5</label>
+                        <select id="filterOver15" multiple>
+                            <option value="">Todos</option>
+                            <option value="100">100</option>
+                            <option value="90">90</option>
+                            <option value="80">80</option>
+                            <option value="70">70</option>
+                            <option value="60">60</option>
+                            <option value="50">50</option>
+                            <option value=">80">Maiores que 80</option>
+                        </select>
+                        <label class="filter-label"><i class="fas fa-filter"></i>Over 3.5</label>
+                        <select id="filterOver35" multiple>
+                            <option value="">Todos</option>
+                            <option value="100">100</option>
+                            <option value="90">90</option>
+                            <option value="80">80</option>
+                            <option value="70">70</option>
+                            <option value="60">60</option>
+                            <option value="50">50</option>
+                            <option value=">80">Maiores que 80</option>
+                        </select>
+                        <label class="filter-label"><i class="fas fa-filter"></i>Over 4.5</label>
+                        <select id="filterOver45" multiple>
+                            <option value="">Todos</option>
+                            <option value="100">100</option>
+                            <option value="90">90</option>
+                            <option value="80">80</option>
+                            <option value="70">70</option>
+                            <option value="60">60</option>
+                            <option value="50">50</option>
+                            <option value=">80">Maiores que 80</option>
+                        </select>
+                        <label class="filter-label"><i class="fas fa-filter"></i>Over 5.5</label>
+                        <select id="filterOver55" multiple>
+                            <option value="">Todos</option>
+                            <option value="100">100</option>
+                            <option value="90">90</option>
+                            <option value="80">80</option>
+                            <option value="70">70</option>
+                            <option value="60">60</option>
+                            <option value="50">50</option>
+                            <option value=">80">Maiores que 80</option>
+                        </select>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="table-container" id="tableContainer" style="display: none;">
+            <table id="gamesTable">
+                <thead>
+                    <tr>
+                        <th>Liga</th>
+                        <th>Partida</th>
+                        <th>Data / Hora</th>
+                        <th>Média</th>
+                        <th>Casa</th>
+                        <th>Fora</th>
+                        <th>BTTS</th>
+                        <th>Over 1.5</th>
+                        <th>Over 2.5</th>
+                        <th>Over 3.5</th>
+                        <th>Qualidade</th>
+                    </tr>
+                </thead>
+                <tbody id="gamesTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let gamesData = [];
+
+        async function fetchGames() {
+            const loading = document.getElementById("loading");
+            const filtersSection = document.getElementById("filtersSection");
+            const tableContainer = document.getElementById("tableContainer");
+            const loadingContainer = document.getElementById("loadingContainer");
+
+            try {
+                loading.innerHTML = '<div class="spinner"></div><span>Buscando jogos próximos...</span>';
+                const response = await fetch("https://api.green365.com.br/api/league/upcoming?sport=fifa&leagueId=&page=1");
+                if (!response.ok) throw new Error(`Erro na requisição: ${response.status}`);
+                const data = await response.json();
+                loading.innerHTML = '<div class="spinner"></div><span>Processando jogos...</span>';
+                gamesData = await Promise.all(data.data.map(async game => {
+                    const stats = await fetchStats(game.homeID, game.awayID, game.home, game.away, game.leagueID);
+                    return { ...game, ...stats };
+                }));
+                console.log("Dados carregados:", gamesData); // Debug
+                if (gamesData.length > 0) {
+                    populateFilters();
+                    applyFilters();
+                    filtersSection.style.display = "block";
+                    tableContainer.style.display = "block";
+                    loadingContainer.style.display = "none";
+                }
+            } catch (error) {
+                loading.innerHTML = `<div class="error"><i class="fas fa-exclamation-circle"></i> Erro ao carregar os dados: ${error.message}</div>`;
+            }
+        }
+
+        async function fetchStats(homeID, awayID, homeName, awayName, leagueID) {
+            try {
+                const response = await fetch(`https://api.green365.com.br/api/e-soccer/event/stats?homeID=${homeID}&awayID=${awayID}&home=${encodeURIComponent(homeName)}&away=${encodeURIComponent(awayName)}&league=${leagueID}&eventID=0&period=last_5`);
+                if (!response.ok) throw new Error(`Erro nas estatísticas: ${response.status}`);
+                const data = await response.json();
+
+                const homeGames = data.players.playerA.stats.games || [];
+                const awayGames = data.players.playerB.stats.games || [];
+                const allGames = [...homeGames, ...awayGames];
+
+                const homeGoals = homeGames.reduce((sum, game) => sum + parseInt(game.score.split('-')[0]) || 0, 0) / Math.max(homeGames.length, 1);
+                const awayGoals = awayGames.reduce((sum, game) => sum + parseInt(game.score.split('-')[1]) || 0, 0) / Math.max(awayGames.length, 1);
+                const avgGoals = (homeGoals + awayGoals) / 2;
+
+                const bttsYes = allGames.filter(game => {
+                    const [homeScore, awayScore] = game.score.split('-').map(Number);
+                    return homeScore > 0 && awayScore > 0;
+                }).length;
+                const bttsPercent = ((bttsYes / Math.max(allGames.length, 1)) * 100).toFixed(0);
+
+                const totalGoals = allGames.map(game => {
+                    const [homeScore, awayScore] = game.score.split('-').map(Number);
+                    return (homeScore || 0) + (awayScore || 0);
+                });
+                const over15 = ((totalGoals.filter(g => g > 1.5).length / Math.max(totalGoals.length, 1)) * 100).toFixed(0);
+                const over25 = ((totalGoals.filter(g => g > 2.5).length / Math.max(totalGoals.length, 1)) * 100).toFixed(0);
+                const over35 = ((totalGoals.filter(g => g > 3.5).length / Math.max(totalGoals.length, 1)) * 100).toFixed(0);
+                const over45 = ((totalGoals.filter(g => g > 4.5).length / Math.max(totalGoals.length, 1)) * 100).toFixed(0);
+                const over55 = ((totalGoals.filter(g => g > 5.5).length / Math.max(totalGoals.length, 1)) * 100).toFixed(0);
+
+                const homeWins = homeGames.filter(game => game.winnerName === homeName.toLowerCase()).length;
+                const homeDraws = homeGames.filter(game => game.winnerName === "draw").length;
+                const homeLosses = homeGames.filter(game => game.winnerName !== homeName.toLowerCase() && game.winnerName !== "draw").length;
+                const awayWins = awayGames.filter(game => game.winnerName === awayName.toLowerCase()).length;
+                const awayDraws = awayGames.filter(game => game.winnerName === "draw").length;
+                const awayLosses = awayGames.filter(game => game.winnerName !== awayName.toLowerCase() && game.winnerName !== "draw").length;
+
+                return {
+                    avgGoals: isNaN(avgGoals) ? 0 : avgGoals.toFixed(2),
+                    homeAvgGoals: isNaN(homeGoals) ? 0 : homeGoals.toFixed(1),
+                    awayAvgGoals: isNaN(awayGoals) ? 0 : awayGoals.toFixed(1),
+                    bttsPercent,
+                    homeWins,
+                    homeDraws,
+                    homeLosses,
+                    awayWins,
+                    awayDraws,
+                    awayLosses,
+                    over15,
+                    over25,
+                    over35,
+                    over45,
+                    over55
+                };
+            } catch (error) {
+                console.error(`Erro ao buscar estatísticas para ${homeID} vs ${awayID}:`, error);
+                return {
+                    avgGoals: 0,
+                    homeAvgGoals: 0,
+                    awayAvgGoals: 0,
+                    bttsPercent: 0,
+                    homeWins: 0, homeDraws: 0, homeLosses: 0,
+                    awayWins: 0, awayDraws: 0, awayLosses: 0,
+                    over15: 0, over25: 0, over35: 0, over45: 0, over55: 0
+                };
+            }
+        }
+
+        function populateFilters() {
+            const fields = [
+                { id: "filterLeague", key: "leagueName" },
+                { id: "filterHome", key: "home" },
+                { id: "filterAway", key: "away" },
+                { id: "filterDay", key: "day" },
+                { id: "filterHour", key: "hour" },
+                { id: "filterAvg", key: "avgGoals" },
+                { id: "filterHomeAvg", key: "homeAvgGoals" },
+                { id: "filterAwayAvg", key: "awayAvgGoals" },
+                { id: "filterBTTS", key: "bttsPercent" },
+                { id: "filterHomeWins", key: "homeWins" },
+                { id: "filterHomeDraws", key: "homeDraws" },
+                { id: "filterHomeLosses", key: "homeLosses" },
+                { id: "filterAwayWins", key: "awayWins" },
+                { id: "filterAwayDraws", key: "awayDraws" },
+                { id: "filterAwayLosses", key: "awayLosses" },
+                { id: "filterOver15", key: "over15" },
+                { id: "filterOver25", key: "over25" },
+                { id: "filterOver35", key: "over35" },
+                { id: "filterOver45", key: "over45" },
+                { id: "filterOver55", key: "over55" }
+            ];
+
+            fields.forEach(field => {
+                const select = document.getElementById(field.id);
+                let uniqueValues = [...new Set(gamesData.map(game => game[field.key].toString()))].sort();
+                if (field.key.endsWith('Percent') || field.key.startsWith('over')) {
+                    uniqueValues = ["100", "90", "80", "70", "60", "50", ">80"].concat(uniqueValues.filter(v => !["100", "90", "80", "70", "60", "50", ">80"].includes(v)));
+                }
+                select.innerHTML = `<option value="">Todos</option>` + uniqueValues.map(value => `<option value="${value}">${value}</option>`).join('');
+            });
+        }
+
+        function applyFilters() {
+            const filterValues = {};
+            const fields = [
+                "filterLeague", "filterHome", "filterAway", "filterDay", "filterHour", "filterAvg", "filterHomeAvg", "filterAwayAvg",
+                "filterBTTS", "filterHomeWins", "filterHomeDraws", "filterHomeLosses", "filterAwayWins", "filterAwayDraws", "filterAwayLosses",
+                "filterOver15", "filterOver25", "filterOver35", "filterOver45", "filterOver55"
+            ];
+
+            fields.forEach(field => {
+                const select = document.getElementById(field);
+                filterValues[field] = Array.from(select.selectedOptions).map(option => option.value);
+            });
+
+            const filteredGames = gamesData.filter(game => {
+                return (
+                    (filterValues.filterLeague.length === 0 || filterValues.filterLeague.includes(game.leagueName)) &&
+                    (filterValues.filterHome.length === 0 || filterValues.filterHome.includes(game.home)) &&
+                    (filterValues.filterAway.length === 0 || filterValues.filterAway.includes(game.away)) &&
+                    (filterValues.filterDay.length === 0 || filterValues.filterDay.includes(game.day)) &&
+                    (filterValues.filterHour.length === 0 || filterValues.filterHour.includes(game.hour)) &&
+                    (filterValues.filterAvg.length === 0 || filterValues.filterAvg.includes(game.avgGoals.toString())) &&
+                    (filterValues.filterHomeAvg.length === 0 || filterValues.filterHomeAvg.includes(game.homeAvgGoals.toString())) &&
+                    (filterValues.filterAwayAvg.length === 0 || filterValues.filterAwayAvg.includes(game.awayAvgGoals.toString())) &&
+                    (filterValues.filterBTTS.length === 0 || filterValues.filterBTTS.some(value => {
+                        if (value === ">80") return parseInt(game.bttsPercent) > 80;
+                        return game.bttsPercent.toString() === value;
+                    })) &&
+                    (filterValues.filterHomeWins.length === 0 || filterValues.filterHomeWins.includes(game.homeWins.toString())) &&
+                    (filterValues.filterHomeDraws.length === 0 || filterValues.filterHomeDraws.includes(game.homeDraws.toString())) &&
+                    (filterValues.filterHomeLosses.length === 0 || filterValues.filterHomeLosses.includes(game.homeLosses.toString())) &&
+                    (filterValues.filterAwayWins.length === 0 || filterValues.filterAwayWins.includes(game.awayWins.toString())) &&
+                    (filterValues.filterAwayDraws.length === 0 || filterValues.filterAwayDraws.includes(game.awayDraws.toString())) &&
+                    (filterValues.filterAwayLosses.length === 0 || filterValues.filterAwayLosses.includes(game.awayLosses.toString())) &&
+                    (filterValues.filterOver15.length === 0 || filterValues.filterOver15.some(value => {
+                        if (value === ">80") return parseInt(game.over15) > 80;
+                        return game.over15.toString() === value;
+                    })) &&
+                    (filterValues.filterOver25.length === 0 || filterValues.filterOver25.some(value => {
+                        if (value === ">80") return parseInt(game.over25) > 80;
+                        return game.over25.toString() === value;
+                    })) &&
+                    (filterValues.filterOver35.length === 0 || filterValues.filterOver35.some(value => {
+                        if (value === ">80") return parseInt(game.over35) > 80;
+                        return game.over35.toString() === value;
+                    })) &&
+                    (filterValues.filterOver45.length === 0 || filterValues.filterOver45.some(value => {
+                        if (value === ">80") return parseInt(game.over45) > 80;
+                        return game.over45.toString() === value;
+                    })) &&
+                    (filterValues.filterOver55.length === 0 || filterValues.filterOver55.some(value => {
+                        if (value === ">80") return parseInt(game.over55) > 80;
+                        return game.over55.toString() === value;
+                    }))
+                );
+            });
+
+            displayGames(filteredGames);
+        }
+
+        function calculateQualityScore(game) {
+            const avgGoalsWeight = 0.3; // 30%
+            const bttsWeight = 0.3;     // 30%
+            const over25Weight = 0.4;   // 40%
+
+            const avgGoalsScore = parseFloat(game.avgGoals) * 10; // Normalizar média (ex.: 2.5 -> 25)
+            const bttsScore = parseInt(game.bttsPercent) || 0;
+            const over25Score = parseInt(game.over25) || 0;
+
+            const qualityScore = (avgGoalsScore * avgGoalsWeight) + (bttsScore * bttsWeight) + (over25Score * over25Weight);
+            return Math.min(qualityScore, 100); // Limita a 100
+        }
+
+        function getPercentClass(percent) {
+            const value = parseInt(percent);
+            if (value >= 75) return "positive-high";
+            if (value >= 60) return "positive-medium";
+            if (value >= 50) return "positive-low";
+            if (value >= 40) return "neutral";
+            if (value >= 30) return "negative-low";
+            if (value >= 15) return "negative-medium";
+            return "negative-high";
+        }
+
+        function displayGames(games) {
+            const tableBody = document.getElementById("gamesTableBody");
+            const loadingContainer = document.getElementById("loadingContainer");
+            const tableContainer = document.getElementById("tableContainer");
+            tableBody.innerHTML = "";
+
+            if (!games || games.length === 0) {
+                loadingContainer.style.display = "flex";
+                loadingContainer.innerHTML = '<div class="error"><i class="fas fa-exclamation-circle"></i> Nenhum jogo encontrado com os filtros atuais.</div>';
+                tableContainer.style.display = "none";
+                return;
+            }
+
+            loadingContainer.style.display = "none";
+            tableContainer.style.display = "block";
+
+            // Ordenar por qualidade (decrescente)
+            games.sort((a, b) => calculateQualityScore(b) - calculateQualityScore(a));
+
+            games.forEach(game => {
+                const qualityScore = calculateQualityScore(game).toFixed(0);
+                const isTopMatch = qualityScore >= 80;
+
+                const row = document.createElement("tr");
+                const bttsClass = getPercentClass(game.bttsPercent);
+                const over15Class = getPercentClass(game.over15);
+                const over25Class = getPercentClass(game.over25);
+                const over35Class = getPercentClass(game.over35);
+
+                row.innerHTML = `
+                    <td>
+                        <div class="league-name">
+                            <i class="fas fa-trophy league-icon"></i>
+                            ${game.leagueName}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="team-name">${game.home}</div>
+                        <div style="margin: 4px 0">vs</div>
+                        <div class="team-name">${game.away}</div>
+                    </td>
+                    <td>
+                        <div class="date-time">
+                            <span class="date">${game.day}</span>
+                            <span class="time">${game.hour}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="stats-value">${game.avgGoals}</div>
+                    </td>
+                    <td>
+                        <div>${game.homeAvgGoals}</div>
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 3px;">
+                            ${game.homeWins}V-${game.homeDraws}E-${game.homeLosses}D
+                        </div>
+                    </td>
+                    <td>
+                        <div>${game.awayAvgGoals}</div>
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 3px;">
+                            ${game.awayWins}V-${game.awayDraws}E-${game.awayLosses}D
+                        </div>
+                    </td>
+                    <td class="stat-cell ${bttsClass}">
+                        <span class="stat-pill">${game.bttsPercent}%</span>
+                    </td>
+                    <td class="stat-cell ${over15Class}">
+                        <span class="stat-pill">${game.over15}%</span>
+                    </td>
+                    <td class="stat-cell ${over25Class}">
+                        <span class="stat-pill">${game.over25}%</span>
+                    </td>
+                    <td class="stat-cell ${over35Class}">
+                        <span class="stat-pill">${game.over35}%</span>
+                    </td>
+                    <td class="quality-cell ${isTopMatch ? 'top-match' : ''}">
+                        ${qualityScore}%
+                        ${isTopMatch ? '<i class="fas fa-star top-match-icon"></i>' : ''}
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function resetFilters() {
+            const selects = document.querySelectorAll('select');
+            selects.forEach(select => {
+                select.selectedIndex = 0; // Reseta para o primeiro option ("Todos")
+            });
+            applyFilters();
+        }
+
+        if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator && (location.hostname === 'localhost' || location.protocol === 'https:')) {
+            navigator.serviceWorker.register('./sw.js')
+                .then(registration => {
+                    console.log('Service Worker registrado com sucesso:', registration);
+                })
+                .catch(error => {
+                    console.error('Erro ao registrar Service Worker:', error);
+                    if (error.name === 'SecurityError') {
+                        console.warn('Registro falhou: Service Workers requerem HTTPS ou localhost.');
+                    } else if (error.name === 'TypeError' || error.name === 'InvalidStateError') {
+                        console.warn('Caminho ou estado inválido para o Service Worker.');
+                    }
+                });
+        } else {
+            console.log('Service Worker não é suportado ou não aplicável neste ambiente (ex.: Node.js ou HTTP).');
+            if (typeof require !== 'undefined') {
+                const sw = require('./sw.js');
+                sw.checkOpportunities();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchGames();
+
+            const selects = document.querySelectorAll('select');
+            selects.forEach(select => {
+                select.addEventListener('change', applyFilters);
+            });
+
+            document.getElementById("resetFilters").addEventListener('click', resetFilters);
+        });
+    </script>
+</body>
+
+</html>
