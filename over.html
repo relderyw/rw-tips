@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,10 +41,11 @@
         header {
             display: flex;
             align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
             border-bottom: 1px solid var(--border-color);
             flex-wrap: wrap;
+            gap: 10px;
         }
 
         .logo-container {
@@ -73,11 +73,11 @@
             color: var(--text-primary);
         }
 
-        .back-button {
+        .back-button, .btn-reset {
             background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 500;
@@ -87,33 +87,38 @@
             align-items: center;
             justify-content: center;
             box-shadow: var(--shadow);
-            margin-left: auto;
         }
 
-        .back-button:hover {
+        .back-button:hover, .btn-reset:hover {
             background-color: var(--primary-dark);
             transform: translateY(-2px);
         }
 
-        .back-button i {
+        .back-button i, .btn-reset i {
             margin-right: 8px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-left: auto;
         }
 
         .loading-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 200px;
+            height: 150px;
             background-color: var(--card-bg);
             border-radius: 10px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             box-shadow: var(--shadow);
         }
 
         #loading {
             display: flex;
             align-items: center;
-            font-size: 18px;
+            font-size: 16px;
             color: var(--text-secondary);
         }
 
@@ -121,10 +126,10 @@
             border: 4px solid rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             border-top: 4px solid var(--primary-color);
-            width: 30px;
-            height: 30px;
+            width: 24px;
+            height: 24px;
             animation: spin 1s linear infinite;
-            margin-right: 15px;
+            margin-right: 10px;
         }
 
         @keyframes spin {
@@ -135,7 +140,7 @@
         .error {
             color: #f87171;
             background-color: rgba(248, 113, 113, 0.1);
-            padding: 12px;
+            padding: 10px;
             border-radius: 6px;
             border-left: 4px solid #f87171;
         }
@@ -145,129 +150,6 @@
             background-color: var(--card-bg);
             border-radius: 10px;
             box-shadow: var(--shadow);
-        }
-
-        .filters-container {
-            margin-bottom: 20px;
-            background-color: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        details {
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        details:last-child {
-            border-bottom: none;
-        }
-
-        summary {
-            padding: 12px 15px;
-            background-color: var(--secondary-color);
-            color: var(--text-primary);
-            font-weight: 500;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: background-color 0.3s ease;
-            list-style: none;
-        }
-
-        summary:hover {
-            background-color: #1e2a38;
-        }
-
-        summary::-webkit-details-marker {
-            display: none;
-        }
-
-        summary::after {
-            content: '\f107';
-            font-family: "Font Awesome 6 Free";
-            font-weight: 900;
-            transition: transform 0.3s ease;
-        }
-
-        details[open] summary::after {
-            transform: rotate(180deg);
-        }
-
-        .filter-group {
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .filter-label {
-            font-weight: 500;
-            margin-bottom: 8px;
-            color: var(--text-secondary);
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-        }
-
-        .filter-label i {
-            margin-right: 6px;
-            color: var(--primary-color);
-            font-size: 12px;
-        }
-
-        select[multiple] {
-            padding: 12px 15px;
-            background-color: var(--secondary-color);
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 14px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            min-height: 120px;
-            appearance: none;
-            outline: none;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-            background-image: linear-gradient(to bottom, var(--secondary-color), #1e2a38);
-            width: 100%;
-        }
-
-        select[multiple] option {
-            padding: 8px 12px;
-            background-color: var(--secondary-color);
-            color: var(--text-primary);
-        }
-
-        select[multiple] option:hover {
-            background-color: var(--hover-color);
-            color: var(--text-primary);
-        }
-
-        select[multiple]:hover,
-        select[multiple]:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
-        }
-
-        select[multiple]::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        select[multiple]::-webkit-scrollbar-track {
-            background: var(--border-color);
-            border-radius: 4px;
-        }
-
-        select[multiple]::-webkit-scrollbar-thumb {
-            background: var(--primary-color);
-            border-radius: 4px;
-        }
-
-        select[multiple]::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-dark);
         }
 
         table {
@@ -285,15 +167,116 @@
         th {
             background-color: var(--secondary-color);
             color: var(--text-primary);
-            padding: 15px 12px;
+            padding: 12px 10px;
             text-align: center;
             font-weight: 600;
             border-bottom: 2px solid var(--primary-color);
             white-space: nowrap;
+            position: relative;
+            cursor: pointer;
+        }
+
+        th:hover {
+            background-color: #1e2a38;
+        }
+
+        th.filtered {
+            border-bottom: 2px solid var(--hover-color);
+            position: relative;
+        }
+
+        th.filtered::after {
+            content: '\f0b0';
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 12px;
+            margin-left: 5px;
+            color: var(--hover-color);
+        }
+
+        th .filter-icon {
+            font-size: 12px;
+            margin-left: 5px;
+        }
+
+        .filter-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            z-index: 30;
+            max-height: 80vh;
+            overflow-y: auto;
+            width: 400px;
+        }
+
+        .filter-modal.active {
+            display: block;
+        }
+
+        .filter-modal h3 {
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .filter-modal .filter-options {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .filter-modal .filter-options label {
+            display: block;
+            padding: 8px 12px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .filter-modal .filter-options label:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .filter-modal .filter-options input {
+            margin-right: 10px;
+        }
+
+        .filter-modal .buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .filter-modal .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-modal .btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .filter-modal .btn.cancel {
+            background-color: #6b7280;
+        }
+
+        .filter-modal .btn.cancel:hover {
+            background-color: #4b5563;
         }
 
         td {
-            padding: 12px;
+            padding: 10px;
             text-align: center;
             border-bottom: 1px solid var(--border-color);
             transition: background-color 0.2s;
@@ -383,33 +366,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 5px;
+            border-radius: 4px;
+            opacity: 0.9;
         }
 
         .league-icon {
             margin-right: 6px;
-            color: var(--primary-color);
-        }
-
-        .btn-reset {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background-color 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-reset:hover {
-            background-color: var(--primary-dark);
-        }
-
-        .btn-reset i {
-            margin-right: 8px;
+            color: #ffffff;
         }
 
         .stat-cell {
@@ -432,6 +396,35 @@
             margin-left: 5px;
         }
 
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--secondary-color);
+            color: var(--text-primary);
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
         @media (max-width: 768px) {
             header {
                 flex-direction: column;
@@ -439,21 +432,55 @@
             }
 
             h1 {
-                margin-top: 10px;
+                margin-top: 8px;
+                font-size: 24px;
             }
 
-            .btn-reset, .back-button {
-                margin-top: 15px;
+            .button-group {
                 margin-left: 0;
+                margin-top: 10px;
+                flex-wrap: wrap;
             }
 
-            details summary {
+            .back-button, .btn-reset {
+                margin-top: 8px;
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+
+            .loading-container {
+                height: 120px;
+            }
+
+            #loading {
                 font-size: 14px;
+            }
+
+            .spinner {
+                width: 20px;
+                height: 20px;
+            }
+
+            th, td {
+                padding: 8px;
+                font-size: 12px;
+            }
+
+            .filter-modal {
+                width: 300px;
+                padding: 15px;
+            }
+
+            .filter-modal h3 {
+                font-size: 16px;
+            }
+
+            .filter-modal .filter-options label {
+                padding: 6px 10px;
             }
         }
     </style>
 </head>
-
 <body>
     <div class="container">
         <header>
@@ -462,12 +489,14 @@
                 <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
             </div>
             <h1>Análise Over x Confronto</h1>
-            <button class="back-button" onclick="window.location.href='visualization.html'">
-                <i class="fas fa-arrow-left"></i> Voltar
-            </button>
-            <button id="resetFilters" class="btn-reset">
-                <i class="fas fa-sync-alt"></i> Limpar Filtros
-            </button>
+            <div class="button-group">
+                <button id="resetFilters" class="btn-reset">
+                    <i class="fas fa-sync-alt"></i> Limpar Filtros
+                </button>
+                <button class="back-button" onclick="window.location.href='visualization.html'">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </button>
+            </div>
         </header>
 
         <div class="loading-container" id="loadingContainer">
@@ -477,176 +506,89 @@
             </div>
         </div>
 
-        <div id="filtersSection" style="display: none;">
-            <div class="filters-container">
-                <details open>
-                    <summary>Jogo <i class="fas fa-caret-down"></i></summary>
-                    <div class="filter-group">
-                        <label class="filter-label"><i class="fas fa-filter"></i>Liga</label>
-                        <select id="filterLeague" multiple>
-                            <option value="">Todos</option>
-                        </select>
-                        <label class="filter-label"><i class="fas fa-filter"></i>Time Casa</label>
-                        <select id="filterHome" multiple>
-                            <option value="">Todos</option>
-                        </select>
-                        <label class="filter-label"><i class="fas fa-filter"></i>Time Visitante</label>
-                        <select id="filterAway" multiple>
-                            <option value="">Todos</option>
-                        </select>
-                        <label class="filter-label"><i class="fas fa-filter"></i>Data</label>
-                        <select id="filterDay" multiple>
-                            <option value="">Todos</option>
-                        </select>
-                        <label class="filter-label"><i class="fas fa-filter"></i>Hora</label>
-                        <select id="filterHour" multiple>
-                            <option value="">Todos</option>
-                        </select>
-                    </div>
-                </details>
-                <details open>
-                    <summary>Estatísticas <i class="fas fa-caret-down"></i></summary>
-                    <div class="filter-group">
-                        <label class="filter-label"><i class="fas fa-filter"></i>Média de Gols</label>
-                        <select id="filterAvg" multiple>
-                            <option value="">Todos</option>
-                        </select>
-                        <label class="filter-label"><i class="fas fa-filter"></i>Média Gols Casa</label>
-                        <select id="filterHomeAvg" multiple>
-                            <option value="">Todos</option>
-                        </select>
-                        <label class="filter-label"><i class="fas fa-filter"></i>Média Gols Visitante</label>
-                        <select id="filterAwayAvg" multiple>
-                            <option value="">Todos</option>
-                        </select>
-                        <label class="filter-label"><i class="fas fa-filter"></i>BTTS</label>
-                        <select id="filterBTTS" multiple>
-                            <option value="">Todos</option>
-                            <option value="100">100</option>
-                            <option value="90">90</option>
-                            <option value="80">80</option>
-                            <option value="70">70</option>
-                            <option value="60">60</option>
-                            <option value="50">50</option>
-                            <option value=">80">Maiores que 80</option>
-                        </select>
-                        <label class="filter-label"><i class="fas fa-filter"></i>Over 2.5</label>
-                        <select id="filterOver25" multiple>
-                            <option value="">Todos</option>
-                            <option value="100">100</option>
-                            <option value="90">90</option>
-                            <option value="80">80</option>
-                            <option value="70">70</option>
-                            <option value="60">60</option>
-                            <option value="50">50</option>
-                            <option value=">80">Maiores que 80</option>
-                        </select>
-                    </div>
-                </details>
-                <details>
-                    <summary>Avançado <i class="fas fa-caret-down"></i></summary>
-                    <div class="filter-group">
-                        <label class="filter-label"><i class="fas fa-filter"></i>Casa Vence</label>
-                        <select id="filterHomeWins" multiple>
-                            <option value="">Todos</option>
-                        </select>
-                        <label class="filter-label"><i class="fas fa-filter"></i>Casa Empata</label>
-                        <select id="filterHomeDraws" multiple>
-                            <option value="">Todos</option>
-                        </select>
-                        <label class="filter-label"><i class="fas fa-filter"></i>Casa Perde</label>
-                        <select id="filterHomeLosses" multiple>
-                            <option value="">Todos</option>
-                        </select>
-                        <label class="filter-label"><i class="fas fa-filter"></i>Fora Vence</label>
-                        <select id="filterAwayWins" multiple>
-                            <option value="">Todos</option>
-                        </select>
-                        <label class="filter-label"><i class="fas fa-filter"></i>Fora Empata</label>
-                        <select id="filterAwayDraws" multiple>
-                            <option value="">Todos</option>
-                        </select>
-                        <label class="filter-label"><i class="fas fa-filter"></i>Fora Perde</label>
-                        <select id="filterAwayLosses" multiple>
-                            <option value="">Todos</option>
-                        </select>
-                        <label class="filter-label"><i class="fas fa-filter"></i>Over 1.5</label>
-                        <select id="filterOver15" multiple>
-                            <option value="">Todos</option>
-                            <option value="100">100</option>
-                            <option value="90">90</option>
-                            <option value="80">80</option>
-                            <option value="70">70</option>
-                            <option value="60">60</option>
-                            <option value="50">50</option>
-                            <option value=">80">Maiores que 80</option>
-                        </select>
-                        <label class="filter-label"><i class="fas fa-filter"></i>Over 3.5</label>
-                        <select id="filterOver35" multiple>
-                            <option value="">Todos</option>
-                            <option value="100">100</option>
-                            <option value="90">90</option>
-                            <option value="80">80</option>
-                            <option value="70">70</option>
-                            <option value="60">60</option>
-                            <option value="50">50</option>
-                            <option value=">80">Maiores que 80</option>
-                        </select>
-                        <label class="filter-label"><i class="fas fa-filter"></i>Over 4.5</label>
-                        <select id="filterOver45" multiple>
-                            <option value="">Todos</option>
-                            <option value="100">100</option>
-                            <option value="90">90</option>
-                            <option value="80">80</option>
-                            <option value="70">70</option>
-                            <option value="60">60</option>
-                            <option value="50">50</option>
-                            <option value=">80">Maiores que 80</option>
-                        </select>
-                        <label class="filter-label"><i class="fas fa-filter"></i>Over 5.5</label>
-                        <select id="filterOver55" multiple>
-                            <option value="">Todos</option>
-                            <option value="100">100</option>
-                            <option value="90">90</option>
-                            <option value="80">80</option>
-                            <option value="70">70</option>
-                            <option value="60">60</option>
-                            <option value="50">50</option>
-                            <option value=">80">Maiores que 80</option>
-                        </select>
-                    </div>
-                </details>
-            </div>
-        </div>
-
         <div class="table-container" id="tableContainer" style="display: none;">
             <table id="gamesTable">
                 <thead>
                     <tr>
-                        <th>Liga</th>
-                        <th>Partida</th>
-                        <th>Data / Hora</th>
-                        <th>Média</th>
-                        <th>Casa</th>
-                        <th>Fora</th>
-                        <th>BTTS</th>
-                        <th>Over 1.5</th>
-                        <th>Over 2.5</th>
-                        <th>Over 3.5</th>
-                        <th>Qualidade</th>
+                        <th data-column="leagueName">
+                            Liga
+                            <i class="fas fa-filter filter-icon"></i>
+                        </th>
+                        <th data-column="match">
+                            Partida
+                            <i class="fas fa-filter filter-icon"></i>
+                        </th>
+                        <th data-column="dateTime">
+                            Data / Hora
+                            <i class="fas fa-filter filter-icon"></i>
+                        </th>
+                        <th data-column="avgGoals">
+                            Média
+                            <i class="fas fa-filter filter-icon"></i>
+                        </th>
+                        <th data-column="homeAvgGoals">
+                            Casa
+                            <i class="fas fa-filter filter-icon"></i>
+                        </th>
+                        <th data-column="awayAvgGoals">
+                            Fora
+                            <i class="fas fa-filter filter-icon"></i>
+                        </th>
+                        <th data-column="bttsPercent">
+                            BTTS
+                            <i class="fas fa-filter filter-icon"></i>
+                        </th>
+                        <th data-column="over15">
+                            Over 1.5
+                            <i class="fas fa-filter filter-icon"></i>
+                        </th>
+                        <th data-column="over25">
+                            Over 2.5
+                            <i class="fas fa-filter filter-icon"></i>
+                        </th>
+                        <th data-column="over35">
+                            Over 3.5
+                            <i class="fas fa-filter filter-icon"></i>
+                        </th>
+                        <th data-column="qualityScore">
+                            Qualidade
+                            <i class="fas fa-filter filter-icon"></i>
+                        </th>
                     </tr>
                 </thead>
                 <tbody id="gamesTableBody"></tbody>
             </table>
         </div>
+
+        <div class="filter-modal" id="filterModal">
+            <h3 id="filterModalTitle"></h3>
+            <div class="filter-options" id="filterOptions"></div>
+            <div class="buttons">
+                <button class="btn cancel" onclick="closeFilterModal()">Cancelar</button>
+                <button class="btn" onclick="applyColumnFilter()">Aplicar</button>
+            </div>
+        </div>
     </div>
 
     <script>
         let gamesData = [];
+        let activeColumn = null;
+        let columnFilters = {};
+
+        // Function to generate a consistent color based on a string (e.g., league name)
+        function stringToColor(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const r = (hash & 0xFF0000) >> 16;
+            const g = (hash & 0x00FF00) >> 8;
+            const b = hash & 0x0000FF;
+            return `rgba(${r}, ${g}, ${b}, 0.3)`;
+        }
 
         async function fetchGames() {
             const loading = document.getElementById("loading");
-            const filtersSection = document.getElementById("filtersSection");
             const tableContainer = document.getElementById("tableContainer");
             const loadingContainer = document.getElementById("loadingContainer");
 
@@ -658,15 +600,14 @@
                 loading.innerHTML = '<div class="spinner"></div><span>Processando jogos...</span>';
                 gamesData = await Promise.all(data.data.map(async game => {
                     const stats = await fetchStats(game.homeID, game.awayID, game.home, game.away, game.leagueID);
-                    return { ...game, ...stats };
+                    return { ...game, ...stats, qualityScore: calculateQualityScore({ ...game, ...stats }) };
                 }));
-                console.log("Dados carregados:", gamesData); // Debug
+                console.log("Dados carregados:", gamesData);
                 if (gamesData.length > 0) {
-                    populateFilters();
                     applyFilters();
-                    filtersSection.style.display = "block";
                     tableContainer.style.display = "block";
                     loadingContainer.style.display = "none";
+                    setupColumnFilters();
                 }
             } catch (error) {
                 loading.innerHTML = `<div class="error"><i class="fas fa-exclamation-circle"></i> Erro ao carregar os dados: ${error.message}</div>`;
@@ -700,8 +641,6 @@
                 const over15 = ((totalGoals.filter(g => g > 1.5).length / Math.max(totalGoals.length, 1)) * 100).toFixed(0);
                 const over25 = ((totalGoals.filter(g => g > 2.5).length / Math.max(totalGoals.length, 1)) * 100).toFixed(0);
                 const over35 = ((totalGoals.filter(g => g > 3.5).length / Math.max(totalGoals.length, 1)) * 100).toFixed(0);
-                const over45 = ((totalGoals.filter(g => g > 4.5).length / Math.max(totalGoals.length, 1)) * 100).toFixed(0);
-                const over55 = ((totalGoals.filter(g => g > 5.5).length / Math.max(totalGoals.length, 1)) * 100).toFixed(0);
 
                 const homeWins = homeGames.filter(game => game.winnerName === homeName.toLowerCase()).length;
                 const homeDraws = homeGames.filter(game => game.winnerName === "draw").length;
@@ -723,9 +662,7 @@
                     awayLosses,
                     over15,
                     over25,
-                    over35,
-                    over45,
-                    over55
+                    over35
                 };
             } catch (error) {
                 console.error(`Erro ao buscar estatísticas para ${homeID} vs ${awayID}:`, error);
@@ -736,115 +673,65 @@
                     bttsPercent: 0,
                     homeWins: 0, homeDraws: 0, homeLosses: 0,
                     awayWins: 0, awayDraws: 0, awayLosses: 0,
-                    over15: 0, over25: 0, over35: 0, over45: 0, over55: 0
+                    over15: 0, over25: 0, over35: 0
                 };
             }
         }
 
-        function populateFilters() {
-            const fields = [
-                { id: "filterLeague", key: "leagueName" },
-                { id: "filterHome", key: "home" },
-                { id: "filterAway", key: "away" },
-                { id: "filterDay", key: "day" },
-                { id: "filterHour", key: "hour" },
-                { id: "filterAvg", key: "avgGoals" },
-                { id: "filterHomeAvg", key: "homeAvgGoals" },
-                { id: "filterAwayAvg", key: "awayAvgGoals" },
-                { id: "filterBTTS", key: "bttsPercent" },
-                { id: "filterHomeWins", key: "homeWins" },
-                { id: "filterHomeDraws", key: "homeDraws" },
-                { id: "filterHomeLosses", key: "homeLosses" },
-                { id: "filterAwayWins", key: "awayWins" },
-                { id: "filterAwayDraws", key: "awayDraws" },
-                { id: "filterAwayLosses", key: "awayLosses" },
-                { id: "filterOver15", key: "over15" },
-                { id: "filterOver25", key: "over25" },
-                { id: "filterOver35", key: "over35" },
-                { id: "filterOver45", key: "over45" },
-                { id: "filterOver55", key: "over55" }
-            ];
-
-            fields.forEach(field => {
-                const select = document.getElementById(field.id);
-                let uniqueValues = [...new Set(gamesData.map(game => game[field.key].toString()))].sort();
-                if (field.key.endsWith('Percent') || field.key.startsWith('over')) {
-                    uniqueValues = ["100", "90", "80", "70", "60", "50", ">80"].concat(uniqueValues.filter(v => !["100", "90", "80", "70", "60", "50", ">80"].includes(v)));
-                }
-                select.innerHTML = `<option value="">Todos</option>` + uniqueValues.map(value => `<option value="${value}">${value}</option>`).join('');
-            });
-        }
-
         function applyFilters() {
-            const filterValues = {};
-            const fields = [
-                "filterLeague", "filterHome", "filterAway", "filterDay", "filterHour", "filterAvg", "filterHomeAvg", "filterAwayAvg",
-                "filterBTTS", "filterHomeWins", "filterHomeDraws", "filterHomeLosses", "filterAwayWins", "filterAwayDraws", "filterAwayLosses",
-                "filterOver15", "filterOver25", "filterOver35", "filterOver45", "filterOver55"
-            ];
+            let filteredGames = [...gamesData];
 
-            fields.forEach(field => {
-                const select = document.getElementById(field);
-                filterValues[field] = Array.from(select.selectedOptions).map(option => option.value);
-            });
-
-            const filteredGames = gamesData.filter(game => {
-                return (
-                    (filterValues.filterLeague.length === 0 || filterValues.filterLeague.includes(game.leagueName)) &&
-                    (filterValues.filterHome.length === 0 || filterValues.filterHome.includes(game.home)) &&
-                    (filterValues.filterAway.length === 0 || filterValues.filterAway.includes(game.away)) &&
-                    (filterValues.filterDay.length === 0 || filterValues.filterDay.includes(game.day)) &&
-                    (filterValues.filterHour.length === 0 || filterValues.filterHour.includes(game.hour)) &&
-                    (filterValues.filterAvg.length === 0 || filterValues.filterAvg.includes(game.avgGoals.toString())) &&
-                    (filterValues.filterHomeAvg.length === 0 || filterValues.filterHomeAvg.includes(game.homeAvgGoals.toString())) &&
-                    (filterValues.filterAwayAvg.length === 0 || filterValues.filterAwayAvg.includes(game.awayAvgGoals.toString())) &&
-                    (filterValues.filterBTTS.length === 0 || filterValues.filterBTTS.some(value => {
-                        if (value === ">80") return parseInt(game.bttsPercent) > 80;
-                        return game.bttsPercent.toString() === value;
-                    })) &&
-                    (filterValues.filterHomeWins.length === 0 || filterValues.filterHomeWins.includes(game.homeWins.toString())) &&
-                    (filterValues.filterHomeDraws.length === 0 || filterValues.filterHomeDraws.includes(game.homeDraws.toString())) &&
-                    (filterValues.filterHomeLosses.length === 0 || filterValues.filterHomeLosses.includes(game.homeLosses.toString())) &&
-                    (filterValues.filterAwayWins.length === 0 || filterValues.filterAwayWins.includes(game.awayWins.toString())) &&
-                    (filterValues.filterAwayDraws.length === 0 || filterValues.filterAwayDraws.includes(game.awayDraws.toString())) &&
-                    (filterValues.filterAwayLosses.length === 0 || filterValues.filterAwayLosses.includes(game.awayLosses.toString())) &&
-                    (filterValues.filterOver15.length === 0 || filterValues.filterOver15.some(value => {
-                        if (value === ">80") return parseInt(game.over15) > 80;
-                        return game.over15.toString() === value;
-                    })) &&
-                    (filterValues.filterOver25.length === 0 || filterValues.filterOver25.some(value => {
-                        if (value === ">80") return parseInt(game.over25) > 80;
-                        return game.over25.toString() === value;
-                    })) &&
-                    (filterValues.filterOver35.length === 0 || filterValues.filterOver35.some(value => {
-                        if (value === ">80") return parseInt(game.over35) > 80;
-                        return game.over35.toString() === value;
-                    })) &&
-                    (filterValues.filterOver45.length === 0 || filterValues.filterOver45.some(value => {
-                        if (value === ">80") return parseInt(game.over45) > 80;
-                        return game.over45.toString() === value;
-                    })) &&
-                    (filterValues.filterOver55.length === 0 || filterValues.filterOver55.some(value => {
-                        if (value === ">80") return parseInt(game.over55) > 80;
-                        return game.over55.toString() === value;
-                    }))
-                );
-            });
+            // Apply column-specific filters
+            for (let column in columnFilters) {
+                if (columnFilters[column].values && columnFilters[column].values.length > 0) {
+                    filteredGames = filteredGames.filter(game => {
+                        const value = getColumnValue(game, column).toString();
+                        return columnFilters[column].values.includes(value) || (columnFilters[column].values.includes(">80") && parseInt(value) > 80);
+                    });
+                }
+                if (columnFilters[column].sort) {
+                    filteredGames.sort((a, b) => {
+                        const aValue = getColumnValue(a, column);
+                        const bValue = getColumnValue(b, column);
+                        return columnFilters[column].sort === "asc" ? 
+                            (aValue - bValue) || aValue.localeCompare(bValue) : 
+                            (bValue - aValue) || bValue.localeCompare(aValue);
+                    });
+                }
+            }
 
             displayGames(filteredGames);
+            updateFilteredColumns();
+        }
+
+        function getColumnValue(game, column) {
+            switch (column) {
+                case "leagueName": return game.leagueName;
+                case "match": return `${game.home} vs ${game.away}`;
+                case "dateTime": return `${game.day} ${game.hour}`;
+                case "avgGoals": return parseFloat(game.avgGoals);
+                case "homeAvgGoals": return parseFloat(game.homeAvgGoals);
+                case "awayAvgGoals": return parseFloat(game.awayAvgGoals);
+                case "bttsPercent": return parseInt(game.bttsPercent);
+                case "over15": return parseInt(game.over15);
+                case "over25": return parseInt(game.over25);
+                case "over35": return parseInt(game.over35);
+                case "qualityScore": return parseInt(game.qualityScore);
+                default: return "";
+            }
         }
 
         function calculateQualityScore(game) {
-            const avgGoalsWeight = 0.3; // 30%
-            const bttsWeight = 0.3;     // 30%
-            const over25Weight = 0.4;   // 40%
+            const avgGoalsWeight = 0.3;
+            const bttsWeight = 0.3;
+            const over25Weight = 0.4;
 
-            const avgGoalsScore = parseFloat(game.avgGoals) * 10; // Normalizar média (ex.: 2.5 -> 25)
+            const avgGoalsScore = parseFloat(game.avgGoals) * 10;
             const bttsScore = parseInt(game.bttsPercent) || 0;
             const over25Score = parseInt(game.over25) || 0;
 
             const qualityScore = (avgGoalsScore * avgGoalsWeight) + (bttsScore * bttsWeight) + (over25Score * over25Weight);
-            return Math.min(qualityScore, 100); // Limita a 100
+            return Math.min(qualityScore, 100);
         }
 
         function getPercentClass(percent) {
@@ -874,11 +761,8 @@
             loadingContainer.style.display = "none";
             tableContainer.style.display = "block";
 
-            // Ordenar por qualidade (decrescente)
-            games.sort((a, b) => calculateQualityScore(b) - calculateQualityScore(a));
-
             games.forEach(game => {
-                const qualityScore = calculateQualityScore(game).toFixed(0);
+                const qualityScore = game.qualityScore.toFixed(0);
                 const isTopMatch = qualityScore >= 80;
 
                 const row = document.createElement("tr");
@@ -889,7 +773,7 @@
 
                 row.innerHTML = `
                     <td>
-                        <div class="league-name">
+                        <div class="league-name" style="background-color: ${stringToColor(game.leagueName)};">
                             <i class="fas fa-trophy league-icon"></i>
                             ${game.leagueName}
                         </div>
@@ -909,15 +793,27 @@
                         <div class="stats-value">${game.avgGoals}</div>
                     </td>
                     <td>
-                        <div>${game.homeAvgGoals}</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 3px;">
-                            ${game.homeWins}V-${game.homeDraws}E-${game.homeLosses}D
+                        <div class="tooltip">
+                            <div>${game.homeAvgGoals}</div>
+                            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 3px;">
+                                ${game.homeWins}V-${game.homeDraws}E-${game.homeLosses}D
+                            </div>
+                            <span class="tooltiptext">
+                                Média de gols do time da casa nos últimos jogos: ${game.homeAvgGoals}<br>
+                                Registro: ${game.homeWins} Vitórias, ${game.homeDraws} Empates, ${game.homeLosses} Derrotas
+                            </span>
                         </div>
                     </td>
                     <td>
-                        <div>${game.awayAvgGoals}</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 3px;">
-                            ${game.awayWins}V-${game.awayDraws}E-${game.awayLosses}D
+                        <div class="tooltip">
+                            <div>${game.awayAvgGoals}</div>
+                            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 3px;">
+                                ${game.awayWins}V-${game.awayDraws}E-${game.awayLosses}D
+                            </div>
+                            <span class="tooltiptext">
+                                Média de gols do time visitante nos últimos jogos: ${game.awayAvgGoals}<br>
+                                Registro: ${game.awayWins} Vitórias, ${game.awayDraws} Empates, ${game.awayLosses} Derrotas
+                            </span>
                         </div>
                     </td>
                     <td class="stat-cell ${bttsClass}">
@@ -942,11 +838,79 @@
         }
 
         function resetFilters() {
-            const selects = document.querySelectorAll('select');
-            selects.forEach(select => {
-                select.selectedIndex = 0; // Reseta para o primeiro option ("Todos")
-            });
+            columnFilters = {};
             applyFilters();
+        }
+
+        function updateFilteredColumns() {
+            const thElements = document.querySelectorAll('th');
+            thElements.forEach(th => {
+                const column = th.dataset.column;
+                if (columnFilters[column] && (columnFilters[column].values?.length > 0 || columnFilters[column].sort)) {
+                    th.classList.add('filtered');
+                } else {
+                    th.classList.remove('filtered');
+                }
+            });
+        }
+
+        function setupColumnFilters() {
+            const thElements = document.querySelectorAll('th');
+            thElements.forEach(th => {
+                th.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    activeColumn = th.dataset.column;
+                    const modal = document.getElementById('filterModal');
+                    const title = document.getElementById('filterModalTitle');
+                    const options = document.getElementById('filterOptions');
+
+                    title.textContent = `Filtrar por ${th.textContent.trim()}`;
+                    const uniqueValues = [...new Set(gamesData.map(game => getColumnValue(game, activeColumn).toString()))].sort();
+                    options.innerHTML = `
+                        <label><input type="checkbox" data-action="sort-asc" ${columnFilters[activeColumn]?.sort === 'asc' ? 'checked' : ''}> Classificar de Menor para Maior</label>
+                        <label><input type="checkbox" data-action="sort-desc" ${columnFilters[activeColumn]?.sort === 'desc' ? 'checked' : ''}> Classificar de Maior para Menor</label>
+                        <hr>
+                        ${uniqueValues.map(value => `
+                            <label><input type="checkbox" value="${value}" ${columnFilters[activeColumn]?.values?.includes(value) ? 'checked' : ''}> ${value}</label>
+                        `).join('')}
+                    `;
+                    modal.classList.add('active');
+
+                    // Close modal when clicking outside
+                    document.addEventListener('click', function closeModal(event) {
+                        if (!modal.contains(event.target) && event.target !== th) {
+                            modal.classList.remove('active');
+                            document.removeEventListener('click', closeModal);
+                        }
+                    });
+                });
+            });
+        }
+
+        function closeFilterModal() {
+            const modal = document.getElementById('filterModal');
+            modal.classList.remove('active');
+        }
+
+        function applyColumnFilter() {
+            const options = document.getElementById('filterOptions');
+            const checkboxes = options.querySelectorAll('input[type="checkbox"]');
+            columnFilters[activeColumn] = { values: [], sort: null };
+
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    if (checkbox.dataset.action === "sort-asc") {
+                        columnFilters[activeColumn].sort = "asc";
+                    } else if (checkbox.dataset.action === "sort-desc") {
+                        columnFilters[activeColumn].sort = "desc";
+                    } else {
+                        columnFilters[activeColumn].values.push(checkbox.value);
+                    }
+                }
+            });
+
+            applyFilters();
+            closeFilterModal();
         }
 
         if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator && (location.hostname === 'localhost' || location.protocol === 'https:')) {
@@ -972,15 +936,8 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             fetchGames();
-
-            const selects = document.querySelectorAll('select');
-            selects.forEach(select => {
-                select.addEventListener('change', applyFilters);
-            });
-
             document.getElementById("resetFilters").addEventListener('click', resetFilters);
         });
     </script>
 </body>
-
 </html>
