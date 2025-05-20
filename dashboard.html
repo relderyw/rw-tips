@@ -753,6 +753,12 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Verificar login
+            if (!sessionStorage.getItem('loggedIn')) {
+                window.location.href = 'index.html';
+                return; // Interrompe a execução do restante do script
+            }
+
             const lastUpdatedElement = document.getElementById('lastUpdated');
             const refreshBtn = document.getElementById('refreshBtn');
             const leagueBadgesElement = document.getElementById('leagueBadges');
