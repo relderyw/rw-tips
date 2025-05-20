@@ -1,5 +1,4 @@
-NBA
-
+```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -755,6 +754,7 @@ NBA
             <h1>CALENDÁRIO NBA</h1>
             <div class="nav-buttons">
                 <button id="visualizationBtn" class="nav-button">🎮</button>
+                <button id="logoutBtn" class="nav-button">Sair</button>
             </div>
             <div class="logo">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</div>
         </div>
@@ -797,6 +797,23 @@ NBA
     </div>
 
     <script>
+        // Função de verificação de login
+        function checkUserLogin() {
+            if (!sessionStorage.getItem('loggedIn')) {
+                window.location.replace('index.html');
+                return false;
+            }
+            return true;
+        }
+
+        // Função de logout
+        function logout() {
+            sessionStorage.removeItem('loggedIn');
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('currentUserKey');
+            window.location.replace('index.html');
+        }
+
         const tabsDiv = document.querySelector('#tabs');
         const categoryTabsDiv = document.querySelector('#categoryTabs');
         const leadersGrid = document.querySelector('#leadersGrid');
@@ -916,6 +933,9 @@ NBA
         }
 
         async function renderTabs() {
+            // Verificar login antes de renderizar
+            if (!checkUserLogin()) return;
+
             try {
                 const dates = await fetchDates();
                 const hoje = getDataAtualSP();
@@ -945,6 +965,9 @@ NBA
                 document.getElementById('visualizationBtn').addEventListener('click', () => {
                     window.location.href = 'visualization.html';
                 });
+
+                // Adicionar evento ao botão de logout
+                document.getElementById('logoutBtn').addEventListener('click', logout);
 
                 createParticles();
                 startAutoUpdate();
@@ -1388,4 +1411,3 @@ NBA
     </script>
 </body>
 </html>
-</xaiArtifact
