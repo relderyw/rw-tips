@@ -290,7 +290,8 @@
     }
 
     .submit-button,
-    .back-button-link {
+    .back-button-link,
+    .logout-button {
       width: 100%;
       padding: 0.875rem 1.75rem;
       border: none;
@@ -311,13 +312,15 @@
     }
 
     .submit-button:hover,
-    .back-button-link:hover {
+    .back-button-link:hover,
+    .logout-button:hover {
       transform: translateY(-2px);
       box-shadow: 0 0 20px rgba(0, 255, 100, 0.5);
     }
 
     .submit-button::after,
-    .back-button-link::after {
+    .back-button-link::after,
+    .logout-button::after {
       content: '';
       position: absolute;
       top: 0;
@@ -329,7 +332,8 @@
     }
 
     .submit-button:hover::after,
-    .back-button-link:hover::after {
+    .back-button-link:hover::after,
+    .logout-button:hover::after {
       left: 100%;
     }
 
@@ -337,10 +341,12 @@
     .back-to-visualization {
       margin-bottom: 1rem;
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .back-button-link {
+    .back-button-link,
+    .logout-button {
       width: auto;
       display: inline-flex;
       align-items: center;
@@ -871,6 +877,15 @@
         </svg>
         Voltar
       </a>
+      <button class="logout-button" onclick="logout()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        Sair
+      </button>
     </div>
 
     <div class="container">
@@ -1069,6 +1084,14 @@
     let chart = null;
     let todasApostas = [];
 
+    // Função de logout
+    window.logout = function () {
+      sessionStorage.removeItem('loggedIn');
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('currentUserKey');
+      window.location.replace('index.html');
+    };
+
     // Definindo função removerAposta no escopo global
     window.removerAposta = async function (id) {
       if (!confirm("Tem certeza que deseja remover esta aposta?")) return;
@@ -1155,17 +1178,18 @@
 
     // Funções de autenticação
     function checkUserLogin() {
-      currentUser = localStorage.getItem('currentUser');
-      currentUserKey = localStorage.getItem('currentUserKey');
-
-      if (!currentUser || !currentUserKey) {
+      if (!sessionStorage.getItem('loggedIn')) {
         window.location.replace('index.html');
         return false;
       }
 
       // Atualizar interface do usuário
-      document.getElementById('user-email').textContent = currentUser;
-      document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
+      currentUser = localStorage.getItem('currentUser');
+      currentUserKey = localStorage.getItem('currentUserKey') || 'user';
+      if (currentUser) {
+        document.getElementById('user-email').textContent = currentUser;
+        document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
+      }
 
       // Verificar se é admin ou dono dos mercados para mostrar/ocultar o formulário de adicionar mercados
       const marketForm = document.getElementById("market-form");
@@ -1622,20 +1646,20 @@
                 stepSize: 5, // Define o intervalo de 5 em 5 reais
               },
             },
-          },
-        },
-        x: {
-          grid: {
-            display: false
-          },
-          ticks: {
-            color: "#e0e0e0",
-            padding: 8,
-            font: {
-              size: 12
+            x: {
+              grid: {
+                display: false
+              },
+              ticks: {
+                color: "#e0e0e0",
+                padding: 8,
+                font: {
+                  size: 12
+                },
+                maxRotation: 45,
+                minRotation: 45
+              },
             },
-            maxRotation: 45,
-            minRotation: 45
           },
         },
       });
@@ -1731,24 +1755,8 @@
     // Event Listeners
     document.addEventListener("DOMContentLoaded", async () => {
       try {
-        // Verificar se os dados do usuário existem no localStorage
-        currentUser = localStorage.getItem('currentUser');
-        currentUserKey = localStorage.getItem('currentUserKey');
-
-        console.log("Usuário logado:", currentUser);
-        console.log("Chave do usuário:", currentUserKey);
-
-        if (!currentUser || !currentUserKey) {
-          console.log("Usuário não logado. Redirecionando para index.html...");
-          window.location.replace('index.html');
-          return;
-        }
-
-        console.log("Usuário logado com sucesso. Carregando página...");
-
-        // Atualizar interface do usuário
-        document.getElementById('user-email').textContent = currentUser;
-        document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
+        // Verificar login
+        if (!checkUserLogin()) return;
 
         // Inicializar a página
         setupTabs();
