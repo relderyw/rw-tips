@@ -344,7 +344,7 @@
 
 <body>
     <div class="logo-container">
-        <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo">
+        <img src="https://i.ibb.co/G4Y8sHM/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo">
         <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
     </div>
 
@@ -352,66 +352,93 @@
     <div class="button-container">
         <button id="viewResultsButton" class="action-button">Ver Últimos Resultados</button>
         <button id="backButton" class="action-button">Voltar para Próximos Jogos</button>
+        <button id="logoutButton" class="action-button">Sair</button>
     </div>
     <div id="statsContainer" class="leagues-container"></div>
 
     <script>
-        document.getElementById('viewResultsButton').addEventListener('click', function () {
-            localStorage.setItem('needsUpdate', 'true');
-            window.location.href = 'results.html';
-        });
+        // Função de verificação de login
+        function checkUserLogin() {
+            if (!sessionStorage.getItem('loggedIn')) {
+                window.location.replace('index.html');
+                return false;
+            }
+            return true;
+        }
 
-        document.getElementById('backButton').addEventListener('click', function () {
-            localStorage.setItem('needsUpdate', 'true');
-            window.location.href = 'visualization.html';
-        });
+        // Função de logout
+        function logout() {
+            sessionStorage.removeItem('loggedIn');
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('currentUserKey');
+            window.location.replace('index.html');
+        }
 
-        fetch('https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=1')
-            .then(response => response.json())
-            .then(data => {
-                const games = data.data;
-                const leagues = {};
+        // Verificar login ao carregar a página
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!checkUserLogin()) return;
 
-                games.forEach(game => {
-                    const leagueName = game.leagueName;
-                    if (!leagues[leagueName]) {
-                        leagues[leagueName] = [];
-                    }
-                    leagues[leagueName].push(game);
-                });
+            // Adicionar evento ao botão de logout
+            document.getElementById('logoutButton').addEventListener('click', logout);
 
-                const statsContainer = document.getElementById('statsContainer');
-                for (const league in leagues) {
-                    const leagueStats = calculateStats(leagues[league]);
-                    const isStarred = leagueStats['Over 1.5'] === 100 &&
-                        leagueStats['Over 2.5'] === 100 &&
-                        leagueStats['Over 3.5'] >= 85 &&
-                        leagueStats['Ambos Marcam'] >= 85 &&
-                        leagueStats['0x0'] === 0;
-                    const star = isStarred ? '<div class="star">⭐</div>' : '';
-                    const highlightClass = isStarred ? 'highlight' : '';
-                    const leagueDiv = document.createElement('div');
-                    leagueDiv.className = `league-stats ${highlightClass}`;
-                    leagueDiv.innerHTML = `
-                        ${star}
-                        <div class="league-name">${league}</div>
-                        ${generateBar('Over 0.5', leagueStats['Over 0.5'])}
-                        ${generateBar('Over 1.5', leagueStats['Over 1.5'])}
-                        ${generateBar('Over 2.5', leagueStats['Over 2.5'])}
-                        ${generateBar('Over 3.5', leagueStats['Over 3.5'])}
-                        ${generateBar('Over 4.5', leagueStats['Over 4.5'])}
-                        ${generateBar('Over 5.5', leagueStats['Over 5.5'])}
-                        ${generateBar('Over 6.5', leagueStats['Over 6.5'])}
-                        ${generateBar('Ambos Marcam', leagueStats['Ambos Marcam'])}
-                        ${generateBar('0x0', leagueStats['0x0'], true)}
-                    `;
-                    statsContainer.appendChild(leagueDiv);
-                }
-            })
-            .catch(error => {
-                console.error('Erro ao buscar dados:', error);
-                alert('Erro ao carregar estatísticas. Por favor, tente novamente.');
+            // Restante do código original
+            document.getElementById('viewResultsButton').addEventListener('click', function () {
+                localStorage.setItem('needsUpdate', 'true');
+                window.location.href = 'results.html';
             });
+
+            document.getElementById('backButton').addEventListener('click', function () {
+                localStorage.setItem('needsUpdate', 'true');
+                window.location.href = 'visualization.html';
+            });
+
+            fetch('https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=1')
+                .then(response => response.json())
+                .then(data => {
+                    const games = data.data;
+                    const leagues = {};
+
+                    games.forEach(game => {
+                        const leagueName = game.leagueName;
+                        if (!leagues[leagueName]) {
+                            leagues[leagueName] = [];
+                        }
+                        leagues[leagueName].push(game);
+                    });
+
+                    const statsContainer = document.getElementById('statsContainer');
+                    for (const league in leagues) {
+                        const leagueStats = calculateStats(leagues[league]);
+                        const isStarred = leagueStats['Over 1.5'] === 100 &&
+                            leagueStats['Over 2.5'] === 100 &&
+                            leagueStats['Over 3.5'] >= 85 &&
+                            leagueStats['Ambos Marcam'] >= 85 &&
+                            leagueStats['0x0'] === 0;
+                        const star = isStarred ? '<div class="star">⭐</div>' : '';
+                        const highlightClass = isStarred ? 'highlight' : '';
+                        const leagueDiv = document.createElement('div');
+                        leagueDiv.className = `league-stats ${highlightClass}`;
+                        leagueDiv.innerHTML = `
+                            ${star}
+                            <div class="league-name">${league}</div>
+                            ${generateBar('Over 0.5', leagueStats['Over 0.5'])}
+                            ${generateBar('Over 1.5', leagueStats['Over 1.5'])}
+                            ${generateBar('Over 2.5', leagueStats['Over 2.5'])}
+                            ${generateBar('Over 3.5', leagueStats['Over 3.5'])}
+                            ${generateBar('Over 4.5', leagueStats['Over 4.5'])}
+                            ${generateBar('Over 5.5', leagueStats['Over 5.5'])}
+                            ${generateBar('Over 6.5', leagueStats['Over 6.5'])}
+                            ${generateBar('Ambos Marcam', leagueStats['Ambos Marcam'])}
+                            ${generateBar('0x0', leagueStats['0x0'], true)}
+                        `;
+                        statsContainer.appendChild(leagueDiv);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar dados:', error);
+                    alert('Erro ao carregar estatísticas. Por favor, tente novamente.');
+                });
+        });
 
         function calculateStats(games) {
             const totalGames = games.filter(game => game.score).length;
