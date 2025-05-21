@@ -750,10 +750,9 @@
 
     <div class="container">
         <div class="header">
-            <h1>CALENDÁRIO NBA</h1>
+            < HOUSE OF THE DRAGON
             <div class="nav-buttons">
                 <button id="visualizationBtn" class="nav-button">🎮</button>
-                <button id="logoutBtn" class="nav-button">Sair</button>
             </div>
             <div class="logo">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</div>
         </div>
@@ -805,605 +804,602 @@
             return true;
         }
 
-        // Função de logout
-        function logout() {
-            sessionStorage.removeItem('loggedIn');
-            localStorage.removeItem('currentUser');
-            localStorage.removeItem('currentUserKey');
-            window.location.replace('index.html');
-        }
+        // Função para inicializar o aplicativo
+        function initApp() {
+            const tabsDiv = document.querySelector('#tabs');
+            const categoryTabsDiv = document.querySelector('#categoryTabs');
+            const leadersGrid = document.querySelector('#leadersGrid');
+            const injuriesGrid = document.querySelector('#injuriesGrid');
+            const betsGrid = document.querySelector('#betsGrid');
+            const scheduleDiv = document.querySelector('#schedule');
+            let currentDate = null;
+            let autoUpdateInterval = null;
+            let previousScores = {};
 
-        const tabsDiv = document.querySelector('#tabs');
-        const categoryTabsDiv = document.querySelector('#categoryTabs');
-        const leadersGrid = document.querySelector('#leadersGrid');
-        const injuriesGrid = document.querySelector('#injuriesGrid');
-        const betsGrid = document.querySelector('#betsGrid');
-        const scheduleDiv = document.querySelector('#schedule');
-        let currentDate = null;
-        let autoUpdateInterval = null;
-        let previousScores = {};
+            const modal = document.querySelector('#gameStatsModal');
+            const modalTitle = document.querySelector('#modalTitle');
+            const awayTeamName = document.querySelector('#awayTeamName');
+            const homeTeamName = document.querySelector('#homeTeamName');
+            const teamLeadersContainer = document.querySelector('#teamLeadersContainer');
+            const statsContent = document.querySelector('#statsContent');
+            const injuriesContainer = document.querySelector('#injuriesContainer');
+            const betsContainer = document.querySelector('#betsContainer');
+            const closeModalBtn = document.querySelector('#closeModal');
 
-        const modal = document.querySelector('#gameStatsModal');
-        const modalTitle = document.querySelector('#modalTitle');
-        const awayTeamName = document.querySelector('#awayTeamName');
-        const homeTeamName = document.querySelector('#homeTeamName');
-        const teamLeadersContainer = document.querySelector('#teamLeadersContainer');
-        const statsContent = document.querySelector('#statsContent');
-        const injuriesContainer = document.querySelector('#injuriesContainer');
-        const betsContainer = document.querySelector('#betsContainer');
-        const closeModalBtn = document.querySelector('#closeModal');
+            function createParticles() {
+                const particlesContainer = document.getElementById('particles');
+                const numberOfParticles = 10;
 
-        function createParticles() {
-            const particlesContainer = document.getElementById('particles');
-            const numberOfParticles = 10;
+                for (let i = 0; i < numberOfParticles; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
 
-            for (let i = 0; i < numberOfParticles; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
+                    const posX = Math.random() * 100;
+                    const posY = Math.random() * 100 + 100;
+                    const size = Math.random() * 1.5 + 1;
+                    const duration = Math.random() * 20 + 20;
+                    const delay = Math.random() * 5;
 
-                const posX = Math.random() * 100;
-                const posY = Math.random() * 100 + 100;
-                const size = Math.random() * 1.5 + 1;
-                const duration = Math.random() * 20 + 20;
-                const delay = Math.random() * 5;
+                    particle.style.left = `${posX}%`;
+                    particle.style.top = `${posY}%`;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    particle.style.animationDuration = `${duration}s`;
+                    particle.style.animationDelay = `${delay}s`;
 
-                particle.style.left = `${posX}%`;
-                particle.style.top = `${posY}%`;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.animationDuration = `${duration}s`;
-                particle.style.animationDelay = `${delay}s`;
-
-                particlesContainer.appendChild(particle);
-            }
-        }
-
-        async function fetchPlayerSeasonStats(eventId) {
-            const apiUrl = `https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/event/${eventId}/playerSeasonStats?nbPlayersToShow=5&brand=tsn&qualifiedOnly=true&type=json&seasonType=regular_season`;
-            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
-            try {
-                const response = await fetch(proxyUrl);
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                const data = await response.json();
-                return data;
-            } catch (error) {
-                console.error('Error fetching player season stats:', error);
-                throw error;
-            }
-        }
-
-        async function fetchInjuries() {
-            const apiUrl = `https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/playerInjuries?brand=tsn&type=json`;
-            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
-            try {
-                const response = await fetch(proxyUrl);
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                const data = await response.json();
-                return data;
-            } catch (error) {
-                console.error('Error fetching injuries:', error);
-                throw error;
-            }
-        }
-
-        function getPlayerPhotoUrl(playerName) {
-            const seoId = playerName.toLowerCase().replace(/\s+/g, '-') + '-358183';
-            return `https://tsnimages.tsn.ca/ImageProvider/PlayerHeadshot?seoId=${seoId}&width=128&height=128`;
-        }
-
-        function formatarDataBrasil(dataStr) {
-            const data = new Date(dataStr + 'T12:00:00');
-            const options = { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'America/Sao_Paulo' };
-            return data.toLocaleDateString('pt-BR', options).replace('.', '').toUpperCase();
-        }
-
-        function getDataAtualSP() {
-            const now = new Date();
-            const spTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
-            return spTime.toISOString().split('T')[0];
-        }
-
-        async function fetchDates() {
-            const apiUrl = `https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/scheduleV2/subset/dates?brand=tsn&type=json`;
-            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
-            try {
-                const response = await fetch(proxyUrl);
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                const data = await response.json();
-                return Object.keys(data).sort();
-            } catch (error) {
-                console.error('Error fetching dates:', error);
-                throw error;
-            }
-        }
-
-        async function fetchSchedule(date) {
-            const apiUrl = `https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/scheduleV2/subset/dates?brand=tsn&type=json&dateOrId=${date}`;
-            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
-            try {
-                const response = await fetch(proxyUrl);
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                const data = await response.json();
-                return data[date];
-            } catch (error) {
-                console.error('Error fetching schedule:', error);
-                throw error;
-            }
-        }
-
-        async function renderTabs() {
-            if (!checkUserLogin()) return;
-            try {
-                const dates = await fetchDates();
-                const hoje = getDataAtualSP();
-
-                let html = '';
-                let dataAtiva = dates.includes(hoje) ? hoje : dates[0];
-
-                dates.forEach(date => {
-                    const ativa = date === dataAtiva;
-                    const textoAba = formatarDataBrasil(date);
-                    html += `<div class="tab${ativa ? ' active' : ''}" data-date="${date}">${textoAba}</div>`;
-                });
-
-                tabsDiv.innerHTML = html;
-                currentDate = dataAtiva;
-
-                document.querySelectorAll('.tab').forEach(tab => {
-                    tab.addEventListener('click', () => {
-                        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                        tab.classList.add('active');
-                        currentDate = tab.dataset.date;
-                        previousScores = {};
-                        startAutoUpdate();
-                    });
-                });
-
-                document.getElementById('visualizationBtn').addEventListener('click', () => {
-                    window.location.href = 'visualization.html';
-                });
-
-                document.getElementById('logoutBtn').addEventListener('click', logout);
-
-                createParticles();
-                startAutoUpdate();
-            } catch (error) {
-                console.error('Erro ao renderizar abas:', error);
-                tabsDiv.innerHTML = '<div class="error">Erro ao carregar datas</div>';
-            }
-        }
-
-        function splitTeamName(fullName) {
-            const specialCases = {
-                'Trail Blazers': 'Portland', 'Timberwolves': 'Minnesota', 'Thunder': 'Oklahoma City', 'Jazz': 'Utah',
-                'Heat': 'Miami', 'Magic': 'Orlando', 'Wizards': 'Washington', 'Pacers': 'Indiana', 'Knicks': 'New York',
-                'Nets': 'Brooklyn', 'Celtics': 'Boston', '76ers': 'Philadelphia', 'Raptors': 'Toronto', 'Bulls': 'Chicago',
-                'Cavaliers': 'Cleveland', 'Pistons': 'Detroit', 'Bucks': 'Milwaukee', 'Hawks': 'Atlanta', 'Hornets': 'Charlotte',
-                'Mavericks': 'Dallas', 'Rockets': 'Houston', 'Grizzlies': 'Memphis', 'Pelicans': 'New Orleans', 'Spurs': 'San Antonio',
-                'Nuggets': 'Denver', 'Warriors': 'Golden State', 'Clippers': 'LA Clippers', 'Lakers': 'Los Angeles', 'Suns': 'Phoenix',
-                'Kings': 'Sacramento'
-            };
-            for (const [nickname, city] of Object.entries(specialCases)) {
-                if (fullName.includes(nickname)) return { city, nickname };
-            }
-            const parts = fullName.split(' ');
-            if (parts.length === 1) return { city: fullName, nickname: '' };
-            const nickname = parts.pop();
-            const city = parts.join(' ');
-            return { city, nickname };
-        }
-
-        function formatRecord(record) {
-            if (!record) return '';
-            const [wins, losses] = record.split('-');
-            return `<span class="wins">${wins}</span>-<span class="losses">${losses}</span>`;
-        }
-
-        function getTeamLogoUrl(seoIdentifier) {
-            return `https://tsnimages.tsn.ca/ImageProvider/TeamLogo?seoId=${seoIdentifier}&width=50&height=50`;
-        }
-
-        function formatTime(dateET) {
-            const date = new Date(dateET);
-            return date.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo', hour: 'numeric', minute: 'numeric', hour12: true }).replace(':', 'h');
-        }
-
-        async function renderSchedule(date) {
-            try {
-                const data = await fetchSchedule(date);
-                if (!data || !data.events) {
-                    scheduleDiv.innerHTML = `<div class="day-header">${formatarDataBrasil(date)}</div><div class="match">Nenhum jogo agendado</div>`;
-                    return;
+                    particlesContainer.appendChild(particle);
                 }
-
-                let html = `<div class="day-header">${formatarDataBrasil(date)}</div>`;
-                data.events.forEach(event => {
-                    const eventData = event.event;
-                    const { top, bottom: away, status, dateET } = eventData;
-                    const eventId = event.eventId;
-
-                    const isLiveGame = status.includes('Progress') || status.includes('Em Andamento');
-                    const isFinalGame = status.includes('Final') || status.includes('Terminado');
-
-                    const topTeam = splitTeamName(top.name);
-                    const awayTeam = splitTeamName(away.name);
-
-                    const scoreDisplay = (top.score != null && away.score != null) ? `${away.score} - ${top.score}` : '';
-                    const timeDisplay = formatTime(dateET);
-                    const topLogo = getTeamLogoUrl(top.seoIdentifier);
-                    const awayLogo = getTeamLogoUrl(away.seoIdentifier);
-
-                    const hasScore = top.score != null && away.score != null;
-                    const scoreKey = `${eventId}`;
-                    const previousScore = previousScores[scoreKey] || '';
-                    const currentScore = hasScore ? scoreDisplay : '';
-                    const scoreChanged = previousScore && currentScore && previousScore !== currentScore;
-                    previousScores[scoreKey] = currentScore;
-
-                    if (status === 'Final' || hasScore) {
-                        html += `
-                            <div class="match ${isLiveGame ? 'live-game' : ''} ${isFinalGame ? 'final-game' : ''}">
-                                ${isLiveGame ? '<div class="live-badge">AO VIVO</div>' : ''}
-                                <div class="match-header">${away.name} vs ${top.name}</div>
-                                <div class="teams">
-                                    <div class="team">
-                                        <img src="${awayLogo}" alt="${away.name}" onerror="this.src='https://via.placeholder.com/50?text=${away.shortName}'">
-                                        <span class="team-name">
-                                            <span class="team-city">${awayTeam.city}</span>
-                                            <span class="team-nickname">${awayTeam.nickname}</span>
-                                        </span>
-                                        <span class="team-record">${formatRecord(away.record)}</span>
-                                        ${away.hasWon ? '<span class="winner">(V)</span>' : ''}
-                                    </div>
-                                    <div class="versus">
-                                        <div class="score${scoreChanged ? ' score-updated' : ''}">${scoreDisplay}</div>
-                                        <div class="status ${isLiveGame ? 'in-progress' : 'final'}">${status}</div>
-                                    </div>
-                                    <div class="team">
-                                        <img src="${topLogo}" alt="${top.name}" onerror="this.src='https://via.placeholder.com/50?text=${top.shortName}'">
-                                        <span class="team-name">
-                                            <span class="team-city">${topTeam.city}</span>
-                                            <span class="team-nickname">${topTeam.nickname}</span>
-                                        </span>
-                                        <span class="team-record">${formatRecord(top.record)}</span>
-                                        ${top.hasWon ? '<span class="winner">(V)</span>' : ''}
-                                    </div>
-                                </div>
-                                <div class="details">
-                                    <button onclick="showGameStats('${eventId}', '${away.name}', '${top.name}', '${away.seoIdentifier}', '${top.seoIdentifier}')">Estatísticas</button>
-                                </div>
-                            </div>
-                        `;
-                    } else {
-                        html += `
-                            <div class="match">
-                                <div class="match-header">${away.name} vs ${top.name}</div>
-                                <div class="teams">
-                                    <div class="team">
-                                        <img src="${awayLogo}" alt="${away.name}" onerror="this.src='https://via.placeholder.com/50?text=${away.shortName}'">
-                                        <span class="team-name">
-                                            <span class="team-city">${awayTeam.city}</span>
-                                            <span class="team-nickname">${awayTeam.nickname}</span>
-                                        </span>
-                                        <span class="team-record">${formatRecord(away.record)}</span>
-                                    </div>
-                                    <div class="versus">
-                                        <div class="time">${timeDisplay}</div>
-                                    </div>
-                                    <div class="team">
-                                        <img src="${topLogo}" alt="${top.name}" onerror="this.src='https://via.placeholder.com/50?text=${top.shortName}'">
-                                        <span class="team-name">
-                                            <span class="team-city">${topTeam.city}</span>
-                                            <span class="team-nickname">${topTeam.nickname}</span>
-                                        </span>
-                                        <span class="team-record">${formatRecord(top.record)}</span>
-                                    </div>
-                                </div>
-                                <div class="details">
-                                    <button onclick="showGameStats('${eventId}', '${away.name}', '${top.name}', '${away.seoIdentifier}', '${top.seoIdentifier}')">Estatísticas</button>
-                                </div>
-                            </div>
-                        `;
-                    }
-                });
-                scheduleDiv.innerHTML = html;
-            } catch (error) {
-                scheduleDiv.innerHTML = `<div class="day-header">${formatarDataBrasil(date)}</div><div class="error">Erro ao carregar o calendário: ${error.message}</div>`;
             }
-        }
 
-        function startAutoUpdate() {
-            if (autoUpdateInterval) clearInterval(autoUpdateInterval);
-            if (currentDate) renderSchedule(currentDate);
-            autoUpdateInterval = setInterval(async () => {
-                if (currentDate) await renderSchedule(currentDate);
-            }, 30000);
-        }
-
-        async function showGameStats(eventId, homeName, awayName, homeSeoIdentifier, awaySeoIdentifier) {
-            try {
-                const scheduleData = await fetchSchedule(currentDate);
-                const game = scheduleData?.events.find(e => e.eventId === eventId)?.event;
-                const gameStatus = game?.status || 'Pre-Game';
-                const hasScores = game?.top.score != null && game?.bottom.score != null;
-                const isLiveOrFinished = hasScores || gameStatus === 'In Progress' || gameStatus === 'Final';
-
-                let statsData, playerData, injuriesData;
-                if (isLiveOrFinished) {
-                    const gameStatsUrl = `https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/event/${eventId}/stats?brand=tsn&type=json`;
-                    const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(gameStatsUrl)}`);
-                    statsData = await response.json();
-                } else {
-                    const seasonStatsUrl = `https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/event/${eventId}/competitorSeasonStats?brand=tsn&type=json`;
-                    const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(seasonStatsUrl)}`);
-                    statsData = await response.json();
+            async function fetchPlayerSeasonStats(eventId) {
+                const apiUrl = `https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/event/${eventId}/playerSeasonStats?nbPlayersToShow=5&brand=tsn&qualifiedOnly=true&type=json&seasonType=regular_season`;
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
+                try {
+                    const response = await fetch(proxyUrl);
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    const data = await response.json();
+                    return data;
+                } catch (error) {
+                    console.error('Error fetching player season stats:', error);
+                    throw error;
                 }
+            }
 
-                playerData = await fetchPlayerSeasonStats(eventId);
-                injuriesData = await fetchInjuries();
-
-                modalTitle.textContent = `${homeName} vs ${awayName}`;
-                homeTeamName.textContent = homeName;
-                awayTeamName.textContent = awayName;
-
-                // Process team leaders
-                const categories = {
-                    'points': { title: 'POINTS PER GAME', key: 'pointsAverage', displayKey: 'pointsAverage' },
-                    'rebounds': { title: 'REBOUNDS/GAME', key: 'reboundsPerGame', displayKey: 'reboundsPerGame' },
-                    'assists': { title: 'ASSISTS/GAME', key: 'assistsPerGame', displayKey: 'assistsPerGame' },
-                    'blocks': { title: 'BLOCKS/GAME', key: 'blocksPerGame', displayKey: 'blocksPerGame' },
-                    'steals': { title: 'STEALS/GAME', key: 'stealsPerGame', displayKey: 'stealsPerGame' }
-                };
-
-                const getTeamLeaders = (teamData) => {
-                    if (!teamData || !teamData.playerStatsByCategory) return [];
-                    const teamLeaders = [];
-                    Object.entries(categories).forEach(([category, info]) => {
-                        const player = teamData.playerStatsByCategory[info.key]?.[0];
-                        if (player) {
-                            teamLeaders.push({
-                                category,
-                                position: player.player.positionShort || 'N/A',
-                                name: player.player.displayName || 'Unknown',
-                                stat: player.stats[info.displayKey] || '0',
-                                photoUrl: getPlayerPhotoUrl(player.player.displayName)
-                            });
-                        } else {
-                            teamLeaders.push({
-                                category,
-                                position: 'N/A',
-                                name: 'Data Unavailable',
-                                stat: '0',
-                                photoUrl: 'https://via.placeholder.com/60?text=N/A'
-                            });
-                        }
-                    });
-                    return teamLeaders;
-                };
-
-                const homeLeaders = getTeamLeaders(playerData?.home);
-                const awayLeaders = getTeamLeaders(playerData?.away);
-
-                const allLeaders = [];
-                homeLeaders.forEach((homeLeader, index) => {
-                    allLeaders.push({ home: homeLeader, away: awayLeaders[index], category: homeLeader.category });
-                });
-
-                function renderCategory(category) {
-                    const categoryLeaders = allLeaders.filter(leader => leader.category === category);
-                    leadersGrid.innerHTML = categoryLeaders.map(leader => `
-                        <div class="leader-team">
-                            <img src="${leader.home.photoUrl}" alt="${leader.home.name}" class="leader-photo" onerror="this.src='https://via.placeholder.com/60?text=${leader.home.name}'">
-                            <div class="leader-info">
-                                <span class="position">${leader.home.position}</span>
-                                <span class="name">${leader.home.name}</span>
-                            </div>
-                            <div class="stat">${leader.home.stat}</div>
-                        </div>
-                        <div class="leader-team">
-                            <img src="${leader.away.photoUrl}" alt="${leader.away.name}" class="leader-photo" onerror="this.src='https://via.placeholder.com/60?text=${leader.away.name}'">
-                            <div class="leader-info">
-                                <span class="position">${leader.away.position}</span>
-                                <span class="name">${leader.away.name}</span>
-                            </div>
-                            <div class="stat">${leader.away.stat}</div>
-                        </div>
-                    `).join('');
+            async function fetchInjuries() {
+                const apiUrl = `https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/playerInjuries?brand=tsn&type=json`;
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
+                try {
+                    const response = await fetch(proxyUrl);
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    const data = await response.json();
+                    return data;
+                } catch (error) {
+                    console.error('Error fetching injuries:', error);
+                    throw error;
                 }
+            }
 
-                renderCategory('points');
+            function getPlayerPhotoUrl(playerName) {
+                const seoId = playerName.toLowerCase().replace(/\s+/g, '-') + '-358183';
+                return `https://tsnimages.tsn.ca/ImageProvider/PlayerHeadshot?seoId=${seoId}&width=128&height=128`;
+            }
 
-                document.querySelectorAll('.category-tab').forEach(tab => {
-                    tab.addEventListener('click', () => {
-                        document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
-                        tab.classList.add('active');
-                        const category = tab.dataset.category;
-                        renderCategory(category);
-                    });
-                });
+            function formatarDataBrasil(dataStr) {
+                const data = new Date(dataStr + 'T12:00:00');
+                const options = { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'America/Sao_Paulo' };
+                return data.toLocaleDateString('pt-BR', options).replace('.', '').toUpperCase();
+            }
 
-                // Process injuries
-                const homeInjuries = injuriesData?.find(team => team.competitor.seoIdentifier === homeSeoIdentifier)?.playerInjuries || [];
-                const awayInjuries = injuriesData?.find(team => team.competitor.seoIdentifier === awaySeoIdentifier)?.playerInjuries || [];
+            function getDataAtualSP() {
+                const now = new Date();
+                const spTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
+                return spTime.toISOString().split('T')[0];
+            }
 
-                const allInjuries = [];
-                const maxInjuries = Math.max(homeInjuries.length, awayInjuries.length);
-                for (let i = 0; i < maxInjuries; i++) {
-                    const homeInjury = homeInjuries[i] || { player: { displayName: 'Nenhum', positionShort: '' }, description: 'Nenhum jogador lesionado', date: '' };
-                    const awayInjury = awayInjuries[i] || { player: { displayName: 'Nenhum', positionShort: '' }, description: 'Nenhum jogador lesionado', date: '' };
-                    allInjuries.push({ home: homeInjury, away: awayInjury });
+            async function fetchDates() {
+                const apiUrl = `https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/scheduleV2/subset/dates?brand=tsn&type=json`;
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
+                try {
+                    const response = await fetch(proxyUrl);
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    const data = await response.json();
+                    return Object.keys(data).sort();
+                } catch (error) {
+                    console.error('Error fetching dates:', error);
+                    throw error;
                 }
+            }
 
-                injuriesGrid.innerHTML = allInjuries.map(injury => `
-                    <div class="injury-team">
-                        <span class="injury-icon">🏥</span>
-                        <div class="injury-info">
-                            <span class="name">${injury.home.player.displayName} (${injury.home.player.positionShort || 'N/A'})</span>
-                            <span class="description">${injury.home.description}</span>
-                            <span class="date">${injury.home.date ? `Desde: ${injury.home.date}` : ''}</span>
-                        </div>
-                    </div>
-                    <div class="injury-team">
-                        <span class="injury-icon">🏥</span>
-                        <div class="injury-info">
-                            <span class="name">${injury.away.player.displayName} (${injury.away.player.positionShort || 'N/A'})</span>
-                            <span class="description">${injury.away.description}</span>
-                            <span class="date">${injury.away.date ? `Desde: ${injury.away.date}` : ''}</span>
-                        </div>
-                    </div>
-                `).join('');
+            async function fetchSchedule(date) {
+                const apiUrl = `https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/scheduleV2/subset/dates?brand=tsn&type=json&dateOrId=${date}`;
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
+                try {
+                    const response = await fetch(proxyUrl);
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    const data = await response.json();
+                    return data[date];
+                } catch (error) {
+                    console.error('Error fetching schedule:', error);
+                    throw error;
+                }
+            }
 
-                // Process possible bets
-                const homePointsFor = parseFloat(statsData?.home?.stats?.pointsForPerGame) || 0;
-                const awayPointsFor = parseFloat(statsData?.away?.stats?.pointsForPerGame) || 0;
-                const homePointsAgainst = parseFloat(statsData?.home?.stats?.pointsAgainstPerGame) || 0;
-                const awayPointsAgainst = parseFloat(statsData?.away?.stats?.pointsAgainstPerGame) || 0;
-
-                const avgPointsHome = (homePointsFor + awayPointsAgainst) / 2;
-                const avgPointsAway = (awayPointsFor + homePointsAgainst) / 2;
-                const totalPoints = (avgPointsHome + avgPointsAway) / 2;
-                const overPoints = totalPoints > 0 ? Math.ceil(totalPoints / 5) * 5 : 200;
-
-                const homeRebounds = parseFloat(statsData?.home?.stats?.reboundsPerGame) || 0;
-                const awayRebounds = parseFloat(statsData?.away?.stats?.reboundsPerGame) || 0;
-                const totalRebounds = homeRebounds + awayRebounds;
-                const overRebounds = totalRebounds > 0 ? Math.ceil(totalRebounds / 5) * 5 : 80;
-
-                const homeTurnovers = parseFloat(statsData?.home?.stats?.turnoverPerGame) || 0;
-                const awayTurnovers = parseFloat(statsData?.away?.stats?.turnoverPerGame) || 0;
-                const totalTurnovers = homeTurnovers + awayTurnovers;
-                const underTurnovers = totalTurnovers > 0 ? Math.ceil(totalTurnovers) + 2 : 25;
-
-                const homeAssistsLeader = playerData?.home?.playerStatsByCategory?.assistsPerGame?.[0];
-                const awayAssistsLeader = playerData?.away?.playerStatsByCategory?.assistsPerGame?.[0];
-                const homeReboundsLeader = playerData?.home?.playerStatsByCategory?.reboundsPerGame?.[0];
-                const awayReboundsLeader = playerData?.away?.playerStatsByCategory?.reboundsPerGame?.[0];
-
-                const homeAssistsBet = homeAssistsLeader ? {
-                    name: homeAssistsLeader.player.displayName,
-                    position: homeAssistsLeader.player.positionShort || 'N/A',
-                    assists: Math.floor(parseFloat(homeAssistsLeader.stats.assistsPerGame) || 0)
-                } : { name: 'Nenhum', position: '', assists: 0 };
-
-                const awayAssistsBet = awayAssistsLeader ? {
-                    name: awayAssistsLeader.player.displayName,
-                    position: awayAssistsLeader.player.positionShort || 'N/A',
-                    assists: Math.floor(parseFloat(awayAssistsLeader.stats.assistsPerGame) || 0)
-                } : { name: 'Nenhum', position: '', assists: 0 };
-
-                const homeReboundsBet = homeReboundsLeader ? {
-                    name: homeReboundsLeader.player.displayName,
-                    position: homeReboundsLeader.player.positionShort || 'N/A',
-                    rebounds: Math.floor(parseFloat(homeReboundsLeader.stats.reboundsPerGame) || 0)
-                } : { name: 'Nenhum', position: '', rebounds: 0 };
-
-                const awayReboundsBet = awayReboundsLeader ? {
-                    name: awayReboundsLeader.player.displayName,
-                    position: awayReboundsLeader.player.positionShort || 'N/A',
-                    rebounds: Math.floor(parseFloat(awayReboundsLeader.stats.reboundsPerGame) || 0)
-                } : { name: 'Nenhum', position: '', rebounds: 0 };
-
-                const bets = [
-                    { type: 'Over Pontos', value: `Over ${overPoints} pontos` },
-                    { type: 'Over Rebotes (Equipes)', value: `Over ${overRebounds} rebotes` },
-                    { type: 'Under Erros de Posse (Equipes)', value: `Under ${underTurnovers} turnovers` },
-                    { type: `${homeAssistsBet.name} (${homeAssistsBet.position}) Assistências`, value: `Pelo menos ${homeAssistsBet.assists} assistências` },
-                    { type: `${awayAssistsBet.name} (${awayAssistsBet.position}) Assistências`, value: `Pelo menos ${awayAssistsBet.assists} assistências` },
-                    { type: `${homeReboundsBet.name} (${homeReboundsBet.position}) Rebotes`, value: `Pelo menos ${homeReboundsBet.rebounds} rebotes` },
-                    { type: `${awayReboundsBet.name} (${awayReboundsBet.position}) Rebotes`, value: `Pelo menos ${awayReboundsBet.rebounds} rebotes` }
-                ];
-
-                betsGrid.innerHTML = bets.map(bet => `
-                    <div class="bet-item">
-                        <span class="bet-icon">🎯</span>
-                        <div class="bet-info">
-                            <span class="type">${bet.type}</span>
-                            <span class="value">${bet.value}</span>
-                        </div>
-                    </div>
-                `).join('');
-
-                // Render game stats
-                if ((statsData && (statsData.away || statsData.home)) || (playerData && (playerData.away || playerData.home))) {
-                    const stats = isLiveOrFinished ? [
-                        { label: 'PONTOS', home: game?.bottom.score || '0', away: game?.top.score || '0' },
-                        { label: 'PONTOS SOFRIDOS', home: game?.top.score || '0', away: game?.bottom.score || '0' },
-                        { label: '% DE ARREMESSOS CERTOS', home: statsData.home.stats?.fieldGoalsPercentage ? `${(parseFloat(statsData.home.stats.fieldGoalsPercentage) * 100).toFixed(1)}%` : 'N/A', away: statsData.away.stats?.fieldGoalsPercentage ? `${(parseFloat(statsData.away.stats.fieldGoalsPercentage) * 100).toFixed(1)}%` : 'N/A' },
-                        { label: '% DE LANCES LIVRES', home: statsData.home.stats?.freeThrowsPercentage ? `${(parseFloat(statsData.home.stats.freeThrowsPercentage) * 100).toFixed(1)}%` : 'N/A', away: statsData.away.stats?.freeThrowsPercentage ? `${(parseFloat(statsData.away.stats.freeThrowsPercentage) * 100).toFixed(1)}%` : 'N/A' },
-                        { label: '% DE ARREMESSOS DE 3 PONTOS', home: statsData.home.stats?.threePointPercentage ? `${(parseFloat(statsData.home.stats.threePointPercentage) * 100).toFixed(1)}%` : 'N/A', away: statsData.away.stats?.threePointPercentage ? `${(parseFloat(statsData.away.stats.threePointPercentage) * 100).toFixed(1)}%` : 'N/A' },
-                        { label: 'REBOTES', home: statsData.home.stats?.reboundsTotal || '0', away: statsData.away.stats?.reboundsTotal || '0' },
-                        { label: 'ASSISTÊNCIAS', home: statsData.home.stats?.assists || '0', away: statsData.away.stats?.assists || '0' },
-                        { label: 'TOCOS', home: statsData.home.stats?.blockedShots || '0', away: statsData.away.stats?.blockedShots || '0' },
-                        { label: 'ROUBOS DE BOLA', home: statsData.home.stats?.steals || '0', away: statsData.away.stats?.steals || '0' },
-                        { label: 'ERROS DE POSSE', home: statsData.home.stats?.turnovers || '0', away: statsData.away.stats?.turnovers || '0' }
-                    ] : [
-                        { label: 'PONTOS POR JOGO', home: statsData.home?.stats?.pointsForPerGame || 'N/A', away: statsData.away?.stats?.pointsForPerGame || 'N/A' },
-                        { label: 'PONTOS SOFRIDOS POR JOGO', home: statsData.home?.stats?.pointsAgainstPerGame || 'N/A', away: statsData.away?.stats?.pointsAgainstPerGame || 'N/A' },
-                        { label: '% DE ARREMESSOS CERTOS', home: statsData.home?.stats?.fieldGoalsPercentage ? `${(parseFloat(statsData.home.stats.fieldGoalsPercentage) * 100).toFixed(1)}%` : 'N/A', away: statsData.away?.stats?.fieldGoalsPercentage ? `${(parseFloat(statsData.away.stats.fieldGoalsPercentage) * 100).toFixed(1)}%` : 'N/A' },
-                        { label: '% DE LANCES LIVRES', home: statsData.home?.stats?.freeThrowsPercentage ? `${(parseFloat(statsData.home.stats.freeThrowsPercentage) * 100).toFixed(1)}%` : 'N/A', away: statsData.away?.stats?.freeThrowsPercentage ? `${(parseFloat(statsData.away.stats.freeThrowsPercentage) * 100).toFixed(1)}%` : 'N/A' },
-                        { label: '% DE ARREMESSOS DE 3 PONTOS', home: statsData.home?.stats?.threePointPercentage ? `${(parseFloat(statsData.home.stats.threePointPercentage) * 100).toFixed(1)}%` : 'N/A', away: statsData.away?.stats?.threePointPercentage ? `${(parseFloat(statsData.away.stats.threePointPercentage) * 100).toFixed(1)}%` : 'N/A' },
-                        { label: 'REBOTES POR JOGO', home: statsData.home?.stats?.reboundsPerGame || 'N/A', away: statsData.away?.stats?.reboundsPerGame || 'N/A' },
-                        { label: 'ASSISTÊNCIAS POR JOGO', home: statsData.home?.stats?.assistsPerGame || 'N/A', away: statsData.away?.stats?.assistsPerGame || 'N/A' },
-                        { label: 'TOCOS POR JOGO', home: statsData.home?.stats?.blocksPerGame || 'N/A', away: statsData.away?.stats?.blocksPerGame || 'N/A' },
-                        { label: 'ROUBOS DE BOLA POR JOGO', home: statsData.home?.stats?.stealsPerGame || 'N/A', away: statsData.away?.stats?.stealsPerGame || 'N/A' },
-                        { label: 'ERROS DE POSSE POR JOGO', home: statsData.home?.stats?.turnoverPerGame || 'N/A', away: statsData.away?.stats?.turnoverPerGame || 'N/A' }
-                    ];
+            async function renderTabs() {
+                try {
+                    const dates = await fetchDates();
+                    const hoje = getDataAtualSP();
 
                     let html = '';
-                    stats.forEach(stat => {
-                        const homeValue = parseFloat(stat.home) || 0;
-                        const awayValue = parseFloat(stat.away) || 0;
-                        const max = Math.max(homeValue, awayValue, 1);
-                        const homeWidth = (homeValue / max) * 100;
-                        const awayWidth = (awayValue / max) * 100;
+                    let dataAtiva = dates.includes(hoje) ? hoje : dates[0];
 
-                        html += `
-                            <div class="stat-row">
-                                <div class="stat-value home">${stat.home}</div>
-                                <div class="stat-label">${stat.label}</div>
-                                <div class="stat-value away">${stat.away}</div>
-                            </div>
-                            <div class="stat-bar-container">
-                                <div class="stat-bar home" style="width: ${homeWidth}%"></div>
-                                <div class="stat-bar away" style="width: ${awayWidth}%"></div>
-                            </div>
-                        `;
+                    dates.forEach(date => {
+                        const ativa = date === dataAtiva;
+                        const textoAba = formatarDataBrasil(date);
+                        html += `<div class="tab${ativa ? ' active' : ''}" data-date="${date}">${textoAba}</div>`;
                     });
-                    statsContent.innerHTML = html;
-                } else {
-                    statsContent.innerHTML = `<div class="stat-row"><div class="stat-label" style="width: 100%; text-align: center;">Estatísticas não disponíveis</div></div>`;
+
+                    tabsDiv.innerHTML = html;
+                    currentDate = dataAtiva;
+
+                    document.querySelectorAll('.tab').forEach(tab => {
+                        tab.addEventListener('click', () => {
+                            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                            tab.classList.add('active');
+                            currentDate = tab.dataset.date;
+                            previousScores = {};
+                            startAutoUpdate();
+                        });
+                    });
+
+                    document.getElementById('visualizationBtn').addEventListener('click', () => {
+                        window.location.href = 'visualization.html';
+                    });
+
+                    createParticles();
+                    startAutoUpdate();
+                } catch (error) {
+                    console.error('Erro ao renderizar abas:', error);
+                    tabsDiv.innerHTML = '<div class="error">Erro ao carregar datas</div>';
                 }
-
-                modal.style.display = 'flex';
-                setTimeout(() => modal.classList.add('show'), 10);
-            } catch (error) {
-                console.error('Failed to load game stats:', error);
-                teamLeadersContainer.innerHTML = '';
-                injuriesContainer.innerHTML = '';
-                betsContainer.innerHTML = '';
-                statsContent.innerHTML = `
-                    <div class="error">Erro ao carregar estatísticas</div>
-                    <div class="error-details">${error.message}</div>
-                    <button class="retry-btn" onclick="showGameStats('${eventId}', '${homeName}', '${awayName}', '${homeSeoIdentifier}', '${awaySeoIdentifier}')">Tentar Novamente</button>
-                `;
-                modal.style.display = 'flex';
-                setTimeout(() => modal.classList.add('show'), 10);
             }
-        }
 
-        closeModalBtn.addEventListener('click', () => {
-            modal.classList.remove('show');
-            setTimeout(() => modal.style.display = 'none', 300);
-        });
+            function splitTeamName(fullName) {
+                const specialCases = {
+                    'Trail Blazers': 'Portland', 'Timberwolves': 'Minnesota', 'Thunder': 'Oklahoma City', 'Jazz': 'Utah',
+                    'Heat': 'Miami', 'Magic': 'Orlando', 'Wizards': 'Washington', 'Pacers': 'Indiana', 'Knicks': 'New York',
+                    'Nets': 'Brooklyn', 'Celtics': 'Boston', '76ers': 'Philadelphia', 'Raptors': 'Toronto', 'Bulls': 'Chicago',
+                    'Cavaliers': 'Cleveland', 'Pistons': 'Detroit', 'Bucks': 'Milwaukee', 'Hawks': 'Atlanta', 'Hornets': 'Charlotte',
+                    'Mavericks': 'Dallas', 'Rockets': 'Houston', 'Grizzlies': 'Memphis', 'Pelicans': 'New Orleans', 'Spurs': 'San Antonio',
+                    'Nuggets': 'Denver', 'Warriors': 'Golden State', 'Clippers': 'LA Clippers', 'Lakers': 'Los Angeles', 'Suns': 'Phoenix',
+                    'Kings': 'Sacramento'
+                };
+                for (const [nickname, city] of Object.entries(specialCases)) {
+                    if (fullName.includes(nickname)) return { city, nickname };
+                }
+                const parts = fullName.split(' ');
+                if (parts.length === 1) return { city: fullName, nickname: '' };
+                const nickname = parts.pop();
+                const city = parts.join(' ');
+                return { city, nickname };
+            }
 
-        window.addEventListener('click', (event) => {
-            if (event.target === modal) {
+            function formatRecord(record) {
+                if (!record) return '';
+                const [wins, losses] = record.split('-');
+                return `<span class="wins">${wins}</span>-<span class="losses">${losses}</span>`;
+            }
+
+            function getTeamLogoUrl(seoIdentifier) {
+                return `https://tsnimages.tsn.ca/ImageProvider/TeamLogo?seoId=${seoIdentifier}&width=50&height=50`;
+            }
+
+            function formatTime(dateET) {
+                const date = new Date(dateET);
+                return date.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo', hour: 'numeric', minute: 'numeric', hour12: true }).replace(':', 'h');
+            }
+
+            async function renderSchedule(date) {
+                try {
+                    const data = await fetchSchedule(date);
+                    if (!data || !data.events) {
+                        scheduleDiv.innerHTML = `<div class="day-header">${formatarDataBrasil(date)}</div><div class="match">Nenhum jogo agendado</div>`;
+                        return;
+                    }
+
+                    let html = `<div class="day-header">${formatarDataBrasil(date)}</div>`;
+                    data.events.forEach(event => {
+                        const eventData = event.event;
+                        const { top, bottom: away, status, dateET } = eventData;
+                        const eventId = event.eventId;
+
+                        const isLiveGame = status.includes('Progress') || status.includes('Em Andamento');
+                        const isFinalGame = status.includes('Final') || status.includes('Terminado');
+
+                        const topTeam = splitTeamName(top.name);
+                        const awayTeam = splitTeamName(away.name);
+
+                        const scoreDisplay = (top.score != null && away.score != null) ? `${away.score} - ${top.score}` : '';
+                        const timeDisplay = formatTime(dateET);
+                        const topLogo = getTeamLogoUrl(top.seoIdentifier);
+                        const awayLogo = getTeamLogoUrl(away.seoIdentifier);
+
+                        const hasScore = top.score != null && away.score != null;
+                        const scoreKey = `${eventId}`;
+                        const previousScore = previousScores[scoreKey] || '';
+                        const currentScore = hasScore ? scoreDisplay : '';
+                        const scoreChanged = previousScore && currentScore && previousScore !== currentScore;
+                        previousScores[scoreKey] = currentScore;
+
+                        if (status === 'Final' || hasScore) {
+                            html += `
+                                <div class="match ${isLiveGame ? 'live-game' : ''} ${isFinalGame ? 'final-game' : ''}">
+                                    ${isLiveGame ? '<div class="live-badge">AO VIVO</div>' : ''}
+                                    <div class="match-header">${away.name} vs ${top.name}</div>
+                                    <div class="teams">
+                                        <div class="team">
+                                            <img src="${awayLogo}" alt="${away.name}" onerror="this.src='https://via.placeholder.com/50?text=${away.shortName}'">
+                                            <span class="team-name">
+                                                <span class="team-city">${awayTeam.city}</span>
+                                                <span class="team-nickname">${awayTeam.nickname}</span>
+                                            </span>
+                                            <span class="team-record">${formatRecord(away.record)}</span>
+                                            ${away.hasWon ? '<span class="winner">(V)</span>' : ''}
+                                        </div>
+                                        <div class="versus">
+                                            <div class="score${scoreChanged ? ' score-updated' : ''}">${scoreDisplay}</div>
+                                            <div class="status ${isLiveGame ? 'in-progress' : 'final'}">${status}</div>
+                                        </div>
+                                        <div class="team">
+                                            <img src="${topLogo}" alt="${top.name}" onerror="this.src='https://via.placeholder.com/50?text=${top.shortName}'">
+                                            <span class="team-name">
+                                                <span class="team-city">${topTeam.city}</span>
+                                                <span class="team-nickname">${topTeam.nickname}</span>
+                                            </span>
+                                            <span class="team-record">${formatRecord(top.record)}</span>
+                                            ${top.hasWon ? '<span class="winner">(V)</span>' : ''}
+                                        </div>
+                                    </div>
+                                    <div class="details">
+                                        <button onclick="showGameStats('${eventId}', '${away.name}', '${top.name}', '${away.seoIdentifier}', '${top.seoIdentifier}')">Estatísticas</button>
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            html += `
+                                <div class="match">
+                                    <div class="match-header">${away.name} vs ${top.name}</div>
+                                    <div class="teams">
+                                        <div class="team">
+                                            <img src="${awayLogo}" alt="${away.name}" onerror="this.src='https://via.placeholder.com/50?text=${away.shortName}'">
+                                            <span class="team-name">
+                                                <span class="team-city">${awayTeam.city}</span>
+                                                <span class="team-nickname">${awayTeam.nickname}</span>
+                                            </span>
+                                            <span class="team-record">${formatRecord(away.record)}</span>
+                                        </div>
+                                        <div class="versus">
+                                            <div class="time">${timeDisplay}</div>
+                                        </div>
+                                        <div class="team">
+                                            <img src="${topLogo}" alt="${top.name}" onerror="this.src='https://via.placeholder.com/50?text=${top.shortName}'">
+                                            <span class="team-name">
+                                                <span class="team-city">${topTeam.city}</span>
+                                                <span class="team-nickname">${topTeam.nickname}</span>
+                                            </span>
+                                            <span class="team-record">${formatRecord(top.record)}</span>
+                                        </div>
+                                    </div>
+                                    <div class="details">
+                                        <button onclick="showGameStats('${eventId}', '${away.name}', '${top.name}', '${away.seoIdentifier}', '${top.seoIdentifier}')">Estatísticas</button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                    scheduleDiv.innerHTML = html;
+                } catch (error) {
+                    scheduleDiv.innerHTML = `<div class="day-header">${formatarDataBrasil(date)}</div><div class="error">Erro ao carregar o calendário: ${error.message}</div>`;
+                }
+            }
+
+            function startAutoUpdate() {
+                if (autoUpdateInterval) clearInterval(autoUpdateInterval);
+                if (currentDate) renderSchedule(currentDate);
+                autoUpdateInterval = setInterval(async () => {
+                    if (currentDate) await renderSchedule(currentDate);
+                }, 30000);
+            }
+
+            async function showGameStats(eventId, homeName, awayName, homeSeoIdentifier, awaySeoIdentifier) {
+                try {
+                    const scheduleData = await fetchSchedule(currentDate);
+                    const game = scheduleData?.events.find(e => e.eventId === eventId)?.event;
+                    const gameStatus = game?.status || 'Pre-Game';
+                    const hasScores = game?.top.score != null && game?.bottom.score != null;
+                    const isLiveOrFinished = hasScores || gameStatus === 'In Progress' || gameStatus === 'Final';
+
+                    let statsData, playerData, injuriesData;
+                    if (isLiveOrFinished) {
+                        const gameStatsUrl = `https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/event/${eventId}/stats?brand=tsn&type=json`;
+                        const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(gameStatsUrl)}`);
+                        statsData = await response.json();
+                    } else {
+                        const seasonStatsUrl = `https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/event/${eventId}/competitorSeasonStats?brand=tsn&type=json`;
+                        const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(seasonStatsUrl)}`);
+                        statsData = await response.json();
+                    }
+
+                    playerData = await fetchPlayerSeasonStats(eventId);
+                    injuriesData = await fetchInjuries();
+
+                    modalTitle.textContent = `${homeName} vs ${awayName}`;
+                    homeTeamName.textContent = homeName;
+                    awayTeamName.textContent = awayName;
+
+                    // Process team leaders
+                    const categories = {
+                        'points': { title: 'POINTS PER GAME', key: 'pointsAverage', displayKey: 'pointsAverage' },
+                        'rebounds': { title: 'REBOUNDS/GAME', key: 'reboundsPerGame', displayKey: 'reboundsPerGame' },
+                        'assists': { title: 'ASSISTS/GAME', key: 'assistsPerGame', displayKey: 'assistsPerGame' },
+                        'blocks': { title: 'BLOCKS/GAME', key: 'blocksPerGame', displayKey: 'blocksPerGame' },
+                        'steals': { title: 'STEALS/GAME', key: 'stealsPerGame', displayKey: 'stealsPerGame' }
+                    };
+
+                    const getTeamLeaders = (teamData) => {
+                        if (!teamData || !teamData.playerStatsByCategory) return [];
+                        const teamLeaders = [];
+                        Object.entries(categories).forEach(([category, info]) => {
+                            const player = teamData.playerStatsByCategory[info.key]?.[0];
+                            if (player) {
+                                teamLeaders.push({
+                                    category,
+                                    position: player.player.positionShort || 'N/A',
+                                    name: player.player.displayName || 'Unknown',
+                                    stat: player.stats[info.displayKey] || '0',
+                                    photoUrl: getPlayerPhotoUrl(player.player.displayName)
+                                });
+                            } else {
+                                teamLeaders.push({
+                                    category,
+                                    position: 'N/A',
+                                    name: 'Data Unavailable',
+                                    stat: '0',
+                                    photoUrl: 'https://via.placeholder.com/60?text=N/A'
+                                });
+                            }
+                        });
+                        return teamLeaders;
+                    };
+
+                    const homeLeaders = getTeamLeaders(playerData?.home);
+                    const awayLeaders = getTeamLeaders(playerData?.away);
+
+                    const allLeaders = [];
+                    homeLeaders.forEach((homeLeader, index) => {
+                        allLeaders.push({ home: homeLeader, away: awayLeaders[index], category: homeLeader.category });
+                    });
+
+                    function renderCategory(category) {
+                        const categoryLeaders = allLeaders.filter(leader => leader.category === category);
+                        leadersGrid.innerHTML = categoryLeaders.map(leader => `
+                            <div class="leader-team">
+                                <img src="${leader.home.photoUrl}" alt="${leader.home.name}" class="leader-photo" onerror="this.src='https://via.placeholder.com/60?text=${leader.home.name}'">
+                                <div class="leader-info">
+                                    <span class="position">${leader.home.position}</span>
+                                    <span class="name">${leader.home.name}</span>
+                                </div>
+                                <div class="stat">${leader.home.stat}</div>
+                            </div>
+                            <div class="leader-team">
+                                <img src="${leader.away.photoUrl}" alt="${leader.away.name}" class="leader-photo" onerror="this.src='https://via.placeholder.com/60?text=${leader.away.name}'">
+                                <div class="leader-info">
+                                    <span class="position">${leader.away.position}</span>
+                                    <span class="name">${leader.away.name}</span>
+                                </div>
+                                <div class="stat">${leader.away.stat}</div>
+                            </div>
+                        `).join('');
+                    }
+
+                    renderCategory('points');
+
+                    document.querySelectorAll('.category-tab').forEach(tab => {
+                        tab.addEventListener('click', () => {
+                            document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                            tab.classList.add('active');
+                            const category = tab.dataset.category;
+                            renderCategory(category);
+                        });
+                    });
+
+                    // Process injuries
+                    const homeInjuries = injuriesData?.find(team => team.competitor.seoIdentifier === homeSeoIdentifier)?.playerInjuries || [];
+                    const awayInjuries = injuriesData?.find(team => team.competitor.seoIdentifier === awaySeoIdentifier)?.playerInjuries || [];
+
+                    const allInjuries = [];
+                    const maxInjuries = Math.max(homeInjuries.length, awayInjuries.length);
+                    for (let i = 0; i < maxInjuries; i++) {
+                        const homeInjury = homeInjuries[i] || { player: { displayName: 'Nenhum', positionShort: '' }, description: 'Nenhum jogador lesionado', date: '' };
+                        const awayInjury = awayInjuries[i] || { player: { displayName: 'Nenhum', positionShort: '' }, description: 'Nenhum jogador lesionado', date: '' };
+                        allInjuries.push({ home: homeInjury, away: awayInjury });
+                    }
+
+                    injuriesGrid.innerHTML = allInjuries.map(injury => `
+                        <div class="injury-team">
+                            <span class="injury-icon">🏥</span>
+                            <div class="injury-info">
+                                <span class="name">${injury.home.player.displayName} (${injury.home.player.positionShort || 'N/A'})</span>
+                                <span class="description">${injury.home.description}</span>
+                                <span class="date">${injury.home.date ? `Desde: ${injury.home.date}` : ''}</span>
+                            </div>
+                        </div>
+                        <div class="injury-team">
+                            <span class="injury-icon">🏥</span>
+                            <div class="injury-info">
+                                <span class="name">${injury.away.player.displayName} (${injury.away.player.positionShort || 'N/A'})</span>
+                                <span class="description">${injury.away.description}</span>
+                                <span class="date">${injury.away.date ? `Desde: ${injury.away.date}` : ''}</span>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    // Process possible bets
+                    const homePointsFor = parseFloat(statsData?.home?.stats?.pointsForPerGame) || 0;
+                    const awayPointsFor = parseFloat(statsData?.away?.stats?.pointsForPerGame) || 0;
+                    const homePointsAgainst = parseFloat(statsData?.home?.stats?.pointsAgainstPerGame) || 0;
+                    const awayPointsAgainst = parseFloat(statsData?.away?.stats?.pointsAgainstPerGame) || 0;
+
+                    const avgPointsHome = (homePointsFor + awayPointsAgainst) / 2;
+                    const avgPointsAway = (awayPointsFor + homePointsAgainst) / 2;
+                    const totalPoints = (avgPointsHome + avgPointsAway) / 2;
+                    const overPoints = totalPoints > 0 ? Math.ceil(totalPoints / 5) * 5 : 200;
+
+                    const homeRebounds = parseFloat(statsData?.home?.stats?.reboundsPerGame) || 0;
+                    const awayRebounds = parseFloat(statsData?.away?.stats?.reboundsPerGame) || 0;
+                    const totalRebounds = homeRebounds + awayRebounds;
+                    const overRebounds = totalRebounds > 0 ? Math.ceil(totalRebounds / 5) * 5 : 80;
+
+                    const homeTurnovers = parseFloat(statsData?.home?.stats?.turnoverPerGame) || 0;
+                    const awayTurnovers = parseFloat(statsData?.away?.stats?.turnoverPerGame) || 0;
+                    const totalTurnovers = homeTurnovers + awayTurnovers;
+                    const underTurnovers = totalTurnovers > 0 ? Math.ceil(totalTurnovers) + 2 : 25;
+
+                    const homeAssistsLeader = playerData?.home?.playerStatsByCategory?.assistsPerGame?.[0];
+                    const awayAssistsLeader = playerData?.away?.playerStatsByCategory?.assistsPerGame?.[0];
+                    const homeReboundsLeader = playerData?.home?.playerStatsByCategory?.reboundsPerGame?.[0];
+                    const awayReboundsLeader = playerData?.away?.playerStatsByCategory?.reboundsPerGame?.[0];
+
+                    const homeAssistsBet = homeAssistsLeader ? {
+                        name: homeAssistsLeader.player.displayName,
+                        position: homeAssistsLeader.player.positionShort || 'N/A',
+                        assists: Math.floor(parseFloat(homeAssistsLeader.stats.assistsPerGame) || 0)
+                    } : { name: 'Nenhum', position: '', assists: 0 };
+
+                    const awayAssistsBet = awayAssistsLeader ? {
+                        name: awayAssistsLeader.player.displayName,
+                        position: awayAssistsLeader.player.positionShort || 'N/A',
+                        assists: Math.floor(parseFloat(awayAssistsLeader.stats.assistsPerGame) || 0)
+                    } : { name: 'Nenhum', position: '', assists: 0 };
+
+                    const homeReboundsBet = homeReboundsLeader ? {
+                        name: homeReboundsLeader.player.displayName,
+                        position: homeReboundsLeader.player.positionShort || 'N/A',
+                        rebounds: Math.floor(parseFloat(homeReboundsLeader.stats.reboundsPerGame) || 0)
+                    } : { name: 'Nenhum', position: '', rebounds: 0 };
+
+                    const awayReboundsBet = awayReboundsLeader ? {
+                        name: awayReboundsLeader.player.displayName,
+                        position: awayReboundsLeader.player.positionShort || 'N/A',
+                        rebounds: Math.floor(parseFloat(awayReboundsLeader.stats.reboundsPerGame) || 0)
+                    } : { name: 'Nenhum', position: '', rebounds: 0 };
+
+                    const bets = [
+                        { type: 'Over Pontos', value: `Over ${overPoints} pontos` },
+                        { type: 'Over Rebotes (Equipes)', value: `Over ${overRebounds} rebotes` },
+                        { type: 'Under Erros de Posse (Equipes)', value: `Under ${underTurnovers} turnovers` },
+                        { type: `${homeAssistsBet.name} (${homeAssistsBet.position}) Assistências`, value: `Pelo menos ${homeAssistsBet.assists} assistências` },
+                        { type: `${awayAssistsBet.name} (${awayAssistsBet.position}) Assistências`, value: `Pelo menos ${awayAssistsBet.assists} assistências` },
+                        { type: `${homeReboundsBet.name} (${homeReboundsBet.position}) Rebotes`, value: `Pelo menos ${homeReboundsBet.rebounds} rebotes` },
+                        { type: `${awayReboundsBet.name} (${awayReboundsBet.position}) Rebotes`, value: `Pelo menos ${awayReboundsBet.rebounds} rebotes` }
+                    ];
+
+                    betsGrid.innerHTML = bets.map(bet => `
+                        <div class="bet-item">
+                            <span class="bet-icon">🎯</span>
+                            <div class="bet-info">
+                                <span class="type">${bet.type}</span>
+                                <span class="value">${bet.value}</span>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    // Render game stats
+                    if ((statsData && (statsData.away || statsData.home)) || (playerData && (playerData.away || playerData.home))) {
+                        const stats = isLiveOrFinished ? [
+                            { label: 'PONTOS', home: game?.bottom.score || '0', away: game?.top.score || '0' },
+                            { label: 'PONTOS SOFRIDOS', home: game?.top.score || '0', away: game?.bottom.score || '0' },
+                            { label: '% DE ARREMESSOS CERTOS', home: statsData.home.stats?.fieldGoalsPercentage ? `${(parseFloat(statsData.home.stats.fieldGoalsPercentage) * 100).toFixed(1)}%` : 'N/A', away: statsData.away.stats?.fieldGoalsPercentage ? `${(parseFloat(statsData.away.stats.fieldGoalsPercentage) * 100).toFixed(1)}%` : 'N/A' },
+                            { label: '% DE LANCES LIVRES', home: statsData.home.stats?.freeThrowsPercentage ? `${(parseFloat(statsData.home.stats.freeThrowsPercentage) * 100).toFixed(1)}%` : 'N/A', away: statsData.away.stats?.freeThrowsPercentage ? `${(parseFloat(statsData.away.stats.freeThrowsPercentage) * 100).toFixed(1)}%` : 'N/A' },
+                            { label: '% DE ARREMESSOS DE 3 PONTOS', home: statsData.home.stats?.threePointPercentage ? `${(parseFloat(statsData.home.stats.threePointPercentage) * 100).toFixed(1)}%` : 'N/A', away: statsData.away.stats?.threePointPercentage ? `${(parseFloat(statsData.away.stats.threePointPercentage) * 100).toFixed(1)}%` : 'N/A' },
+                            { label: 'REBOTES', home: statsData.home.stats?.reboundsTotal || '0', away: statsData.away.stats?.reboundsTotal || '0' },
+                            { label: 'ASSISTÊNCIAS', home: statsData.home.stats?.assists || '0', away: statsData.away.stats?.assists || '0' },
+                            { label: 'TOCOS', home: statsData.home.stats?.blockedShots || '0', away: statsData.away.stats?.blockedShots || '0' },
+                            { label: 'ROUBOS DE BOLA', home: statsData.home.stats?.steals || '0', away: statsData.away.stats?.steals || '0' },
+                            { label: 'ERROS DE POSSE', home: statsData.home.stats?.turnovers || '0', away: statsData.away.stats?.turnovers || '0' }
+                        ] : [
+                            { label: 'PONTOS POR JOGO', home: statsData.home?.stats?.pointsForPerGame || 'N/A', away: statsData.away?.stats?.pointsForPerGame || 'N/A' },
+                            { label: 'PONTOS SOFRIDOS POR JOGO', home: statsData.home?.stats?.pointsAgainstPerGame || 'N/A', away: statsData.away?.stats?.pointsAgainstPerGame || 'N/A' },
+                            { label: '% DE ARREMESSOS CERTOS', home: statsData.home?.stats?.fieldGoalsPercentage ? `${(parseFloat(statsData.home.stats.fieldGoalsPercentage) * 100).toFixed(1)}%` : 'N/A', away: statsData.away?.stats?.fieldGoalsPercentage ? `${(parseFloat(statsData.away.stats.fieldGoalsPercentage) * 100).toFixed(1)}%` : 'N/A' },
+                            { label: '% DE LANCES LIVRES', home: statsData.home?.stats?.freeThrowsPercentage ? `${(parseFloat(statsData.home.stats.freeThrowsPercentage) * 100).toFixed(1)}%` : 'N/A', away: statsData.away?.stats?.freeThrowsPercentage ? `${(parseFloat(statsData.away.stats.freeThrowsPercentage) * 100).toFixed(1)}%` : 'N/A' },
+                            { label: '% DE ARREMESSOS DE 3 PONTOS', home: statsData.home?.stats?.threePointPercentage ? `${(parseFloat(statsData.home.stats.threePointPercentage) * 100).toFixed(1)}%` : 'N/A', away: statsData.away?.stats?.threePointPercentage ? `${(parseFloat(statsData.away.stats.threePointPercentage) * 100).toFixed(1)}%` : 'N/A' },
+                            { label: 'REBOTES POR JOGO', home: statsData.home?.stats?.reboundsPerGame || 'N/A', away: statsData.away?.stats?.reboundsPerGame || 'N/A' },
+                            { label: 'ASSISTÊNCIAS POR JOGO', home: statsData.home?.stats?.assistsPerGame || 'N/A', away: statsData.away?.stats?.assistsPerGame || 'N/A' },
+                            { label: 'TOCOS POR JOGO', home: statsData.home?.stats?.blocksPerGame || 'N/A', away: statsData.away?.stats?.blocksPerGame || 'N/A' },
+                            { label: 'ROUBOS DE BOLA POR JOGO', home: statsData.home?.stats?.stealsPerGame || 'N/A', away: statsData.away?.stats?.stealsPerGame || 'N/A' },
+                            { label: 'ERROS DE POSSE POR JOGO', home: statsData.home?.stats?.turnoverPerGame || 'N/A', away: statsData.away?.stats?.turnoverPerGame || 'N/A' }
+                        ];
+
+                        let html = '';
+                        stats.forEach(stat => {
+                            const homeValue = parseFloat(stat.home) || 0;
+                            const awayValue = parseFloat(stat.away) || 0;
+                            const max = Math.max(homeValue, awayValue, 1);
+                            const homeWidth = (homeValue / max) * 100;
+                            const awayWidth = (awayValue / max) * 100;
+
+                            html += `
+                                <div class="stat-row">
+                                    <div class="stat-value home">${stat.home}</div>
+                                    <div class="stat-label">${stat.label}</div>
+                                    <div class="stat-value away">${stat.away}</div>
+                                </div>
+                                <div class="stat-bar-container">
+                                    <div class="stat-bar home" style="width: ${homeWidth}%"></div>
+                                    <div class="stat-bar away" style="width: ${awayWidth}%"></div>
+                                </div>
+                            `;
+                        });
+                        statsContent.innerHTML = html;
+                    } else {
+                        statsContent.innerHTML = `<div class="stat-row"><div class="stat-label" style="width: 100%; text-align: center;">Estatísticas não disponíveis</div></div>`;
+                    }
+
+                    modal.style.display = 'flex';
+                    setTimeout(() => modal.classList.add('show'), 10);
+                } catch (error) {
+                    console.error('Failed to load game stats:', error);
+                    teamLeadersContainer.innerHTML = '';
+                    injuriesContainer.innerHTML = '';
+                    betsContainer.innerHTML = '';
+                    statsContent.innerHTML = `
+                        <div class="error">Erro ao carregar estatísticas</div>
+                        <div class="error-details">${error.message}</div>
+                        <button class="retry-btn" onclick="showGameStats('${eventId}', '${homeName}', '${awayName}', '${homeSeoIdentifier}', '${awaySeoIdentifier}')">Tentar Novamente</button>
+                    `;
+                    modal.style.display = 'flex';
+                    setTimeout(() => modal.classList.add('show'), 10);
+                }
+            }
+
+            closeModalBtn.addEventListener('click', () => {
                 modal.classList.remove('show');
                 setTimeout(() => modal.style.display = 'none', 300);
-            }
-        });
+            });
 
-        renderTabs();
+            window.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    modal.classList.remove('show');
+                    setTimeout(() => modal.style.display = 'none', 300);
+                }
+            });
+
+            renderTabs();
+        }
+
+        // Verifica se o usuário está logado antes de inicializar o aplicativo
+        if (checkUserLogin()) {
+            initApp();
+        }
     </script>
 </body>
 </html>
