@@ -485,7 +485,7 @@
     <div class="container">
         <header>
             <div class="logo-container">
-                <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
+                <img src="https://i.ibb.co/G4Y8sHM/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
                 <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
             </div>
             <h1>Análise Over x Confronto</h1>
@@ -571,6 +571,15 @@
     </div>
 
     <script>
+        // Função de verificação de login
+        function checkUserLogin() {
+            if (!sessionStorage.getItem('loggedIn')) {
+                window.location.replace('index.html');
+                return false;
+            }
+            return true;
+        }
+
         let gamesData = [];
         let activeColumn = null;
         let columnFilters = {};
@@ -935,6 +944,9 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Verifica se o usuário está logado antes de prosseguir
+            if (!checkUserLogin()) return;
+
             fetchGames();
             document.getElementById("resetFilters").addEventListener('click', resetFilters);
         });
