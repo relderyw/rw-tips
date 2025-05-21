@@ -753,6 +753,7 @@
             <h1>CALENDÁRIO NBA</h1>
             <div class="nav-buttons">
                 <button id="visualizationBtn" class="nav-button">🎮</button>
+                <button id="logoutBtn" class="nav-button">Sair</button>
             </div>
             <div class="logo">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</div>
         </div>
@@ -795,6 +796,23 @@
     </div>
 
     <script>
+        // Função de verificação de login
+        function checkUserLogin() {
+            if (!sessionStorage.getItem('loggedIn')) {
+                window.location.replace('index.html');
+                return false;
+            }
+            return true;
+        }
+
+        // Função de logout
+        function logout() {
+            sessionStorage.removeItem('loggedIn');
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('currentUserKey');
+            window.location.replace('index.html');
+        }
+
         const tabsDiv = document.querySelector('#tabs');
         const categoryTabsDiv = document.querySelector('#categoryTabs');
         const leadersGrid = document.querySelector('#leadersGrid');
@@ -914,6 +932,7 @@
         }
 
         async function renderTabs() {
+            if (!checkUserLogin()) return;
             try {
                 const dates = await fetchDates();
                 const hoje = getDataAtualSP();
@@ -943,6 +962,8 @@
                 document.getElementById('visualizationBtn').addEventListener('click', () => {
                     window.location.href = 'visualization.html';
                 });
+
+                document.getElementById('logoutBtn').addEventListener('click', logout);
 
                 createParticles();
                 startAutoUpdate();
@@ -1318,9 +1339,9 @@
                     ] : [
                         { label: 'PONTOS POR JOGO', home: statsData.home?.stats?.pointsForPerGame || 'N/A', away: statsData.away?.stats?.pointsForPerGame || 'N/A' },
                         { label: 'PONTOS SOFRIDOS POR JOGO', home: statsData.home?.stats?.pointsAgainstPerGame || 'N/A', away: statsData.away?.stats?.pointsAgainstPerGame || 'N/A' },
-                        { label: '% DE ARREMESSOS CERTOS', home: statsData.home?.stats?.fieldGoalsPercentage ? `${(parseFloat(statsData.home.stats.fieldGoalsPercentage) * 100).toFixed(1)}%` : 'N/A', away: statsData.away.stats?.fieldGoalsPercentage ? `${(parseFloat(statsData.away.stats.fieldGoalsPercentage) * 100).toFixed(1)}%` : 'N/A' },
-                        { label: '% DE LANCES LIVRES', home: statsData.home?.stats?.freeThrowsPercentage ? `${(parseFloat(statsData.home.stats.freeThrowsPercentage) * 100).toFixed(1)}%` : 'N/A', away: statsData.away.stats?.freeThrowsPercentage ? `${(parseFloat(statsData.away.stats.freeThrowsPercentage) * 100).toFixed(1)}%` : 'N/A' },
-                        { label: '% DE ARREMESSOS DE 3 PONTOS', home: statsData.home?.stats?.threePointPercentage ? `${(parseFloat(statsData.home.stats.threePointPercentage) * 100).toFixed(1)}%` : 'N/A', away: statsData.away.stats?.threePointPercentage ? `${(parseFloat(statsData.away.stats.threePointPercentage) * 100).toFixed(1)}%` : 'N/A' },
+                        { label: '% DE ARREMESSOS CERTOS', home: statsData.home?.stats?.fieldGoalsPercentage ? `${(parseFloat(statsData.home.stats.fieldGoalsPercentage) * 100).toFixed(1)}%` : 'N/A', away: statsData.away?.stats?.fieldGoalsPercentage ? `${(parseFloat(statsData.away.stats.fieldGoalsPercentage) * 100).toFixed(1)}%` : 'N/A' },
+                        { label: '% DE LANCES LIVRES', home: statsData.home?.stats?.freeThrowsPercentage ? `${(parseFloat(statsData.home.stats.freeThrowsPercentage) * 100).toFixed(1)}%` : 'N/A', away: statsData.away?.stats?.freeThrowsPercentage ? `${(parseFloat(statsData.away.stats.freeThrowsPercentage) * 100).toFixed(1)}%` : 'N/A' },
+                        { label: '% DE ARREMESSOS DE 3 PONTOS', home: statsData.home?.stats?.threePointPercentage ? `${(parseFloat(statsData.home.stats.threePointPercentage) * 100).toFixed(1)}%` : 'N/A', away: statsData.away?.stats?.threePointPercentage ? `${(parseFloat(statsData.away.stats.threePointPercentage) * 100).toFixed(1)}%` : 'N/A' },
                         { label: 'REBOTES POR JOGO', home: statsData.home?.stats?.reboundsPerGame || 'N/A', away: statsData.away?.stats?.reboundsPerGame || 'N/A' },
                         { label: 'ASSISTÊNCIAS POR JOGO', home: statsData.home?.stats?.assistsPerGame || 'N/A', away: statsData.away?.stats?.assistsPerGame || 'N/A' },
                         { label: 'TOCOS POR JOGO', home: statsData.home?.stats?.blocksPerGame || 'N/A', away: statsData.away?.stats?.blocksPerGame || 'N/A' },
@@ -1386,4 +1407,3 @@
     </script>
 </body>
 </html>
-</xaiArtifact
