@@ -94,7 +94,7 @@
         }
 
         .back-button {
-            margin-bottom: 20px; /* Espaço abaixo do botão */
+            margin-bottom: 20px;
             padding: 10px 20px;
             background: var(--primary-color);
             color: var(--text-primary);
@@ -386,7 +386,7 @@
 <body>
     <header class="header">
         <div class="logo-container">
-            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
+            <img src="https://i.ibb.co/G4Y8sHM/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
             <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
         </div>
     </header>
@@ -463,7 +463,19 @@
     </div>
 
     <script>
+        // Função de verificação de login
+        function checkUserLogin() {
+            if (!sessionStorage.getItem('loggedIn')) {
+                window.location.replace('index.html');
+                return false;
+            }
+            return true;
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
+            // Verifica se o usuário está logado antes de prosseguir
+            if (!checkUserLogin()) return;
+
             const tabs = document.querySelectorAll('.tab');
             const tabContents = document.querySelectorAll('.tab-content');
             const leagueFilter = document.getElementById('leagueFilter');
@@ -540,7 +552,7 @@
                         league,
                         team: awayTeam,
                         won: awayGoals > homeGoals,
-                        draw: awayGoals === homeGoals
+                        draw: awayGoals === awayGoals
                     });
 
                     playerStats[homePlayer].teams.add(homeTeam);
