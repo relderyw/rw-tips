@@ -880,7 +880,7 @@
 <body>
     <header class="header">
         <div class="logo-container">
-            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
+            <img src="https://i.ibb.co/G4Y8sHM/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
             <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
         </div>
     </header>
@@ -935,7 +935,19 @@
     </div>
 
     <script>
+        // Função de verificação de login
+        function checkUserLogin() {
+            if (!sessionStorage.getItem('loggedIn')) {
+                window.location.replace('index.html');
+                return false;
+            }
+            return true;
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
+            // Verifica se o usuário está logado antes de prosseguir
+            if (!checkUserLogin()) return;
+
             const gamesContainer = document.getElementById('gamesContainer');
             const searchFilter = document.getElementById('searchFilter');
             const topNavButtons = document.querySelectorAll('.top-nav-button');
