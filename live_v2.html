@@ -1327,6 +1327,9 @@
     </div>
 
     <script>
+        if (sessionStorage.getItem('loggedIn') !== 'true') {
+            window.location.href = 'index.html?error=login_required';
+        }
         const API_URL_LIVE = 'https://caveira-proxy.onrender.com/api/matches/live';
         const API_URL_FINISHED = 'https://caveira-proxy.onrender.com/api/historico/partidas';
         const API_URL_PLAYER_HISTORY = 'https://caveira-proxy.onrender.com/api/v1/historico/partidas-assincrono';
