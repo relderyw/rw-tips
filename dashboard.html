@@ -14,18 +14,15 @@
             --card-bg: #1c202b;
             --text-color: #e0e0e0;
             --muted-text: #a0a0a0;
-            
             --gt-color: #00ff66;
             --battle-color: #ff3a5e;
             --volta-color: #ffcc00;
             --h2h-color: #a64dff;
             --adriatic-color: #00aaff;
-            
             --primary-accent: #00cc66;
             --success-color: #00cc66;
             --warning-color: #ffaa00;
             --danger-color: #ff3a5e;
-
             --logo-green: #00ff66;
             --logo-dark: #0f1117;
         }
@@ -97,7 +94,7 @@
         .nav-btn {
             padding: 8px 16px;
             border-radius: 6px;
-            font-weight: 600;
+            font-weight: bold;
             font-size: 0.9rem;
             text-align: center;
             white-space: nowrap;
@@ -131,7 +128,7 @@
         
         .card-header {
             background-color: rgba(0, 0, 0, 0.2);
-            font-weight: 600;
+            font-weight: bold;
             padding: 15px 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
@@ -261,7 +258,7 @@
         
         .filter-title {
             font-size: 1rem;
-            font-weight: 600;
+            font-weight: bold;
             margin-bottom: 10px;
             color: var(--text-color);
         }
@@ -272,7 +269,7 @@
             margin-bottom: 5px;
             padding: 6px 12px;
             border-radius: 20px;
-            font-weight: 600;
+            font-weight: bold;
             font-size: 0.75rem;
             border: none;
             transition: all 0.2s;
@@ -308,7 +305,7 @@
         .filter-btn {
             padding: 6px 12px;
             border-radius: 20px;
-            font-weight: 600;
+            font-weight: bold;
             font-size: 0.75rem;
             margin-right: 5px;
             margin-bottom: 5px;
@@ -364,7 +361,7 @@
         
         .game-stat-value {
             font-size: 0.9rem;
-            font-weight: 600;
+            font-weight: bold;
         }
         
         .league-gt {
@@ -443,7 +440,7 @@
             border: none;
             border-radius: 6px;
             padding: 8px 16px;
-            font-weight: 600;
+            font-weight: bold;
             transition: all 0.2s;
             text-decoration: none;
         }
@@ -458,7 +455,7 @@
             padding: 3px 8px;
             border-radius: 4px;
             font-size: 0.8rem;
-            font-weight: 600;
+            font-weight: bold;
             margin-right: 5px;
         }
         
@@ -508,7 +505,7 @@
         }
 
         .best-player-section {
-            flex: 1 1 calc(33.333% - 20px); /* 3 seções por linha em telas grandes */
+            flex: 1 1 calc(33.333% - 20px);
             min-width: 300px;
             margin-bottom: 15px;
         }
@@ -547,7 +544,7 @@
         }
 
         .best-player-name {
-            font-weight: 700;
+            font-weight: bold;
             color: var(--text-color);
             font-size: 1rem;
         }
@@ -568,7 +565,7 @@
         }
 
         .stat-value {
-            font-weight: 600;
+            font-weight: bold;
             color: var(--success-color);
             font-size: 0.9rem;
         }
@@ -585,7 +582,7 @@
 
         @media (max-width: 992px) {
             .best-player-section {
-                flex: 1 1 calc(50% - 20px); /* 2 seções por linha em telas médias */
+                flex: 1 1 calc(50% - 20px);
             }
         }
 
@@ -605,7 +602,7 @@
 
         @media (max-width: 576px) {
             .best-player-section {
-                flex: 1 1 100%; /* 1 seção por linha em telas pequenas */
+                flex: 1 1 100%;
             }
 
             .best-player-card {
@@ -623,7 +620,7 @@
         <div class="container">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="logo-container">
-                    <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo">
+                    <img src="https://i.ibb.co/G4Y8sHM/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo">
                     <h2 class="logo-text"><span class="crown">👑</span> RW TIPS <span class="game">🎮</span></h2>
                 </div>
                 <div class="last-updated-header">
@@ -643,7 +640,6 @@
         <h1 class="title-gradient">RW TIPS - ANÁLISE DE CENÁRIOS</h1>
         
         <div id="bestPlayersByLeague" class="best-players-container">
-            <!-- Melhores jogadores por liga serão inseridos aqui -->
         </div>
         
         <div class="games-filter">
@@ -695,7 +691,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Dados serão inseridos aqui -->
                 </tbody>
             </table>
         </div>
@@ -713,7 +708,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Dados serão inseridos aqui -->
                 </tbody>
             </table>
         </div>
@@ -733,14 +727,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Dados serão inseridos aqui -->
                 </tbody>
             </table>
         </div>
         
         <nav aria-label="Paginação">
             <ul class="pagination" id="pagination">
-                <!-- Paginação será inserida aqui -->
             </ul>
         </nav>
     </div>
@@ -753,10 +745,9 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Verificar login
             if (!sessionStorage.getItem('loggedIn')) {
                 window.location.href = 'index.html';
-                return; // Interrompe a execução do restante do script
+                return;
             }
 
             const lastUpdatedElement = document.getElementById('lastUpdated');
@@ -792,12 +783,10 @@
                     allGames = [];
                     
                     for (let page = 1; page <= maxPages; page++) {
-                        const proxyUrl = 'https://corsproxy.io/?';
-                        const timestamp = new Date().getTime();
-                        const apiUrl = `https://api.b365api.com/v3/events/ended?sport_id=1&token=183604-pWN7flhoAsWGu8&page=${page}&_=${timestamp}`;
+                        const apiUrl = `https://caveira-proxy.onrender.com/api/historico/partidas?page=${page}&limit=20`;
                         
                         try {
-                            const response = await fetch(proxyUrl + encodeURIComponent(apiUrl));
+                            const response = await fetch(apiUrl);
                             
                             if (!response.ok) {
                                 throw new Error(`Erro na API (página ${page}): ${response.status}`);
@@ -805,7 +794,7 @@
                             
                             const data = await response.json();
                             
-                            if (data.success !== 1 || !data.results) {
+                            if (!data.partidas || !Array.isArray(data.partidas)) {
                                 throw new Error(`Formato de resposta inválido (página ${page})`);
                             }
                             
@@ -813,23 +802,34 @@
                             const cutoffDate = new Date();
                             cutoffDate.setDate(now.getDate() - daysBack);
                             
-                            const pageGames = data.results.filter(game => {
-                                const isESoccer = game.league?.name?.toLowerCase().includes('esoccer') || 
-                                                game.league?.name?.toLowerCase().includes('e-soccer') ||
-                                                game.league?.name?.toLowerCase().includes('fifa') ||
-                                                game.league?.name?.toLowerCase().includes('cyber');
+                            const pageGames = data.partidas.filter(game => {
+                                const isESoccer = game.league_name?.toLowerCase().includes('esoccer') ||
+                                                game.league_name?.toLowerCase().includes('e-soccer') ||
+                                                game.league_name?.toLowerCase().includes('fifa') ||
+                                                game.league_name?.toLowerCase().includes('cyber');
                                 
-                                const gameDate = new Date(game.time * 1000);
+                                const gameDate = new Date(game.data_realizacao);
                                 const isRecentGame = gameDate >= cutoffDate;
                                 
-                                const isFinished = game.time_status === "3" || game.time_status === 3;
-                                
-                                return isESoccer && isRecentGame && (isFinished || (game.ss && game.ss.includes('-')));
-                            });
+                                return isESoccer && isRecentGame;
+                            }).map(game => ({
+                                id: game.id,
+                                time: Math.floor(new Date(game.data_realizacao).getTime() / 1000),
+                                league: { name: game.league_name },
+                                home: { name: `${game.home_team} (${game.home_player})` },
+                                away: { name: `${game.away_team} (${game.away_player})` },
+                                ss: `${game.score_home}-${game.score_away}`,
+                                scores: {
+                                    "1": {
+                                        home: game.halftime_score_home,
+                                        away: game.halftime_score_away
+                                    }
+                                }
+                            }));
                             
                             allGames = [...allGames, ...pageGames];
                             
-                            if (data.results.length === 0) {
+                            if (data.partidas.length < 20) {
                                 break;
                             }
                             
@@ -1389,7 +1389,7 @@
                         leagueTagClass = 'volta';
                     } else if (game.league.name.toLowerCase().includes('battle')) {
                         leagueTagClass = 'battle';
-                    } else if (game.league.name.toLowerCase().includes('h2h') || game.league.name.toLowerCase().includes('gg')) {
+                    } else if (game.league.name.toLowerCase().includes('games')) {
                         leagueTagClass = 'h2h';
                     }
     
@@ -1440,7 +1440,7 @@
                                     </div>
                                     <div class="game-stat">
                                         <div class="game-stat-title">Over 2.5</div>
-                                        <div class="game-stat-value ${totalGoals > 2.5 ? 'text-success' : 'text-danger'}">${totalGoals > 2.5 ? 'Sim' : 'Não'}</div>
+                                        <div class="game-stat-value">${totalGoals > 2.5 ? 'Sim' : 'Não'}</div>
                                     </div>
                                 </div>
                             </div>
@@ -1477,7 +1477,7 @@
                 
                 const prevLi = document.createElement('li');
                 prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
-                prevLi.innerHTML = `<a class="page-link" href="#" aria-label="Anterior"><span aria-hidden="true">«</span></a>`;
+                prevLi.innerHTML = `<a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>`;
                 prevLi.addEventListener('click', (e) => {
                     e.preventDefault();
                     if (currentPage > 1) {
@@ -1515,7 +1515,7 @@
                 
                 const nextLi = document.createElement('li');
                 nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
-                nextLi.innerHTML = `<a class="page-link" href="#" aria-label="Próximo"><span aria-hidden="true">»</span></a>`;
+                nextLi.innerHTML = `<a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>`;
                 nextLi.addEventListener('click', (e) => {
                     e.preventDefault();
                     if (currentPage < totalPages) {
@@ -1590,14 +1590,14 @@
                                     totalHtGoalsScored += awayScoreHt;
                                     totalFtGoalsScored += awayScoreFt;
                                     totalHtGoalsConceded += homeScoreHt;
-                                    totalFtGoalsConceded += homeScoreFt;
+                                    totalFtGoalsConceded += awayScoreFt;
                                     if (awayScoreFt > homeScoreFt) wins++;
                                 }
                                 gameCount++;
                             }
                         });
                         
-                        if (gameCount >= 3) { // Restrição: mínimo de 3 jogos
+                        if (gameCount >= 3) {
                             const avgHtGoalsScored = (totalHtGoalsScored / gameCount).toFixed(2);
                             const avgFtGoalsScored = (totalFtGoalsScored / gameCount).toFixed(2);
                             const avgHtGoalsConceded = (totalHtGoalsConceded / gameCount).toFixed(2);
@@ -1628,22 +1628,22 @@
                     
                     const sortedPlayers = playerData.sort((a, b) => b.score - a.score);
                     const maxScore = sortedPlayers.length > 0 ? sortedPlayers[0].score : 0;
-                    const bestPlayers = sortedPlayers.filter(player => player.score === maxScore);
+                    const bestPlayers = sortedPlayers.filter(player => player.score >= maxScore);
                     
                     const leagueSection = document.createElement('div');
                     leagueSection.className = 'best-player-section';
                     
                     let leagueClass = '';
                     if (leagueName.toLowerCase().includes('adriatic') || leagueName.toLowerCase().includes('10 mins')) {
-                        leagueClass = 'adriatic';
+                        leagueClass = 'league-adriatic';
                     } else if (leagueName.toLowerCase().includes('gt')) {
-                        leagueClass = 'gt';
+                        leagueClass = 'league-gt';
                     } else if (leagueName.toLowerCase().includes('volta')) {
-                        leagueClass = 'volta';
+                        leagueClass = 'league-volta';
                     } else if (leagueName.toLowerCase().includes('battle')) {
-                        leagueClass = 'battle';
+                        leagueClass = 'league-battle';
                     } else if (leagueName.toLowerCase().includes('h2h') || leagueName.toLowerCase().includes('gg')) {
-                        leagueClass = 'h2h';
+                        leagueClass = 'league-h2h';
                     }
                     
                     leagueSection.innerHTML = `
@@ -1678,7 +1678,7 @@
                                     <span class="stat-label">Sofreu HT</span>
                                 </div>
                                 <div class="stat-item">
-                                    <span class="stat-value">${player.avgFtGoalsConceded}</span>
+                                    <span class="stat-value">${player.avgFtGoals}</span>
                                     <span class="stat-label">Sofreu FT</span>
                                 </div>
                             </div>
@@ -1724,7 +1724,7 @@
                 });
                 
                 if (bestPlayersByLeagueElement.innerHTML === '') {
-                    bestPlayersByLeagueElement.innerHTML = '<p class="text-center">Nenhum jogador com estatísticas relevantes encontrado.</p>';
+                    bestPlayersByLeagueElement.innerHTML = '<p class="text-center">Nenhum jogador com estatísticas relevantes encontrado não encontrado.</p>';
                 }
             }
             
