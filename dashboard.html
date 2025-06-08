@@ -1389,7 +1389,7 @@
                         leagueTagClass = 'volta';
                     } else if (game.league.name.toLowerCase().includes('battle')) {
                         leagueTagClass = 'battle';
-                    } else if (game.league.name.toLowerCase().includes('games')) {
+                    } else if (game.league.name.toLowerCase().includes('h2h') || game.league.name.toLowerCase().includes('gg')) {
                         leagueTagClass = 'h2h';
                     }
     
@@ -1477,7 +1477,7 @@
                 
                 const prevLi = document.createElement('li');
                 prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
-                prevLi.innerHTML = `<a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>`;
+                prevLi.innerHTML = `<a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">«</span></a>`;
                 prevLi.addEventListener('click', (e) => {
                     e.preventDefault();
                     if (currentPage > 1) {
@@ -1515,7 +1515,7 @@
                 
                 const nextLi = document.createElement('li');
                 nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
-                nextLi.innerHTML = `<a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>`;
+                nextLi.innerHTML = `<a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">»</span></a>`;
                 nextLi.addEventListener('click', (e) => {
                     e.preventDefault();
                     if (currentPage < totalPages) {
@@ -1590,7 +1590,7 @@
                                     totalHtGoalsScored += awayScoreHt;
                                     totalFtGoalsScored += awayScoreFt;
                                     totalHtGoalsConceded += homeScoreHt;
-                                    totalFtGoalsConceded += awayScoreFt;
+                                    totalFtGoalsConceded += homeScoreFt;
                                     if (awayScoreFt > homeScoreFt) wins++;
                                 }
                                 gameCount++;
@@ -1678,7 +1678,7 @@
                                     <span class="stat-label">Sofreu HT</span>
                                 </div>
                                 <div class="stat-item">
-                                    <span class="stat-value">${player.avgFtGoals}</span>
+                                    <span class="stat-value">${player.avgFtGoalsConceded}</span>
                                     <span class="stat-label">Sofreu FT</span>
                                 </div>
                             </div>
@@ -1724,7 +1724,7 @@
                 });
                 
                 if (bestPlayersByLeagueElement.innerHTML === '') {
-                    bestPlayersByLeagueElement.innerHTML = '<p class="text-center">Nenhum jogador com estatísticas relevantes encontrado não encontrado.</p>';
+                    bestPlayersByLeagueElement.innerHTML = '<p class="text-center">Nenhum jogador com estatísticas relevantes encontrado.</p>';
                 }
             }
             
