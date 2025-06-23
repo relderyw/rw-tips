@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,7 +29,7 @@
             --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.3);
             --shadow-hover: 0 6px 20px rgba(0, 204, 102, 0.4);
         }
-        
+
         body {
             font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: var(--primary-bg);
@@ -37,7 +38,7 @@
             margin: 0;
             overflow-x: hidden;
         }
-        
+
         .header {
             background: var(--secondary-bg);
             padding: 20px 0;
@@ -48,18 +49,18 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
             transition: transform 0.3s ease;
         }
-        
+
         .header:hover {
             transform: translateY(-2px);
         }
-        
+
         .logo-container {
             display: flex;
             align-items: center;
             margin-bottom: 0;
             position: relative;
         }
-        
+
         .logo {
             height: 70px;
             margin-right: 20px;
@@ -67,12 +68,12 @@
             box-shadow: 0 0 15px rgba(0, 255, 102, 0.6);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        
+
         .logo:hover {
             transform: scale(1.05);
             box-shadow: 0 0 20px rgba(0, 255, 102, 0.8);
         }
-        
+
         .logo-text {
             color: var(--logo-green);
             margin: 0;
@@ -86,20 +87,20 @@
             text-shadow: 0 0 8px rgba(0, 255, 102, 0.5);
             animation: glow 2s ease-in-out infinite alternate;
         }
-        
+
         .logo-text .crown {
             color: #ffd700;
             margin-right: 8px;
             font-size: 2.2rem;
             animation: bounce 1.5s infinite;
         }
-        
+
         .logo-text .game {
             color: #a64dff;
             margin-left: 8px;
             font-size: 2.2rem;
         }
-        
+
         .nav-buttons {
             display: flex;
             gap: 15px;
@@ -107,7 +108,7 @@
             overflow-x: auto;
             padding-bottom: 8px;
         }
-        
+
         .nav-btn {
             padding: 10px 20px;
             border-radius: 8px;
@@ -122,19 +123,19 @@
             color: var(--text-color);
             box-shadow: var(--shadow-light);
         }
-        
+
         .nav-btn.secondary:hover {
             background: linear-gradient(135deg, #3a3f4d, #4a4f5d);
             transform: translateY(-2px);
             box-shadow: var(--shadow-hover);
         }
-        
+
         .container {
             max-width: 1300px;
             padding: 30px;
             animation: fadeIn 0.5s ease-in;
         }
-        
+
         .card {
             background: var(--card-bg);
             border-radius: 12px;
@@ -144,12 +145,12 @@
             overflow: hidden;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        
+
         .card:hover {
             transform: translateY(-5px);
             box-shadow: var(--shadow-hover);
         }
-        
+
         .card-header {
             background: linear-gradient(90deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1));
             font-weight: 600;
@@ -158,11 +159,11 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        
+
         .card-body {
             padding: 25px;
         }
-        
+
         .btn-primary {
             background: linear-gradient(135deg, #00cc66, #00b359);
             border-color: var(--primary-accent);
@@ -171,13 +172,13 @@
             border-radius: 8px;
             transition: all 0.3s ease;
         }
-        
+
         .btn-primary:hover {
             background: linear-gradient(135deg, #00b359, #00994d);
             transform: scale(1.05);
             box-shadow: 0 0 15px rgba(0, 204, 102, 0.6);
         }
-        
+
         .chart-container {
             position: relative;
             height: 350px;
@@ -188,12 +189,12 @@
             box-shadow: var(--shadow-light);
             transition: transform 0.3s ease;
         }
-        
+
         .chart-container:hover {
             transform: translateY(-3px);
             box-shadow: var(--shadow-hover);
         }
-        
+
         .loading {
             position: fixed;
             top: 0;
@@ -207,35 +208,35 @@
             z-index: 1000;
             backdrop-filter: blur(5px);
         }
-        
+
         .spinner-border {
             width: 4rem;
             height: 4rem;
             animation: spin 1s linear infinite;
         }
-        
+
         .high-value {
             color: var(--success-color);
             font-weight: 700;
             text-shadow: 0 0 5px rgba(0, 204, 102, 0.5);
         }
-        
+
         .medium-value {
             color: var(--warning-color);
             font-weight: 600;
         }
-        
+
         .low-value {
             color: var(--danger-color);
             font-weight: 600;
         }
-        
+
         .table {
             color: var(--text-color);
             border-radius: 10px;
             overflow: hidden;
         }
-        
+
         .table th {
             background: linear-gradient(90deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1));
             color: var(--text-color);
@@ -244,16 +245,16 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        
+
         .table td {
             border-color: rgba(255, 255, 255, 0.08);
             transition: background-color 0.3s ease;
         }
-        
+
         .table tbody tr:hover td {
             background: rgba(255, 255, 255, 0.05);
         }
-        
+
         .badge {
             font-size: 90%;
             padding: 6px 12px;
@@ -261,16 +262,16 @@
             font-weight: 600;
             transition: transform 0.3s ease;
         }
-        
+
         .badge:hover {
             transform: scale(1.05);
         }
-        
+
         .pagination {
             justify-content: center;
             margin-top: 25px;
         }
-        
+
         .page-link {
             background: var(--card-bg);
             color: var(--text-color);
@@ -278,18 +279,18 @@
             border-radius: 6px;
             transition: all 0.3s ease;
         }
-        
+
         .page-link:hover {
             background: linear-gradient(135deg, #2a2e3a, #3a3f4d);
             transform: translateY(-2px);
         }
-        
+
         .page-item.active .page-link {
             background: linear-gradient(135deg, #00cc66, #00b359);
             border-color: var(--primary-accent);
             font-weight: 600;
         }
-        
+
         .api-status {
             font-size: 0.95rem;
             padding: 12px 18px;
@@ -300,29 +301,29 @@
             border-left: 5px solid;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
-        
+
         .api-status.success {
             background: rgba(0, 204, 102, 0.1);
             color: var(--success-color);
             border-left-color: var(--success-color);
         }
-        
+
         .api-status.error {
             background: rgba(255, 58, 94, 0.1);
             color: var(--danger-color);
             border-left-color: var(--danger-color);
         }
-        
+
         .api-status.warning {
             background: rgba(255, 170, 0, 0.1);
             color: var(--warning-color);
             border-left-color: var(--warning-color);
         }
-        
+
         .league-filter {
             margin-bottom: 25px;
         }
-        
+
         .filter-title {
             font-size: 1.1rem;
             font-weight: 700;
@@ -331,7 +332,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        
+
         .league-badge {
             cursor: pointer;
             margin-right: 8px;
@@ -344,17 +345,17 @@
             transition: all 0.3s ease;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
-        
+
         .league-badge.active {
             box-shadow: 0 0 15px rgba(0, 204, 102, 0.6);
             transform: scale(1.05);
         }
-        
+
         .league-badge:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 10px rgba(0, 204, 102, 0.4);
         }
-        
+
         .last-updated-header {
             font-size: 0.95rem;
             color: var(--muted-text);
@@ -364,27 +365,27 @@
             align-items: center;
             transition: color 0.3s ease;
         }
-        
+
         .last-updated-header:hover {
             color: var(--text-color);
         }
-        
+
         .refresh-btn {
             cursor: pointer;
             color: var(--primary-accent);
             margin-left: 8px;
             transition: transform 0.3s ease, color 0.3s ease;
         }
-        
+
         .refresh-btn:hover {
             color: #00b359;
             transform: rotate(360deg);
         }
-        
+
         .games-filter {
             margin-bottom: 25px;
         }
-        
+
         .filter-btn {
             padding: 8px 16px;
             border-radius: 25px;
@@ -398,25 +399,25 @@
             transition: all 0.3s ease;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
-        
+
         .filter-btn:hover {
             background: linear-gradient(135deg, #3a3f4d, #4a4f5d);
             transform: translateY(-2px);
             box-shadow: 0 4px 10px rgba(0, 204, 102, 0.3);
         }
-        
+
         .filter-btn.active {
             background: linear-gradient(135deg, #00cc66, #00b359);
             color: #fff;
             box-shadow: 0 0 15px rgba(0, 204, 102, 0.6);
         }
-        
+
         .game-row:hover {
             background: linear-gradient(90deg, rgba(255, 255, 255, 0.05), rgba(0, 204, 102, 0.05));
             cursor: pointer;
             transition: background 0.3s ease;
         }
-        
+
         .game-details {
             display: none;
             padding: 20px;
@@ -427,13 +428,13 @@
             box-shadow: var(--shadow-light);
             animation: slideDown 0.3s ease-out;
         }
-        
+
         .game-stats {
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
         }
-        
+
         .game-stat {
             background: linear-gradient(135deg, #252a38, #2a2e3a);
             padding: 10px;
@@ -444,91 +445,93 @@
             text-align: center;
             transition: transform 0.3s ease;
         }
-        
+
         .game-stat:hover {
             transform: translateY(-3px);
         }
-        
+
         .game-stat-title {
             font-size: 0.75rem;
             color: var(--muted-text);
             text-transform: uppercase;
         }
-        
+
         .game-stat-value {
             font-size: 1rem;
             font-weight: 700;
         }
-        
+
         .league-gt {
             color: var(--gt-color);
             background: rgba(0, 255, 102, 0.15);
         }
-        
+
         .league-battle {
             color: var(--battle-color);
             background: rgba(255, 58, 94, 0.15);
         }
-        
+
         .league-volta {
             color: var(--volta-color);
             background: rgba(255, 204, 0, 0.15);
         }
-        
+
         .league-h2h {
             color: var(--h2h-color);
             background: rgba(166, 77, 255, 0.15);
         }
-        
+
         .league-adriatic {
             color: var(--adriatic-color);
             background: rgba(0, 170, 255, 0.15);
         }
-        
+
         .league-gt.active {
             background: var(--gt-color);
             color: #000;
         }
-        
+
         .league-battle.active {
             background: var(--battle-color);
             color: #fff;
         }
-        
+
         .league-volta.active {
             background: var(--volta-color);
             color: #000;
         }
-        
+
         .league-h2h.active {
             background: var(--h2h-color);
             color: #fff;
         }
-        
+
         .league-adriatic.active {
             background: var(--adriatic-color);
             color: #fff;
         }
-        
-        .form-control, .form-select {
+
+        .form-control,
+        .form-select {
             background: var(--secondary-bg);
             border-color: rgba(255, 255, 255, 0.1);
             color: var(--text-color);
             border-radius: 8px;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
-        
-        .form-control:focus, .form-select:focus {
+
+        .form-control:focus,
+        .form-select:focus {
             background: var(--secondary-bg);
             color: var(--text-color);
             border-color: var(--primary-accent);
             box-shadow: 0 0 0 0.25rem rgba(0, 204, 102, 0.25);
         }
-        
+
         .form-text {
             color: var(--muted-text);
         }
-        
+
         .back-button {
             display: inline-flex;
             align-items: center;
@@ -543,13 +546,13 @@
             text-decoration: none;
             box-shadow: var(--shadow-light);
         }
-        
+
         .back-button:hover {
             background: linear-gradient(135deg, #3a3f4d, #4a4f5d);
             transform: translateY(-2px);
             box-shadow: var(--shadow-hover);
         }
-        
+
         .league-tag {
             display: inline-block;
             padding: 4px 12px;
@@ -560,32 +563,32 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        
+
         .league-tag.gt {
             background: rgba(0, 255, 102, 0.2);
             color: var(--gt-color);
         }
-        
+
         .league-tag.battle {
             background: rgba(255, 58, 94, 0.2);
             color: var(--battle-color);
         }
-        
+
         .league-tag.volta {
             background: rgba(255, 204, 0, 0.2);
             color: var(--volta-color);
         }
-        
+
         .league-tag.h2h {
             background: rgba(166, 77, 255, 0.2);
             color: var(--h2h-color);
         }
-        
+
         .league-tag.adriatic {
             background: rgba(0, 170, 255, 0.2);
             color: var(--adriatic-color);
         }
-        
+
         .title-gradient {
             background: linear-gradient(90deg, #00cc66, #00b359, #000000);
             -webkit-background-clip: text;
@@ -600,7 +603,7 @@
             text-shadow: 0 0 10px rgba(0, 204, 102, 0.3);
             animation: gradientShift 5s ease-in-out infinite;
         }
-        
+
         .best-players-container {
             display: flex;
             flex-wrap: wrap;
@@ -693,6 +696,74 @@
             margin-bottom: 35px;
         }
 
+        .strategy-container {
+            margin-bottom: 35px;
+        }
+
+        .strategy-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow-light);
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .strategy-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .strategy-header {
+            background: linear-gradient(90deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1));
+            font-weight: 600;
+            padding: 18px 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .strategy-body {
+            padding: 25px;
+        }
+
+        .strategy-matchup {
+            background: linear-gradient(135deg, #252a38, #2a2e3a);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .strategy-matchup h6 {
+            margin-bottom: 10px;
+            color: var(--text-color);
+            font-weight: 700;
+        }
+
+        .strategy-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
+
+        .strategy-stat {
+            text-align: center;
+        }
+
+        .strategy-stat-value {
+            font-weight: 700;
+            color: var(--success-color);
+            font-size: 1rem;
+        }
+
+        .strategy-stat-label {
+            color: var(--muted-text);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
         @media (max-width: 992px) {
             .best-player-section {
                 flex: 1 1 calc(50% - 25px);
@@ -703,7 +774,7 @@
             .title-gradient {
                 font-size: 2rem;
             }
-            
+
             .logo-text {
                 font-size: 1.5rem;
             }
@@ -729,48 +800,94 @@
 
         /* Animações */
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         @keyframes slideDown {
-            from { transform: translateY(-10px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(-10px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         @keyframes glow {
-            from { text-shadow: 0 0 5px rgba(0, 255, 102, 0.3); }
-            to { text-shadow: 0 0 10px rgba(0, 255, 102, 0.6); }
+            from {
+                text-shadow: 0 0 5px rgba(0, 255, 102, 0.3);
+            }
+
+            to {
+                text-shadow: 0 0 10px rgba(0, 255, 102, 0.6);
+            }
         }
 
         @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
         }
 
         @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="header">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="logo-container">
-                    <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo">
+                    <img src="https://i.ibb.co/G4Y8sHM/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png"
+                        alt="RW Tips Logo" class="logo">
                     <h2 class="logo-text"><span class="crown">👑</span> RW TIPS <span class="game">🎮</span></h2>
                 </div>
                 <div class="last-updated-header">
@@ -785,13 +902,28 @@
             </div>
         </div>
     </div>
-    
+
     <div class="container">
         <h1 class="title-gradient">RW TIPS - ANÁLISE DE CENÁRIOS</h1>
-        
-        <div id="bestPlayersByLeague" class="best-players-container">
+
+        <h2 class="section-title">Testes de Estratégias</h2>
+        <div class="strategy-container" id="strategyTests">
+            <div class="strategy-card">
+                <div class="strategy-header">OVER_BATTLE</div>
+                <div class="strategy-body" id="overBattleResults"></div>
+            </div>
+            <div class="strategy-card">
+                <div class="strategy-header">GT_OVER_HT</div>
+                <div class="strategy-body" id="gtOverHtResults"></div>
+            </div>
+            <div class="strategy-card">
+                <div class="strategy-header">VOLTA_OVER</div>
+                <div class="strategy-body" id="voltaOverResults"></div>
+            </div>
         </div>
-        
+
+        <div id="bestPlayersByLeague" class="best-players-container"></div>
+
         <div class="games-filter">
             <div class="filter-title">Filtrar por Jogos:</div>
             <div id="gamesFilter">
@@ -801,7 +933,7 @@
                 <button type="button" class="filter-btn" data-games="15">15 Jogos</button>
             </div>
         </div>
-        
+
         <div id="leagueFilters" class="league-filter">
             <div class="filter-title">Filtrar por Liga:</div>
             <div id="leagueBadges">
@@ -813,7 +945,7 @@
                 <button class="league-badge league-adriatic">Adriatic League 10m</button>
             </div>
         </div>
-        
+
         <div class="row charts-row">
             <div class="col-md-6">
                 <div class="chart-container">
@@ -826,7 +958,7 @@
                 </div>
             </div>
         </div>
-        
+
         <h2 class="section-title">Análise por Liga</h2>
         <div class="table-responsive">
             <table class="table table-dark table-hover" id="leagueTable">
@@ -840,11 +972,10 @@
                         <th>Over 3.5 %</th>
                     </tr>
                 </thead>
-                <tbody>
-                </tbody>
+                <tbody></tbody>
             </table>
         </div>
-        
+
         <h2 class="section-title">Análise de Mercados</h2>
         <div class="table-responsive">
             <table class="table table-dark table-hover" id="marketsTable">
@@ -857,11 +988,10 @@
                         <th>Valor</th>
                     </tr>
                 </thead>
-                <tbody>
-                </tbody>
+                <tbody></tbody>
             </table>
         </div>
-        
+
         <h2 class="section-title">Jogos Recentes</h2>
         <div class="table-responsive">
             <table class="table table-dark table-hover" id="recentGamesTable">
@@ -876,30 +1006,30 @@
                         <th>BTTS</th>
                     </tr>
                 </thead>
-                <tbody>
-                </tbody>
+                <tbody></tbody>
             </table>
         </div>
-        
+
         <nav aria-label="Paginação">
-            <ul class="pagination" id="pagination">
-            </ul>
+            <ul class="pagination" id="pagination"></ul>
         </nav>
     </div>
-    
+
     <div class="loading" id="loading">
         <div class="spinner-border text-success" role="status">
             <span class="visually-hidden">Carregando...</span>
         </div>
     </div>
-    
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
+            // Verifica se o usuário está logado
             if (!sessionStorage.getItem('loggedIn')) {
                 window.location.href = 'index.html';
                 return;
             }
 
+            // Elementos do DOM
             const lastUpdatedElement = document.getElementById('lastUpdated');
             const refreshBtn = document.getElementById('refreshBtn');
             const leagueBadgesElement = document.getElementById('leagueBadges');
@@ -910,7 +1040,11 @@
             const loadingElement = document.getElementById('loading');
             const paginationElement = document.getElementById('pagination');
             const gamesFilterButtons = document.querySelectorAll('#gamesFilter .filter-btn');
-            
+            const overBattleResults = document.getElementById('overBattleResults');
+            const gtOverHtResults = document.getElementById('gtOverHtResults');
+            const voltaOverResults = document.getElementById('voltaOverResults');
+
+            // Variáveis globais
             let allGames = [];
             let filteredGames = [];
             let currentPage = 1;
@@ -919,48 +1053,49 @@
             let selectedGames = 'all';
             let goalsChart, bttsChart;
             let isLoading = false;
-            
+
             const maxPages = 5;
             const daysBack = 1;
-            
+
+            // Função para buscar dados da API
             async function fetchData() {
                 if (isLoading) return;
-                
+
                 loadingElement.style.display = 'flex';
                 isLoading = true;
-                
+
                 try {
                     allGames = [];
-                    
+
                     for (let page = 1; page <= maxPages; page++) {
                         const apiUrl = `https://caveira-proxy.onrender.com/api/historico/partidas?page=${page}&limit=20`;
-                        
+
                         try {
                             const response = await fetch(apiUrl);
-                            
+
                             if (!response.ok) {
                                 throw new Error(`Erro na API (página ${page}): ${response.status}`);
                             }
-                            
+
                             const data = await response.json();
-                            
+
                             if (!data.partidas || !Array.isArray(data.partidas)) {
                                 throw new Error(`Formato de resposta inválido (página ${page})`);
                             }
-                            
+
                             const now = new Date();
                             const cutoffDate = new Date();
                             cutoffDate.setDate(now.getDate() - daysBack);
-                            
+
                             const pageGames = data.partidas.filter(game => {
                                 const isESoccer = game.league_name?.toLowerCase().includes('esoccer') ||
-                                                game.league_name?.toLowerCase().includes('e-soccer') ||
-                                                game.league_name?.toLowerCase().includes('fifa') ||
-                                                game.league_name?.toLowerCase().includes('cyber');
-                                
+                                    game.league_name?.toLowerCase().includes('e-soccer') ||
+                                    game.league_name?.toLowerCase().includes('fifa') ||
+                                    game.league_name?.toLowerCase().includes('cyber');
+
                                 const gameDate = new Date(game.data_realizacao);
                                 const isRecentGame = gameDate >= cutoffDate;
-                                
+
                                 return isESoccer && isRecentGame;
                             }).map(game => ({
                                 id: game.id,
@@ -976,33 +1111,34 @@
                                     }
                                 }
                             }));
-                            
+
                             allGames = [...allGames, ...pageGames];
-                            
+
                             if (data.partidas.length < 20) {
                                 break;
                             }
-                            
+
                         } catch (error) {
                             console.error(`Erro ao buscar página ${page}:`, error);
                         }
                     }
-                    
+
+                    // Remove jogos duplicados
                     const uniqueGames = [];
                     const gameIds = new Set();
-                    
+
                     allGames.forEach(game => {
                         if (!gameIds.has(game.id)) {
                             gameIds.add(game.id);
                             uniqueGames.push(game);
                         }
                     });
-                    
+
                     allGames = uniqueGames;
-                    
+
                     if (allGames.length > 0) {
                         const now = new Date();
-                        lastUpdatedElement.textContent = now.toLocaleString();
+                        lastUpdatedElement.textContent = now.toLocaleString('pt-BR');
                         processData();
                     } else {
                         leagueBadgesElement.innerHTML = '<button class="league-badge active">Todas</button>';
@@ -1011,10 +1147,13 @@
                         recentGamesTableBody.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum jogo encontrado</td></tr>';
                         bestPlayersByLeagueElement.innerHTML = '';
                         paginationElement.innerHTML = '';
+                        overBattleResults.innerHTML = '<p class="text-center">Nenhum jogo encontrado</p>';
+                        gtOverHtResults.innerHTML = '<p class="text-center">Nenhum jogo encontrado</p>';
+                        voltaOverResults.innerHTML = '<p class="text-center">Nenhum jogo encontrado</p>';
                         if (goalsChart) goalsChart.destroy();
                         if (bttsChart) bttsChart.destroy();
                     }
-                    
+
                 } catch (error) {
                     console.error('Erro ao buscar dados:', error);
                     leagueBadgesElement.innerHTML = '<button class="league-badge active">Todas</button>';
@@ -1023,6 +1162,9 @@
                     recentGamesTableBody.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum jogo encontrado</td></tr>';
                     bestPlayersByLeagueElement.innerHTML = '';
                     paginationElement.innerHTML = '';
+                    overBattleResults.innerHTML = '<p class="text-center">Nenhum jogo encontrado</p>';
+                    gtOverHtResults.innerHTML = '<p class="text-center">Nenhum jogo encontrado</p>';
+                    voltaOverResults.innerHTML = '<p class="text-center">Nenhum jogo encontrado</p>';
                     if (goalsChart) goalsChart.destroy();
                     if (bttsChart) bttsChart.destroy();
                 } finally {
@@ -1030,12 +1172,14 @@
                     isLoading = false;
                 }
             }
-            
+
+            // Normaliza nomes das ligas
             function normalizeLeagueName(leagueName) {
                 if (!leagueName) return leagueName;
                 return leagueName.replace(/-/g, '–');
             }
-            
+
+            // Processa os dados
             function processData() {
                 allGames = allGames.map(game => {
                     if (game.league && game.league.name) {
@@ -1043,11 +1187,11 @@
                     }
                     return game;
                 });
-                
+
                 if (selectedLeague !== 'all') {
                     selectedLeague = normalizeLeagueName(selectedLeague);
                 }
-                
+
                 applyFilters();
                 updateLeagueFilters();
                 updateCharts();
@@ -1055,18 +1199,18 @@
                 updateMarketsTable();
                 updateRecentGamesTable();
                 updateBestPlayersByLeague();
+                updateStrategyTests();
             }
-            
+
+            // Aplica filtros
             function applyFilters() {
-                let gamesFilteredByLeague = [];
-                if (selectedLeague === 'all') {
-                    gamesFilteredByLeague = [...allGames];
-                } else {
-                    gamesFilteredByLeague = allGames.filter(game => 
+                let gamesFilteredByLeague = allGames;
+                if (selectedLeague !== 'all') {
+                    gamesFilteredByLeague = allGames.filter(game =>
                         game.league.name.toLowerCase() === selectedLeague.toLowerCase()
                     );
                 }
-                
+
                 if (selectedGames === 'all') {
                     filteredGames = gamesFilteredByLeague;
                 } else {
@@ -1074,13 +1218,14 @@
                     filteredGames = sortedGames.slice(0, parseInt(selectedGames));
                 }
             }
-            
+
+            // Atualiza os filtros de liga
             function updateLeagueFilters() {
                 const uniqueLeagues = new Set();
                 allGames.forEach(game => uniqueLeagues.add(game.league.name));
-                
+
                 leagueBadgesElement.innerHTML = '';
-                
+
                 const allBadge = document.createElement('button');
                 allBadge.className = `league-badge ${selectedLeague === 'all' ? 'active' : ''}`;
                 allBadge.textContent = 'Todas';
@@ -1089,7 +1234,7 @@
                     processData();
                 });
                 leagueBadgesElement.appendChild(allBadge);
-                
+
                 uniqueLeagues.forEach(league => {
                     const badge = document.createElement('button');
                     let leagueClass = '';
@@ -1104,7 +1249,7 @@
                     } else if (league.toLowerCase().includes('h2h') || league.toLowerCase().includes('gg')) {
                         leagueClass = 'league-h2h';
                     }
-                    
+
                     badge.className = `league-badge ${leagueClass} ${selectedLeague === league ? 'active' : ''}`;
                     badge.textContent = league;
                     badge.addEventListener('click', () => {
@@ -1114,13 +1259,14 @@
                     leagueBadgesElement.appendChild(badge);
                 });
             }
-            
+
+            // Atualiza os gráficos
             function updateCharts() {
                 if (goalsChart) goalsChart.destroy();
                 if (bttsChart) bttsChart.destroy();
-                
+
                 const goalsDistribution = Array(10).fill(0);
-                
+
                 filteredGames.forEach(game => {
                     if (game.ss && game.ss.includes('-')) {
                         const [homeScore, awayScore] = game.ss.split('-').map(Number);
@@ -1132,11 +1278,11 @@
                         }
                     }
                 });
-                
-                const goalsPercentages = goalsDistribution.map(count => 
+
+                const goalsPercentages = goalsDistribution.map(count =>
                     filteredGames.length > 0 ? (count / filteredGames.length * 100).toFixed(1) : 0
                 );
-                
+
                 const goalsCtx = document.getElementById('goalsChart').getContext('2d');
                 goalsChart = new Chart(goalsCtx, {
                     type: 'bar',
@@ -1194,10 +1340,10 @@
                         }
                     }
                 });
-                
+
                 let bttsYesCount = 0;
                 let bttsNoCount = 0;
-                
+
                 filteredGames.forEach(game => {
                     if (game.ss && game.ss.includes('-')) {
                         const [homeScore, awayScore] = game.ss.split('-').map(Number);
@@ -1208,7 +1354,7 @@
                         }
                     }
                 });
-                
+
                 const bttsCtx = document.getElementById('bttsChart').getContext('2d');
                 bttsChart = new Chart(bttsCtx, {
                     type: 'pie',
@@ -1241,7 +1387,7 @@
                             },
                             tooltip: {
                                 callbacks: {
-                                    label: function(context) {
+                                    label: function (context) {
                                         return context.label + ': ' + context.raw + '%';
                                     }
                                 }
@@ -1255,15 +1401,16 @@
                     }
                 });
             }
-            
+
+            // Atualiza tabela de ligas
             function updateLeagueTable() {
                 leagueTableBody.innerHTML = '';
-                
+
                 const leagueStats = {};
-                
+
                 allGames.forEach(game => {
                     const leagueName = game.league.name;
-                    
+
                     if (!leagueStats[leagueName]) {
                         leagueStats[leagueName] = {
                             name: leagueName,
@@ -1274,38 +1421,38 @@
                             over35Count: 0
                         };
                     }
-                    
+
                     if (game.ss && game.ss.includes('-')) {
                         const [homeScore, awayScore] = game.ss.split('-').map(Number);
                         const totalGoals = homeScore + awayScore;
-                        
+
                         leagueStats[leagueName].games++;
                         leagueStats[leagueName].totalGoals += totalGoals;
-                        
+
                         if (homeScore > 0 && awayScore > 0) {
                             leagueStats[leagueName].bttsCount++;
                         }
-                        
+
                         if (totalGoals > 2.5) {
                             leagueStats[leagueName].over25Count++;
                         }
-                        
+
                         if (totalGoals > 3.5) {
                             leagueStats[leagueName].over35Count++;
                         }
                     }
                 });
-                
-                const sortedLeagues = Object.values(leagueStats).sort((a, b) => 
+
+                const sortedLeagues = Object.values(leagueStats).sort((a, b) =>
                     (b.totalGoals / b.games) - (a.totalGoals / a.games)
                 );
-                
+
                 sortedLeagues.forEach(league => {
                     const avgGoals = (league.totalGoals / league.games).toFixed(2);
                     const bttsPercentage = (league.bttsCount / league.games * 100).toFixed(1);
                     const over25Percentage = (league.over25Count / league.games * 100).toFixed(1);
                     const over35Percentage = (league.over35Count / league.games * 100).toFixed(1);
-                    
+
                     let leagueTagClass = '';
                     if (league.name.toLowerCase().includes('adriatic') || league.name.toLowerCase().includes('10 mins')) {
                         leagueTagClass = 'adriatic';
@@ -1318,7 +1465,7 @@
                     } else if (league.name.toLowerCase().includes('h2h') || league.name.toLowerCase().includes('gg')) {
                         leagueTagClass = 'h2h';
                     }
-                    
+
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td><span class="league-tag ${leagueTagClass}">${league.name}</span></td>
@@ -1331,17 +1478,18 @@
                     leagueTableBody.appendChild(row);
                 });
             }
-            
+
+            // Atualiza tabela de mercados
             function updateMarketsTable() {
                 marketsTableBody.innerHTML = '';
-                
+
                 if (filteredGames.length === 0) {
                     const row = document.createElement('tr');
                     row.innerHTML = `<td colspan="5" class="text-center">Nenhum jogo encontrado com os filtros atuais</td>`;
                     marketsTableBody.appendChild(row);
                     return;
                 }
-                
+
                 const totalGames = filteredGames.length;
                 let bttsYesCount = 0;
                 let over05Count = 0;
@@ -1349,44 +1497,44 @@
                 let over25Count = 0;
                 let over35Count = 0;
                 let over45Count = 0;
-                
+
                 let bttsHtYesCount = 0;
                 let over05HtCount = 0;
                 let over15HtCount = 0;
                 let over25HtCount = 0;
-                
+
                 filteredGames.forEach(game => {
                     if (game.ss && game.ss.includes('-')) {
                         const [homeScore, awayScore] = game.ss.split('-').map(Number);
                         const totalGoals = homeScore + awayScore;
-                        
+
                         if (homeScore > 0 && awayScore > 0) {
                             bttsYesCount++;
                         }
-                        
+
                         if (totalGoals > 0.5) over05Count++;
                         if (totalGoals > 1.5) over15Count++;
                         if (totalGoals > 2.5) over25Count++;
                         if (totalGoals > 3.5) over35Count++;
                         if (totalGoals > 4.5) over45Count++;
                     }
-                    
+
                     if (game.scores && game.scores["1"]) {
                         const homeScoreHT = parseInt(game.scores["1"].home) || 0;
                         const awayScoreHT = parseInt(game.scores["1"].away) || 0;
-                        
+
                         const totalGoalsHT = homeScoreHT + awayScoreHT;
-                        
+
                         if (homeScoreHT > 0 && awayScoreHT > 0) {
                             bttsHtYesCount++;
                         }
-                        
+
                         if (totalGoalsHT > 0.5) over05HtCount++;
                         if (totalGoalsHT > 1.5) over15HtCount++;
                         if (totalGoalsHT > 2.5) over25HtCount++;
                     }
                 });
-                
+
                 const markets = [
                     {
                         name: 'BTTS Sim (FT)',
@@ -1445,7 +1593,7 @@
                         avgOdd: 4.00
                     }
                 ];
-                
+
                 markets.forEach(market => {
                     if (isNaN(parseFloat(market.fairOdd)) || !isFinite(parseFloat(market.fairOdd))) {
                         market.fairOdd = 'N/A';
@@ -1463,13 +1611,13 @@
                         }
                     }
                 });
-                
+
                 markets.sort((a, b) => {
                     if (a.value === 'N/A') return 1;
                     if (b.value === 'N/A') return -1;
                     return parseFloat(b.value) - parseFloat(a.value);
                 });
-                
+
                 markets.forEach(market => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
@@ -1482,10 +1630,11 @@
                     marketsTableBody.appendChild(row);
                 });
             }
-            
+
+            // Atualiza tabela de jogos recentes
             function updateRecentGamesTable() {
                 recentGamesTableBody.innerHTML = '';
-                
+
                 if (filteredGames.length === 0) {
                     const row = document.createElement('tr');
                     row.innerHTML = `<td colspan="7" class="text-center">Nenhum jogo encontrado com os filtros atuais</td>`;
@@ -1493,43 +1642,43 @@
                     paginationElement.innerHTML = '';
                     return;
                 }
-                
+
                 const sortedGames = [...filteredGames].sort((a, b) => b.time - a.time);
                 const totalPages = Math.ceil(sortedGames.length / itemsPerPage);
-                
+
                 if (currentPage > totalPages) {
                     currentPage = 1;
                 }
-                
+
                 const startIndex = (currentPage - 1) * itemsPerPage;
                 const endIndex = Math.min(startIndex + itemsPerPage, sortedGames.length);
                 const currentGames = sortedGames.slice(startIndex, endIndex);
-                
+
                 currentGames.forEach(game => {
                     const gameDate = new Date(game.time * 1000);
-                    const formattedDate = gameDate.toLocaleDateString('pt-BR') + ' ' + 
-                        gameDate.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-    
+                    const formattedDate = gameDate.toLocaleDateString('pt-BR') + ' ' +
+                        gameDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
                     let homeScore = 0;
                     let awayScore = 0;
                     let totalGoals = 0;
                     let btts = 'Não';
                     let bttsClass = 'text-danger';
-    
+
                     if (game.ss && game.ss.includes('-')) {
                         [homeScore, awayScore] = game.ss.split('-').map(Number);
                         totalGoals = homeScore + awayScore;
                         btts = homeScore > 0 && awayScore > 0 ? 'Sim' : 'Não';
                         bttsClass = btts === 'Sim' ? 'text-success' : 'text-danger';
                     }
-                    
+
                     let htScore = 'N/A';
                     if (game.scores && game.scores["1"]) {
                         const homeScoreHT = parseInt(game.scores["1"].home) || 0;
                         const awayScoreHT = parseInt(game.scores["1"].away) || 0;
                         htScore = `${homeScoreHT}-${awayScoreHT}`;
                     }
-                    
+
                     let leagueTagClass = '';
                     if (game.league.name.toLowerCase().includes('adriatic') || game.league.name.toLowerCase().includes('10 mins')) {
                         leagueTagClass = 'adriatic';
@@ -1542,11 +1691,11 @@
                     } else if (game.league.name.toLowerCase().includes('h2h') || game.league.name.toLowerCase().includes('gg')) {
                         leagueTagClass = 'h2h';
                     }
-    
+
                     const row = document.createElement('tr');
                     row.className = 'game-row';
                     row.setAttribute('data-game-id', game.id);
-    
+
                     row.innerHTML = `
                         <td>${formattedDate}</td>
                         <td><span class="league-tag ${leagueTagClass}">${game.league.name}</span></td>
@@ -1556,7 +1705,7 @@
                         <td>${totalGoals}</td>
                         <td class="${bttsClass}">${btts}</td>
                     `;
-                    
+
                     const detailsRow = document.createElement('tr');
                     detailsRow.className = 'game-details-row';
                     detailsRow.innerHTML = `
@@ -1596,14 +1745,14 @@
                             </div>
                         </td>
                     `;
-                    
+
                     recentGamesTableBody.appendChild(row);
                     recentGamesTableBody.appendChild(detailsRow);
-                    
-                    row.addEventListener('click', function() {
+
+                    row.addEventListener('click', function () {
                         const gameId = this.getAttribute('data-game-id');
                         const detailsElement = document.getElementById(`game-details-${gameId}`);
-                        
+
                         if (detailsElement.style.display === 'block') {
                             detailsElement.style.display = 'none';
                         } else {
@@ -1614,20 +1763,21 @@
                         }
                     });
                 });
-                
+
                 updatePagination(totalPages);
             }
-            
+
+            // Atualiza a paginação
             function updatePagination(totalPages) {
                 paginationElement.innerHTML = '';
-                
+
                 if (totalPages <= 1) {
                     return;
                 }
-                
+
                 const prevLi = document.createElement('li');
                 prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
-                prevLi.innerHTML = `<a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">«</span></a>`;
+                prevLi.innerHTML = `<a class="page-link" href="#" aria-label="Página anterior"><span aria-hidden="true">«</span></a>`;
                 prevLi.addEventListener('click', (e) => {
                     e.preventDefault();
                     if (currentPage > 1) {
@@ -1636,11 +1786,11 @@
                     }
                 });
                 paginationElement.appendChild(prevLi);
-                
+
                 for (let i = 1; i <= totalPages; i++) {
                     if (
-                        i === 1 || 
-                        i === totalPages || 
+                        i === 1 ||
+                        i === totalPages ||
                         (i >= currentPage - 2 && i <= currentPage + 2)
                     ) {
                         const pageLi = document.createElement('li');
@@ -1653,7 +1803,7 @@
                         });
                         paginationElement.appendChild(pageLi);
                     } else if (
-                        i === currentPage - 3 || 
+                        i === currentPage - 3 ||
                         i === currentPage + 3
                     ) {
                         const ellipsisLi = document.createElement('li');
@@ -1662,10 +1812,10 @@
                         paginationElement.appendChild(ellipsisLi);
                     }
                 }
-                
+
                 const nextLi = document.createElement('li');
                 nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
-                nextLi.innerHTML = `<a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">»</span></a>`;
+                nextLi.innerHTML = `<a class="page-link" href="#" aria-label="Próxima página"><span aria-hidden="true">»</span></a>`;
                 nextLi.addEventListener('click', (e) => {
                     e.preventDefault();
                     if (currentPage < totalPages) {
@@ -1675,40 +1825,42 @@
                 });
                 paginationElement.appendChild(nextLi);
             }
-            
+
+            // Extrai nome do jogador
             function extractPlayerName(teamName) {
                 const match = teamName.match(/\((.*?)\)/);
                 return match ? match[1] : teamName;
             }
-            
+
+            // Atualiza melhores jogadores por liga
             function updateBestPlayersByLeague() {
                 bestPlayersByLeagueElement.innerHTML = '';
-                
+
                 const leagueStats = {};
-                
+
                 filteredGames.forEach(game => {
                     const leagueName = game.league.name;
                     if (!leagueStats[leagueName]) {
                         leagueStats[leagueName] = {};
                     }
-                    
+
                     const homePlayer = extractPlayerName(game.home.name);
                     const awayPlayer = extractPlayerName(game.away.name);
-                    
+
                     if (!leagueStats[leagueName][homePlayer]) {
                         leagueStats[leagueName][homePlayer] = { games: [] };
                     }
                     if (!leagueStats[leagueName][awayPlayer]) {
                         leagueStats[leagueName][awayPlayer] = { games: [] };
                     }
-                    
+
                     leagueStats[leagueName][homePlayer].games.push(game);
                     leagueStats[leagueName][awayPlayer].games.push(game);
                 });
-                
+
                 Object.entries(leagueStats).forEach(([leagueName, players]) => {
                     const playerData = [];
-                    
+
                     Object.entries(players).forEach(([playerName, data]) => {
                         const recentGames = data.games.sort((a, b) => b.time - a.time).slice(0, 5);
                         let totalHtGoalsScored = 0;
@@ -1717,18 +1869,18 @@
                         let totalFtGoalsConceded = 0;
                         let wins = 0;
                         let gameCount = 0;
-                        
+
                         recentGames.forEach(game => {
                             if (game.ss && game.ss.includes('-')) {
                                 const [homeScoreFt, awayScoreFt] = game.ss.split('-').map(Number);
                                 let homeScoreHt = 0;
                                 let awayScoreHt = 0;
-                                
+
                                 if (game.scores && game.scores["1"]) {
                                     homeScoreHt = parseInt(game.scores["1"].home) || 0;
                                     awayScoreHt = parseInt(game.scores["1"].away) || 0;
                                 }
-                                
+
                                 const isHomePlayer = extractPlayerName(game.home.name) === playerName;
                                 if (isHomePlayer) {
                                     totalHtGoalsScored += homeScoreHt;
@@ -1746,7 +1898,7 @@
                                 gameCount++;
                             }
                         });
-                        
+
                         if (gameCount >= 3) {
                             const avgHtGoalsScored = (totalHtGoalsScored / gameCount).toFixed(2);
                             const avgFtGoalsScored = (totalFtGoalsScored / gameCount).toFixed(2);
@@ -1756,7 +1908,7 @@
                             const combinedGoals = (parseFloat(avgHtGoalsScored) + parseFloat(avgFtGoalsScored)).toFixed(2);
                             const concededGoals = (parseFloat(avgHtGoalsConceded) + parseFloat(avgFtGoalsConceded)).toFixed(2);
                             const score = (parseFloat(combinedGoals) * 2) - (parseFloat(concededGoals) * 1.5) + (parseFloat(winPercentage) / 10);
-                            
+
                             if (avgHtGoalsScored > 0 || avgFtGoalsScored > 0 || winPercentage > 0) {
                                 playerData.push({
                                     name: playerName,
@@ -1773,16 +1925,16 @@
                             }
                         }
                     });
-                    
+
                     if (playerData.length === 0) return;
-                    
+
                     const sortedPlayers = playerData.sort((a, b) => b.score - a.score);
                     const maxScore = sortedPlayers.length > 0 ? sortedPlayers[0].score : 0;
                     const bestPlayers = sortedPlayers.filter(player => player.score >= maxScore);
-                    
+
                     const leagueSection = document.createElement('div');
                     leagueSection.className = 'best-player-section';
-                    
+
                     let leagueClass = '';
                     if (leagueName.toLowerCase().includes('adriatic') || leagueName.toLowerCase().includes('10 mins')) {
                         leagueClass = 'league-adriatic';
@@ -1795,13 +1947,13 @@
                     } else if (leagueName.toLowerCase().includes('h2h') || leagueName.toLowerCase().includes('gg')) {
                         leagueClass = 'league-h2h';
                     }
-                    
+
                     leagueSection.innerHTML = `
                         <div class="best-player-league">
                             <span class="league-tag ${leagueClass}">${leagueName}</span>
                         </div>
                     `;
-                    
+
                     bestPlayers.forEach(player => {
                         const playerCard = document.createElement('div');
                         playerCard.className = 'best-player-card';
@@ -1817,82 +1969,303 @@
                                 </div>
                                 <div class="stat-item">
                                     <span class="stat-value">${player.avgHtGoalsScored}</span>
-                                    <span class="stat-label">Gols HT</span>
+                                    <span class="stat-label">Média Gols HT</span>
                                 </div>
                                 <div class="stat-item">
                                     <span class="stat-value">${player.avgFtGoalsScored}</span>
-                                    <span class="stat-label">Gols FT</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-value">${player.avgHtGoalsConceded}</span>
-                                    <span class="stat-label">Sofreu HT</span>
+                                    <span class="stat-label">Média Gols FT</span>
                                 </div>
                                 <div class="stat-item">
                                     <span class="stat-value">${player.avgFtGoalsConceded}</span>
-                                    <span class="stat-label">Sofreu FT</span>
+                                    <span class="stat-label">Média Gols Sofridos FT</span>
                                 </div>
                             </div>
                         `;
                         leagueSection.appendChild(playerCard);
                     });
-                    
-                    if (bestPlayers.length === 0) {
-                        const noPlayerCard = document.createElement('div');
-                        noPlayerCard.className = 'best-player-card';
-                        noPlayerCard.innerHTML = `
-                            <div class="best-player-info">
-                                <i class="bi bi-trophy-fill best-player-icon"></i>
-                                <span class="best-player-name">Nenhum jogador</span>
-                            </div>
-                            <div class="best-player-stats">
-                                <div class="stat-item">
-                                    <span class="stat-value">0%</span>
-                                    <span class="stat-label">Vitórias</span>
+
+                    bestPlayersByLeagueElement.appendChild(leagueSection);
+                });
+            }
+
+            // Atualiza testes de estratégias
+            function updateStrategyTests() {
+                // Limpa os contêineres de resultados
+                overBattleResults.innerHTML = '';
+                gtOverHtResults.innerHTML = '';
+                voltaOverResults.innerHTML = '';
+
+                // Agrupa jogos por jogador e liga
+                const playerStatsByLeague = {};
+
+                filteredGames.forEach(game => {
+                    const leagueName = game.league.name;
+                    if (!playerStatsByLeague[leagueName]) {
+                        playerStatsByLeague[leagueName] = {};
+                    }
+
+                    const homePlayer = extractPlayerName(game.home.name);
+                    const awayPlayer = extractPlayerName(game.away.name);
+
+                    if (!playerStatsByLeague[leagueName][homePlayer]) {
+                        playerStatsByLeague[leagueName][homePlayer] = {
+                            games: [],
+                            over25FtCount: 0,
+                            over15HtCount: 0,
+                            totalGames: 0
+                        };
+                    }
+                    if (!playerStatsByLeague[leagueName][awayPlayer]) {
+                        playerStatsByLeague[leagueName][awayPlayer] = {
+                            games: [],
+                            over25FtCount: 0,
+                            over15HtCount: 0,
+                            totalGames: 0
+                        };
+                    }
+
+                    playerStatsByLeague[leagueName][homePlayer].games.push(game);
+                    playerStatsByLeague[leagueName][awayPlayer].games.push(game);
+
+                    // Calcula estatísticas de Over 2.5 FT e Over 1.5 HT
+                    if (game.ss && game.ss.includes('-')) {
+                        const [homeScoreFt, awayScoreFt] = game.ss.split('-').map(Number);
+                        const totalGoalsFt = homeScoreFt + awayScoreFt;
+
+                        let homeScoreHt = 0;
+                        let awayScoreHt = 0;
+                        if (game.scores && game.scores["1"]) {
+                            homeScoreHt = parseInt(game.scores["1"].home) || 0;
+                            awayScoreHt = parseInt(game.scores["1"].away) || 0;
+                        }
+                        const totalGoalsHt = homeScoreHt + awayScoreHt;
+
+                        if (totalGoalsFt > 2.5) {
+                            playerStatsByLeague[leagueName][homePlayer].over25FtCount++;
+                            playerStatsByLeague[leagueName][awayPlayer].over25FtCount++;
+                        }
+
+                        if (totalGoalsHt > 1.5) {
+                            playerStatsByLeague[leagueName][homePlayer].over15HtCount++;
+                            playerStatsByLeague[leagueName][awayPlayer].over15HtCount++;
+                        }
+
+                        playerStatsByLeague[leagueName][homePlayer].totalGames++;
+                        playerStatsByLeague[leagueName][awayPlayer].totalGames++;
+                    }
+                });
+
+                // Função para renderizar confrontos
+                function renderMatchups(container, leagueName, matchups, strategyName) {
+                    if (matchups.length === 0) {
+                        container.innerHTML += `<p class="text-center">Nenhum confronto encontrado para ${leagueName} (${strategyName})</p>`;
+                        return;
+                    }
+
+                    const leagueSection = document.createElement('div');
+                    leagueSection.className = 'best-player-league';
+                    let leagueClass = '';
+                    if (leagueName.toLowerCase().includes('adriatic') || leagueName.toLowerCase().includes('10 mins')) {
+                        leagueClass = 'league-adriatic';
+                    } else if (leagueName.toLowerCase().includes('gt')) {
+                        leagueClass = 'league-gt';
+                    } else if (leagueName.toLowerCase().includes('volta')) {
+                        leagueClass = 'league-volta';
+                    } else if (leagueName.toLowerCase().includes('battle')) {
+                        leagueClass = 'league-battle';
+                    } else if (leagueName.toLowerCase().includes('h2h') || leagueName.toLowerCase().includes('gg')) {
+                        leagueClass = 'league-h2h';
+                    }
+
+                    leagueSection.innerHTML = `
+                        <div class="best-player-league">
+                            <span class="league-tag ${leagueClass}">${leagueName}</span>
+                        </div>
+                    `;
+
+                    matchups.forEach(matchup => {
+                        const matchupCard = document.createElement('div');
+                        matchupCard.className = 'strategy-matchup';
+                        matchupCard.innerHTML = `
+                            <h6>${matchup.player1} vs ${matchup.player2}</h6>
+                            <div class="strategy-stats">
+                                <div class="strategy-stat">
+                                    <span class="strategy-stat-value">${matchup.percentage1}%</span>
+                                    <span class="strategy-stat-label">${matchup.player1}</span>
                                 </div>
-                                <div class="stat-item">
-                                    <span class="stat-value">0</span>
-                                    <span class="stat-label">Gols HT</span>
+                                <div class="strategy-stat">
+                                    <span class="strategy-stat-value">${matchup.percentage2}%</span>
+                                    <span class="strategy-stat-label">${matchup.player2}</span>
                                 </div>
-                                <div class="stat-item">
-                                    <span class="stat-value">0</span>
-                                    <span class="stat-label">Gols FT</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-value">0</span>
-                                    <span class="stat-label">Sofreu HT</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-value">0</span>
-                                    <span class="stat-label">Sofreu FT</span>
+                                <div class="strategy-stat">
+                                    <span class="strategy-stat-value">${matchup.combinedPercentage}%</span>
+                                    <span class="strategy-stat-label">Combinado</span>
                                 </div>
                             </div>
                         `;
-                        leagueSection.appendChild(noPlayerCard);
-                    }
-                    
-                    bestPlayersByLeagueElement.appendChild(leagueSection);
-                });
-                
-                if (bestPlayersByLeagueElement.innerHTML === '') {
-                    bestPlayersByLeagueElement.innerHTML = '<p class="text-center">Nenhum jogador com estatísticas relevantes encontrado.</p>';
+                        leagueSection.appendChild(matchupCard);
+                    });
+
+                    container.appendChild(leagueSection);
+                }
+
+                // Estratégia OVER_BATTLE: Confrontos na Battle 8m com alta % de Over 2.5 FT
+                if (selectedLeague === 'all' || selectedLeague.toLowerCase().includes('battle')) {
+                    const battleLeagues = Object.keys(playerStatsByLeague).filter(league =>
+                        league.toLowerCase().includes('battle') && !league.toLowerCase().includes('volta')
+                    );
+
+                    battleLeagues.forEach(leagueName => {
+                        const players = playerStatsByLeague[leagueName];
+                        const matchups = [];
+
+                        const eligiblePlayers = Object.entries(players)
+                            .filter(([_, stats]) => stats.totalGames >= 3 &&
+                                (stats.over25FtCount / stats.totalGames) >= 0.7)
+                            .map(([playerName, stats]) => ({
+                                name: playerName,
+                                percentage: ((stats.over25FtCount / stats.totalGames) * 100).toFixed(1)
+                            }));
+
+                        // Gera combinações de confrontos
+                        for (let i = 0; i < eligiblePlayers.length; i++) {
+                            for (let j = i + 1; j < eligiblePlayers.length; j++) {
+                                const player1 = eligiblePlayers[i];
+                                const player2 = eligiblePlayers[j];
+                                const combinedPercentage = (
+                                    (parseFloat(player1.percentage) + parseFloat(player2.percentage)) / 2
+                                ).toFixed(1);
+
+                                matchups.push({
+                                    player1: player1.name,
+                                    player2: player2.name,
+                                    percentage1: player1.percentage,
+                                    percentage2: player2.percentage,
+                                    combinedPercentage
+                                });
+                            }
+                        }
+
+                        // Ordena por porcentagem combinada
+                        matchups.sort((a, b) => b.combinedPercentage - a.combinedPercentage);
+                        renderMatchups(overBattleResults, leagueName, matchups.slice(0, 5), 'OVER_BATTLE');
+                    });
+                } else {
+                    overBattleResults.innerHTML = '<p class="text-center">Selecione a liga Battle ou Todas para ver os confrontos</p>';
+                }
+
+                // Estratégia GT_OVER_HT: Confrontos na GT Leagues com alta % de Over 1.5 HT
+                if (selectedLeague === 'all' || selectedLeague.toLowerCase().includes('gt')) {
+                    const gtLeagues = Object.keys(playerStatsByLeague).filter(league =>
+                        league.toLowerCase().includes('gt')
+                    );
+
+                    gtLeagues.forEach(leagueName => {
+                        const players = playerStatsByLeague[leagueName];
+                        const matchups = [];
+
+                        const eligiblePlayers = Object.entries(players)
+                            .filter(([_, stats]) => stats.totalGames >= 3 &&
+                                (stats.over15HtCount / stats.totalGames) >= 0.65)
+                            .map(([playerName, stats]) => ({
+                                name: playerName,
+                                percentage: ((stats.over15HtCount / stats.totalGames) * 100).toFixed(1)
+                            }));
+
+                        // Gera combinações de confrontos
+                        for (let i = 0; i < eligiblePlayers.length; i++) {
+                            for (let j = i + 1; j < eligiblePlayers.length; j++) {
+                                const player1 = eligiblePlayers[i];
+                                const player2 = eligiblePlayers[j];
+                                const combinedPercentage = (
+                                    (parseFloat(player1.percentage) + parseFloat(player2.percentage)) / 2
+                                ).toFixed(1);
+
+                                matchups.push({
+                                    player1: player1.name,
+                                    player2: player2.name,
+                                    percentage1: player1.percentage,
+                                    percentage2: player2.percentage,
+                                    combinedPercentage
+                                });
+                            }
+                        }
+
+                        // Ordena por porcentagem combinada
+                        matchups.sort((a, b) => b.combinedPercentage - a.combinedPercentage);
+                        renderMatchups(gtOverHtResults, leagueName, matchups.slice(0, 5), 'GT_OVER_HT');
+                    });
+                } else {
+                    gtOverHtResults.innerHTML = '<p class="text-center">Selecione a liga GT ou Todas para ver os confrontos</p>';
+                }
+
+                // Estratégia VOLTA_OVER: Confrontos na Battle Volta com alta % de Over 2.5 FT
+                if (selectedLeague === 'all' || selectedLeague.toLowerCase().includes('volta')) {
+                    const voltaLeagues = Object.keys(playerStatsByLeague).filter(league =>
+                        league.toLowerCase().includes('volta')
+                    );
+
+                    voltaLeagues.forEach(leagueName => {
+                        const players = playerStatsByLeague[leagueName];
+                        const matchups = [];
+
+                        const eligiblePlayers = Object.entries(players)
+                            .filter(([_, stats]) => stats.totalGames >= 3 &&
+                                (stats.over25FtCount / stats.totalGames) >= 0.75)
+                            .map(([playerName, stats]) => ({
+                                name: playerName,
+                                percentage: ((stats.over25FtCount / stats.totalGames) * 100).toFixed(1)
+                            }));
+
+                        // Gera combinações de confrontos
+                        for (let i = 0; i < eligiblePlayers.length; i++) {
+                            for (let j = i + 1; j < eligiblePlayers.length; j++) {
+                                const player1 = eligiblePlayers[i];
+                                const player2 = eligiblePlayers[j];
+                                const combinedPercentage = (
+                                    (parseFloat(player1.percentage) + parseFloat(player2.percentage)) / 2
+                                ).toFixed(1);
+
+                                matchups.push({
+                                    player1: player1.name,
+                                    player2: player2.name,
+                                    percentage1: player1.percentage,
+                                    percentage2: player2.percentage,
+                                    combinedPercentage
+                                });
+                            }
+                        }
+
+                        // Ordena por porcentagem combinada
+                        matchups.sort((a, b) => b.combinedPercentage - a.combinedPercentage);
+                        renderMatchups(voltaOverResults, leagueName, matchups.slice(0, 5), 'VOLTA_OVER');
+                    });
+                } else {
+                    voltaOverResults.innerHTML = '<p class="text-center">Selecione a liga Volta ou Todas para ver os confrontos</p>';
                 }
             }
-            
+
+            // Configura eventos dos filtros de jogos
             gamesFilterButtons.forEach(button => {
-                button.addEventListener('click', () => {
+                button.addEventListener('click', function () {
                     gamesFilterButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                    selectedGames = button.getAttribute('data-games');
+                    this.classList.add('active');
+                    selectedGames = this.getAttribute('data-games');
+                    currentPage = 1;
                     processData();
                 });
             });
-            
+
+            // Configura evento do botão de atualizar
             refreshBtn.addEventListener('click', () => {
                 fetchData();
             });
-            
+
+            // Inicializa a página
             fetchData();
         });
     </script>
 </body>
+
 </html>
+</xaiArtifact>
