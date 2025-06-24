@@ -646,9 +646,9 @@
                     recentGamesTableBody.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum jogo encontrado</td></tr>';
                     bestPlayersByLeagueElement.innerHTML = '';
                     paginationElement.innerHTML = '';
-                    overBattleResults.innerHTML = '<p class="text-center">Nenhum jogo encontrado</p>';
-                    gtOverHtResults.innerHTML = '<p class="text-center">Nenhum jogo encontrado</p>';
-                    voltaOverResults.innerHTML = '<p class="text-center">Nenhum jogo encontrado</p>';
+                    overBattleResults.innerHTML = '<p class="text-center">Erro ao carregar dados</p>';
+                    gtOverHtResults.innerHTML = '<p class="text-center">Erro ao carregar dados</p>';
+                    voltaOverResults.innerHTML = '<p class="text-center">Erro ao carregar dados</p>';
                     if (goalsChart) goalsChart.destroy();
                     if (bttsChart) bttsChart.destroy();
                 } finally {
@@ -660,7 +660,13 @@
             // Normaliza nomes das ligas
             function normalizeLeagueName(leagueName) {
                 if (!leagueName) return leagueName;
-                return leagueName.replace(/_/g, ' ');
+                return leagueName.replace(/_/g, ' ').toLowerCase();
+            }
+            
+            // Extrai nome do jogador
+            function extractPlayerName(teamName) {
+                const match = teamName.match(/\((.*?)\)/);
+                return match ? match[1] : teamName.split('(')[0].trim();
             }
             
             // Processa os dados
@@ -691,7 +697,7 @@
                 let gamesFilteredByLeague = allGames;
                 if (selectedLeague !== 'all') {
                     gamesFilteredByLeague = allGames.filter(game => 
-                        game.league.name.toLowerCase().includes(selectedLeague.toLowerCase())
+                        game.league.name.includes(selectedLeague)
                     );
                 }
                 
@@ -722,15 +728,15 @@
                 uniqueLeagues.forEach(league => {
                     const badge = document.createElement('button');
                     let leagueClass = '';
-                    if (league.toLowerCase().includes('adriatic') || league.toLowerCase().includes('10 mins')) {
+                    if (league.includes('adriatic') || league.includes('10 mins')) {
                         leagueClass = 'league-adriatic';
-                    } else if (league.toLowerCase().includes('gt')) {
+                    } else if (league.includes('gt')) {
                         leagueClass = 'league-gt';
-                    } else if (league.toLowerCase().includes('volta')) {
+                    } else if (league.includes('volta')) {
                         leagueClass = 'league-volta';
-                    } else if (league.toLowerCase().includes('battle')) {
+                    } else if (league.includes('battle')) {
                         leagueClass = 'league-battle';
-                    } else if (league.toLowerCase().includes('h2h') || league.toLowerCase().includes('gg')) {
+                    } else if (league.includes('h2h') || league.includes('gg')) {
                         leagueClass = 'league-h2h';
                     }
                     
@@ -1147,15 +1153,15 @@
                     }
                     
                     let leagueTagClass = '';
-                    if (game.league.name.toLowerCase().includes('adriatic') || game.league.name.toLowerCase().includes('10 mins')) {
+                    if (game.league.name.includes('adriatic') || game.league.name.includes('10 mins')) {
                         leagueTagClass = 'adriatic';
-                    } else if (game.league.name.toLowerCase().includes('gt')) {
+                    } else if (game.league.name.includes('gt')) {
                         leagueTagClass = 'gt';
-                    } else if (game.league.name.toLowerCase().includes('volta')) {
+                    } else if (game.league.name.includes('volta')) {
                         leagueTagClass = 'volta';
-                    } else if (game.league.name.toLowerCase().includes('battle')) {
+                    } else if (game.league.name.includes('battle')) {
                         leagueTagClass = 'battle';
-                    } else if (game.league.name.toLowerCase().includes('h2h') || game.league.name.toLowerCase().includes('gg')) {
+                    } else if (game.league.name.includes('h2h') || game.league.name.includes('gg')) {
                         leagueTagClass = 'h2h';
                     }
     
@@ -1293,12 +1299,6 @@
                 paginationElement.appendChild(nextLi);
             }
             
-            // Extrai nome do jogador
-            function extractPlayerName(teamName) {
-                const match = teamName.match(/\((.*?)\)/);
-                return match ? match[1] : teamName;
-            }
-            
             // Atualiza melhores jogadores por liga
             function updateBestPlayersByLeague() {
                 bestPlayersByLeagueElement.innerHTML = '';
@@ -1370,15 +1370,15 @@
                         leagueSection.className = 'best-player-section';
                         
                         let leagueClass = '';
-                        if (leagueName.toLowerCase().includes('adriatic') || leagueName.toLowerCase().includes('10 mins')) {
+                        if (leagueName.includes('adriatic') || leagueName.includes('10 mins')) {
                             leagueClass = 'adriatic';
-                        } else if (leagueName.toLowerCase().includes('gt')) {
+                        } else if (leagueName.includes('gt')) {
                             leagueClass = 'gt';
-                        } else if (leagueName.toLowerCase().includes('volta')) {
+                        } else if (leagueName.includes('volta')) {
                             leagueClass = 'volta';
-                        } else if (leagueName.toLowerCase().includes('battle')) {
+                        } else if (leagueName.includes('battle')) {
                             leagueClass = 'battle';
-                        } else if (leagueName.toLowerCase().includes('h2h') || leagueName.toLowerCase().includes('gg')) {
+                        } else if (leagueName.includes('h2h') || leagueName.includes('gg')) {
                             leagueClass = 'h2h';
                         }
                         
@@ -1477,9 +1477,9 @@
                 });
                 
                 // Identifica confrontos para OVER_BATTLE
-                if (selectedLeague === 'all' || selectedLeague.toLowerCase().includes('battle')) {
+                if (selectedLeague === 'all' || selectedLeague.includes('battle')) {
                     const battleLeagues = Object.keys(playerStats).filter(league => 
-                        league.toLowerCase().includes('battle') && !league.toLowerCase().includes('volta')
+                        league.includes('battle') && !league.includes('volta')
                     );
                     
                     battleLeagues.forEach(leagueName => {
@@ -1507,12 +1507,14 @@
                             }
                         }
                     });
+                    strategyResults.overBattle.sort((a, b) => b.combinedPercentage - a.combinedPercentage);
+                    strategyResults.overBattle = strategyResults.overBattle.slice(0, 5);
                 }
                 
                 // Identifica confrontos para GT_OVER_HT
-                if (selectedLeague === 'all' || selectedLeague.toLowerCase().includes('gt')) {
+                if (selectedLeague === 'all' || selectedLeague.includes('gt')) {
                     const gtLeagues = Object.keys(playerStats).filter(league => 
-                        league.toLowerCase().includes('gt')
+                        league.includes('gt')
                     );
                     
                     gtLeagues.forEach(leagueName => {
@@ -1540,12 +1542,14 @@
                             }
                         }
                     });
+                    strategyResults.gtOverHt.sort((a, b) => b.combinedPercentage - a.combinedPercentage);
+                    strategyResults.gtOverHt = strategyResults.gtOverHt.slice(0, 5);
                 }
                 
                 // Identifica confrontos para VOLTA_OVER
-                if (selectedLeague === 'all' || selectedLeague.toLowerCase().includes('volta')) {
+                if (selectedLeague === 'all' || selectedLeague.includes('volta')) {
                     const voltaLeagues = Object.keys(playerStats).filter(league => 
-                        league.toLowerCase().includes('volta')
+                        league.includes('volta')
                     );
                     
                     voltaLeagues.forEach(leagueName => {
@@ -1573,6 +1577,8 @@
                             }
                         }
                     });
+                    strategyResults.voltaOver.sort((a, b) => b.combinedPercentage - a.combinedPercentage);
+                    strategyResults.voltaOver = strategyResults.voltaOver.slice(0, 5);
                 }
                 
                 // Renderiza os resultados para OVER_BATTLE
