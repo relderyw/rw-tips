@@ -1313,36 +1313,26 @@
                     
                     const homePlayer = extractPlayerName(game.home.name);
                     const awayPlayer = extractPlayerName(game.away.name);
-                    
+                    const [homeScore, awayScore] = game.ss?.split('-').map(Number) || [0, 0];
+                    const [homeScoreHT, awayScoreHT] = game.scores?.["1"] ? [parseInt(game.scores["1"].home) || 0, parseInt(game.scores["1"].away) || 0] : [0, 0];
+
+                    // Estatísticas para o jogador da casa
                     if (!leagueStats[leagueName][homePlayer]) {
-                        leagueStats[leagueName][homePlayer] = {
-                            games: 0,
-                            totalGoals: 0,
-                            bttsCount: 0
-                        };
+                        leagueStats[leagueName][homePlayer] = { games: 0, goalsScored: 0, goalsConceded: 0, bttsCount: 0 };
                     }
+                    leagueStats[leagueName][homePlayer].games++;
+                    leagueStats[leagueName][homePlayer].goalsScored += homeScore;
+                    leagueStats[leagueName][homePlayer].goalsConceded += awayScore;
+                    if (homeScore > 0 && awayScore > 0) leagueStats[leagueName][homePlayer].bttsCount++;
+
+                    // Estatísticas para o jogador visitante
                     if (!leagueStats[leagueName][awayPlayer]) {
-                        leagueStats[leagueName][awayPlayer] = {
-                            games: 0,
-                            totalGoals: 0,
-                            bttsCount: 0
-                        };
+                        leagueStats[leagueName][awayPlayer] = { games: 0, goalsScored: 0, goalsConceded: 0, bttsCount: 0 };
                     }
-                    
-                    if (game.ss && game.ss.includes('-')) {
-                        const [homeScore, awayScore] = game.ss.split('-').map(Number);
-                        const totalGoals = homeScore + awayScore;
-                        
-                        leagueStats[leagueName][homePlayer].games++;
-                        leagueStats[leagueName][homePlayer].totalGoals += totalGoals;
-                        leagueStats[leagueName][awayPlayer].games++;
-                        leagueStats[leagueName][awayPlayer].totalGoals += totalGoals;
-                        
-                        if (homeScore > 0 && awayScore > 0) {
-                            leagueStats[leagueName][homePlayer].bttsCount++;
-                            leagueStats[leagueName][awayPlayer].bttsCount++;
-                        }
-                    }
+                    leagueStats[leagueName][awayPlayer].games++;
+                    leagueStats[leagueName][awayPlayer].goalsScored += awayScore;
+                    leagueStats[leagueName][awayPlayer].goalsConceded += homeScore;
+                    if (homeScore > 0 && awayScore > 0) leagueStats[leagueName][awayPlayer].bttsCount++;
                 });
                 
                 Object.keys(leagueStats).forEach(leagueName => {
@@ -1352,12 +1342,12 @@
                     Object.keys(players).forEach(playerName => {
                         const stats = players[playerName];
                         if (stats.games >= 3) {
-                            const avgGoals = (stats.totalGoals / stats.games).toFixed(2);
+                            const avgGoals = (stats.goalsScored / stats.games).toFixed(2);
                             const bttsPercentage = ((stats.bttsCount / stats.games) * 100).toFixed(1);
                             playerData.push({
                                 name: playerName,
-                                avgGoals: avgGoals,
-                                bttsPercentage: bttsPercentage
+                                avgGoals: parseFloat(avgGoals),
+                                bttsPercentage: parseFloat(bttsPercentage)
                             });
                         }
                     });
@@ -1429,54 +1419,33 @@
                     const leagueName = game.league.name;
                     const homePlayer = extractPlayerName(game.home.name);
                     const awayPlayer = extractPlayerName(game.away.name);
-                    
+                    const [homeScore, awayScore] = game.ss?.split('-').map(Number) || [0, 0];
+                    const [homeScoreHT, awayScoreHT] = game.scores?.["1"] ? [parseInt(game.scores["1"].home) || 0, parseInt(game.scores["1"].away) || 0] : [0, 0];
+                    const totalGoals = homeScore + awayScore;
+                    const totalGoalsHT = homeScoreHT + awayScoreHT;
+
                     if (!playerStats[leagueName]) {
                         playerStats[leagueName] = {};
                     }
-                    
+
+                    // Estatísticas para o jogador da casa
                     if (!playerStats[leagueName][homePlayer]) {
-                        playerStats[leagueName][homePlayer] = {
-                            games: 0,
-                            over25FtCount: 0,
-                            over15HtCount: 0
-                        };
+                        playerStats[leagueName][homePlayer] = { games: 0, over25FtCount: 0, over15HtCount: 0 };
                     }
+                    playerStats[leagueName][homePlayer].games++;
+                    if (totalGoals > 2.5) playerStats[leagueName][homePlayer].over25FtCount++;
+                    if (totalGoalsHT > 1.5) playerStats[leagueName][homePlayer].over15HtCount++;
+
+                    // Estatísticas para o jogador visitante
                     if (!playerStats[leagueName][awayPlayer]) {
-                        playerStats[leagueName][awayPlayer] = {
-                            games: 0,
-                            over25FtCount: 0,
-                            over15HtCount: 0
-                        };
+                        playerStats[leagueName][awayPlayer] = { games: 0, over25FtCount: 0, over15HtCount: 0 };
                     }
-                    
-                    if (game.ss && game.ss.includes('-')) {
-                        const [homeScore, awayScore] = game.ss.split('-').map(Number);
-                        const totalGoals = homeScore + awayScore;
-                        
-                        let homeScoreHT = 0;
-                        let awayScoreHT = 0;
-                        if (game.scores && game.scores["1"]) {
-                            homeScoreHT = parseInt(game.scores["1"].home) || 0;
-                            awayScoreHT = parseInt(game.scores["1"].away) || 0;
-                        }
-                        const totalGoalsHT = homeScoreHT + awayScoreHT;
-                        
-                        playerStats[leagueName][homePlayer].games++;
-                        playerStats[leagueName][awayPlayer].games++;
-                        
-                        if (totalGoals > 2.5) {
-                            playerStats[leagueName][homePlayer].over25FtCount++;
-                            playerStats[leagueName][awayPlayer].over25FtCount++;
-                        }
-                        
-                        if (totalGoalsHT > 1.5) {
-                            playerStats[leagueName][homePlayer].over15HtCount++;
-                            playerStats[leagueName][awayPlayer].over15HtCount++;
-                        }
-                    }
+                    playerStats[leagueName][awayPlayer].games++;
+                    if (totalGoals > 2.5) playerStats[leagueName][awayPlayer].over25FtCount++;
+                    if (totalGoalsHT > 1.5) playerStats[leagueName][awayPlayer].over15HtCount++;
                 });
                 
-                // Identifica confrontos para OVER_BATTLE
+                // Identifica confrontos para OVER_BATTLE (70% Over 2.5 FT, min 3 jogos)
                 if (selectedLeague === 'all' || selectedLeague.toLowerCase().includes('battle')) {
                     const battleLeagues = Object.keys(playerStats).filter(league => 
                         league.toLowerCase().includes('battle') && !league.toLowerCase().includes('volta')
@@ -1507,9 +1476,10 @@
                             }
                         }
                     });
+                    strategyResults.overBattle.sort((a, b) => b.combinedPercentage - a.combinedPercentage).slice(0, 5);
                 }
                 
-                // Identifica confrontos para GT_OVER_HT
+                // Identifica confrontos para GT_OVER_HT (65% Over 1.5 HT, min 3 jogos)
                 if (selectedLeague === 'all' || selectedLeague.toLowerCase().includes('gt')) {
                     const gtLeagues = Object.keys(playerStats).filter(league => 
                         league.toLowerCase().includes('gt')
@@ -1540,9 +1510,10 @@
                             }
                         }
                     });
+                    strategyResults.gtOverHt.sort((a, b) => b.combinedPercentage - a.combinedPercentage).slice(0, 5);
                 }
                 
-                // Identifica confrontos para VOLTA_OVER
+                // Identifica confrontos para VOLTA_OVER (75% Over 2.5 FT, min 3 jogos)
                 if (selectedLeague === 'all' || selectedLeague.toLowerCase().includes('volta')) {
                     const voltaLeagues = Object.keys(playerStats).filter(league => 
                         league.toLowerCase().includes('volta')
@@ -1573,15 +1544,12 @@
                             }
                         }
                     });
+                    strategyResults.voltaOver.sort((a, b) => b.combinedPercentage - a.combinedPercentage).slice(0, 5);
                 }
                 
-                // Renderiza os resultados para OVER_BATTLE
+                // Renderiza os resultados
                 renderStrategyResults(overBattleResults, strategyResults.overBattle, 'Over 2.5 FT');
-                
-                // Renderiza os resultados para GT_OVER_HT
                 renderStrategyResults(gtOverHtResults, strategyResults.gtOverHt, 'Over 1.5 HT');
-                
-                // Renderiza os resultados para VOLTA_OVER
                 renderStrategyResults(voltaOverResults, strategyResults.voltaOver, 'Over 2.5 FT');
             }
             
