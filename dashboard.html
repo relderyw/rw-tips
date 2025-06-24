@@ -9,6 +9,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        :root {
+            --battle-8m-color: #FF4C4C;
+            --battle-volta-6m-color: #FFD700;
+            --gt-leagues-12m-color: #32CD32;
+            --h2h-gg-8m-color: #8A2BE2;
+        }
         body {
             background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
             color: #e0e0e0;
@@ -127,11 +133,10 @@
             color: #fff;
             border-color: #00cc66;
         }
-        .league-gt.active { background: #ff6f61; border-color: #ff6f61; }
-        .league-battle.active { background: #6b7280; border-color: #6b7280; }
-        .league-volta.active { background: #d946ef; border-color: #d946ef; }
-        .league-h2h.active { background: #3b82f6; border-color: #3b82f6; }
-        .league-adriatic.active { background: #f59e0b; border-color: #f59e0b; }
+        .league-gt.active { background: #32CD32; border-color: #32CD32; }
+        .league-battle.active { background: #FF4C4C; border-color: #FF4C4C; }
+        .league-volta.active { background: #FFD700; border-color: #FFD700; }
+        .league-h2h.active { background: #8A2BE2; border-color: #8A2BE2; }
         .best-players-container {
             display: flex;
             flex-wrap: wrap;
@@ -145,8 +150,22 @@
             flex: 1;
             min-width: 300px;
         }
-        .best-player-league {
+        .league-header {
             margin-bottom: 10px;
+            padding-left: 10px;
+            font-weight: bold;
+        }
+        .league-header.battle-8m {
+            border-left: 4px solid var(--battle-8m-color);
+        }
+        .league-header.battle-volta-6m {
+            border-left: 4px solid var(--battle-volta-6m-color);
+        }
+        .league-header.gt-leagues-12m {
+            border-left: 4px solid var(--gt-leagues-12m-color);
+        }
+        .league-header.h2h-gg-8m {
+            border-left: 4px solid var(--h2h-gg-8m-color);
         }
         .best-player-card {
             background: rgba(255, 255, 255, 0.03);
@@ -326,14 +345,32 @@
             border-radius: 10px;
             font-size: 0.9rem;
         }
-        .league-tag.battle { background: #6b7280; color: #fff; }
-        .league-tag.volta { background: #d946ef; color: #fff; }
-        .league-tag.gt { background: #ff6f61; color: #fff; }
-        .league-tag.h2h { background: #3b82f6; color: #fff; }
-        .league-tag.adriatic { background: #f59e0b; color: #fff; }
+        .league-tag.battle-8m { background: #FF4C4C; color: #fff; }
+        .league-tag.battle-volta-6m { background: #FFD700; color: #fff; }
+        .league-tag.gt-leagues-12m { background: #32CD32; color: #fff; }
+        .league-tag.h2h-gg-8m { background: #8A2BE2; color: #fff; }
         .high-value { color: #00cc66; font-weight: bold; }
         .medium-value { color: #ffeb3b; }
         .low-value { color: #ff3a5e; }
+        .top-nav {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .top-nav-button {
+            background: #333;
+            border: 1px solid #555;
+            color: #e0e0e0;
+            padding: 5px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .top-nav-button.active, .top-nav-button:hover {
+            background: #00cc66;
+            color: #fff;
+            border-color: #00cc66;
+        }
     </style>
 </head>
 <body>
@@ -360,6 +397,14 @@
     <div class="container">
         <h1 class="title-gradient">RW TIPS - ANÁLISE DE CENÁRIOS</h1>
         
+        <div class="top-nav" id="leagueNav">
+            <button class="top-nav-button active" data-league="">Todas as Ligas</button>
+            <button class="top-nav-button" data-league="Battle 8m" style="color: #FF4C4C;">Battle 8m</button>
+            <button class="top-nav-button" data-league="Battle Volta 6m" style="color: #FFD700;">Battle Volta 6m</button>
+            <button class="top-nav-button" data-league="GT Leagues 12m" style="color: #32CD32;">GT Leagues 12m</button>
+            <button class="top-nav-button" data-league="H2H GG 8m" style="color: #8A2BE2;">H2H GG 8m</button>
+        </div>
+        
         <!-- Abas -->
         <ul class="nav nav-tabs" id="analysisTabs" role="tablist">
             <li class="nav-item" role="presentation">
@@ -380,18 +425,6 @@
                         <button type="button" class="filter-btn" data-games="5">5 Jogos</button>
                         <button type="button" class="filter-btn" data-games="10">10 Jogos</button>
                         <button type="button" class="filter-btn" data-games="15">15 Jogos</button>
-                    </div>
-                </div>
-                
-                <div id="leagueFilters" class="league-filter">
-                    <div class="filter-title">Filtrar por Liga:</div>
-                    <div id="leagueBadges">
-                        <button class="league-badge active">Todas</button>
-                        <button class="league-badge league-gt">GT Leagues 12m</button>
-                        <button class="league-badge league-battle">Battle 8m</button>
-                        <button class="league-badge league-volta">Battle Volta 6m</button>
-                        <button class="league-badge league-h2h">H2H GG 8m</button>
-                        <button class="league-badge league-adriatic">Adriatic League 10m</button>
                     </div>
                 </div>
                 
@@ -507,16 +540,13 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Verifica se o usuário está logado
             if (!sessionStorage.getItem('loggedIn')) {
                 window.location.href = 'index.html';
                 return;
             }
 
-            // Elementos do DOM
             const lastUpdatedElement = document.getElementById('lastUpdated');
             const refreshBtn = document.getElementById('refreshBtn');
-            const leagueBadgesElement = document.getElementById('leagueBadges');
             const leagueTableBody = document.getElementById('leagueTable').querySelector('tbody');
             const marketsTableBody = document.getElementById('marketsTable').querySelector('tbody');
             const recentGamesTableBody = document.getElementById('recentGamesTable').querySelector('tbody');
@@ -527,59 +557,49 @@
             const overBattleResults = document.getElementById('overBattleResults');
             const gtOverHtResults = document.getElementById('gtOverHtResults');
             const voltaOverResults = document.getElementById('voltaOverResults');
-            
-            // Variáveis globais
+            const leagueNavButtons = document.querySelectorAll('#leagueNav .top-nav-button');
+
             let allGames = [];
             let filteredGames = [];
             let currentPage = 1;
             let itemsPerPage = 20;
-            let selectedLeague = 'all';
+            let selectedLeague = '';
             let selectedGames = 'all';
             let goalsChart, bttsChart;
             let isLoading = false;
-            
+
             const maxPages = 5;
             const daysBack = 1;
-            
-            // Função para buscar dados da API
+
             async function fetchData() {
                 if (isLoading) return;
-                
+
                 loadingElement.style.display = 'flex';
                 isLoading = true;
-                
+
                 try {
                     allGames = [];
-                    
+
                     for (let page = 1; page <= maxPages; page++) {
                         const apiUrl = `https://caveira-proxy.onrender.com/api/historico/partidas?page=${page}&limit=20`;
                         
                         try {
                             const response = await fetch(apiUrl);
-                            
-                            if (!response.ok) {
-                                throw new Error(`Erro na API (página ${page}): ${response.status}`);
-                            }
-                            
+                            if (!response.ok) throw new Error(`Erro na API (página ${page}): ${response.status}`);
                             const data = await response.json();
-                            
-                            if (!data.partidas || !Array.isArray(data.partidas)) {
-                                throw new Error(`Formato de resposta inválido (página ${page})`);
-                            }
-                            
+                            if (!data.partidas || !Array.isArray(data.partidas)) throw new Error(`Formato inválido (página ${page})`);
+
                             const now = new Date();
                             const cutoffDate = new Date();
                             cutoffDate.setDate(now.getDate() - daysBack);
-                            
+
                             const pageGames = data.partidas.filter(game => {
                                 const isESoccer = game.league_name?.toLowerCase().includes('esoccer') ||
                                                 game.league_name?.toLowerCase().includes('e-soccer') ||
                                                 game.league_name?.toLowerCase().includes('fifa') ||
                                                 game.league_name?.toLowerCase().includes('cyber');
-                                
                                 const gameDate = new Date(game.data_realizacao);
                                 const isRecentGame = gameDate >= cutoffDate;
-                                
                                 return isESoccer && isRecentGame;
                             }).map(game => ({
                                 id: game.id,
@@ -595,37 +615,30 @@
                                     }
                                 }
                             }));
-                            
+
                             allGames = [...allGames, ...pageGames];
-                            
-                            if (data.partidas.length < 20) {
-                                break;
-                            }
-                            
+                            if (data.partidas.length < 20) break;
+
                         } catch (error) {
                             console.error(`Erro ao buscar página ${page}:`, error);
                         }
                     }
-                    
-                    // Remove jogos duplicados
+
                     const uniqueGames = [];
                     const gameIds = new Set();
-                    
                     allGames.forEach(game => {
                         if (!gameIds.has(game.id)) {
                             gameIds.add(game.id);
                             uniqueGames.push(game);
                         }
                     });
-                    
                     allGames = uniqueGames;
-                    
+
                     if (allGames.length > 0) {
                         const now = new Date();
                         lastUpdatedElement.textContent = now.toLocaleString('pt-BR');
                         processData();
                     } else {
-                        leagueBadgesElement.innerHTML = '<button class="league-badge active">Todas</button>';
                         leagueTableBody.innerHTML = '';
                         marketsTableBody.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum jogo encontrado</td></tr>';
                         recentGamesTableBody.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum jogo encontrado</td></tr>';
@@ -637,10 +650,9 @@
                         if (goalsChart) goalsChart.destroy();
                         if (bttsChart) bttsChart.destroy();
                     }
-                    
+
                 } catch (error) {
                     console.error('Erro ao buscar dados:', error);
-                    leagueBadgesElement.innerHTML = '<button class="league-badge active">Todas</button>';
                     leagueTableBody.innerHTML = '';
                     marketsTableBody.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum jogo encontrado</td></tr>';
                     recentGamesTableBody.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum jogo encontrado</td></tr>';
@@ -656,20 +668,17 @@
                     isLoading = false;
                 }
             }
-            
-            // Normaliza nomes das ligas
+
             function normalizeLeagueName(leagueName) {
                 if (!leagueName) return leagueName;
                 return leagueName.replace(/_/g, ' ').toLowerCase();
             }
-            
-            // Extrai nome do jogador
+
             function extractPlayerName(teamName) {
                 const match = teamName.match(/\((.*?)\)/);
                 return match ? match[1] : teamName.split('(')[0].trim();
             }
-            
-            // Processa os dados
+
             function processData() {
                 allGames = allGames.map(game => {
                     if (game.league && game.league.name) {
@@ -677,13 +686,8 @@
                     }
                     return game;
                 });
-                
-                if (selectedLeague !== 'all') {
-                    selectedLeague = normalizeLeagueName(selectedLeague);
-                }
-                
+
                 applyFilters();
-                updateLeagueFilters();
                 updateCharts();
                 updateLeagueTable();
                 updateMarketsTable();
@@ -691,16 +695,15 @@
                 updateBestPlayersByLeague();
                 updateStrategyTests();
             }
-            
-            // Aplica filtros
+
             function applyFilters() {
                 let gamesFilteredByLeague = allGames;
-                if (selectedLeague !== 'all') {
+                if (selectedLeague) {
                     gamesFilteredByLeague = allGames.filter(game => 
-                        game.league.name.includes(selectedLeague)
+                        game.league.name.includes(selectedLeague.toLowerCase())
                     );
                 }
-                
+
                 if (selectedGames === 'all') {
                     filteredGames = gamesFilteredByLeague;
                 } else {
@@ -708,55 +711,12 @@
                     filteredGames = sortedGames.slice(0, parseInt(selectedGames));
                 }
             }
-            
-            // Atualiza os filtros de liga
-            function updateLeagueFilters() {
-                const uniqueLeagues = new Set();
-                allGames.forEach(game => uniqueLeagues.add(game.league.name));
-                
-                leagueBadgesElement.innerHTML = '';
-                
-                const allBadge = document.createElement('button');
-                allBadge.className = `league-badge ${selectedLeague === 'all' ? 'active' : ''}`;
-                allBadge.textContent = 'Todas';
-                allBadge.addEventListener('click', () => {
-                    selectedLeague = 'all';
-                    processData();
-                });
-                leagueBadgesElement.appendChild(allBadge);
-                
-                uniqueLeagues.forEach(league => {
-                    const badge = document.createElement('button');
-                    let leagueClass = '';
-                    if (league.includes('adriatic') || league.includes('10 mins')) {
-                        leagueClass = 'league-adriatic';
-                    } else if (league.includes('gt')) {
-                        leagueClass = 'league-gt';
-                    } else if (league.includes('volta')) {
-                        leagueClass = 'league-volta';
-                    } else if (league.includes('battle')) {
-                        leagueClass = 'league-battle';
-                    } else if (league.includes('h2h') || league.includes('gg')) {
-                        leagueClass = 'league-h2h';
-                    }
-                    
-                    badge.className = `league-badge ${leagueClass} ${selectedLeague === league ? 'active' : ''}`;
-                    badge.textContent = league;
-                    badge.addEventListener('click', () => {
-                        selectedLeague = league;
-                        processData();
-                    });
-                    leagueBadgesElement.appendChild(badge);
-                });
-            }
-            
-            // Atualiza os gráficos
+
             function updateCharts() {
                 if (goalsChart) goalsChart.destroy();
                 if (bttsChart) bttsChart.destroy();
-                
+
                 const goalsDistribution = Array(10).fill(0);
-                
                 filteredGames.forEach(game => {
                     if (game.ss && game.ss.includes('-')) {
                         const [homeScore, awayScore] = game.ss.split('-').map(Number);
@@ -768,11 +728,11 @@
                         }
                     }
                 });
-                
+
                 const goalsPercentages = goalsDistribution.map(count => 
                     filteredGames.length > 0 ? (count / filteredGames.length * 100).toFixed(1) : 0
                 );
-                
+
                 const goalsCtx = document.getElementById('goalsChart').getContext('2d');
                 goalsChart = new Chart(goalsCtx, {
                     type: 'bar',
@@ -790,50 +750,18 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            title: {
-                                display: true,
-                                text: 'Distribuição de Gols por Jogo',
-                                color: '#e0e0e0'
-                            },
-                            legend: {
-                                display: false
-                            }
+                            title: { display: true, text: 'Distribuição de Gols por Jogo', color: '#e0e0e0' },
+                            legend: { display: false }
                         },
                         scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Percentual (%)',
-                                    color: '#e0e0e0'
-                                },
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
-                                },
-                                ticks: {
-                                    color: '#e0e0e0'
-                                }
-                            },
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: 'Total de Gols',
-                                    color: '#e0e0e0'
-                                },
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
-                                },
-                                ticks: {
-                                    color: '#e0e0e0'
-                                }
-                            }
+                            y: { beginAtZero: true, title: { display: true, text: 'Percentual (%)', color: '#e0e0e0' }, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: '#e0e0e0' } },
+                            x: { title: { display: true, text: 'Total de Gols', color: '#e0e0e0' }, grid: { color: 'rgba(255, 255, 255, 0.1)' }, ticks: { color: '#e0e0e0' } }
                         }
                     }
                 });
-                
+
                 let bttsYesCount = 0;
                 let bttsNoCount = 0;
-                
                 filteredGames.forEach(game => {
                     if (game.ss && game.ss.includes('-')) {
                         const [homeScore, awayScore] = game.ss.split('-').map(Number);
@@ -844,7 +772,7 @@
                         }
                     }
                 });
-                
+
                 const bttsCtx = document.getElementById('bttsChart').getContext('2d');
                 bttsChart = new Chart(bttsCtx, {
                     type: 'pie',
@@ -855,14 +783,8 @@
                                 filteredGames.length > 0 ? (bttsYesCount / filteredGames.length * 100).toFixed(1) : 0,
                                 filteredGames.length > 0 ? (bttsNoCount / filteredGames.length * 100).toFixed(1) : 0
                             ],
-                            backgroundColor: [
-                                'rgba(0, 204, 102, 0.7)',
-                                'rgba(255, 58, 94, 0.7)'
-                            ],
-                            borderColor: [
-                                'rgba(0, 204, 102, 1)',
-                                'rgba(255, 58, 94, 1)'
-                            ],
+                            backgroundColor: ['rgba(0, 204, 102, 0.7)', 'rgba(255, 58, 94, 0.7)'],
+                            borderColor: ['rgba(0, 204, 102, 1)', 'rgba(255, 58, 94, 1)'],
                             borderWidth: 1
                         }]
                     },
@@ -870,75 +792,41 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            title: {
-                                display: true,
-                                text: 'Ambas Equipes Marcam (BTTS)',
-                                color: '#e0e0e0'
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        return context.label + ': ' + context.raw + '%';
-                                    }
-                                }
-                            },
-                            legend: {
-                                labels: {
-                                    color: '#e0e0e0'
-                                }
-                            }
+                            title: { display: true, text: 'Ambas Equipes Marcam (BTTS)', color: '#e0e0e0' },
+                            tooltip: { callbacks: { label: function(context) { return context.label + ': ' + context.raw + '%'; } } },
+                            legend: { labels: { color: '#e0e0e0' } }
                         }
                     }
                 });
             }
-            
-            // Atualiza tabela de ligas
+
             function updateLeagueTable() {
                 leagueTableBody.innerHTML = '';
-                
+
                 const leagueStats = {};
-                
                 allGames.forEach(game => {
                     const leagueName = game.league.name;
-                    
                     if (!leagueStats[leagueName]) {
-                        leagueStats[leagueName] = {
-                            games: 0,
-                            totalGoals: 0,
-                            bttsCount: 0,
-                            over25Count: 0,
-                            over35Count: 0
-                        };
+                        leagueStats[leagueName] = { games: 0, totalGoals: 0, bttsCount: 0, over25Count: 0, over35Count: 0 };
                     }
-                    
                     if (game.ss && game.ss.includes('-')) {
                         const [homeScore, awayScore] = game.ss.split('-').map(Number);
                         const totalGoals = homeScore + awayScore;
-                        
                         leagueStats[leagueName].games++;
                         leagueStats[leagueName].totalGoals += totalGoals;
-                        
-                        if (homeScore > 0 && awayScore > 0) {
-                            leagueStats[leagueName].bttsCount++;
-                        }
-                        
-                        if (totalGoals > 2.5) {
-                            leagueStats[leagueName].over25Count++;
-                        }
-                        
-                        if (totalGoals > 3.5) {
-                            leagueStats[leagueName].over35Count++;
-                        }
+                        if (homeScore > 0 && awayScore > 0) leagueStats[leagueName].bttsCount++;
+                        if (totalGoals > 2.5) leagueStats[leagueName].over25Count++;
+                        if (totalGoals > 3.5) leagueStats[leagueName].over35Count++;
                     }
                 });
-                
+
                 Object.keys(leagueStats).forEach(leagueName => {
                     const stats = leagueStats[leagueName];
                     const avgGoals = (stats.totalGoals / stats.games).toFixed(2);
                     const bttsPercentage = ((stats.bttsCount / stats.games) * 100).toFixed(1);
                     const over25Percentage = ((stats.over25Count / stats.games) * 100).toFixed(1);
                     const over35Percentage = ((stats.over35Count / stats.games) * 100).toFixed(1);
-                    
+
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${leagueName}</td>
@@ -951,122 +839,52 @@
                     leagueTableBody.appendChild(row);
                 });
             }
-            
-            // Atualiza tabela de mercados
+
             function updateMarketsTable() {
                 marketsTableBody.innerHTML = '';
-                
+
                 if (filteredGames.length === 0) {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `<td colspan="5" class="text-center">Nenhum jogo encontrado com os filtros atuais</td>`;
-                    marketsTableBody.appendChild(row);
+                    marketsTableBody.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum jogo encontrado</td></tr>';
                     return;
                 }
-                
+
                 const totalGames = filteredGames.length;
-                let bttsYesCount = 0;
-                let over05Count = 0;
-                let over15Count = 0;
-                let over25Count = 0;
-                let over35Count = 0;
-                let over45Count = 0;
-                
-                let bttsHtYesCount = 0;
-                let over05HtCount = 0;
-                let over15HtCount = 0;
-                let over25HtCount = 0;
-                
+                let bttsYesCount = 0, over05Count = 0, over15Count = 0, over25Count = 0, over35Count = 0, over45Count = 0;
+                let bttsHtYesCount = 0, over05HtCount = 0, over15HtCount = 0, over25HtCount = 0;
+
                 filteredGames.forEach(game => {
                     if (game.ss && game.ss.includes('-')) {
                         const [homeScore, awayScore] = game.ss.split('-').map(Number);
                         const totalGoals = homeScore + awayScore;
-                        
-                        if (homeScore > 0 && awayScore > 0) {
-                            bttsYesCount++;
-                        }
-                        
+                        if (homeScore > 0 && awayScore > 0) bttsYesCount++;
                         if (totalGoals > 0.5) over05Count++;
                         if (totalGoals > 1.5) over15Count++;
                         if (totalGoals > 2.5) over25Count++;
                         if (totalGoals > 3.5) over35Count++;
                         if (totalGoals > 4.5) over45Count++;
                     }
-                    
                     if (game.scores && game.scores["1"]) {
                         const homeScoreHT = parseInt(game.scores["1"].home) || 0;
                         const awayScoreHT = parseInt(game.scores["1"].away) || 0;
-                        
                         const totalGoalsHT = homeScoreHT + awayScoreHT;
-                        
-                        if (homeScoreHT > 0 && awayScoreHT > 0) {
-                            bttsHtYesCount++;
-                        }
-                        
+                        if (homeScoreHT > 0 && awayScoreHT > 0) bttsHtYesCount++;
                         if (totalGoalsHT > 0.5) over05HtCount++;
                         if (totalGoalsHT > 1.5) over15HtCount++;
                         if (totalGoalsHT > 2.5) over25HtCount++;
                     }
                 });
-                
+
                 const markets = [
-                    {
-                        name: 'BTTS Sim (FT)',
-                        count: bttsYesCount,
-                        percentage: (bttsYesCount / totalGames * 100).toFixed(1),
-                        fairOdd: (1 / (bttsYesCount / totalGames)).toFixed(2),
-                        avgOdd: 1.80
-                    },
-                    {
-                        name: 'Over 2.5 (FT)',
-                        count: over25Count,
-                        percentage: (over25Count / totalGames * 100).toFixed(1),
-                        fairOdd: (1 / (over25Count / totalGames)).toFixed(2),
-                        avgOdd: 1.90
-                    },
-                    {
-                        name: 'Over 3.5 (FT)',
-                        count: over35Count,
-                        percentage: (over35Count / totalGames * 100).toFixed(1),
-                        fairOdd: (1 / (over35Count / totalGames)).toFixed(2),
-                        avgOdd: 2.70
-                    },
-                    {
-                        name: 'Over 4.5 (FT)',
-                        count: over45Count,
-                        percentage: (over45Count / totalGames * 100).toFixed(1),
-                        fairOdd: (1 / (over45Count / totalGames)).toFixed(2),
-                        avgOdd: 4.50
-                    },
-                    {
-                        name: 'BTTS Sim (HT)',
-                        count: bttsHtYesCount,
-                        percentage: (bttsHtYesCount / totalGames * 100).toFixed(1),
-                        fairOdd: (1 / (bttsHtYesCount / totalGames)).toFixed(2),
-                        avgOdd: 2.50
-                    },
-                    {
-                        name: 'Over 0.5 (HT)',
-                        count: over05HtCount,
-                        percentage: (over05HtCount / totalGames * 100).toFixed(1),
-                        fairOdd: (1 / (over05HtCount / totalGames)).toFixed(2),
-                        avgOdd: 1.30
-                    },
-                    {
-                        name: 'Over 1.5 (HT)',
-                        count: over15HtCount,
-                        percentage: (over15HtCount / totalGames * 100).toFixed(1),
-                        fairOdd: (1 / (over15HtCount / totalGames)).toFixed(2),
-                        avgOdd: 2.20
-                    },
-                    {
-                        name: 'Over 2.5 (HT)',
-                        count: over25HtCount,
-                        percentage: (over25HtCount / totalGames * 100).toFixed(1),
-                        fairOdd: (1 / (over25HtCount / totalGames)).toFixed(2),
-                        avgOdd: 4.00
-                    }
+                    { name: 'BTTS Sim (FT)', count: bttsYesCount, percentage: (bttsYesCount / totalGames * 100).toFixed(1), fairOdd: (1 / (bttsYesCount / totalGames)).toFixed(2), avgOdd: 1.80 },
+                    { name: 'Over 2.5 (FT)', count: over25Count, percentage: (over25Count / totalGames * 100).toFixed(1), fairOdd: (1 / (over25Count / totalGames)).toFixed(2), avgOdd: 1.90 },
+                    { name: 'Over 3.5 (FT)', count: over35Count, percentage: (over35Count / totalGames * 100).toFixed(1), fairOdd: (1 / (over35Count / totalGames)).toFixed(2), avgOdd: 2.70 },
+                    { name: 'Over 4.5 (FT)', count: over45Count, percentage: (over45Count / totalGames * 100).toFixed(1), fairOdd: (1 / (over45Count / totalGames)).toFixed(2), avgOdd: 4.50 },
+                    { name: 'BTTS Sim (HT)', count: bttsHtYesCount, percentage: (bttsHtYesCount / totalGames * 100).toFixed(1), fairOdd: (1 / (bttsHtYesCount / totalGames)).toFixed(2), avgOdd: 2.50 },
+                    { name: 'Over 0.5 (HT)', count: over05HtCount, percentage: (over05HtCount / totalGames * 100).toFixed(1), fairOdd: (1 / (over05HtCount / totalGames)).toFixed(2), avgOdd: 1.30 },
+                    { name: 'Over 1.5 (HT)', count: over15HtCount, percentage: (over15HtCount / totalGames * 100).toFixed(1), fairOdd: (1 / (over15HtCount / totalGames)).toFixed(2), avgOdd: 2.20 },
+                    { name: 'Over 2.5 (HT)', count: over25HtCount, percentage: (over25HtCount / totalGames * 100).toFixed(1), fairOdd: (1 / (over25HtCount / totalGames)).toFixed(2), avgOdd: 4.00 }
                 ];
-                
+
                 markets.forEach(market => {
                     if (isNaN(parseFloat(market.fairOdd)) || !isFinite(parseFloat(market.fairOdd))) {
                         market.fairOdd = 'N/A';
@@ -1075,22 +893,16 @@
                     } else {
                         const value = market.avgOdd / parseFloat(market.fairOdd);
                         market.value = value.toFixed(2);
-                        if (value >= 1.1) {
-                            market.valueClass = 'high-value';
-                        } else if (value >= 0.95) {
-                            market.valueClass = 'medium-value';
-                        } else {
-                            market.valueClass = 'low-value';
-                        }
+                        market.valueClass = value >= 1.1 ? 'high-value' : value >= 0.95 ? 'medium-value' : 'low-value';
                     }
                 });
-                
+
                 markets.sort((a, b) => {
                     if (a.value === 'N/A') return 1;
                     if (b.value === 'N/A') return -1;
                     return parseFloat(b.value) - parseFloat(a.value);
                 });
-                
+
                 markets.forEach(market => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
@@ -1103,72 +915,54 @@
                     marketsTableBody.appendChild(row);
                 });
             }
-            
-            // Atualiza tabela de jogos recentes
+
             function updateRecentGames() {
                 recentGamesTableBody.innerHTML = '';
-                
+
                 if (filteredGames.length === 0) {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `<td colspan="7" class="text-center">Nenhum jogo encontrado com os filtros atuais</td>`;
-                    recentGamesTableBody.appendChild(row);
+                    recentGamesTableBody.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum jogo encontrado</td></tr>';
                     paginationElement.innerHTML = '';
                     return;
                 }
-                
+
                 const sortedGames = [...filteredGames].sort((a, b) => b.time - a.time);
                 const totalPages = Math.ceil(sortedGames.length / itemsPerPage);
-                
-                if (currentPage > totalPages) {
-                    currentPage = 1;
-                }
-                
+
+                if (currentPage > totalPages) currentPage = 1;
+
                 const startIndex = (currentPage - 1) * itemsPerPage;
                 const endIndex = Math.min(startIndex + itemsPerPage, sortedGames.length);
                 const currentGames = sortedGames.slice(startIndex, endIndex);
-                
+
                 currentGames.forEach(game => {
                     const gameDate = new Date(game.time * 1000);
                     const formattedDate = gameDate.toLocaleDateString('pt-BR') + ' ' + 
                         gameDate.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-    
-                    let homeScore = 0;
-                    let awayScore = 0;
-                    let totalGoals = 0;
-                    let btts = 'Não';
-                    let bttsClass = 'text-danger';
-    
+
+                    let homeScore = 0, awayScore = 0, totalGoals = 0, btts = 'Não', bttsClass = 'text-danger';
                     if (game.ss && game.ss.includes('-')) {
                         [homeScore, awayScore] = game.ss.split('-').map(Number);
                         totalGoals = homeScore + awayScore;
                         btts = homeScore > 0 && awayScore > 0 ? 'Sim' : 'Não';
                         bttsClass = btts === 'Sim' ? 'text-success' : 'text-danger';
                     }
-                    
+
                     let htScore = 'N/A';
                     if (game.scores && game.scores["1"]) {
                         const homeScoreHT = parseInt(game.scores["1"].home) || 0;
                         const awayScoreHT = parseInt(game.scores["1"].away) || 0;
                         htScore = `${homeScoreHT}-${awayScoreHT}`;
                     }
-                    
+
                     let leagueTagClass = '';
-                    if (game.league.name.includes('adriatic') || game.league.name.includes('10 mins')) {
-                        leagueTagClass = 'adriatic';
-                    } else if (game.league.name.includes('gt')) {
-                        leagueTagClass = 'gt';
-                    } else if (game.league.name.includes('volta')) {
-                        leagueTagClass = 'volta';
-                    } else if (game.league.name.includes('battle')) {
-                        leagueTagClass = 'battle';
-                    } else if (game.league.name.includes('h2h') || game.league.name.includes('gg')) {
-                        leagueTagClass = 'h2h';
-                    }
-    
+                    if (game.league.name.includes('battle 8m')) leagueTagClass = 'battle-8m';
+                    else if (game.league.name.includes('battle volta 6m')) leagueTagClass = 'battle-volta-6m';
+                    else if (game.league.name.includes('gt leagues 12m')) leagueTagClass = 'gt-leagues-12m';
+                    else if (game.league.name.includes('h2h gg 8m')) leagueTagClass = 'h2h-gg-8m';
+
                     const row = document.createElement('tr');
                     row.className = 'game-row';
                     row.setAttribute('data-game-id', game.id);
-    
                     row.innerHTML = `
                         <td>${formattedDate}</td>
                         <td><span class="league-tag ${leagueTagClass}">${game.league.name}</span></td>
@@ -1178,7 +972,7 @@
                         <td>${totalGoals}</td>
                         <td class="${bttsClass}">${btts}</td>
                     `;
-                    
+
                     const detailsRow = document.createElement('tr');
                     detailsRow.className = 'game-details-row';
                     detailsRow.innerHTML = `
@@ -1218,149 +1012,98 @@
                             </div>
                         </td>
                     `;
-                    
+
                     recentGamesTableBody.appendChild(row);
                     recentGamesTableBody.appendChild(detailsRow);
-                    
+
                     row.addEventListener('click', function() {
                         const gameId = this.getAttribute('data-game-id');
                         const detailsElement = document.getElementById(`game-details-${gameId}`);
-                        
-                        if (detailsElement.style.display === 'block') {
-                            detailsElement.style.display = 'none';
-                        } else {
-                            document.querySelectorAll('.game-details').forEach(el => {
-                                el.style.display = 'none';
-                            });
-                            detailsElement.style.display = 'block';
-                        }
+                        document.querySelectorAll('.game-details').forEach(el => el.style.display = 'none');
+                        detailsElement.style.display = detailsElement.style.display === 'block' ? 'none' : 'block';
                     });
                 });
-                
+
                 updatePagination(totalPages);
             }
-            
-            // Atualiza a paginação
+
             function updatePagination(totalPages) {
                 paginationElement.innerHTML = '';
-                
-                if (totalPages <= 1) {
-                    return;
-                }
-                
+
+                if (totalPages <= 1) return;
+
                 const prevLi = document.createElement('li');
                 prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
                 prevLi.innerHTML = `<a class="page-link" href="#" aria-label="Página anterior"><span aria-hidden="true">«</span></a>`;
-                prevLi.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    if (currentPage > 1) {
-                        currentPage--;
-                        updateRecentGames();
-                    }
-                });
+                prevLi.addEventListener('click', (e) => { e.preventDefault(); if (currentPage > 1) { currentPage--; updateRecentGames(); } });
                 paginationElement.appendChild(prevLi);
-                
+
                 for (let i = 1; i <= totalPages; i++) {
-                    if (
-                        i === 1 || 
-                        i === totalPages || 
-                        (i >= currentPage - 2 && i <= currentPage + 2)
-                    ) {
+                    if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
                         const pageLi = document.createElement('li');
                         pageLi.className = `page-item ${i === currentPage ? 'active' : ''}`;
                         pageLi.innerHTML = `<a class="page-link" href="#">${i}</a>`;
-                        pageLi.addEventListener('click', (e) => {
-                            e.preventDefault();
-                            currentPage = i;
-                            updateRecentGames();
-                        });
+                        pageLi.addEventListener('click', (e) => { e.preventDefault(); currentPage = i; updateRecentGames(); });
                         paginationElement.appendChild(pageLi);
-                    } else if (
-                        i === currentPage - 3 || 
-                        i === currentPage + 3
-                    ) {
+                    } else if (i === currentPage - 3 || i === currentPage + 3) {
                         const ellipsisLi = document.createElement('li');
                         ellipsisLi.className = 'page-item disabled';
                         ellipsisLi.innerHTML = '<a class="page-link" href="#">...</a>';
                         paginationElement.appendChild(ellipsisLi);
                     }
                 }
-                
+
                 const nextLi = document.createElement('li');
                 nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
                 nextLi.innerHTML = `<a class="page-link" href="#" aria-label="Próxima página"><span aria-hidden="true">»</span></a>`;
-                nextLi.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    if (currentPage < totalPages) {
-                        currentPage++;
-                        updateRecentGames();
-                    }
-                });
+                nextLi.addEventListener('click', (e) => { e.preventDefault(); if (currentPage < totalPages) { currentPage++; updateRecentGames(); } });
                 paginationElement.appendChild(nextLi);
             }
-            
-            // Atualiza melhores jogadores por liga
+
             function updateBestPlayersByLeague() {
                 bestPlayersByLeagueElement.innerHTML = '';
-                
+
                 const leagueStats = {};
-                
                 filteredGames.forEach(game => {
                     const leagueName = game.league.name;
-                    if (!leagueStats[leagueName]) {
-                        leagueStats[leagueName] = {};
-                    }
-                    
+                    if (!leagueStats[leagueName]) leagueStats[leagueName] = {};
+
                     const homePlayer = extractPlayerName(game.home.name);
                     const awayPlayer = extractPlayerName(game.away.name);
-                    
+
                     if (!leagueStats[leagueName][homePlayer]) {
-                        leagueStats[leagueName][homePlayer] = {
-                            games: 0,
-                            goalsScoredHT: 0,
-                            goalsScoredFT: 0,
-                            goalsConcededHT: 0,
-                            goalsConcededFT: 0
-                        };
+                        leagueStats[leagueName][homePlayer] = { games: 0, goalsScoredHT: 0, goalsScoredFT: 0, goalsConcededHT: 0, goalsConcededFT: 0 };
                     }
                     if (!leagueStats[leagueName][awayPlayer]) {
-                        leagueStats[leagueName][awayPlayer] = {
-                            games: 0,
-                            goalsScoredHT: 0,
-                            goalsScoredFT: 0,
-                            goalsConcededHT: 0,
-                            goalsConcededFT: 0
-                        };
+                        leagueStats[leagueName][awayPlayer] = { games: 0, goalsScoredHT: 0, goalsScoredFT: 0, goalsConcededHT: 0, goalsConcededFT: 0 };
                     }
-                    
+
                     if (game.ss && game.ss.includes('-') && game.scores && game.scores["1"]) {
                         const [homeScoreFT, awayScoreFT] = game.ss.split('-').map(Number);
                         const [homeScoreHT, awayScoreHT] = [
                             parseInt(game.scores["1"].home) || 0,
                             parseInt(game.scores["1"].away) || 0
                         ];
-                        
+
                         leagueStats[leagueName][homePlayer].games++;
                         leagueStats[leagueName][awayPlayer].games++;
-                        
-                        // Gols marcados e sofridos para o time da casa
+
                         leagueStats[leagueName][homePlayer].goalsScoredHT += homeScoreHT;
                         leagueStats[leagueName][homePlayer].goalsScoredFT += homeScoreFT;
                         leagueStats[leagueName][homePlayer].goalsConcededHT += awayScoreHT;
                         leagueStats[leagueName][homePlayer].goalsConcededFT += awayScoreFT;
-                        
-                        // Gols marcados e sofridos para o time visitante
+
                         leagueStats[leagueName][awayPlayer].goalsScoredHT += awayScoreHT;
                         leagueStats[leagueName][awayPlayer].goalsScoredFT += awayScoreFT;
                         leagueStats[leagueName][awayPlayer].goalsConcededHT += homeScoreHT;
                         leagueStats[leagueName][awayPlayer].goalsConcededFT += homeScoreFT;
                     }
                 });
-                
+
                 Object.keys(leagueStats).forEach(leagueName => {
                     const players = leagueStats[leagueName];
                     const playerData = [];
-                    
+
                     Object.keys(players).forEach(playerName => {
                         const stats = players[playerName];
                         if (stats.games >= 3) {
@@ -1370,193 +1113,117 @@
                             const avgGoalsConcededFT = stats.goalsConcededFT / stats.games;
                             playerData.push({
                                 name: playerName,
-                                avgGoalsScoredHT: avgGoalsScoredHT.toFixed(2),
-                                avgGoalsScoredFT: avgGoalsScoredFT.toFixed(2),
-                                avgGoalsConcededHT: avgGoalsConcededHT.toFixed(2),
-                                avgGoalsConcededFT: avgGoalsConcededFT.toFixed(2)
+                                avgGoalsScoredHT: avgGoalsScoredHT,
+                                avgGoalsScoredFT: avgGoalsScoredFT,
+                                avgGoalsConcededHT: avgGoalsConcededHT,
+                                avgGoalsConcededFT: avgGoalsConcededFT,
+                                score: avgGoalsScoredHT + avgGoalsScoredFT - (avgGoalsConcededHT + avgGoalsConcededFT)
                             });
                         }
                     });
-                    
+
                     if (playerData.length > 0) {
-                        // Ordena por maior média de gols marcados HT (Over gols HT)
-                        const topScoredHT = [...playerData].sort((a, b) => b.avgGoalsScoredHT - a.avgGoalsScoredHT).slice(0, 3);
-                        // Ordena por maior média de gols marcados FT (Over gols FT)
-                        const topScoredFT = [...playerData].sort((a, b) => b.avgGoalsScoredFT - a.avgGoalsScoredFT).slice(0, 3);
-                        // Ordena por menor média de gols sofridos HT
-                        const topConcededHT = [...playerData].sort((a, b) => a.avgGoalsConcededHT - b.avgGoalsConcededHT).slice(0, 3);
-                        // Ordena por menor média de gols sofridos FT
-                        const topConcededFT = [...playerData].sort((a, b) => a.avgGoalsConcededFT - b.avgGoalsConcededFT).slice(0, 3);
-                        
+                        const topPlayer = playerData.reduce((best, current) => {
+                            return current.score > best.score ? current : best;
+                        }, playerData[0]);
+
                         const leagueSection = document.createElement('div');
                         leagueSection.className = 'best-player-section';
-                        
-                        let leagueClass = '';
-                        if (leagueName.includes('adriatic') || leagueName.includes('10 mins')) {
-                            leagueClass = 'adriatic';
-                        } else if (leagueName.includes('gt')) {
-                            leagueClass = 'gt';
-                        } else if (leagueName.includes('volta')) {
-                            leagueClass = 'volta';
-                        } else if (leagueName.includes('battle')) {
-                            leagueClass = 'battle';
-                        } else if (leagueName.includes('h2h') || leagueName.includes('gg')) {
-                            leagueClass = 'h2h';
-                        }
-                        
+
+                        let leagueHeaderClass = '';
+                        if (leagueName.includes('battle 8m')) leagueHeaderClass = 'battle-8m';
+                        else if (leagueName.includes('battle volta 6m')) leagueHeaderClass = 'battle-volta-6m';
+                        else if (leagueName.includes('gt leagues 12m')) leagueHeaderClass = 'gt-leagues-12m';
+                        else if (leagueName.includes('h2h gg 8m')) leagueHeaderClass = 'h2h-gg-8m';
+
                         leagueSection.innerHTML = `
-                            <div class="best-player-league">
-                                <span class="league-tag ${leagueClass}">${leagueName}</span>
+                            <div class="league-header ${leagueHeaderClass}">
+                                ${leagueName}
+                            </div>
+                            <div class="best-player-card">
+                                <div class="best-player-info">
+                                    <i class="bi bi-trophy-fill best-player-icon"></i>
+                                    <span class="best-player-name">Destaque: ${topPlayer.name}</span>
+                                </div>
+                                <div class="best-player-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-value">${topPlayer.avgGoalsScoredHT.toFixed(2)}</span>
+                                        <span class="stat-label">Média Gols HT</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-value">${topPlayer.avgGoalsScoredFT.toFixed(2)}</span>
+                                        <span class="stat-label">Média Gols FT</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-value">${topPlayer.avgGoalsConcededHT.toFixed(2)}</span>
+                                        <span class="stat-label">Gols Sofr. HT</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-value">${topPlayer.avgGoalsConcededFT.toFixed(2)}</span>
+                                        <span class="stat-label">Gols Sofr. FT</span>
+                                    </div>
+                                </div>
                             </div>
                         `;
-                        
-                        // Adiciona seção para maior média de gols marcados HT
-                        const scoredHTCard = document.createElement('div');
-                        scoredHTCard.className = 'best-player-card';
-                        scoredHTCard.innerHTML = `<div class="best-player-info"><i class="bi bi-trophy-fill best-player-icon"></i><span class="best-player-name">Maior Média Gols HT</span></div>`;
-                        topScoredHT.forEach(player => {
-                            const playerStat = document.createElement('div');
-                            playerStat.className = 'best-player-stats';
-                            playerStat.innerHTML = `
-                                <div class="stat-item">
-                                    <span class="stat-value">${player.name}: ${player.avgGoalsScoredHT}</span>
-                                    <span class="stat-label">Média Gols HT</span>
-                                </div>
-                            `;
-                            scoredHTCard.appendChild(playerStat);
-                        });
-                        leagueSection.appendChild(scoredHTCard);
-                        
-                        // Adiciona seção para maior média de gols marcados FT
-                        const scoredFTCard = document.createElement('div');
-                        scoredFTCard.className = 'best-player-card';
-                        scoredFTCard.innerHTML = `<div class="best-player-info"><i class="bi bi-trophy-fill best-player-icon"></i><span class="best-player-name">Maior Média Gols FT</span></div>`;
-                        topScoredFT.forEach(player => {
-                            const playerStat = document.createElement('div');
-                            playerStat.className = 'best-player-stats';
-                            playerStat.innerHTML = `
-                                <div class="stat-item">
-                                    <span class="stat-value">${player.name}: ${player.avgGoalsScoredFT}</span>
-                                    <span class="stat-label">Média Gols FT</span>
-                                </div>
-                            `;
-                            scoredFTCard.appendChild(playerStat);
-                        });
-                        leagueSection.appendChild(scoredFTCard);
-                        
-                        // Adiciona seção para menor média de gols sofridos HT
-                        const concededHTCard = document.createElement('div');
-                        concededHTCard.className = 'best-player-card';
-                        concededHTCard.innerHTML = `<div class="best-player-info"><i class="bi bi-shield-fill best-player-icon"></i><span class="best-player-name">Menor Média Gols Sofridos HT</span></div>`;
-                        topConcededHT.forEach(player => {
-                            const playerStat = document.createElement('div');
-                            playerStat.className = 'best-player-stats';
-                            playerStat.innerHTML = `
-                                <div class="stat-item">
-                                    <span class="stat-value">${player.name}: ${player.avgGoalsConcededHT}</span>
-                                    <span class="stat-label">Média Gols HT</span>
-                                </div>
-                            `;
-                            concededHTCard.appendChild(playerStat);
-                        });
-                        leagueSection.appendChild(concededHTCard);
-                        
-                        // Adiciona seção para menor média de gols sofridos FT
-                        const concededFTCard = document.createElement('div');
-                        concededFTCard.className = 'best-player-card';
-                        concededFTCard.innerHTML = `<div class="best-player-info"><i class="bi bi-shield-fill best-player-icon"></i><span class="best-player-name">Menor Média Gols Sofridos FT</span></div>`;
-                        topConcededFT.forEach(player => {
-                            const playerStat = document.createElement('div');
-                            playerStat.className = 'best-player-stats';
-                            playerStat.innerHTML = `
-                                <div class="stat-item">
-                                    <span class="stat-value">${player.name}: ${player.avgGoalsConcededFT}</span>
-                                    <span class="stat-label">Média Gols FT</span>
-                                </div>
-                            `;
-                            concededFTCard.appendChild(playerStat);
-                        });
-                        leagueSection.appendChild(concededFTCard);
-                        
+
                         bestPlayersByLeagueElement.appendChild(leagueSection);
                     }
                 });
             }
-            
-            // Atualiza testes de estratégias
+
             function updateStrategyTests() {
-                const strategyResults = {
-                    overBattle: [],
-                    gtOverHt: [],
-                    voltaOver: []
-                };
-                
+                const strategyResults = { overBattle: [], gtOverHt: [], voltaOver: {}};
                 const playerStats = {};
-                
+
                 filteredGames.forEach(game => {
                     const leagueName = game.league.name;
                     const homePlayer = extractPlayerName(game.home.name);
                     const awayPlayer = extractPlayerName(game.away.name);
-                    
-                    if (!playerStats[leagueName]) {
-                        playerStats[leagueName] = {};
-                    }
-                    
+
+                    if (!playerStats[leagueName]) playerStats[leagueName] = {};
+
                     if (!playerStats[leagueName][homePlayer]) {
-                        playerStats[leagueName][homePlayer] = {
-                            games: 0,
-                            over25FtCount: 0,
-                            over15HtCount: 0
-                        };
+                        playerStats[leagueName][homePlayer] = { games: 0, over25FtCount: 0, over15HtCount: 0 };
                     }
                     if (!playerStats[leagueName][awayPlayer]) {
-                        playerStats[leagueName][awayPlayer] = {
-                            games: 0,
-                            over25FtCount: 0,
-                            over15HtCount: 0
-                        };
+                        playerStats[leagueName][awayPlayer] = { games: 0, over25FtCount: 0, over15HtCount: 0 };
                     }
-                    
+
                     if (game.ss && game.ss.includes('-')) {
                         const [homeScore, awayScore] = game.ss.split('-').map(Number);
                         const totalGoals = homeScore + awayScore;
-                        
-                        let homeScoreHT = 0;
-                        let awayScoreHT = 0;
+
+                        let homeScoreHT = 0, awayScoreHT = 0;
                         if (game.scores && game.scores["1"]) {
                             homeScoreHT = parseInt(game.scores["1"].home) || 0;
                             awayScoreHT = parseInt(game.scores["1"].away) || 0;
                         }
                         const totalGoalsHT = homeScoreHT + awayScoreHT;
-                        
+
                         playerStats[leagueName][homePlayer].games++;
                         playerStats[leagueName][awayPlayer].games++;
-                        
+
                         if (totalGoals > 2.5) {
                             playerStats[leagueName][homePlayer].over25FtCount++;
                             playerStats[leagueName][awayPlayer].over25FtCount++;
                         }
-                        
+
                         if (totalGoalsHT > 1.5) {
                             playerStats[leagueName][homePlayer].over15HtCount++;
                             playerStats[leagueName][awayPlayer].over15HtCount++;
                         }
                     }
                 });
-                
-                // Identifica confrontos para OVER_BATTLE
-                if (selectedLeague === 'all' || selectedLeague.includes('battle')) {
+
+                if (selectedLeague === '' || selectedLeague.toLowerCase().includes('battle') && !selectedLeague.toLowerCase().includes('volta')) {
                     const battleLeagues = Object.keys(playerStats).filter(league => 
                         league.includes('battle') && !league.includes('volta')
                     );
-                    
                     battleLeagues.forEach(leagueName => {
                         const players = playerStats[leagueName];
                         const eligiblePlayers = Object.keys(players).filter(player => 
-                            players[player].games >= 3 && 
-                            (players[player].over25FtCount / players[player].games) >= 0.7
+                            players[player].games >= 3 && (players[player].over25FtCount / players[player].games) >= 0.7
                         );
-                        
                         for (let i = 0; i < eligiblePlayers.length; i++) {
                             for (let j = i + 1; j < eligiblePlayers.length; j++) {
                                 const player1 = eligiblePlayers[i];
@@ -1566,10 +1233,8 @@
                                 const combinedPercentage = ((parseFloat(percentage1) + parseFloat(percentage2)) / 2).toFixed(1);
                                 strategyResults.overBattle.push({
                                     league: leagueName,
-                                    player1,
-                                    player2,
-                                    percentage1,
-                                    percentage2,
+                                    player1, player2,
+                                    percentage1, percentage2,
                                     combinedPercentage
                                 });
                             }
@@ -1578,20 +1243,14 @@
                     strategyResults.overBattle.sort((a, b) => b.combinedPercentage - a.combinedPercentage);
                     strategyResults.overBattle = strategyResults.overBattle.slice(0, 5);
                 }
-                
-                // Identifica confrontos para GT_OVER_HT
-                if (selectedLeague === 'all' || selectedLeague.includes('gt')) {
-                    const gtLeagues = Object.keys(playerStats).filter(league => 
-                        league.includes('gt')
-                    );
-                    
+
+                if (selectedLeague === '' || selectedLeague.toLowerCase().includes('gt')) {
+                    const gtLeagues = Object.keys(playerStats).filter(league => league.includes('gt'));
                     gtLeagues.forEach(leagueName => {
                         const players = playerStats[leagueName];
                         const eligiblePlayers = Object.keys(players).filter(player => 
-                            players[player].games >= 3 && 
-                            (players[player].over15HtCount / players[player].games) >= 0.65
+                            players[player].games >= 3 && (players[player].over15HtCount / players[player].games) >= 0.65
                         );
-                        
                         for (let i = 0; i < eligiblePlayers.length; i++) {
                             for (let j = i + 1; j < eligiblePlayers.length; j++) {
                                 const player1 = eligiblePlayers[i];
@@ -1601,10 +1260,8 @@
                                 const combinedPercentage = ((parseFloat(percentage1) + parseFloat(percentage2)) / 2).toFixed(1);
                                 strategyResults.gtOverHt.push({
                                     league: leagueName,
-                                    player1,
-                                    player2,
-                                    percentage1,
-                                    percentage2,
+                                    player1, player2,
+                                    percentage1, percentage2,
                                     combinedPercentage
                                 });
                             }
@@ -1613,20 +1270,14 @@
                     strategyResults.gtOverHt.sort((a, b) => b.combinedPercentage - a.combinedPercentage);
                     strategyResults.gtOverHt = strategyResults.gtOverHt.slice(0, 5);
                 }
-                
-                // Identifica confrontos para VOLTA_OVER
-                if (selectedLeague === 'all' || selectedLeague.includes('volta')) {
-                    const voltaLeagues = Object.keys(playerStats).filter(league => 
-                        league.includes('volta')
-                    );
-                    
+
+                if (selectedLeague === '' || selectedLeague.toLowerCase().includes('volta')) {
+                    const voltaLeagues = Object.keys(playerStats).filter(league => league.includes('volta'));
                     voltaLeagues.forEach(leagueName => {
                         const players = playerStats[leagueName];
                         const eligiblePlayers = Object.keys(players).filter(player => 
-                            players[player].games >= 3 && 
-                            (players[player].over25FtCount / players[player].games) >= 0.75
+                            players[player].games >= 3 && (players[player].over25FtCount / players[player].games) >= 0.75
                         );
-                        
                         for (let i = 0; i < eligiblePlayers.length; i++) {
                             for (let j = i + 1; j < eligiblePlayers.length; j++) {
                                 const player1 = eligiblePlayers[i];
@@ -1636,10 +1287,8 @@
                                 const combinedPercentage = ((parseFloat(percentage1) + parseFloat(percentage2)) / 2).toFixed(1);
                                 strategyResults.voltaOver.push({
                                     league: leagueName,
-                                    player1,
-                                    player2,
-                                    percentage1,
-                                    percentage2,
+                                    player1, player2,
+                                    percentage1, percentage2,
                                     combinedPercentage
                                 });
                             }
@@ -1648,28 +1297,22 @@
                     strategyResults.voltaOver.sort((a, b) => b.combinedPercentage - a.combinedPercentage);
                     strategyResults.voltaOver = strategyResults.voltaOver.slice(0, 5);
                 }
-                
-                // Renderiza os resultados para OVER_BATTLE
+
                 renderStrategyResults(overBattleResults, strategyResults.overBattle, 'Over 2.5 FT');
-                
-                // Renderiza os resultados para GT_OVER_HT
                 renderStrategyResults(gtOverHtResults, strategyResults.gtOverHt, 'Over 1.5 HT');
-                
-                // Renderiza os resultados para VOLTA_OVER
                 renderStrategyResults(voltaOverResults, strategyResults.voltaOver, 'Over 2.5 FT');
             }
-            
-            // Função para renderizar resultados de estratégias
+
             function renderStrategyResults(container, matchups, statLabel) {
                 const rulesDiv = container.querySelector('.strategy-rules');
                 container.innerHTML = '';
                 container.appendChild(rulesDiv);
-                
+
                 if (matchups.length === 0) {
                     container.innerHTML += '<p class="text-center">Nenhum confronto encontrado</p>';
                     return;
                 }
-                
+
                 matchups.forEach(matchup => {
                     const matchupDiv = document.createElement('div');
                     matchupDiv.className = 'strategy-matchup';
@@ -1693,8 +1336,7 @@
                     container.appendChild(matchupDiv);
                 });
             }
-            
-            // Configura eventos dos filtros de jogos
+
             gamesFilterButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     gamesFilterButtons.forEach(btn => btn.classList.remove('active'));
@@ -1705,12 +1347,18 @@
                 });
             });
 
-            // Configura evento do botão de atualizar
-            refreshBtn.addEventListener('click', () => {
-                fetchData();
+            leagueNavButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    leagueNavButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedLeague = this.getAttribute('data-league');
+                    currentPage = 1;
+                    processData();
+                });
             });
 
-            // Inicializa a página
+            refreshBtn.addEventListener('click', () => fetchData());
+
             fetchData();
         });
     </script>
