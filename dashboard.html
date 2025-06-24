@@ -155,10 +155,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            max-width: 100%;
         }
         .best-player-info {
             display: flex;
             align-items: center;
+            max-width: 60%;
         }
         .best-player-icon {
             color: #ffeb3b;
@@ -166,13 +168,19 @@
         }
         .best-player-name {
             font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
         }
         .best-player-stats {
             display: flex;
-            gap: 15px;
+            gap: 10px;
+            flex-wrap: wrap;
         }
         .stat-item {
             text-align: center;
+            min-width: 70px;
         }
         .stat-value {
             display: block;
@@ -265,15 +273,24 @@
             padding: 10px;
             border-radius: 5px;
             margin-bottom: 10px;
+            max-width: 100%;
+        }
+        .strategy-matchup h6 {
+            font-size: 1rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin: 0 0 10px;
         }
         .strategy-stats {
             display: flex;
             justify-content: space-between;
             gap: 10px;
+            flex-wrap: wrap;
         }
         .strategy-stat {
             text-align: center;
-            flex: 1;
+            min-width: 80px;
         }
         .strategy-stat-value {
             display: block;
@@ -469,7 +486,7 @@
                         <div class="strategy-header">OVER_BATTLE</div>
                         <div class="strategy-body" id="overBattleResults">
                             <div class="strategy-rules">
-                                <p><strong>Regras OVER_BATTLE:</strong> Identifica confrontos entre jogadores da liga Battle (8 minutos) com pelo menos 70% de jogos com Over 2.5 gols no tempo regulamentar (FT) e um mínimo de 3 jogos disputados.</p>
+                                <p><strong>Regras OVER_BATTLE:</strong> Identifica confrontos entre jogadores da liga Battle (8 minutos) com pelo menos 70% de jogos com Over 2.5 gols no tempo regulamentar (FT) e um mínimo de 3 jogos disputados. Considera apenas confrontos acima de 96% da média geral de Over 2.5.</p>
                             </div>
                         </div>
                     </div>
@@ -477,7 +494,7 @@
                         <div class="strategy-header">GT_OVER_HT</div>
                         <div class="strategy-body" id="gtOverHtResults">
                             <div class="strategy-rules">
-                                <p><strong>Regras GT_OVER_HT:</strong> Identifica confrontos entre jogadores da liga GT Leagues com pelo menos 65% de jogos com Over 1.5 gols no primeiro tempo (HT) e um mínimo de 3 jogos disputados.</p>
+                                <p><strong>Regras GT_OVER_HT:</strong> Identifica confrontos entre jogadores da liga GT Leagues com pelo menos 65% de jogos com Over 1.5 gols no primeiro tempo (HT) e um mínimo de 3 jogos disputados. Considera apenas confrontos acima de 96% da média geral de Over 1.5 HT.</p>
                             </div>
                         </div>
                     </div>
@@ -485,7 +502,7 @@
                         <div class="strategy-header">VOLTA_OVER</div>
                         <div class="strategy-body" id="voltaOverResults">
                             <div class="strategy-rules">
-                                <p><strong>Regras VOLTA_OVER:</strong> Identifica confrontos entre jogadores da liga Battle Volta (6 minutos) com pelo menos 75% de jogos com Over 2.5 gols no tempo regulamentar (FT) e um mínimo de 3 jogos disputados.</p>
+                                <p><strong>Regras VOLTA_OVER:</strong> Identifica confrontos entre jogadores da liga Battle Volta (6 minutos) com pelo menos 75% de jogos com Over 2.5 gols no tempo regulamentar (FT) e um mínimo de 3 jogos disputados. Considera apenas confrontos acima de 96% da média geral de Over 2.5.</p>
                             </div>
                         </div>
                     </div>
@@ -1135,6 +1152,14 @@
                     if (totalGoalsFT > 2.5) playerStats[leagueName][awayPlayer].over25FtCount++;
                     if (totalGoalsHT > 1.5) playerStats[leagueName][awayPlayer].over15HtCount++;
                 });
+                // Calcular médias gerais
+                const totalOver25FtCount = Object.values(playerStats).reduce((sum, league) => sum + Object.values(league).reduce((subSum, player) => subSum + player.over25FtCount, 0), 0);
+                const totalOver15HtCount = Object.values(playerStats).reduce((sum, league) => sum + Object.values(league).reduce((subSum, player) => subSum + player.over15HtCount, 0), 0);
+                const totalGames = Object.values(playerStats).reduce((sum, league) => sum + Object.values(league).reduce((subSum, player) => subSum + player.games, 0), 0);
+                const avgOver25Ft = totalGames > 0 ? (totalOver25FtCount / totalGames * 100).toFixed(1) : 0;
+                const avgOver15Ht = totalGames > 0 ? (totalOver15HtCount / totalGames * 100).toFixed(1) : 0;
+                const thresholdOver25Ft = parseFloat(avgOver25Ft) * 0.96;
+                const thresholdOver15Ht = parseFloat(avgOver15Ht) * 0.96;
                 // OVER_BATTLE
                 if (selectedLeague === 'all' || (selectedLeague.toLowerCase().includes('battle') && !selectedLeague.toLowerCase().includes('volta'))) {
                     const battleLeagues = Object.keys(playerStats).filter(league => league.includes('battle') && !league.includes('volta') && league.includes('8 mins'));
@@ -1150,7 +1175,9 @@
                                 const percentage1 = (players[player1].over25FtCount / players[player1].games * 100).toFixed(1);
                                 const percentage2 = (players[player2].over25FtCount / players[player2].games * 100).toFixed(1);
                                 const combinedPercentage = ((parseFloat(percentage1) + parseFloat(percentage2)) / 2).toFixed(1);
-                                strategyResults.overBattle.push({ league: leagueName, player1, player2, percentage1, percentage2, combinedPercentage });
+                                if (parseFloat(percentage1) >= thresholdOver25Ft && parseFloat(percentage2) >= thresholdOver25Ft) {
+                                    strategyResults.overBattle.push({ league: leagueName, player1, player2, percentage1, percentage2, combinedPercentage });
+                                }
                             }
                         }
                     });
@@ -1171,7 +1198,9 @@
                                 const percentage1 = (players[player1].over15HtCount / players[player1].games * 100).toFixed(1);
                                 const percentage2 = (players[player2].over15HtCount / players[player2].games * 100).toFixed(1);
                                 const combinedPercentage = ((parseFloat(percentage1) + parseFloat(percentage2)) / 2).toFixed(1);
-                                strategyResults.gtOverHt.push({ league: leagueName, player1, player2, percentage1, percentage2, combinedPercentage });
+                                if (parseFloat(percentage1) >= thresholdOver15Ht && parseFloat(percentage2) >= thresholdOver15Ht) {
+                                    strategyResults.gtOverHt.push({ league: leagueName, player1, player2, percentage1, percentage2, combinedPercentage });
+                                }
                             }
                         }
                     });
@@ -1192,23 +1221,25 @@
                                 const percentage1 = (players[player1].over25FtCount / players[player1].games * 100).toFixed(1);
                                 const percentage2 = (players[player2].over25FtCount / players[player2].games * 100).toFixed(1);
                                 const combinedPercentage = ((parseFloat(percentage1) + parseFloat(percentage2)) / 2).toFixed(1);
-                                strategyResults.voltaOver.push({ league: leagueName, player1, player2, percentage1, percentage2, combinedPercentage });
+                                if (parseFloat(percentage1) >= thresholdOver25Ft && parseFloat(percentage2) >= thresholdOver25Ft) {
+                                    strategyResults.voltaOver.push({ league: leagueName, player1, player2, percentage1, percentage2, combinedPercentage });
+                                }
                             }
                         }
                     });
                     strategyResults.voltaOver.sort((a, b) => b.combinedPercentage - a.combinedPercentage).slice(0, 5);
                 }
-                renderStrategyResults(overBattleResults, strategyResults.overBattle, 'Over 2.5 FT');
-                renderStrategyResults(gtOverHtResults, strategyResults.gtOverHt, 'Over 1.5 HT');
-                renderStrategyResults(voltaOverResults, strategyResults.voltaOver, 'Over 2.5 FT');
+                renderStrategyResults(overBattleResults, strategyResults.overBattle, 'Over 2.5 FT', avgOver25Ft);
+                renderStrategyResults(gtOverHtResults, strategyResults.gtOverHt, 'Over 1.5 HT', avgOver15Ht);
+                renderStrategyResults(voltaOverResults, strategyResults.voltaOver, 'Over 2.5 FT', avgOver25Ft);
             }
             
-            function renderStrategyResults(container, matchups, statLabel) {
+            function renderStrategyResults(container, matchups, statLabel, avgStat) {
                 const rulesDiv = container.querySelector('.strategy-rules');
                 container.innerHTML = '';
                 container.appendChild(rulesDiv);
                 if (matchups.length === 0) {
-                    container.innerHTML += '<p class="text-center">Nenhum confronto encontrado</p>';
+                    container.innerHTML += `<p class="text-center">Nenhum confronto encontrado (Média ${statLabel}: ${avgStat}% - 96% = ${parseFloat(avgStat) * 0.96}%)</p>`;
                     return;
                 }
                 matchups.forEach(matchup => {
