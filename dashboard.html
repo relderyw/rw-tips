@@ -1364,28 +1364,28 @@
                     Object.keys(players).forEach(playerName => {
                         const stats = players[playerName];
                         if (stats.games >= 3) {
-                            const avgGoalsScoredHT = (stats.goalsScoredHT / stats.games).toFixed(2);
-                            const avgGoalsScoredFT = (stats.goalsScoredFT / stats.games).toFixed(2);
-                            const avgGoalsConcededHT = (stats.goalsConcededHT / stats.games).toFixed(2);
-                            const avgGoalsConcededFT = (stats.goalsConcededFT / stats.games).toFixed(2);
+                            const avgGoalsScoredHT = stats.goalsScoredHT / stats.games;
+                            const avgGoalsScoredFT = stats.goalsScoredFT / stats.games;
+                            const avgGoalsConcededHT = stats.goalsConcededHT / stats.games;
+                            const avgGoalsConcededFT = stats.goalsConcededFT / stats.games;
                             playerData.push({
                                 name: playerName,
-                                avgGoalsScoredHT,
-                                avgGoalsScoredFT,
-                                avgGoalsConcededHT,
-                                avgGamesConcededFT: avgGoalsConcededFT
+                                avgGoalsScoredHT: avgGoalsScoredHT.toFixed(2),
+                                avgGoalsScoredFT: avgGoalsScoredFT.toFixed(2),
+                                avgGoalsConcededHT: avgGoalsConcededHT.toFixed(2),
+                                avgGoalsConcededFT: avgGoalsConcededFT.toFixed(2)
                             });
                         }
                     });
                     
                     if (playerData.length > 0) {
-                        // Ordena por mais gols marcados HT
+                        // Ordena por maior média de gols marcados HT (Over gols HT)
                         const topScoredHT = [...playerData].sort((a, b) => b.avgGoalsScoredHT - a.avgGoalsScoredHT).slice(0, 3);
-                        // Ordena por mais gols marcados FT
+                        // Ordena por maior média de gols marcados FT (Over gols FT)
                         const topScoredFT = [...playerData].sort((a, b) => b.avgGoalsScoredFT - a.avgGoalsScoredFT).slice(0, 3);
-                        // Ordena por menos gols sofridos HT
+                        // Ordena por menor média de gols sofridos HT
                         const topConcededHT = [...playerData].sort((a, b) => a.avgGoalsConcededHT - b.avgGoalsConcededHT).slice(0, 3);
-                        // Ordena por menos gols sofridos FT
+                        // Ordena por menor média de gols sofridos FT
                         const topConcededFT = [...playerData].sort((a, b) => a.avgGoalsConcededFT - b.avgGoalsConcededFT).slice(0, 3);
                         
                         const leagueSection = document.createElement('div');
@@ -1410,10 +1410,10 @@
                             </div>
                         `;
                         
-                        // Adiciona seção para mais gols marcados HT
+                        // Adiciona seção para maior média de gols marcados HT
                         const scoredHTCard = document.createElement('div');
                         scoredHTCard.className = 'best-player-card';
-                        scoredHTCard.innerHTML = `<div class="best-player-info"><i class="bi bi-trophy-fill best-player-icon"></i><span class="best-player-name">Mais Gols Marcados HT</span></div>`;
+                        scoredHTCard.innerHTML = `<div class="best-player-info"><i class="bi bi-trophy-fill best-player-icon"></i><span class="best-player-name">Maior Média Gols HT</span></div>`;
                         topScoredHT.forEach(player => {
                             const playerStat = document.createElement('div');
                             playerStat.className = 'best-player-stats';
@@ -1427,10 +1427,10 @@
                         });
                         leagueSection.appendChild(scoredHTCard);
                         
-                        // Adiciona seção para mais gols marcados FT
+                        // Adiciona seção para maior média de gols marcados FT
                         const scoredFTCard = document.createElement('div');
                         scoredFTCard.className = 'best-player-card';
-                        scoredFTCard.innerHTML = `<div class="best-player-info"><i class="bi bi-trophy-fill best-player-icon"></i><span class="best-player-name">Mais Gols Marcados FT</span></div>`;
+                        scoredFTCard.innerHTML = `<div class="best-player-info"><i class="bi bi-trophy-fill best-player-icon"></i><span class="best-player-name">Maior Média Gols FT</span></div>`;
                         topScoredFT.forEach(player => {
                             const playerStat = document.createElement('div');
                             playerStat.className = 'best-player-stats';
@@ -1444,10 +1444,10 @@
                         });
                         leagueSection.appendChild(scoredFTCard);
                         
-                        // Adiciona seção para menos gols sofridos HT
+                        // Adiciona seção para menor média de gols sofridos HT
                         const concededHTCard = document.createElement('div');
                         concededHTCard.className = 'best-player-card';
-                        concededHTCard.innerHTML = `<div class="best-player-info"><i class="bi bi-shield-fill best-player-icon"></i><span class="best-player-name">Menos Gols Sofridos HT</span></div>`;
+                        concededHTCard.innerHTML = `<div class="best-player-info"><i class="bi bi-shield-fill best-player-icon"></i><span class="best-player-name">Menor Média Gols Sofridos HT</span></div>`;
                         topConcededHT.forEach(player => {
                             const playerStat = document.createElement('div');
                             playerStat.className = 'best-player-stats';
@@ -1461,10 +1461,10 @@
                         });
                         leagueSection.appendChild(concededHTCard);
                         
-                        // Adiciona seção para menos gols sofridos FT
+                        // Adiciona seção para menor média de gols sofridos FT
                         const concededFTCard = document.createElement('div');
                         concededFTCard.className = 'best-player-card';
-                        concededFTCard.innerHTML = `<div class="best-player-info"><i class="bi bi-shield-fill best-player-icon"></i><span class="best-player-name">Menos Gols Sofridos FT</span></div>`;
+                        concededFTCard.innerHTML = `<div class="best-player-info"><i class="bi bi-shield-fill best-player-icon"></i><span class="best-player-name">Menor Média Gols Sofridos FT</span></div>`;
                         topConcededFT.forEach(player => {
                             const playerStat = document.createElement('div');
                             playerStat.className = 'best-player-stats';
