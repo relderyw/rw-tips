@@ -1166,7 +1166,8 @@
                     battleLeagues.forEach(leagueName => {
                         const players = playerStats[leagueName];
                         const eligiblePlayers = Object.keys(players).filter(player => 
-                            players[player].games >= 3 && (players[player].over25FtCount / players[player].games) >= 0.7
+                            players[player].games >= 3 && (players[player].over25FtCount / players[player].games) >= 0.7 && 
+                            (players[player].over25FtCount / players[player].games * 100) >= thresholdOver25Ft
                         );
                         for (let i = 0; i < eligiblePlayers.length; i++) {
                             for (let j = i + 1; j < eligiblePlayers.length; j++) {
@@ -1189,7 +1190,8 @@
                     gtLeagues.forEach(leagueName => {
                         const players = playerStats[leagueName];
                         const eligiblePlayers = Object.keys(players).filter(player => 
-                            players[player].games >= 3 && (players[player].over15HtCount / players[player].games) >= 0.65
+                            players[player].games >= 3 && (players[player].over15HtCount / players[player].games) >= 0.65 && 
+                            (players[player].over15HtCount / players[player].games * 100) >= thresholdOver15Ht
                         );
                         for (let i = 0; i < eligiblePlayers.length; i++) {
                             for (let j = i + 1; j < eligiblePlayers.length; j++) {
@@ -1212,7 +1214,8 @@
                     voltaLeagues.forEach(leagueName => {
                         const players = playerStats[leagueName];
                         const eligiblePlayers = Object.keys(players).filter(player => 
-                            players[player].games >= 3 && (players[player].over25FtCount / players[player].games) >= 0.75
+                            players[player].games >= 3 && (players[player].over25FtCount / players[player].games) >= 0.75 && 
+                            (players[player].over25FtCount / players[player].games * 100) >= thresholdOver25Ft
                         );
                         for (let i = 0; i < eligiblePlayers.length; i++) {
                             for (let j = i + 1; j < eligiblePlayers.length; j++) {
