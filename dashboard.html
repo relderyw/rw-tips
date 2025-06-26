@@ -983,7 +983,7 @@
                         const totalGoalsHT = homeScoreHT + awayScoreHT;
                         if (homeScoreHT > 0 && awayScoreHT > 0) bttsHtYesCount++;
                         if (totalGoalsHT > 0.5) over05HtCount++;
-                        if (totalGoalsHT > 1.5) over15HtCount++;
+                        if (totalGoalsHT >= 3.0) over15HtCount++;
                         if (totalGoalsHT > 2.5) over25HtCount++;
                     }
                 });
@@ -1174,11 +1174,12 @@
                     leagueStats[leagueName][homePlayer].goalsScoredFT += homeScore;
                     leagueStats[leagueName][homePlayer].goalsConcededFT += awayScore;
                     if (totalGoalsFT > 2.5) leagueStats[leagueName][homePlayer].over25FtCount++;
+                    if (totalGoalsHT >= 3.0) leagueStats[leagueName][homePlayer].over15HtCount++;
                     if (!leagueStats[leagueName][awayPlayer]) leagueStats[leagueName][awayPlayer] = { games: 0, goalsScoredHT: 0, goalsConcededHT: 0, over15HtCount: 0, goalsScoredFT: 0, goalsConcededFT: 0, over25FtCount: 0 };
                     leagueStats[leagueName][awayPlayer].games++;
                     leagueStats[leagueName][awayPlayer].goalsScoredHT += awayScoreHT;
                     leagueStats[leagueName][awayPlayer].goalsConcededHT += homeScoreHT;
-                    if (totalGoalsHT > 1.5) leagueStats[leagueName][awayPlayer].over15HtCount++;
+                    if (totalGoalsHT >= 3.0) leagueStats[leagueName][awayPlayer].over15HtCount++;
                     leagueStats[leagueName][awayPlayer].goalsScoredFT += awayScore;
                     leagueStats[leagueName][awayPlayer].goalsConcededFT += homeScore;
                     if (totalGoalsFT > 2.5) leagueStats[leagueName][awayPlayer].over25FtCount++;
@@ -1261,11 +1262,11 @@
                     if (!playerStats[leagueName][homePlayer]) playerStats[leagueName][homePlayer] = { games: 0, over25FtCount: 0, over15HtCount: 0 };
                     playerStats[leagueName][homePlayer].games++;
                     if (totalGoalsFT > 2.5) playerStats[leagueName][homePlayer].over25FtCount++;
-                    if (totalGoalsHT > 1.5) playerStats[leagueName][homePlayer].over15HtCount++;
+                    if (totalGoalsHT >= 3.0) playerStats[leagueName][homePlayer].over15HtCount++;
                     if (!playerStats[leagueName][awayPlayer]) playerStats[leagueName][awayPlayer] = { games: 0, over25FtCount: 0, over15HtCount: 0 };
                     playerStats[leagueName][awayPlayer].games++;
                     if (totalGoalsFT > 2.5) playerStats[leagueName][awayPlayer].over25FtCount++;
-                    if (totalGoalsHT > 1.5) playerStats[leagueName][awayPlayer].over15HtCount++;
+                    if (totalGoalsHT >= 3.0) playerStats[leagueName][awayPlayer].over15HtCount++;
                 });
                 // Calcular médias gerais
                 const totalOver25FtCount = Object.values(playerStats).reduce((sum, league) => sum + Object.values(league).reduce((subSum, player) => subSum + player.over25FtCount, 0), 0);
@@ -1417,7 +1418,6 @@
                                 </div>
                             </div>
                         `;
-                    }
                     }
                     container.appendChild(matchupDiv);
                 });
