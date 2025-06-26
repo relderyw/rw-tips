@@ -577,7 +577,7 @@
                                 <ul class="strategy-criteria">
                                     <li>Liga: Esoccer Battle 8 mins</li>
                                     <li>Análise: Últimos 8 jogos</li>
-                                    <li>Média de gols HT: >2.5</li>
+                                    <li>Média de gols HT: >=3.0</li>
                                     <li>BTTS HT: Sim</li>
                                     <li>Média de gols FT: >5.0</li>
                                     <li>BTTS FT: Sim</li>
@@ -1281,18 +1281,35 @@
                     battleLeagues.forEach(leagueName => {
                         const players = playerStats[leagueName];
                         const eligiblePlayers = Object.keys(players).filter(player => 
-                            players[player].games >= 3 && (players[player].over25FtCount / players[player].games) >= 0.7 && 
-                            (players[player].over25FtCount / players[player].games * 100) >= thresholdOver25Ft
+                            players[player].games >= 3 && 
+                            (players[player].over25FtCount / players[player].games) >= 0.7 && 
+                            (players[player].over25FtCount / players[player].games * 100) >= thresholdOver25Ft &&
+                            (players[player].over15HtCount / players[player].games) >= 0.5 && 
+                            (players[player].over15HtCount / players[player].games * 100) >= thresholdOver15Ht
                         );
                         for (let i = 0; i < eligiblePlayers.length; i++) {
                             for (let j = i + 1; j < eligiblePlayers.length; j++) {
                                 const player1 = eligiblePlayers[i];
                                 const player2 = eligiblePlayers[j];
-                                const percentage1 = (players[player1].over25FtCount / players[player1].games * 100).toFixed(1);
-                                const percentage2 = (players[player2].over25FtCount / players[player2].games * 100).toFixed(1);
-                                const combinedPercentage = ((parseFloat(percentage1) + parseFloat(percentage2)) / 2).toFixed(1);
-                                if (parseFloat(percentage1) >= thresholdOver25Ft && parseFloat(percentage2) >= thresholdOver25Ft) {
-                                    strategyResults.overBattle.push({ league: leagueName, player1, player2, percentage1, percentage2, combinedPercentage });
+                                const percentageFT1 = (players[player1].over25FtCount / players[player1].games * 100).toFixed(1);
+                                const percentageFT2 = (players[player2].over25FtCount / players[player2].games * 100).toFixed(1);
+                                const percentageHT1 = (players[player1].over15HtCount / players[player1].games * 100).toFixed(1);
+                                const percentageHT2 = (players[player2].over15HtCount / players[player2].games * 100).toFixed(1);
+                                const combinedPercentageFT = ((parseFloat(percentageFT1) + parseFloat(percentageFT2)) / 2).toFixed(1);
+                                const combinedPercentageHT = ((parseFloat(percentageHT1) + parseFloat(percentageHT2)) / 2).toFixed(1);
+                                if (parseFloat(percentageFT1) >= thresholdOver25Ft && parseFloat(percentageFT2) >= thresholdOver25Ft &&
+                                    parseFloat(percentageHT1) >= thresholdOver15Ht && parseFloat(percentageHT2) >= thresholdOver15Ht) {
+                                    strategyResults.overBattle.push({ 
+                                        league: leagueName, 
+                                        player1, 
+                                        player2, 
+                                        percentageFT1, 
+                                        percentageFT2, 
+                                        percentageHT1,
+                                        percentageHT2,
+                                        combinedPercentageFT,
+                                        combinedPercentageHT
+                                    });
                                 }
                             }
                         }
@@ -1347,12 +1364,12 @@
                     });
                     strategyResults.voltaOver.sort((a, b) => b.combinedPercentage - a.combinedPercentage).slice(0, 5);
                 }
-                renderStrategyResults(overBattleResults, strategyResults.overBattle, 'Over 2.5 FT', avgOver25Ft);
+                renderStrategyResults(overBattleResults, strategyResults.overBattle, 'Over 2.5 FT / Over 3.0 HT', avgOver25Ft, avgOver15Ht);
                 renderStrategyResults(gtOverHtResults, strategyResults.gtOverHt, 'Over 1.5 HT', avgOver15Ht);
                 renderStrategyResults(voltaOverResults, strategyResults.voltaOver, 'Over 2.5 FT', avgOver25Ft);
             }
             
-            function renderStrategyResults(container, matchups, statLabel, avgStat) {
+            function renderStrategyResults(container, matchups, statLabel, avgStat, avgStatHT) {
                 const rulesDiv = container.querySelector('.strategy-rules');
                 container.innerHTML = '';
                 container.appendChild(rulesDiv);
@@ -1363,23 +1380,45 @@
                 matchups.forEach(matchup => {
                     const matchupDiv = document.createElement('div');
                     matchupDiv.className = 'strategy-matchup';
-                    matchupDiv.innerHTML = `
-                        <h6>${matchup.player1} vs ${matchup.player2} (${matchup.league})</h6>
-                        <div class="strategy-stats">
-                            <div class="strategy-stat">
-                                <span class="strategy-stat-value">${matchup.percentage1}%</span>
-                                <span class="strategy-stat-label">${matchup.player1}</span>
+                    const isOverBattle = matchup.hasOwnProperty('percentageFT1');
+                    if (isOverBattle) {
+                        matchupDiv.innerHTML = `
+                            <h6>${matchup.player1} vs ${matchup.player2} (${matchup.league})</h6>
+                            <div class="strategy-stats">
+                                <div class="strategy-stat">
+                                    <span class="strategy-stat-value">${matchup.percentageFT1}% / ${matchup.percentageHT1}%</span>
+                                    <span class="strategy-stat-label">${matchup.player1}</span>
+                                </div>
+                                <div class="strategy-stat">
+                                    <span class="strategy-stat-value">${matchup.percentageFT2}% / ${matchup.percentageHT2}%</span>
+                                    <span class="strategy-stat-label">${matchup.player2}</span>
+                                </div>
+                                <div class="strategy-stat">
+                                    <span class="strategy-stat-value">${matchup.combinedPercentageFT}% / ${matchup.combinedPercentageHT}%</span>
+                                    <span class="strategy-stat-label">Combinado FT/HT</span>
+                                </div>
                             </div>
-                            <div class="strategy-stat">
-                                <span class="strategy-stat-value">${matchup.percentage2}%</span>
-                                <span class="strategy-stat-label">${matchup.player2}</span>
+                        `;
+                    } else {
+                        matchupDiv.innerHTML = `
+                            <h6>${matchup.player1} vs ${matchup.player2} (${matchup.league})</h6>
+                            <div class="strategy-stats">
+                                <div class="strategy-stat">
+                                    <span class="strategy-stat-value">${matchup.percentage1}%</span>
+                                    <span class="strategy-stat-label">${matchup.player1}</span>
+                                </div>
+                                <div class="strategy-stat">
+                                    <span class="strategy-stat-value">${matchup.percentage2}%</span>
+                                    <span class="strategy-stat-label">${matchup.player2}</span>
+                                </div>
+                                <div class="strategy-stat">
+                                    <span class="strategy-stat-value">${matchup.combinedPercentage}%</span>
+                                    <span class="strategy-stat-label">Combinado</span>
+                                </div>
                             </div>
-                            <div class="strategy-stat">
-                                <span class="strategy-stat-value">${matchup.combinedPercentage}%</span>
-                                <span class="strategy-stat-label">Combinado</span>
-                            </div>
-                        </div>
-                    `;
+                        `;
+                    }
+                    }
                     container.appendChild(matchupDiv);
                 });
             }
