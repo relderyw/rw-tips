@@ -1492,33 +1492,41 @@
         async function updateBestMatchups() {
             try {
                 // Buscar dados do dashboard
-                const dashboardResponse = await fetch('/dashboard.html');
-                const dashboardHtml = await dashboardResponse.text();
-                
-                // Criar um DOM parser
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(dashboardHtml, 'text/html');
-                
-                // Extrair os resultados das estratégias
-                const overBattleResults = Array.from(doc.querySelectorAll('#overBattleResults .strategy-matchup')).map(el => ({
-                    player1: el.querySelector('.strategy-stat:nth-child(1) .strategy-stat-label').textContent,
-                    player2: el.querySelector('.strategy-stat:nth-child(2) .strategy-stat-label').textContent
-                }));
-                
-                const voltaOverResults = Array.from(doc.querySelectorAll('#voltaOverResults .strategy-matchup')).map(el => ({
-                    player1: el.querySelector('.strategy-stat:nth-child(1) .strategy-stat-label').textContent,
-                    player2: el.querySelector('.strategy-stat:nth-child(2) .strategy-stat-label').textContent
-                }));
-                
-                const gtOverHtResults = Array.from(doc.querySelectorAll('#gtOverHtResults .strategy-matchup')).map(el => ({
-                    player1: el.querySelector('.strategy-stat:nth-child(1) .strategy-stat-label').textContent,
-                    player2: el.querySelector('.strategy-stat:nth-child(2) .strategy-stat-label').textContent
-                }));
+                const response = await fetch('https://caveira-proxy.onrender.com/api/dashboard/data');
+                const data = await response.json();
+                console.log('Dados recebidos da API:', data);
                 
                 // Atualizar bestMatchups com os resultados
-                bestMatchups.battle8m = overBattleResults;
-                bestMatchups.battle6m = voltaOverResults;
-                bestMatchups.gt12m = gtOverHtResults;
+                bestMatchups.battle8m = [];
+                bestMatchups.battle6m = [];
+                bestMatchups.gt12m = [];
+                
+                if (data.strategyResults && data.strategyResults.overBattle) {
+                    bestMatchups.battle8m = data.strategyResults.overBattle
+                        .filter(match => match.combinedPercentage >= 100)
+                        .map(match => ({
+                            player1: match.homePlayer,
+                            player2: match.awayPlayer
+                        }));
+                }
+                
+                if (data.strategyResults && data.strategyResults.voltaOver) {
+                    bestMatchups.battle6m = data.strategyResults.voltaOver
+                        .filter(match => match.combinedPercentage >= 100)
+                        .map(match => ({
+                            player1: match.homePlayer,
+                            player2: match.awayPlayer
+                        }));
+                }
+                
+                if (data.strategyResults && data.strategyResults.gtOverHt) {
+                    bestMatchups.gt12m = data.strategyResults.gtOverHt
+                        .filter(match => match.combinedPercentage >= 100)
+                        .map(match => ({
+                            player1: match.homePlayer,
+                            player2: match.awayPlayer
+                        }));
+                }
                 
                 console.log('Melhores confrontos atualizados:', bestMatchups);
             } catch (error) {
@@ -1528,18 +1536,28 @@
 
         function isBestMatchup(homePlayer, awayPlayer, leagueName) {
             let matchupList = [];
-            if (leagueName.includes('battle') && !leagueName.includes('volta') && leagueName.includes('8 mins')) {
+            console.log('Verificando liga:', leagueName);
+            if (leagueName.toLowerCase().includes('battle') && !leagueName.toLowerCase().includes('volta') && leagueName.includes('8 mins')) {
                 matchupList = bestMatchups.battle8m;
-            } else if (leagueName.includes('volta') && leagueName.includes('6 mins')) {
+                console.log('Liga 8m:', matchupList);
+            } else if (leagueName.toLowerCase().includes('volta') && leagueName.includes('6 mins')) {
                 matchupList = bestMatchups.battle6m;
-            } else if (leagueName.includes('gt') && leagueName.includes('12m')) {
+                console.log('Liga 6m:', matchupList);
+            } else if (leagueName.toLowerCase().includes('gt') && leagueName.includes('12 mins')) {
                 matchupList = bestMatchups.gt12m;
+                console.log('Liga 12m:', matchupList);
             }
+            console.log('Verificando jogadores:', homePlayer, awayPlayer);
 
-            return matchupList.some(match => 
-                (match.player1 === homePlayer && match.player2 === awayPlayer) ||
-                (match.player1 === awayPlayer && match.player2 === homePlayer)
-            );
+            const isMatch = matchupList.some(match => {
+                const p1 = match.player1.toLowerCase();
+                const p2 = match.player2.toLowerCase();
+                const home = homePlayer.toLowerCase();
+                const away = awayPlayer.toLowerCase();
+                return (p1 === home && p2 === away) || (p1 === away && p2 === home);
+            });
+            console.log('É melhor confronto?', isMatch);
+            return isMatch;
         }
 
         // Atualizar os melhores confrontos a cada 5 minutos
