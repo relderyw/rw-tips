@@ -37,6 +37,41 @@
             --transition: all 0.3s ease;
         }
 
+        @keyframes bestMatchPulse {
+            0% {
+                box-shadow: 0 0 15px var(--accent-yellow);
+                border-color: var(--accent-yellow);
+            }
+            50% {
+                box-shadow: 0 0 25px var(--accent-yellow);
+                border-color: var(--accent-yellow);
+            }
+            100% {
+                box-shadow: 0 0 15px var(--accent-yellow);
+                border-color: var(--accent-yellow);
+            }
+        }
+
+        .best-match-indicator {
+            background: linear-gradient(135deg, var(--accent-yellow), var(--accent-orange));
+            color: var(--text-primary);
+            text-align: center;
+            padding: 5px;
+            font-weight: bold;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            animation: glow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px var(--accent-yellow);
+            }
+            to {
+                text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px var(--accent-yellow);
+            }
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -1448,6 +1483,70 @@
             return match ? match[1] : teamName;
         }
 
+        let bestMatchups = {
+            battle8m: [], // Para liga de 8 minutos
+            battle6m: [], // Para liga de 6 minutos
+            gt12m: []    // Para liga de 12 minutos
+        };
+
+        async function updateBestMatchups() {
+            try {
+                // Buscar dados do dashboard
+                const dashboardResponse = await fetch('/dashboard.html');
+                const dashboardHtml = await dashboardResponse.text();
+                
+                // Criar um DOM parser
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(dashboardHtml, 'text/html');
+                
+                // Extrair os resultados das estratégias
+                const overBattleResults = Array.from(doc.querySelectorAll('#overBattleResults .strategy-matchup')).map(el => ({
+                    player1: el.querySelector('.strategy-stat:nth-child(1) .strategy-stat-label').textContent,
+                    player2: el.querySelector('.strategy-stat:nth-child(2) .strategy-stat-label').textContent
+                }));
+                
+                const voltaOverResults = Array.from(doc.querySelectorAll('#voltaOverResults .strategy-matchup')).map(el => ({
+                    player1: el.querySelector('.strategy-stat:nth-child(1) .strategy-stat-label').textContent,
+                    player2: el.querySelector('.strategy-stat:nth-child(2) .strategy-stat-label').textContent
+                }));
+                
+                const gtOverHtResults = Array.from(doc.querySelectorAll('#gtOverHtResults .strategy-matchup')).map(el => ({
+                    player1: el.querySelector('.strategy-stat:nth-child(1) .strategy-stat-label').textContent,
+                    player2: el.querySelector('.strategy-stat:nth-child(2) .strategy-stat-label').textContent
+                }));
+                
+                // Atualizar bestMatchups com os resultados
+                bestMatchups.battle8m = overBattleResults;
+                bestMatchups.battle6m = voltaOverResults;
+                bestMatchups.gt12m = gtOverHtResults;
+                
+                console.log('Melhores confrontos atualizados:', bestMatchups);
+            } catch (error) {
+                console.error('Erro ao atualizar melhores confrontos:', error);
+            }
+        }
+
+        function isBestMatchup(homePlayer, awayPlayer, leagueName) {
+            let matchupList = [];
+            if (leagueName.includes('battle') && !leagueName.includes('volta') && leagueName.includes('8 mins')) {
+                matchupList = bestMatchups.battle8m;
+            } else if (leagueName.includes('volta') && leagueName.includes('6 mins')) {
+                matchupList = bestMatchups.battle6m;
+            } else if (leagueName.includes('gt') && leagueName.includes('12m')) {
+                matchupList = bestMatchups.gt12m;
+            }
+
+            return matchupList.some(match => 
+                (match.player1 === homePlayer && match.player2 === awayPlayer) ||
+                (match.player1 === awayPlayer && match.player2 === homePlayer)
+            );
+        }
+
+        // Atualizar os melhores confrontos a cada 5 minutos
+        setInterval(updateBestMatchups, 5 * 60 * 1000);
+        // Primeira atualização
+        updateBestMatchups();
+
         function renderLiveMatches(data) {
             console.log('Dados recebidos para jogos ao vivo:', data);
             if (!data || !data.data || !Array.isArray(data.data) || data.data.length === 0) {
@@ -1533,10 +1632,18 @@
                     const awayTeam = match.away.name ? match.away.name.split('(')[0].trim() : '';
 
                     const matchCard = document.createElement('div');
-                    // Remove statusClass from className to avoid overriding league color border
-                    matchCard.className = `match-card league-${leagueClass} ${scoreChanged ? 'goal-scored' : ''}`;
+                    const isBestMatch = isBestMatchup(homePlayer, awayPlayer, leagueName);
+                    matchCard.className = `match-card league-${leagueClass} ${scoreChanged ? 'goal-scored' : ''} ${isBestMatch ? 'best-matchup' : ''}`;
+                    
+                    // Adicionar estilo especial para melhores confrontos
+                    if (isBestMatch) {
+                        matchCard.style.boxShadow = '0 0 15px var(--accent-yellow)';
+                        matchCard.style.border = '2px solid var(--accent-yellow)';
+                        matchCard.style.animation = 'bestMatchPulse 2s infinite';
+                    }
 
                     matchCard.innerHTML = `
+                        ${isBestMatch ? '<div class="best-match-indicator">⭐ TOP MATCH ⭐</div>' : ''}
                         <div class="match-status status-${statusClass}">${statusText}</div>
                         <div class="match-time">
                             <i class="${timeIcon}"></i> ${timeDisplay}
