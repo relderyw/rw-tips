@@ -925,9 +925,7 @@
                 const leagueStats = {};
                 allGames.forEach(game => {
                     const leagueName = game.league.name;
-                    if (!leagueStats[leagueName]) {
-                        leagueStats[leagueName] = { games: 0, totalGoals: 0, bttsCount: 0, over25Count: 0, over35Count: 0 };
-                    }
+                    if (!leagueStats[leagueName]) leagueStats[leagueName] = { games: 0, totalGoals: 0, bttsCount: 0, over25Count: 0, over35Count: 0 };
                     if (game.ss && game.ss.includes('-')) {
                         const [homeScore, awayScore] = game.ss.split('-').map(Number);
                         const totalGoals = homeScore + awayScore;
@@ -1247,124 +1245,173 @@
             function updateStrategyTests() {
                 const strategyResults = { overBattle: [], gtOverHt: [], voltaOver: [] };
                 const playerStats = {};
+                
+                // Primeiro, organizamos os jogadores por liga
+                const playersByLeague = {};
+                
                 filteredGames.forEach(game => {
-                    const leagueName = game.league.name.toLowerCase();
+                    const leagueName = game.league.name;
+                    if (!playersByLeague[leagueName]) {
+                        playersByLeague[leagueName] = {};
+                    }
+                    
                     const homePlayer = extractPlayerName(game.home.name);
                     const awayPlayer = extractPlayerName(game.away.name);
                     const [homeScore, awayScore] = game.ss?.split('-').map(Number) || [0, 0];
                     const [homeScoreHT, awayScoreHT] = game.scores?.["1"] ? [parseInt(game.scores["1"].home) || 0, parseInt(game.scores["1"].away) || 0] : [0, 0];
                     const totalGoalsHT = homeScoreHT + awayScoreHT;
                     const totalGoalsFT = homeScore + awayScore;
-                    const isBattle = leagueName.includes('battle') && !leagueName.includes('volta') && leagueName.includes('8 mins');
-                    const isGT = leagueName.includes('gt') && leagueName.includes('12m');
-                    const isVolta = leagueName.includes('volta') && leagueName.includes('6 mins');
-                    if (!playerStats[leagueName]) playerStats[leagueName] = {};
-                    if (!playerStats[leagueName][homePlayer]) playerStats[leagueName][homePlayer] = { games: 0, over25FtCount: 0, over15HtCount: 0 };
-                    playerStats[leagueName][homePlayer].games++;
-                    if (totalGoalsFT > 2.5) playerStats[leagueName][homePlayer].over25FtCount++;
-                    if (totalGoalsHT >= 3.0) playerStats[leagueName][homePlayer].over15HtCount++;
-                    if (!playerStats[leagueName][awayPlayer]) playerStats[leagueName][awayPlayer] = { games: 0, over25FtCount: 0, over15HtCount: 0 };
-                    playerStats[leagueName][awayPlayer].games++;
-                    if (totalGoalsFT > 2.5) playerStats[leagueName][awayPlayer].over25FtCount++;
-                    if (totalGoalsHT >= 3.0) playerStats[leagueName][awayPlayer].over15HtCount++;
+                    
+                    // Adiciona os jogadores à liga se ainda não existirem
+                    if (!playersByLeague[leagueName][homePlayer]) {
+                        playersByLeague[leagueName][homePlayer] = { games: 0, over25FtCount: 0, over15HtCount: 0 };
+                    }
+                    if (!playersByLeague[leagueName][awayPlayer]) {
+                        playersByLeague[leagueName][awayPlayer] = { games: 0, over25FtCount: 0, over15HtCount: 0 };
+                    }
+                    
+                    // Atualiza estatísticas
+                    playersByLeague[leagueName][homePlayer].games++;
+                    playersByLeague[leagueName][awayPlayer].games++;
+                    
+                    if (totalGoalsFT > 2.5) {
+                        playersByLeague[leagueName][homePlayer].over25FtCount++;
+                        playersByLeague[leagueName][awayPlayer].over25FtCount++;
+                    }
+                    
+                    if (totalGoalsHT >= 3.0) {
+                        playersByLeague[leagueName][homePlayer].over15HtCount++;
+                        playersByLeague[leagueName][awayPlayer].over15HtCount++;
+                    }
                 });
+                
                 // Calcular médias gerais
-                const totalOver25FtCount = Object.values(playerStats).reduce((sum, league) => sum + Object.values(league).reduce((subSum, player) => subSum + player.over25FtCount, 0), 0);
-                const totalOver15HtCount = Object.values(playerStats).reduce((sum, league) => sum + Object.values(league).reduce((subSum, player) => subSum + player.over15HtCount, 0), 0);
-                const totalGames = Object.values(playerStats).reduce((sum, league) => sum + Object.values(league).reduce((subSum, player) => subSum + player.games, 0), 0);
+                let totalOver25FtCount = 0;
+                let totalOver15HtCount = 0;
+                let totalGames = 0;
+                
+                Object.values(playersByLeague).forEach(league => {
+                    Object.values(league).forEach(player => {
+                        totalOver25FtCount += player.over25FtCount;
+                        totalOver15HtCount += player.over15HtCount;
+                        totalGames += player.games;
+                    });
+                });
+                
                 const avgOver25Ft = totalGames > 0 ? (totalOver25FtCount / totalGames * 100).toFixed(1) : 0;
                 const avgOver15Ht = totalGames > 0 ? (totalOver15HtCount / totalGames * 100).toFixed(1) : 0;
                 const thresholdOver25Ft = parseFloat(avgOver25Ft) * 0.96;
                 const thresholdOver15Ht = parseFloat(avgOver15Ht) * 0.96;
-                // OVER_BATTLE
-                if (selectedLeague === 'all' || (selectedLeague.toLowerCase().includes('battle') && !selectedLeague.toLowerCase().includes('volta'))) {
-                    const battleLeagues = Object.keys(playerStats).filter(league => league.includes('battle') && !league.includes('volta') && league.includes('8 mins'));
-                    battleLeagues.forEach(leagueName => {
-                        const players = playerStats[leagueName];
-                        const eligiblePlayers = Object.keys(players).filter(player => 
-                            players[player].games >= 3 && 
-                            (players[player].over25FtCount / players[player].games) >= 0.7 && 
-                            (players[player].over25FtCount / players[player].games * 100) >= thresholdOver25Ft &&
-                            (players[player].over15HtCount / players[player].games) >= 0.5 && 
-                            (players[player].over15HtCount / players[player].games * 100) >= thresholdOver15Ht
+                
+                // Processar cada liga separadamente
+                Object.keys(playersByLeague).forEach(leagueName => {
+                    const league = playersByLeague[leagueName];
+                    const players = Object.keys(league);
+                    
+                    // OVER_BATTLE - apenas para ligas Battle 8m
+                    if (leagueName.toLowerCase().includes('battle') && leagueName.toLowerCase().includes('8m')) {
+                        const eligiblePlayers = players.filter(player => 
+                            league[player].games >= 3 && 
+                            (league[player].over25FtCount / league[player].games) >= 0.7 && 
+                            (league[player].over15HtCount / league[player].games) >= 0.5
                         );
+                        
+                        // Gerar combinações de jogadores
                         for (let i = 0; i < eligiblePlayers.length; i++) {
                             for (let j = i + 1; j < eligiblePlayers.length; j++) {
                                 const player1 = eligiblePlayers[i];
                                 const player2 = eligiblePlayers[j];
-                                const percentageFT1 = (players[player1].over25FtCount / players[player1].games * 100).toFixed(1);
-                                const percentageFT2 = (players[player2].over25FtCount / players[player2].games * 100).toFixed(1);
-                                const percentageHT1 = (players[player1].over15HtCount / players[player1].games * 100).toFixed(1);
-                                const percentageHT2 = (players[player2].over15HtCount / players[player2].games * 100).toFixed(1);
+                                
+                                const percentageFT1 = (league[player1].over25FtCount / league[player1].games * 100).toFixed(1);
+                                const percentageFT2 = (league[player2].over25FtCount / league[player2].games * 100).toFixed(1);
+                                const percentageHT1 = (league[player1].over15HtCount / league[player1].games * 100).toFixed(1);
+                                const percentageHT2 = (league[player2].over15HtCount / league[player2].games * 100).toFixed(1);
+                                
                                 const combinedPercentageFT = ((parseFloat(percentageFT1) + parseFloat(percentageFT2)) / 2).toFixed(1);
                                 const combinedPercentageHT = ((parseFloat(percentageHT1) + parseFloat(percentageHT2)) / 2).toFixed(1);
-                                if (parseFloat(percentageFT1) >= thresholdOver25Ft && parseFloat(percentageFT2) >= thresholdOver25Ft &&
-                                    parseFloat(percentageHT1) >= thresholdOver15Ht && parseFloat(percentageHT2) >= thresholdOver15Ht) {
-                                    strategyResults.overBattle.push({ 
-                                        league: leagueName, 
-                                        player1, 
-                                        player2, 
-                                        percentageFT1, 
-                                        percentageFT2, 
-                                        percentageHT1,
-                                        percentageHT2,
-                                        combinedPercentageFT,
-                                        combinedPercentageHT
-                                    });
-                                }
+                                
+                                strategyResults.overBattle.push({ 
+                                    league: leagueName, 
+                                    player1, 
+                                    player2, 
+                                    percentageFT1, 
+                                    percentageFT2, 
+                                    percentageHT1,
+                                    percentageHT2,
+                                    combinedPercentageFT,
+                                    combinedPercentageHT
+                                });
                             }
                         }
-                    });
-                    strategyResults.overBattle.sort((a, b) => b.combinedPercentage - a.combinedPercentage).slice(0, 5);
-                }
-                // GT_OVER_HT
-                if (selectedLeague === 'all' || selectedLeague.toLowerCase().includes('gt')) {
-                    const gtLeagues = Object.keys(playerStats).filter(league => league.includes('gt') && league.includes('12m'));
-                    gtLeagues.forEach(leagueName => {
-                        const players = playerStats[leagueName];
-                        const eligiblePlayers = Object.keys(players).filter(player => 
-                            players[player].games >= 3 && (players[player].over15HtCount / players[player].games) >= 0.65 && 
-                            (players[player].over15HtCount / players[player].games * 100) >= thresholdOver15Ht
+                    }
+                    
+                    // GT_OVER_HT - apenas para ligas GT 12m
+                    if (leagueName.toLowerCase().includes('gt') && leagueName.toLowerCase().includes('12m')) {
+                        const eligiblePlayers = players.filter(player => 
+                            league[player].games >= 3 && 
+                            (league[player].over15HtCount / league[player].games) >= 0.65
                         );
+                        
                         for (let i = 0; i < eligiblePlayers.length; i++) {
                             for (let j = i + 1; j < eligiblePlayers.length; j++) {
                                 const player1 = eligiblePlayers[i];
                                 const player2 = eligiblePlayers[j];
-                                const percentage1 = (players[player1].over15HtCount / players[player1].games * 100).toFixed(1);
-                                const percentage2 = (players[player2].over15HtCount / players[player2].games * 100).toFixed(1);
+                                
+                                const percentage1 = (league[player1].over15HtCount / league[player1].games * 100).toFixed(1);
+                                const percentage2 = (league[player2].over15HtCount / league[player2].games * 100).toFixed(1);
                                 const combinedPercentage = ((parseFloat(percentage1) + parseFloat(percentage2)) / 2).toFixed(1);
-                                if (parseFloat(percentage1) >= thresholdOver15Ht && parseFloat(percentage2) >= thresholdOver15Ht) {
-                                    strategyResults.gtOverHt.push({ league: leagueName, player1, player2, percentage1, percentage2, combinedPercentage });
-                                }
+                                
+                                strategyResults.gtOverHt.push({ 
+                                    league: leagueName, 
+                                    player1, 
+                                    player2, 
+                                    percentage1, 
+                                    percentage2, 
+                                    combinedPercentage 
+                                });
                             }
                         }
-                    });
-                    strategyResults.gtOverHt.sort((a, b) => b.combinedPercentage - a.combinedPercentage).slice(0, 5);
-                }
-                // VOLTA_OVER
-                if (selectedLeague === 'all' || selectedLeague.toLowerCase().includes('volta')) {
-                    const voltaLeagues = Object.keys(playerStats).filter(league => league.includes('volta') && league.includes('6 mins'));
-                    voltaLeagues.forEach(leagueName => {
-                        const players = playerStats[leagueName];
-                        const eligiblePlayers = Object.keys(players).filter(player => 
-                            players[player].games >= 3 && (players[player].over25FtCount / players[player].games) >= 0.75 && 
-                            (players[player].over25FtCount / players[player].games * 100) >= thresholdOver25Ft
+                    }
+                    
+                    // VOLTA_OVER - apenas para ligas Volta 6m
+                    if (leagueName.toLowerCase().includes('volta') && leagueName.toLowerCase().includes('6m')) {
+                        const eligiblePlayers = players.filter(player => 
+                            league[player].games >= 3 && 
+                            (league[player].over25FtCount / league[player].games) >= 0.75
                         );
+                        
                         for (let i = 0; i < eligiblePlayers.length; i++) {
                             for (let j = i + 1; j < eligiblePlayers.length; j++) {
                                 const player1 = eligiblePlayers[i];
                                 const player2 = eligiblePlayers[j];
-                                const percentage1 = (players[player1].over25FtCount / players[player1].games * 100).toFixed(1);
-                                const percentage2 = (players[player2].over25FtCount / players[player2].games * 100).toFixed(1);
+                                
+                                const percentage1 = (league[player1].over25FtCount / league[player1].games * 100).toFixed(1);
+                                const percentage2 = (league[player2].over25FtCount / league[player2].games * 100).toFixed(1);
                                 const combinedPercentage = ((parseFloat(percentage1) + parseFloat(percentage2)) / 2).toFixed(1);
-                                if (parseFloat(percentage1) >= thresholdOver25Ft && parseFloat(percentage2) >= thresholdOver25Ft) {
-                                    strategyResults.voltaOver.push({ league: leagueName, player1, player2, percentage1, percentage2, combinedPercentage });
-                                }
+                                
+                                strategyResults.voltaOver.push({ 
+                                    league: leagueName, 
+                                    player1, 
+                                    player2, 
+                                    percentage1, 
+                                    percentage2, 
+                                    combinedPercentage 
+                                });
                             }
                         }
-                    });
-                    strategyResults.voltaOver.sort((a, b) => b.combinedPercentage - a.combinedPercentage).slice(0, 5);
-                }
+                    }
+                });
+                
+                // Ordenar resultados
+                strategyResults.overBattle.sort((a, b) => parseFloat(b.combinedPercentageFT) - parseFloat(a.combinedPercentageFT));
+                strategyResults.gtOverHt.sort((a, b) => parseFloat(b.combinedPercentage) - parseFloat(a.combinedPercentage));
+                strategyResults.voltaOver.sort((a, b) => parseFloat(b.combinedPercentage) - parseFloat(a.combinedPercentage));
+                
+                // Limitar a 5 resultados por estratégia
+                strategyResults.overBattle = strategyResults.overBattle.slice(0, 5);
+                strategyResults.gtOverHt = strategyResults.gtOverHt.slice(0, 5);
+                strategyResults.voltaOver = strategyResults.voltaOver.slice(0, 5);
+                
                 renderStrategyResults(overBattleResults, strategyResults.overBattle, 'Over 2.5 FT / Over 3.0 HT', avgOver25Ft, avgOver15Ht);
                 renderStrategyResults(gtOverHtResults, strategyResults.gtOverHt, 'Over 1.5 HT', avgOver15Ht);
                 renderStrategyResults(voltaOverResults, strategyResults.voltaOver, 'Over 2.5 FT', avgOver25Ft);
@@ -1374,14 +1421,17 @@
                 const rulesDiv = container.querySelector('.strategy-rules');
                 container.innerHTML = '';
                 container.appendChild(rulesDiv);
+                
                 if (matchups.length === 0) {
                     container.innerHTML += `<p class="text-center">Nenhum confronto encontrado (Média ${statLabel}: ${avgStat}% - 96% = ${parseFloat(avgStat) * 0.96}%)</p>`;
                     return;
                 }
+                
                 matchups.forEach(matchup => {
                     const matchupDiv = document.createElement('div');
                     matchupDiv.className = 'strategy-matchup';
                     const isOverBattle = matchup.hasOwnProperty('percentageFT1');
+                    
                     if (isOverBattle) {
                         matchupDiv.innerHTML = `
                             <h6>${matchup.player1} vs ${matchup.player2} (${matchup.league})</h6>
@@ -1419,6 +1469,7 @@
                             </div>
                         `;
                     }
+                    
                     container.appendChild(matchupDiv);
                 });
             }
