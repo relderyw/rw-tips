@@ -1265,24 +1265,81 @@
                     
                     // Adiciona os jogadores à liga se ainda não existirem
                     if (!playersByLeague[leagueName][homePlayer]) {
-                        playersByLeague[leagueName][homePlayer] = { games: 0, over25FtCount: 0, over15HtCount: 0 };
+                        playersByLeague[leagueName][homePlayer] = {
+                            games: 0,
+                            over25FtCount: 0,
+                            over15HtCount: 0,
+                            goalsHT: 0,
+                            goalsFT: 0,
+                            bttsHT: 0,
+                            bttsFT: 0,
+                            score0x0HT: 0,
+                            score0x0FT: 0,
+                            over25HT: 0
+                        };
                     }
                     if (!playersByLeague[leagueName][awayPlayer]) {
-                        playersByLeague[leagueName][awayPlayer] = { games: 0, over25FtCount: 0, over15HtCount: 0 };
+                        playersByLeague[leagueName][awayPlayer] = {
+                            games: 0,
+                            over25FtCount: 0,
+                            over15HtCount: 0,
+                            goalsHT: 0,
+                            goalsFT: 0,
+                            bttsHT: 0,
+                            bttsFT: 0,
+                            score0x0HT: 0,
+                            score0x0FT: 0,
+                            over25HT: 0
+                        };
                     }
                     
                     // Atualiza estatísticas
-                    playersByLeague[leagueName][homePlayer].games++;
-                    playersByLeague[leagueName][awayPlayer].games++;
+                    const homeStats = playersByLeague[leagueName][homePlayer];
+                    const awayStats = playersByLeague[leagueName][awayPlayer];
                     
-                    if (totalGoalsFT > 2.5) {
-                        playersByLeague[leagueName][homePlayer].over25FtCount++;
-                        playersByLeague[leagueName][awayPlayer].over25FtCount++;
+                    homeStats.games++;
+                    awayStats.games++;
+                    
+                    // Gols HT e FT
+                    homeStats.goalsHT += totalGoalsHT;
+                    awayStats.goalsHT += totalGoalsHT;
+                    homeStats.goalsFT += totalGoalsFT;
+                    awayStats.goalsFT += totalGoalsFT;
+                    
+                    // BTTS HT e FT
+                    if (homeScoreHT > 0 && awayScoreHT > 0) {
+                        homeStats.bttsHT++;
+                        awayStats.bttsHT++;
+                    }
+                    if (homeScore > 0 && awayScore > 0) {
+                        homeStats.bttsFT++;
+                        awayStats.bttsFT++;
                     }
                     
+                    // 0x0 HT e FT
+                    if (homeScoreHT === 0 && awayScoreHT === 0) {
+                        homeStats.score0x0HT++;
+                        awayStats.score0x0HT++;
+                    }
+                    if (homeScore === 0 && awayScore === 0) {
+                        homeStats.score0x0FT++;
+                        awayStats.score0x0FT++;
+                    }
+                    
+                    // Over 2.5 HT e FT
+                    if (totalGoalsHT > 2.5) {
+                        homeStats.over25HT++;
+                        awayStats.over25HT++;
+                    }
+                    if (totalGoalsFT > 2.5) {
+                        homeStats.over25FtCount++;
+                        awayStats.over25FtCount++;
+                    }
+                    
+                    // Over 1.5 HT
                     if (totalGoalsHT >= 3.0) {
-                        playersByLeague[leagueName][homePlayer].over15HtCount++;
-                        playersByLeague[leagueName][awayPlayer].over15HtCount++;
+                        homeStats.over15HtCount++;
+                        awayStats.over15HtCount++;
                     }
                 });
                 
@@ -1311,11 +1368,23 @@
                     
                     // OVER_BATTLE - apenas para ligas Battle 8m
                     if (leagueName.toLowerCase().includes('battle') && leagueName.toLowerCase().includes('8m')) {
-                        const eligiblePlayers = players.filter(player => 
-                            league[player].games >= 4 && 
-                            (league[player].over25FtCount / league[player].games) >= 0.8 && 
-                            (league[player].over15HtCount / league[player].games) >= 0.75
-                        );
+                        const eligiblePlayers = players.filter(player => {
+                            const stats = league[player];
+                            const avgGoalsHT = stats.goalsHT / stats.games;
+                            const avgGoalsFT = stats.goalsFT / stats.games;
+                            const bttsHTPercentage = (stats.bttsHT / stats.games) * 100;
+                            const bttsFTPercentage = (stats.bttsFT / stats.games) * 100;
+                            const has0x0HT = stats.score0x0HT > 0;
+                            const has0x0FT = stats.score0x0FT > 0;
+                            
+                            return stats.games >= 4 && 
+                                   avgGoalsHT >= 2.5 &&
+                                   bttsHTPercentage >= 75 &&
+                                   avgGoalsFT > 4.0 &&
+                                   bttsFTPercentage >= 80 &&
+                                   !has0x0HT &&
+                                   !has0x0FT;
+                        });
                         
                         // Gerar combinações de jogadores
                         for (let i = 0; i < eligiblePlayers.length; i++) {
@@ -1348,10 +1417,19 @@
                     
                     // GT_OVER_HT - apenas para ligas GT 12m
                     if (leagueName.toLowerCase().includes('gt') && leagueName.toLowerCase().includes('12m')) {
-                        const eligiblePlayers = players.filter(player => 
-                            league[player].games >= 4 && 
-                            (league[player].over15HtCount / league[player].games) >= 1.0
-                        );
+                        const eligiblePlayers = players.filter(player => {
+                            const stats = league[player];
+                            const avgGoalsHT = stats.goalsHT / stats.games;
+                            const bttsHTPercentage = (stats.bttsHT / stats.games) * 100;
+                            const over25HTPercentage = (stats.over25HT / stats.games) * 100;
+                            const has0x0HT = stats.score0x0HT > 0;
+                            
+                            return stats.games >= 4 && 
+                                   over25HTPercentage === 100 &&
+                                   avgGoalsHT >= 3.0 &&
+                                   bttsHTPercentage === 100 &&
+                                   !has0x0HT;
+                        });
                         
                         for (let i = 0; i < eligiblePlayers.length; i++) {
                             for (let j = i + 1; j < eligiblePlayers.length; j++) {
@@ -1376,10 +1454,23 @@
                     
                     // VOLTA_OVER - apenas para ligas Volta 6m
                     if (leagueName.toLowerCase().includes('volta') && leagueName.toLowerCase().includes('6m')) {
-                        const eligiblePlayers = players.filter(player => 
-                            league[player].games >= 4 && 
-                            (league[player].over25FtCount / league[player].games) >= 1.0
-                        );
+                        const eligiblePlayers = players.filter(player => {
+                            const stats = league[player];
+                            const avgGoalsFT = stats.goalsFT / stats.games;
+                            const avgGoalsHT = stats.goalsHT / stats.games;
+                            const bttsHTPercentage = (stats.bttsHT / stats.games) * 100;
+                            const bttsFTPercentage = (stats.bttsFT / stats.games) * 100;
+                            const has0x0HT = stats.score0x0HT > 0;
+                            const has0x0FT = stats.score0x0FT > 0;
+                            
+                            return stats.games >= 4 && 
+                                   avgGoalsFT >= 5.0 &&
+                                   bttsHTPercentage === 100 &&
+                                   bttsFTPercentage === 100 &&
+                                   !has0x0HT &&
+                                   !has0x0FT &&
+                                   avgGoalsHT > 3.0;
+                        });
                         
                         for (let i = 0; i < eligiblePlayers.length; i++) {
                             for (let j = i + 1; j < eligiblePlayers.length; j++) {
