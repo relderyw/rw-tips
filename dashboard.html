@@ -738,6 +738,19 @@
             
             const maxPages = 5;
             const daysBack = 1;
+
+            async function updateData() {
+                try {
+                    await fetchData();
+                    processData();
+                    updateCharts();
+                    updateLeagueTable();
+                    const now = new Date();
+                    lastUpdatedElement.textContent = `Última atualização: ${now.toLocaleTimeString()}`;
+                } catch (error) {
+                    console.error('Erro ao atualizar dados:', error);
+                }
+            }
             
             async function fetchData() {
                 if (isLoading) return;
@@ -1647,7 +1660,7 @@
         }
 
         // Auto-refresh every 5 minutes
-        setInterval(updateData, 300000);
+        setInterval(updateData, 300000); // 5 minutos = 300000 milissegundos
             
             // Refresh button click handler
             document.getElementById('refreshBtn').addEventListener('click', function() {
