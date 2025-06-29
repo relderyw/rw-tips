@@ -576,11 +576,11 @@
                                 <p><strong>Regras OVER_BATTLE:</strong></p>
                                 <ul class="strategy-criteria">
                                     <li>Liga: Esoccer Battle 8 mins</li>
-                                    <li>Análise: Últimos 8 jogos</li>
-                                    <li>Média de gols HT: >=3.0</li>
-                                    <li>BTTS HT: Sim</li>
-                                    <li>Média de gols FT: >5.0</li>
-                                    <li>BTTS FT: Sim</li>
+                                    <li>Análise: Últimos 4 jogos</li>
+                                    <li>Média de gols HT: >=2.5</li>
+                                    <li>BTTS HT: >=75%</li>
+                                    <li>Média de gols TOTAL: >4.0</li>
+                                    <li>BTTS FT: >=80%</li>
                                     <li>0x0 HT: 0%</li>
                                     <li>0x0 FT: 0%</li>
                                 </ul>
@@ -594,10 +594,11 @@
                                 <p><strong>Regras GT_OVER_HT:</strong></p>
                                 <ul class="strategy-criteria">
                                     <li>Liga: Esoccer GT Leagues 12 min</li>
-                                    <li>Análise: Últimos 8 jogos</li>
+                                    <li>Análise: Últimos 4 jogos</li>
                                     <li>Over 2.5 HT: 100%</li>
-                                    <li>Média de gols HT: >3.0</li>
+                                    <li>Média de gols HT: >=3.0</li>
                                     <li>BTTS HT: 100%</li>
+                                    <li>0x0 HT: 0%</li>
                                     <li>0x0 HT: 0%</li>
                                 </ul>
                             </div>
@@ -610,8 +611,8 @@
                                 <p><strong>Regras VOLTA_OVER:</strong></p>
                                 <ul class="strategy-criteria">
                                     <li>Liga: Esoccer Volta 6 min</li>
-                                    <li>Análise: Últimos 8 jogos</li>
-                                    <li>Over gols FT: >6.5</li>
+                                    <li>Análise: Últimos 4 jogos</li>
+                                    <li>Over gols TOTAL: >=5.0</li>
                                     <li>BTTS HT: 100%</li>
                                     <li>BTTS FT: 100%</li>
                                     <li>0x0 HT: 0%</li>
@@ -1311,9 +1312,9 @@
                     // OVER_BATTLE - apenas para ligas Battle 8m
                     if (leagueName.toLowerCase().includes('battle') && leagueName.toLowerCase().includes('8m')) {
                         const eligiblePlayers = players.filter(player => 
-                            league[player].games >= 3 && 
-                            (league[player].over25FtCount / league[player].games) >= 0.7 && 
-                            (league[player].over15HtCount / league[player].games) >= 0.5
+                            league[player].games >= 4 && 
+                            (league[player].over25FtCount / league[player].games) >= 0.8 && 
+                            (league[player].over15HtCount / league[player].games) >= 0.75
                         );
                         
                         // Gerar combinações de jogadores
@@ -1348,8 +1349,8 @@
                     // GT_OVER_HT - apenas para ligas GT 12m
                     if (leagueName.toLowerCase().includes('gt') && leagueName.toLowerCase().includes('12m')) {
                         const eligiblePlayers = players.filter(player => 
-                            league[player].games >= 3 && 
-                            (league[player].over15HtCount / league[player].games) >= 0.65
+                            league[player].games >= 4 && 
+                            (league[player].over15HtCount / league[player].games) >= 1.0
                         );
                         
                         for (let i = 0; i < eligiblePlayers.length; i++) {
@@ -1376,8 +1377,8 @@
                     // VOLTA_OVER - apenas para ligas Volta 6m
                     if (leagueName.toLowerCase().includes('volta') && leagueName.toLowerCase().includes('6m')) {
                         const eligiblePlayers = players.filter(player => 
-                            league[player].games >= 3 && 
-                            (league[player].over25FtCount / league[player].games) >= 0.75
+                            league[player].games >= 4 && 
+                            (league[player].over25FtCount / league[player].games) >= 1.0
                         );
                         
                         for (let i = 0; i < eligiblePlayers.length; i++) {
