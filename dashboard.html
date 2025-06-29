@@ -704,29 +704,6 @@
                 return;
             }
 
-            const lastUpdatedElement = document.getElementById('lastUpdated');
-            const refreshBtn = document.getElementById('refreshBtn');
-            const leagueBadgesElement = document.getElementById('leagueBadges');
-            const leagueTableBody = document.getElementById('leagueTable').querySelector('tbody');
-            const marketsTableBody = document.getElementById('marketsTable').querySelector('tbody');
-
-            // Inicializa os filtros
-            initializeFilters();
-            
-            // Configura o botão de atualização
-            refreshBtn.addEventListener('click', updateData);
-            
-            // Carrega os dados iniciais
-            updateData();
-            const recentGamesTableBody = document.getElementById('recentGamesTable').querySelector('tbody');
-            const bestPlayersByLeagueElement = document.getElementById('bestPlayersByLeague');
-            const loadingElement = document.getElementById('loading');
-            const paginationElement = document.getElementById('pagination');
-            const gamesFilterButtons = document.querySelectorAll('#gamesFilter .filter-btn');
-            const overBattleResults = document.getElementById('overBattleResults');
-            const gtOverHtResults = document.getElementById('gtOverHtResults');
-            const voltaOverResults = document.getElementById('voltaOverResults');
-            
             let allGames = [];
             let filteredGames = [];
             let currentPage = 1;
@@ -738,6 +715,29 @@
             
             const maxPages = 5;
             const daysBack = 1;
+
+            const lastUpdatedElement = document.getElementById('lastUpdated');
+            const refreshBtn = document.getElementById('refreshBtn');
+            const leagueBadgesElement = document.getElementById('leagueBadges');
+            const leagueTableBody = document.getElementById('leagueTable').querySelector('tbody');
+            const marketsTableBody = document.getElementById('marketsTable').querySelector('tbody');
+            const recentGamesTableBody = document.getElementById('recentGamesTable').querySelector('tbody');
+            const bestPlayersByLeagueElement = document.getElementById('bestPlayersByLeague');
+            const loadingElement = document.getElementById('loading');
+            const paginationElement = document.getElementById('pagination');
+            const gamesFilterButtons = document.querySelectorAll('#gamesFilter .filter-btn');
+            const overBattleResults = document.getElementById('overBattleResults');
+            const gtOverHtResults = document.getElementById('gtOverHtResults');
+            const voltaOverResults = document.getElementById('voltaOverResults');
+
+            // Inicializa os filtros
+            initializeFilters();
+            
+            // Configura o botão de atualização
+            refreshBtn.addEventListener('click', updateData);
+            
+            // Carrega os dados iniciais
+            updateData();
 
             async function updateData() {
                 try {
@@ -1686,7 +1686,7 @@
             });
         });
 
-        // Auto-refresh every 5 minutes
+        // Auto-refresh every 1 minutes
         setInterval(updateData, 100000);
     </script>
 </body>
