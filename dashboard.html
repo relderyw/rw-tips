@@ -441,6 +441,50 @@
         .high-value { color: #00cc66; font-weight: bold; }
         .medium-value { color: #ffeb3b; }
         .low-value { color: #ff3a5e; }
+        .matchup-status {
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+        .matchup-status.best {
+            background-color: #00cc66;
+            color: white;
+        }
+        .matchup-status.close {
+            background-color: #ffeb3b;
+            color: #333;
+        }
+        .criteria-list {
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        .criteria-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .criteria-met {
+            color: #00cc66;
+            margin-right: 5px;
+        }
+        .criteria-not-met {
+            color: #ff3a5e;
+            margin-right: 5px;
+        }
+        .strategy-section {
+            margin-bottom: 25px;
+        }
+        .strategy-section-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #00cc66;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(0, 204, 102, 0.3);
+        }
     </style>
 </head>
 <body>
@@ -633,6 +677,27 @@
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Função para inicializar os filtros
+        function initializeFilters() {
+            // Inicializa filtros de jogos
+            document.querySelectorAll('#gamesFilter .filter-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    document.querySelectorAll('#gamesFilter .filter-btn').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    updateData();
+                });
+            });
+            
+            // Inicializa filtros de ligas
+            document.querySelectorAll('#leagueBadges .league-badge').forEach(badge => {
+                badge.addEventListener('click', function() {
+                    document.querySelectorAll('#leagueBadges .league-badge').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    updateData();
+                });
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             if (!sessionStorage.getItem('loggedIn')) {
                 window.location.href = 'index.html';
@@ -644,6 +709,15 @@
             const leagueBadgesElement = document.getElementById('leagueBadges');
             const leagueTableBody = document.getElementById('leagueTable').querySelector('tbody');
             const marketsTableBody = document.getElementById('marketsTable').querySelector('tbody');
+
+            // Inicializa os filtros
+            initializeFilters();
+            
+            // Configura o botão de atualização
+            refreshBtn.addEventListener('click', updateData);
+            
+            // Carrega os dados iniciais
+            updateData();
             const recentGamesTableBody = document.getElementById('recentGamesTable').querySelector('tbody');
             const bestPlayersByLeagueElement = document.getElementById('bestPlayersByLeague');
             const loadingElement = document.getElementById('loading');
@@ -1242,10 +1316,15 @@
             }
             
             function updateStrategyTests() {
-                const strategyResults = { overBattle: [], gtOverHt: [], voltaOver: [] };
+                const strategyResults = {
+                    overBattle: { best: [], close: [] },
+                    gtOverHt: { best: [], close: [] },
+                    voltaOver: { best: [], close: [] }
+                };
+                
                 const playerMatchups = {};
                 
-                // Primeiro, organizamos os confrontos entre jogadores
+                // Organizar os confrontos entre jogadores
                 filteredGames.forEach(game => {
                     const homePlayer = extractPlayerName(game.home.name);
                     const awayPlayer = extractPlayerName(game.away.name);
@@ -1309,169 +1388,293 @@
                     // Verificar estratégias
                     if (matchup.league.toLowerCase().includes('battle') && matchup.league.toLowerCase().includes('8m')) {
                         // OVER_BATTLE
-                        if (avgGoalsHT >= 2.5 && 
-                            bttsHTPerc >= 75 && 
-                            avgGoalsFT >= 4.0 && 
-                            stats.is0x0HTCount === 0 && 
-                            stats.is0x0FTCount === 0) {
-                            
-                            strategyResults.overBattle.push({
-                                league: matchup.league,
-                                player1: matchup.players[0],
-                                player2: matchup.players[1],
-                                avgGoalsHT: avgGoalsHT.toFixed(2),
-                                bttsHTPerc: bttsHTPerc.toFixed(1),
-                                avgGoalsFT: avgGoalsFT.toFixed(2),
-                                bttsFTPerc: bttsFTPerc.toFixed(1)
-                            });
+                        const criteria = {
+                            avgGoalsHT: { required: 2.5, actual: avgGoalsHT, met: avgGoalsHT >= 2.5 },
+                            bttsHTPerc: { required: 75, actual: bttsHTPerc, met: bttsHTPerc >= 75 },
+                            avgGoalsFT: { required: 4.0, actual: avgGoalsFT, met: avgGoalsFT >= 4.0 },
+                            is0x0HT: { required: 0, actual: stats.is0x0HTCount, met: stats.is0x0HTCount === 0 },
+                            is0x0FT: { required: 0, actual: stats.is0x0FTCount, met: stats.is0x0FTCount === 0 }
+                        };
+                        
+                        const metCount = Object.values(criteria).filter(c => c.met).length;
+                        const totalCriteria = Object.keys(criteria).length;
+                        const percMet = (metCount / totalCriteria) * 100;
+                        
+                        const result = {
+                            league: matchup.league,
+                            player1: matchup.players[0],
+                            player2: matchup.players[1],
+                            avgGoalsHT: avgGoalsHT.toFixed(2),
+                            bttsHTPerc: bttsHTPerc.toFixed(1),
+                            avgGoalsFT: avgGoalsFT.toFixed(2),
+                            bttsFTPerc: bttsFTPerc.toFixed(1),
+                            criteria,
+                            percMet
+                        };
+                        
+                        if (percMet === 100) {
+                            strategyResults.overBattle.best.push(result);
+                        } else if (percMet >= 70) {
+                            strategyResults.overBattle.close.push(result);
                         }
                     }
                     
                     if (matchup.league.toLowerCase().includes('gt') && matchup.league.toLowerCase().includes('12m')) {
                         // GT_OVER_HT
-                        if (avgGoalsHT >= 3.0 && 
-                            bttsHTPerc === 100 && 
-                            stats.is0x0HTCount === 0) {
-                            
-                            strategyResults.gtOverHt.push({
-                                league: matchup.league,
-                                player1: matchup.players[0],
-                                player2: matchup.players[1],
-                                avgGoalsHT: avgGoalsHT.toFixed(2),
-                                bttsHTPerc: bttsHTPerc.toFixed(1)
-                            });
+                        const criteria = {
+                            avgGoalsHT: { required: 3.0, actual: avgGoalsHT, met: avgGoalsHT >= 3.0 },
+                            bttsHTPerc: { required: 100, actual: bttsHTPerc, met: bttsHTPerc === 100 },
+                            is0x0HT: { required: 0, actual: stats.is0x0HTCount, met: stats.is0x0HTCount === 0 }
+                        };
+                        
+                        const metCount = Object.values(criteria).filter(c => c.met).length;
+                        const totalCriteria = Object.keys(criteria).length;
+                        const percMet = (metCount / totalCriteria) * 100;
+                        
+                        const result = {
+                            league: matchup.league,
+                            player1: matchup.players[0],
+                            player2: matchup.players[1],
+                            avgGoalsHT: avgGoalsHT.toFixed(2),
+                            bttsHTPerc: bttsHTPerc.toFixed(1),
+                            criteria,
+                            percMet
+                        };
+                        
+                        if (percMet === 100) {
+                            strategyResults.gtOverHt.best.push(result);
+                        } else if (percMet >= 70) {
+                            strategyResults.gtOverHt.close.push(result);
                         }
                     }
                     
                     if (matchup.league.toLowerCase().includes('volta') && matchup.league.toLowerCase().includes('6m')) {
                         // VOLTA_OVER
-                        if (avgGoalsFT >= 5.0 && 
-                            bttsHTPerc === 100 && 
-                            bttsFTPerc === 100 && 
-                            stats.is0x0HTCount === 0 && 
-                            stats.is0x0FTCount === 0 && 
-                            avgGoalsHT >= 3.0) {
-                            
-                            strategyResults.voltaOver.push({
-                                league: matchup.league,
-                                player1: matchup.players[0],
-                                player2: matchup.players[1],
-                                avgGoalsHT: avgGoalsHT.toFixed(2),
-                                avgGoalsFT: avgGoalsFT.toFixed(2),
-                                bttsHTPerc: bttsHTPerc.toFixed(1),
-                                bttsFTPerc: bttsFTPerc.toFixed(1)
-                            });
+                        const criteria = {
+                            avgGoalsFT: { required: 5.0, actual: avgGoalsFT, met: avgGoalsFT >= 5.0 },
+                            bttsHTPerc: { required: 100, actual: bttsHTPerc, met: bttsHTPerc === 100 },
+                            bttsFTPerc: { required: 100, actual: bttsFTPerc, met: bttsFTPerc === 100 },
+                            is0x0HT: { required: 0, actual: stats.is0x0HTCount, met: stats.is0x0HTCount === 0 },
+                            is0x0FT: { required: 0, actual: stats.is0x0FTCount, met: stats.is0x0FTCount === 0 },
+                            avgGoalsHT: { required: 3.0, actual: avgGoalsHT, met: avgGoalsHT >= 3.0 }
+                        };
+                        
+                        const metCount = Object.values(criteria).filter(c => c.met).length;
+                        const totalCriteria = Object.keys(criteria).length;
+                        const percMet = (metCount / totalCriteria) * 100;
+                        
+                        const result = {
+                            league: matchup.league,
+                            player1: matchup.players[0],
+                            player2: matchup.players[1],
+                            avgGoalsHT: avgGoalsHT.toFixed(2),
+                            avgGoalsFT: avgGoalsFT.toFixed(2),
+                            bttsHTPerc: bttsHTPerc.toFixed(1),
+                            bttsFTPerc: bttsFTPerc.toFixed(1),
+                            criteria,
+                            percMet
+                        };
+                        
+                        if (percMet === 100) {
+                            strategyResults.voltaOver.best.push(result);
+                        } else if (percMet >= 70) {
+                            strategyResults.voltaOver.close.push(result);
                         }
                     }
                 });
                 
                 // Ordenar resultados
-                strategyResults.overBattle.sort((a, b) => parseFloat(b.avgGoalsFT) - parseFloat(a.avgGoalsFT));
-                strategyResults.gtOverHt.sort((a, b) => parseFloat(b.avgGoalsHT) - parseFloat(a.avgGoalsHT));
-                strategyResults.voltaOver.sort((a, b) => parseFloat(b.avgGoalsFT) - parseFloat(a.avgGoalsFT));
+                strategyResults.overBattle.best.sort((a, b) => parseFloat(b.avgGoalsFT) - parseFloat(a.avgGoalsFT));
+                strategyResults.overBattle.close.sort((a, b) => b.percMet - a.percMet);
+                strategyResults.gtOverHt.best.sort((a, b) => parseFloat(b.avgGoalsHT) - parseFloat(a.avgGoalsHT));
+                strategyResults.gtOverHt.close.sort((a, b) => b.percMet - a.percMet);
+                strategyResults.voltaOver.best.sort((a, b) => parseFloat(b.avgGoalsFT) - parseFloat(a.avgGoalsFT));
+                strategyResults.voltaOver.close.sort((a, b) => b.percMet - a.percMet);
                 
                 // Renderizar resultados
                 renderStrategyResults(overBattleResults, strategyResults.overBattle, 'OVER_BATTLE');
                 renderStrategyResults(gtOverHtResults, strategyResults.gtOverHt, 'GT_OVER_HT');
                 renderStrategyResults(voltaOverResults, strategyResults.voltaOver, 'VOLTA_OVER');
+            }function renderStrategyResults(container, matchups, strategyType) {
+            const rulesDiv = container.querySelector('.strategy-rules');
+            container.innerHTML = '';
+            container.appendChild(rulesDiv);
+            
+            if (matchups.best.length === 0 && matchups.close.length === 0) {
+                container.innerHTML += `<p class="text-center">Nenhum confronto encontrado (nem melhores nem próximos)</p>`;
+                return;
             }
             
-            function renderStrategyResults(container, matchups, strategyType) {
-                const rulesDiv = container.querySelector('.strategy-rules');
-                container.innerHTML = '';
-                container.appendChild(rulesDiv);
+            // Renderizar melhores (100%)
+            if (matchups.best.length > 0) {
+                const bestSection = document.createElement('div');
+                bestSection.className = 'strategy-section';
+                bestSection.innerHTML = `<div class="strategy-section-title">MELHORES CONFRONTOS (100%)</div>`;
                 
-                if (matchups.length === 0) {
-                    container.innerHTML += `<p class="text-center">Nenhum confronto encontrado que atenda aos critérios da estratégia</p>`;
-                    return;
-                }
-                
-                matchups.forEach(matchup => {
+                matchups.best.forEach(matchup => {
                     const matchupDiv = document.createElement('div');
                     matchupDiv.className = 'strategy-matchup';
                     
-                    let statsHTML = '';
-                    
-                    if (strategyType === 'OVER_BATTLE') {
-                        statsHTML = `
-                            <div class="strategy-stats">
-                                <div class="strategy-stat">
-                                    <span class="strategy-stat-value">${matchup.avgGoalsHT}</span>
-                                    <span class="strategy-stat-label">Média Gols HT</span>
-                                </div>
-                                <div class="strategy-stat">
-                                    <span class="strategy-stat-value">${matchup.bttsHTPerc}%</span>
-                                    <span class="strategy-stat-label">BTTS HT</span>
-                                </div>
-                                <div class="strategy-stat">
-                                    <span class="strategy-stat-value">${matchup.avgGoalsFT}</span>
-                                    <span class="strategy-stat-label">Média Gols FT</span>
-                                </div>
-                                <div class="strategy-stat">
-                                    <span class="strategy-stat-value">${matchup.bttsFTPerc}%</span>
-                                    <span class="strategy-stat-label">BTTS FT</span>
-                                </div>
-                            </div>
-                        `;
-                    } else if (strategyType === 'GT_OVER_HT') {
-                        statsHTML = `
-                            <div class="strategy-stats">
-                                <div class="strategy-stat">
-                                    <span class="strategy-stat-value">${matchup.avgGoalsHT}</span>
-                                    <span class="strategy-stat-label">Média Gols HT</span>
-                                </div>
-                                <div class="strategy-stat">
-                                    <span class="strategy-stat-value">${matchup.bttsHTPerc}%</span>
-                                    <span class="strategy-stat-label">BTTS HT</span>
-                                </div>
-                            </div>
-                        `;
-                    } else if (strategyType === 'VOLTA_OVER') {
-                        statsHTML = `
-                            <div class="strategy-stats">
-                                <div class="strategy-stat">
-                                    <span class="strategy-stat-value">${matchup.avgGoalsHT}</span>
-                                    <span class="strategy-stat-label">Média Gols HT</span>
-                                </div>
-                                <div class="strategy-stat">
-                                    <span class="strategy-stat-value">${matchup.avgGoalsFT}</span>
-                                    <span class="strategy-stat-label">Média Gols FT</span>
-                                </div>
-                                <div class="strategy-stat">
-                                    <span class="strategy-stat-value">${matchup.bttsHTPerc}%</span>
-                                    <span class="strategy-stat-label">BTTS HT</span>
-                                </div>
-                                <div class="strategy-stat">
-                                    <span class="strategy-stat-value">${matchup.bttsFTPerc}%</span>
-                                    <span class="strategy-stat-label">BTTS FT</span>
-                                </div>
-                            </div>
-                        `;
-                    }
-                    
                     matchupDiv.innerHTML = `
+                        <div class="matchup-status best">ATENDE 100%</div>
                         <h6>${matchup.player1} vs ${matchup.player2} (${matchup.league})</h6>
-                        ${statsHTML}
+                        ${renderMatchupStats(matchup, strategyType)}
                     `;
                     
-                    container.appendChild(matchupDiv);
+                    bestSection.appendChild(matchupDiv);
                 });
+                
+                container.appendChild(bestSection);
             }
             
-            gamesFilterButtons.forEach(button => {
+            // Renderizar próximos (70-99%)
+            if (matchups.close.length > 0) {
+                const closeSection = document.createElement('div');
+                closeSection.className = 'strategy-section';
+                closeSection.innerHTML = `<div class="strategy-section-title">PRÓXIMOS CONFRONTOS (${Math.min(...matchups.close.map(m => m.percMet))}%-99%)</div>`;
+                
+                matchups.close.forEach(matchup => {
+                    const matchupDiv = document.createElement('div');
+                    matchupDiv.className = 'strategy-matchup';
+                    
+                    matchupDiv.innerHTML = `
+                        <div class="matchup-status close">ATENDE ${Math.round(matchup.percMet)}%</div>
+                        <h6>${matchup.player1} vs ${matchup.player2} (${matchup.league})</h6>
+                        ${renderMatchupStats(matchup, strategyType)}
+                        ${renderCriteriaList(matchup.criteria)}
+                    `;
+                    
+                    closeSection.appendChild(matchupDiv);
+                });
+                
+                container.appendChild(closeSection);
+            }
+        }
+        
+        function renderMatchupStats(matchup, strategyType) {
+            let statsHTML = '';
+            
+            if (strategyType === 'OVER_BATTLE') {
+                statsHTML = `
+                    <div class="strategy-stats">
+                        <div class="strategy-stat">
+                            <span class="strategy-stat-value">${matchup.avgGoalsHT}</span>
+                            <span class="strategy-stat-label">Média Gols HT</span>
+                        </div>
+                        <div class="strategy-stat">
+                            <span class="strategy-stat-value">${matchup.bttsHTPerc}%</span>
+                            <span class="strategy-stat-label">BTTS HT</span>
+                        </div>
+                        <div class="strategy-stat">
+                            <span class="strategy-stat-value">${matchup.avgGoalsFT}</span>
+                            <span class="strategy-stat-label">Média Gols FT</span>
+                        </div>
+                        <div class="strategy-stat">
+                            <span class="strategy-stat-value">${matchup.bttsFTPerc}%</span>
+                            <span class="strategy-stat-label">BTTS FT</span>
+                        </div>
+                    </div>
+                `;
+            } else if (strategyType === 'GT_OVER_HT') {
+                statsHTML = `
+                    <div class="strategy-stats">
+                        <div class="strategy-stat">
+                            <span class="strategy-stat-value">${matchup.avgGoalsHT}</span>
+                            <span class="strategy-stat-label">Média Gols HT</span>
+                        </div>
+                        <div class="strategy-stat">
+                            <span class="strategy-stat-value">${matchup.bttsHTPerc}%</span>
+                            <span class="strategy-stat-label">BTTS HT</span>
+                        </div>
+                    </div>
+                `;
+            } else if (strategyType === 'VOLTA_OVER') {
+                statsHTML = `
+                    <div class="strategy-stats">
+                        <div class="strategy-stat">
+                            <span class="strategy-stat-value">${matchup.avgGoalsHT}</span>
+                            <span class="strategy-stat-label">Média Gols HT</span>
+                        </div>
+                        <div class="strategy-stat">
+                            <span class="strategy-stat-value">${matchup.avgGoalsFT}</span>
+                            <span class="strategy-stat-label">Média Gols FT</span>
+                        </div>
+                        <div class="strategy-stat">
+                            <span class="strategy-stat-value">${matchup.bttsHTPerc}%</span>
+                            <span class="strategy-stat-label">BTTS HT</span>
+                        </div>
+                        <div class="strategy-stat">
+                            <span class="strategy-stat-value">${matchup.bttsFTPerc}%</span>
+                            <span class="strategy-stat-label">BTTS FT</span>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            return statsHTML;
+        }
+        
+        function renderCriteriaList(criteria) {
+            let criteriaHTML = '<div class="criteria-list">';
+            
+            for (const [key, crit] of Object.entries(criteria)) {
+                const label = getCriteriaLabel(key);
+                const icon = crit.met ? '<i class="bi bi-check-circle-fill criteria-met"></i>' : '<i class="bi bi-x-circle-fill criteria-not-met"></i>';
+                const value = key.includes('Perc') ? `${crit.actual}%` : crit.actual;
+                
+                criteriaHTML += `
+                    <div class="criteria-item">
+                        ${icon}
+                        <span>${label}: ${value} (Requerido: ${crit.required}${key.includes('Perc') ? '%' : ''})</span>
+                    </div>
+                `;
+            }
+            
+            criteriaHTML += '</div>';
+            return criteriaHTML;
+        }
+        
+        function getCriteriaLabel(key) {
+            const labels = {
+                'avgGoalsHT': 'Média Gols HT',
+                'bttsHTPerc': 'BTTS HT',
+                'avgGoalsFT': 'Média Gols FT',
+                'bttsFTPerc': 'BTTS FT',
+                'is0x0HT': '0x0 HT',
+                'is0x0FT': '0x0 FT'
+            };
+            return labels[key] || key;
+        }
+
+        // Auto-refresh every 5 minutes
+        setInterval(updateData, 300000);
+            
+            // Refresh button click handler
+            document.getElementById('refreshBtn').addEventListener('click', function() {
+                updateData();
+            });
+            
+            // Game filter click handlers
+            document.querySelectorAll('#gamesFilter .filter-btn').forEach(button => {
                 button.addEventListener('click', function() {
-                    gamesFilterButtons.forEach(btn => btn.classList.remove('active'));
+                    document.querySelectorAll('#gamesFilter .filter-btn').forEach(btn => btn.classList.remove('active'));
                     this.classList.add('active');
-                    selectedGames = this.getAttribute('data-games');
-                    currentPage = 1;
-                    processData();
+                    updateData();
                 });
             });
-
-            refreshBtn.addEventListener('click', () => fetchData());
-
-            fetchData();
+            
+            // League filter click handlers
+            document.querySelectorAll('#leagueBadges .league-badge').forEach(badge => {
+                badge.addEventListener('click', function() {
+                    document.querySelectorAll('#leagueBadges .league-badge').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    updateData();
+                });
+            });
         });
+
+        // Auto-refresh every 5 minutes
+        setInterval(updateData, 300000);
     </script>
 </body>
 </html>
