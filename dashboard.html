@@ -1282,11 +1282,11 @@
                             const avgGoalsConcededFT = (stats.goalsConcededFT / stats.games).toFixed(2);
                             const winRate = (stats.wins / stats.games * 100).toFixed(1);
 
-                            if (parseFloat(avgGoalsScoredHT) >= 2.0 &&
-                                parseFloat(avgGoalsScoredFT) >= 2.5 &&
-                                parseFloat(avgGoalsConcededHT) <= 0.6 &&
-                                parseFloat(avgGoalsConcededFT) <= 1.0 &&
-                                parseFloat(winRate) >= 55) {
+                            if (parseFloat(avgGoalsScoredHT) >= 1.0 &&
+                                parseFloat(avgGoalsScoredFT) >= 1.5 &&
+                                parseFloat(avgGoalsConcededHT) <= 1.6 &&
+                                parseFloat(avgGoalsConcededFT) <= 2.0 &&
+                                parseFloat(winRate) >= 25) {
                                     playerData.push({
                                         name: playerName,
                                         winRate: parseFloat(winRate),
