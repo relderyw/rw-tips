@@ -1281,7 +1281,7 @@
                             const avgGoalsConcededHT = (stats.goalsConcededHT / stats.games).toFixed(2);
                             const avgGoalsConcededFT = (stats.goalsConcededFT / stats.games).toFixed(2);
                             const winRate = (stats.wins / stats.games * 100).toFixed(1);
-
+// ajuste melhores players
                             if (parseFloat(avgGoalsScoredHT) >= 2.0 &&
                                 parseFloat(avgGoalsScoredFT) >= 2.5 &&
                                 parseFloat(avgGoalsConcededHT) <= 0.6 &&
@@ -1426,8 +1426,8 @@
                             avgGoalsHT: { required: 2.0, actual: avgGoalsHT, met: avgGoalsHT >= 2.0 },
                             bttsHTPerc: { required: 70, actual: bttsHTPerc, met: bttsHTPerc >= 70 },
                             avgGoalsFT: { required: 2.5, actual: avgGoalsFT, met: avgGoalsFT >= 2.5 },
-                            is0x0HT: { required: 1, actual: stats.is0x0HTCount, met: stats.is0x0HTCount <= 1 },
-                            is0x0FT: { required: 1, actual: stats.is0x0FTCount, met: stats.is0x0FTCount <= 1 }
+                            is0x0HT: { required: 0, actual: stats.is0x0HTCount, met: stats.is0x0HTCount === 0 },
+                            is0x0FT: { required: 0, actual: stats.is0x0FTCount, met: stats.is0x0FTCount === 0 }
                         };
                         
                         const metCount = Object.values(criteria).filter(c => c.met).length;
@@ -1456,9 +1456,9 @@
                     if (matchup.league.toLowerCase().includes('gt') && matchup.league.toLowerCase().includes('12m')) {
                         // GT_OVER_HT
                         const criteria = {
-                            avgGoalsHT: { required: 1.5, actual: avgGoalsHT, met: avgGoalsHT >= 1.5 },
+                            avgGoalsHT: { required: 2.5, actual: avgGoalsHT, met: avgGoalsHT >= 2.5 },
                             bttsHTPerc: { required: 70, actual: bttsHTPerc, met: bttsHTPerc >= 70 },
-                            is0x0HT: { required: 1, actual: stats.is0x0HTCount, met: stats.is0x0HTCount <= 1 }
+                            is0x0HT: { required: 0, actual: stats.is0x0HTCount, met: stats.is0x0HTCount === 0 }
                         };
                         
                         const metCount = Object.values(criteria).filter(c => c.met).length;
@@ -1488,8 +1488,8 @@
                             avgGoalsFT: { required: 2.75, actual: avgGoalsFT, met: avgGoalsFT >= 2.75 },
                             bttsHTPerc: { required: 75, actual: bttsHTPerc, met: bttsHTPerc >= 75 },
                             bttsFTPerc: { required: 75, actual: bttsFTPerc, met: bttsFTPerc >= 75 },
-                            is0x0HT: { required: 1, actual: stats.is0x0HTCount, met: stats.is0x0HTCount <= 1 },
-                            is0x0FT: { required: 1, actual: stats.is0x0FTCount, met: stats.is0x0FTCount <= 1 },
+                            is0x0HT: { required: 0, actual: stats.is0x0HTCount, met: stats.is0x0HTCount === 0 },
+                            is0x0FT: { required: 0, actual: stats.is0x0FTCount, met: stats.is0x0FTCount === 0 },
                             avgGoalsHT: { required: 1.5, actual: avgGoalsHT, met: avgGoalsHT >= 1.5 }
                         };
                         
