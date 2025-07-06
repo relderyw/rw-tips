@@ -1275,16 +1275,28 @@
                     const playerData = [];
                     Object.keys(players).forEach(playerName => {
                         const stats = players[playerName];
-                        if (stats.games >= 3) {
-                            const avgOver15Ht = Math.min((stats.over15HtCount / stats.games * 100), 100).toFixed(1);
-                            const avgGoalsConcededHT = (stats.goalsConcededHT / stats.games).toFixed(2);
-                            const avgOver25Ft = Math.min((stats.over25FtCount / stats.games * 100), 100).toFixed(1);
-                            const avgGoalsConcededFT = (stats.goalsConcededFT / stats.games).toFixed(2);
-                            const winRate = (stats.wins / stats.games * 100).toFixed(1);
+                        if (stats.games >= 5) {
                             const avgGoalsScoredHT = (stats.goalsScoredHT / stats.games).toFixed(2);
                             const avgGoalsScoredFT = (stats.goalsScoredFT / stats.games).toFixed(2);
-                            const score = (0.3 * (stats.wins / stats.games) + 0.2 * (parseFloat(avgGoalsScoredHT) / 3) + 0.2 * (1 - (parseFloat(avgGoalsConcededHT) / 3)) + 0.15 * (parseFloat(avgGoalsScoredFT) / 3) + 0.15 * (1 - (parseFloat(avgGoalsConcededFT) / 3))) * 100;
-                            playerData.push({ name: playerName, winRate: parseFloat(winRate), avgGoalsScoredHT: parseFloat(avgGoalsScoredHT), avgGoalsConcededHT: parseFloat(avgGoalsConcededHT), avgGoalsScoredFT: parseFloat(avgGoalsScoredFT), avgGoalsConcededFT: parseFloat(avgGoalsConcededFT), score });
+                            const avgGoalsConcededHT = (stats.goalsConcededHT / stats.games).toFixed(2);
+                            const avgGoalsConcededFT = (stats.goalsConcededFT / stats.games).toFixed(2);
+                            const winRate = (stats.wins / stats.games * 100).toFixed(1);
+
+                            if (parseFloat(avgGoalsScoredHT) >= 2.0 &&
+                                parseFloat(avgGoalsScoredFT) >= 2.5 &&
+                                parseFloat(avgGoalsConcededHT) <= 0.6 &&
+                                parseFloat(avgGoalsConcededFT) <= 1.0 &&
+                                parseFloat(winRate) >= 55) {
+                                    playerData.push({
+                                        name: playerName,
+                                        winRate: parseFloat(winRate),
+                                        avgGoalsScoredHT: parseFloat(avgGoalsScoredHT),
+                                        avgGoalsConcededHT: parseFloat(avgGoalsConcededHT),
+                                        avgGoalsScoredFT: parseFloat(avgGoalsScoredFT),
+                                        avgGoalsConcededFT: parseFloat(avgGoalsConcededFT),
+                                        score: parseFloat(winRate)
+                                    });
+                            }
                         }
                     });
                     if (playerData.length > 0) {
