@@ -879,18 +879,18 @@
             }
             
             function applyFilters() {
-                let gamesFilteredByLeague = allGames;
+                const sortedGames = [...allGames].sort((a, b) => b.time - a.time);
+                
                 if (selectedLeague !== 'all') {
-                    gamesFilteredByLeague = allGames.filter(game => 
+                    // Se uma liga está selecionada, primeiro filtra por número de jogos
+                    let recentGames = selectedGames === 'all' ? sortedGames : sortedGames.slice(0, parseInt(selectedGames));
+                    // Depois filtra por liga
+                    filteredGames = recentGames.filter(game => 
                         game.league.name.toLowerCase().includes(selectedLeague.toLowerCase())
                     );
-                }
-                
-                if (selectedGames === 'all') {
-                    filteredGames = gamesFilteredByLeague;
                 } else {
-                    const sortedGames = [...gamesFilteredByLeague].sort((a, b) => b.time - a.time);
-                    filteredGames = sortedGames.slice(0, parseInt(selectedGames));
+                    // Se nenhuma liga está selecionada, apenas filtra por número de jogos
+                    filteredGames = selectedGames === 'all' ? sortedGames : sortedGames.slice(0, parseInt(selectedGames));
                 }
             }
             
