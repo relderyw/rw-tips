@@ -508,7 +508,7 @@
         }
 
         .best-player-section {
-            flex: 1 1 calc(33.333% - 20px); /* 3 seções por linha em telas grandes */
+            flex: 1 1 calc(33.333% - 20px);
             min-width: 300px;
             margin-bottom: 15px;
         }
@@ -585,7 +585,7 @@
 
         @media (max-width: 992px) {
             .best-player-section {
-                flex: 1 1 calc(50% - 20px); /* 2 seções por linha em telas médias */
+                flex: 1 1 calc(50% - 20px);
             }
         }
 
@@ -605,7 +605,7 @@
 
         @media (max-width: 576px) {
             .best-player-section {
-                flex: 1 1 100%; /* 1 seção por linha em telas pequenas */
+                flex: 1 1 100%;
             }
 
             .best-player-card {
@@ -756,7 +756,7 @@
             // Verificar login
             if (!sessionStorage.getItem('loggedIn')) {
                 window.location.href = 'index.html';
-                return; // Interrompe a execução do restante do script
+                return;
             }
 
             const lastUpdatedElement = document.getElementById('lastUpdated');
@@ -779,7 +779,7 @@
             let goalsChart, bttsChart;
             let isLoading = false;
             
-            const maxPages = 5;
+            const maxPages = 2;
             const daysBack = 1;
             
             async function fetchData() {
@@ -792,12 +792,10 @@
                     allGames = [];
                     
                     for (let page = 1; page <= maxPages; page++) {
-                        const proxyUrl = 'https://corsproxy.io/?';
-                        const timestamp = new Date().getTime();
-                        const apiUrl = `https://api.b365api.com/v3/events/ended?sport_id=1&token=183604-pWN7flhoAsWGu8&page=${page}&_=${timestamp}`;
+                        const apiUrl = `https://caveira-proxy.onrender.com/api/historico/partidas?page=${page}&limit=100`;
                         
                         try {
-                            const response = await fetch(proxyUrl + encodeURIComponent(apiUrl));
+                            const response = await fetch(apiUrl);
                             
                             if (!response.ok) {
                                 throw new Error(`Erro na API (página ${page}): ${response.status}`);
@@ -805,7 +803,7 @@
                             
                             const data = await response.json();
                             
-                            if (data.success !== 1 || !data.results) {
+                            if (!data.partidas || !Array.isArray(data.partidas)) {
                                 throw new Error(`Formato de resposta inválido (página ${page})`);
                             }
                             
@@ -813,23 +811,36 @@
                             const cutoffDate = new Date();
                             cutoffDate.setDate(now.getDate() - daysBack);
                             
-                            const pageGames = data.results.filter(game => {
-                                const isESoccer = game.league?.name?.toLowerCase().includes('esoccer') || 
-                                                game.league?.name?.toLowerCase().includes('e-soccer') ||
-                                                game.league?.name?.toLowerCase().includes('fifa') ||
-                                                game.league?.name?.toLowerCase().includes('cyber');
-                                
-                                const gameDate = new Date(game.time * 1000);
-                                const isRecentGame = gameDate >= cutoffDate;
-                                
-                                const isFinished = game.time_status === "3" || game.time_status === 3;
-                                
-                                return isESoccer && isRecentGame && (isFinished || (game.ss && game.ss.includes('-')));
-                            });
+                            const pageGames = data.partidas
+                                .filter(game => {
+                                    const isESoccer = game.league_name?.toLowerCase().includes('esoccer') ||
+                                                    game.league_name?.toLowerCase().includes('e-soccer') ||
+                                                    game.league_name?.toLowerCase().includes('fifa') ||
+                                                    game.league_name?.toLowerCase().includes('cyber');
+                                    const gameDate = new Date(game.data_realizacao);
+                                    const isRecentGame = gameDate >= cutoffDate;
+                                    const isFinished = game.score_home !== null && game.score_away !== null;
+                                    return isESoccer && isRecentGame && isFinished;
+                                })
+                                .map(game => ({
+                                    id: game.id,
+                                    time: Math.floor(new Date(game.data_realizacao).getTime() / 1000),
+                                    league: { name: game.league_name },
+                                    home: { name: `${game.home_team} (${game.home_player})` },
+                                    away: { name: `${game.away_team} (${game.away_player})` },
+                                    ss: `${game.score_home}-${game.score_away}`,
+                                    scores: {
+                                        "1": {
+                                            home: game.halftime_score_home,
+                                            away: game.halftime_score_away
+                                        }
+                                    },
+                                    time_status: "3"
+                                }));
                             
                             allGames = [...allGames, ...pageGames];
                             
-                            if (data.results.length === 0) {
+                            if (data.partidas.length < 100) {
                                 break;
                             }
                             
@@ -1597,7 +1608,7 @@
                             }
                         });
                         
-                        if (gameCount >= 3) { // Restrição: mínimo de 3 jogos
+                        if (gameCount >= 3) {
                             const avgHtGoalsScored = (totalHtGoalsScored / gameCount).toFixed(2);
                             const avgFtGoalsScored = (totalFtGoalsScored / gameCount).toFixed(2);
                             const avgHtGoalsConceded = (totalHtGoalsConceded / gameCount).toFixed(2);
