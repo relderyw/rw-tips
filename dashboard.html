@@ -620,7 +620,7 @@
                                 <p><strong>Regras OVER_BATTLE:</strong></p>
                                 <ul class="strategy-criteria">
                                     <li>Liga: Esoccer Battle 8 mins</li>
-                                    <li>Análise: Últimos 4 jogos head-to-head</li>
+                                    <li>Análise: Últimos jogos head-to-head (baseado no filtro selecionado)</li>
                                     <li>Média de gols HT (soma dos dois jogadores): ≥2.5</li>
                                     <li>BTTS HT: ≥75%</li>
                                     <li>Média de gols TOTAL: ≥4.0</li>
@@ -637,7 +637,7 @@
                                 <p><strong>Regras GT_OVER_HT:</strong></p>
                                 <ul class="strategy-criteria">
                                     <li>Liga: Esoccer GT Leagues 12 min</li>
-                                    <li>Análise: Últimos 4 jogos head-to-head</li>
+                                    <li>Análise: Últimos jogos head-to-head (baseado no filtro selecionado)</li>
                                     <li>Soma de gols HT: ≥100%</li>
                                     <li>Média de gols HT: ≥3.0</li>
                                     <li>BTTS HT: 100%</li>
@@ -653,7 +653,7 @@
                                 <p><strong>Regras VOLTA_OVER:</strong></p>
                                 <ul class="strategy-criteria">
                                     <li>Liga: Esoccer Volta 6 min</li>
-                                    <li>Análise: Últimos 4 jogos head-to-head</li>
+                                    <li>Análise: Últimos jogos head-to-head (baseado no filtro selecionado)</li>
                                     <li>Média de gols TOTAL: ≥5.0</li>
                                     <li>BTTS HT: 100%</li>
                                     <li>BTTS FT: 100%</li>
@@ -882,12 +882,12 @@
                 const sortedGames = [...allGames].sort((a, b) => b.time - a.time);
                 
                 if (selectedLeague !== 'all') {
-                    // Se uma liga está selecionada, primeiro filtra por número de jogos
-                    let recentGames = selectedGames === 'all' ? sortedGames : sortedGames.slice(0, parseInt(selectedGames));
-                    // Depois filtra por liga
-                    filteredGames = recentGames.filter(game => 
+                    // Se uma liga está selecionada, primeiro filtra por liga
+                    const leagueGames = sortedGames.filter(game => 
                         game.league.name.toLowerCase().includes(selectedLeague.toLowerCase())
                     );
+                    // Depois filtra por número de jogos
+                    filteredGames = selectedGames === 'all' ? leagueGames : leagueGames.slice(0, parseInt(selectedGames));
                 } else {
                     // Se nenhuma liga está selecionada, apenas filtra por número de jogos
                     filteredGames = selectedGames === 'all' ? sortedGames : sortedGames.slice(0, parseInt(selectedGames));
@@ -1009,7 +1009,7 @@
             function updateLeagueTable() {
                 leagueTableBody.innerHTML = '';
                 const leagueStats = {};
-                allGames.forEach(game => {
+                filteredGames.forEach(game => {
                     const leagueName = game.league.name;
                     if (!leagueStats[leagueName]) leagueStats[leagueName] = { games: 0, totalGoals: 0, bttsCount: 0, over25Count: 0, over35Count: 0 };
                     if (game.ss && game.ss.includes('-')) {
@@ -1391,11 +1391,12 @@
                 
                 // Analisar cada confronto para as estratégias
                 Object.values(playerMatchups).forEach(matchup => {
-                    // Pegar apenas os últimos 4 jogos
-                    const last4Games = matchup.games.slice(-4);
-                    if (last4Games.length < 4) return;
+                    // Pegar o número de jogos baseado no filtro selecionado
+                    const numGames = selectedGames === 'all' ? 4 : parseInt(selectedGames);
+                    const lastGames = matchup.games.slice(-numGames);
+                    if (lastGames.length < numGames) return;
                     
-                    // Calcular estatísticas para os últimos 4 jogos
+                    // Calcular estatísticas para os jogos selecionados
                     const stats = {
                         totalGoalsHT: 0,
                         totalGoalsFT: 0,
@@ -1405,7 +1406,7 @@
                         is0x0FTCount: 0
                     };
                     
-                    last4Games.forEach(game => {
+                    lastGames.forEach(game => {
                         stats.totalGoalsHT += game.totalGoalsHT;
                         stats.totalGoalsFT += game.totalGoalsFT;
                         if (game.bttsHT) stats.bttsHTCount++;
@@ -1414,10 +1415,10 @@
                         if (game.is0x0FT) stats.is0x0FTCount++;
                     });
                     
-                    const avgGoalsHT = stats.totalGoalsHT / 4;
-                    const avgGoalsFT = stats.totalGoalsFT / 4;
-                    const bttsHTPerc = (stats.bttsHTCount / 4) * 100;
-                    const bttsFTPerc = (stats.bttsFTCount / 4) * 100;
+                    const avgGoalsHT = stats.totalGoalsHT / numGames;
+                    const avgGoalsFT = stats.totalGoalsFT / numGames;
+                    const bttsHTPerc = (stats.bttsHTCount / numGames) * 100;
+                    const bttsFTPerc = (stats.bttsFTCount / numGames) * 100;
                     
                     // Verificar estratégias
                     if (matchup.league.toLowerCase().includes('battle') && matchup.league.toLowerCase().includes('8m')) {
