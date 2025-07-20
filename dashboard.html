@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,13 +15,13 @@
             --card-bg: #1c202b;
             --text-color: #e0e0e0;
             --muted-text: #a0a0a0;
-            
+
             --gt-color: #00ff66;
             --battle-color: #ff3a5e;
             --volta-color: #ffcc00;
             --h2h-color: #a64dff;
             --adriatic-color: #00aaff;
-            
+
             --primary-accent: #00cc66;
             --success-color: #00cc66;
             --warning-color: #ffaa00;
@@ -29,7 +30,7 @@
             --logo-green: #00ff66;
             --logo-dark: #0f1117;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--primary-bg);
@@ -37,7 +38,7 @@
             padding: 0;
             margin: 0;
         }
-        
+
         .header {
             background-color: var(--secondary-bg);
             padding: 15px 0;
@@ -46,21 +47,21 @@
             top: 0;
             z-index: 1000;
         }
-        
+
         .logo-container {
             display: flex;
             align-items: center;
             margin-bottom: 0;
             position: relative;
         }
-        
+
         .logo {
             height: 60px;
             margin-right: 15px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 255, 102, 0.5);
         }
-        
+
         .logo-text {
             color: var(--logo-green);
             margin: 0;
@@ -73,19 +74,19 @@
             letter-spacing: 2px;
             text-shadow: 0 0 5px rgba(0, 255, 102, 0.3);
         }
-        
+
         .logo-text .crown {
             color: #ffc107;
             margin-right: 5px;
             font-size: 1.8rem;
         }
-        
+
         .logo-text .game {
             color: #a64dff;
             margin-left: 5px;
             font-size: 1.8rem;
         }
-        
+
         .last-updated-header {
             font-size: 0.9rem;
             color: var(--muted-text);
@@ -94,17 +95,17 @@
             display: flex;
             align-items: center;
         }
-        
+
         .refresh-btn {
             cursor: pointer;
             color: var(--primary-accent);
             margin-left: 5px;
         }
-        
+
         .refresh-btn:hover {
             color: #00b359;
         }
-        
+
         .nav-buttons {
             display: flex;
             gap: 10px;
@@ -112,7 +113,7 @@
             overflow-x: auto;
             padding-bottom: 5px;
         }
-        
+
         .nav-btn {
             padding: 8px 16px;
             border-radius: 6px;
@@ -125,20 +126,20 @@
             border: none;
             color: var(--text-color);
         }
-        
+
         .nav-btn.secondary {
             background-color: #2a2e3a;
         }
-        
+
         .nav-btn.secondary:hover {
             background-color: #3a3f4d;
         }
-        
+
         .container {
             max-width: 1200px;
             padding: 20px;
         }
-        
+
         .card {
             background-color: var(--card-bg);
             border-radius: 10px;
@@ -147,28 +148,28 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
             overflow: hidden;
         }
-        
+
         .card-header {
             background-color: rgba(0, 0, 0, 0.2);
             font-weight: 600;
             padding: 15px 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
-        
+
         .card-body {
             padding: 20px;
         }
-        
+
         .btn-primary {
             background-color: var(--primary-accent);
             border-color: var(--primary-accent);
         }
-        
+
         .btn-primary:hover {
             background-color: #00b359;
             border-color: #00b359;
         }
-        
+
         .chart-container {
             position: relative;
             height: 300px;
@@ -177,7 +178,7 @@
             border-radius: 8px;
             padding: 10px;
         }
-        
+
         .loading {
             position: fixed;
             top: 0;
@@ -190,64 +191,93 @@
             align-items: center;
             z-index: 1000;
         }
-        
+
         .spinner-border {
             width: 3rem;
             height: 3rem;
         }
-        
+
         .high-value {
             color: var(--success-color);
             font-weight: bold;
+            background-color: rgba(0, 204, 102, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
         }
-        
+
         .medium-value {
             color: var(--warning-color);
+            font-weight: bold;
+            background-color: rgba(255, 170, 0, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
         }
-        
+
         .low-value {
             color: var(--danger-color);
+            font-weight: bold;
+            background-color: rgba(255, 58, 94, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
         }
-        
+
         .table {
             color: var(--text-color);
         }
-        
+
         .table th {
             background-color: rgba(0, 0, 0, 0.2);
             color: var(--text-color);
             border-color: rgba(255, 255, 255, 0.05);
         }
-        
+
         .table td {
             border-color: rgba(255, 255, 255, 0.05);
         }
-        
+
         .badge {
             font-size: 85%;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
         }
-        
+
+        .badge-success {
+            background-color: var(--success-color);
+            color: #fff;
+        }
+
+        .badge-warning {
+            background-color: var(--warning-color);
+            color: #000;
+        }
+
+        .badge-danger {
+            background-color: var(--danger-color);
+            color: #fff;
+        }
+
         .pagination {
             justify-content: center;
             margin-top: 20px;
         }
-        
+
         .page-link {
             background-color: var(--card-bg);
             color: var(--text-color);
             border-color: rgba(255, 255, 255, 0.1);
         }
-        
+
         .page-link:hover {
             background-color: var(--secondary-bg);
             color: var(--text-color);
         }
-        
+
         .page-item.active .page-link {
             background-color: var(--primary-accent);
             border-color: var(--primary-accent);
         }
-        
+
         .api-status {
             font-size: 0.9rem;
             padding: 10px 15px;
@@ -255,36 +285,37 @@
             margin-bottom: 15px;
             display: inline-block;
         }
-        
+
         .api-status.success {
             background-color: rgba(0, 204, 102, 0.1);
             color: var(--success-color);
             border-left: 4px solid var(--success-color);
         }
-        
+
         .api-status.error {
             background-color: rgba(255, 58, 94, 0.1);
             color: var(--danger-color);
             border-left: 4px solid var(--danger-color);
         }
-        
+
         .api-status.warning {
             background-color: rgba(255, 170, 0, 0.1);
             color: var(--warning-color);
             border-left: 4px solid var(--warning-color);
         }
-        
-        .league-filter {
+
+        .league-filter,
+        .games-filter {
             margin-bottom: 20px;
         }
-        
+
         .filter-title {
             font-size: 1rem;
             font-weight: 600;
             margin-bottom: 10px;
             color: var(--text-color);
         }
-        
+
         .league-badge {
             cursor: pointer;
             margin-right: 5px;
@@ -296,15 +327,11 @@
             border: none;
             transition: all 0.2s;
         }
-        
+
         .league-badge.active {
             box-shadow: 0 0 10px rgba(0, 204, 102, 0.5);
         }
-        
-        .games-filter {
-            margin-bottom: 20px;
-        }
-        
+
         .filter-btn {
             padding: 6px 12px;
             border-radius: 20px;
@@ -317,21 +344,21 @@
             border: none;
             transition: all 0.2s;
         }
-        
+
         .filter-btn:hover {
             background-color: #3a3f4d;
         }
-        
+
         .filter-btn.active {
             background-color: var(--primary-accent);
             color: #000;
         }
-        
+
         .game-row:hover {
             background-color: rgba(255, 255, 255, 0.05);
             cursor: pointer;
         }
-        
+
         .game-details {
             display: none;
             padding: 15px;
@@ -340,13 +367,13 @@
             margin-top: 5px;
             margin-bottom: 10px;
         }
-        
+
         .game-stats {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
         }
-        
+
         .game-stat {
             background-color: var(--card-bg);
             padding: 8px;
@@ -356,84 +383,86 @@
             min-width: 100px;
             text-align: center;
         }
-        
+
         .game-stat-title {
             font-size: 0.7rem;
             color: var(--muted-text);
         }
-        
+
         .game-stat-value {
             font-size: 0.9rem;
             font-weight: 600;
         }
-        
+
         .league-gt {
             color: var(--gt-color);
             background-color: rgba(0, 255, 102, 0.1);
         }
-        
+
         .league-battle {
             color: var(--battle-color);
             background-color: rgba(255, 58, 94, 0.1);
         }
-        
+
         .league-volta {
             color: var(--volta-color);
             background-color: rgba(255, 204, 0, 0.1);
         }
-        
+
         .league-h2h {
             color: var(--h2h-color);
             background-color: rgba(166, 77, 255, 0.1);
         }
-        
+
         .league-adriatic {
             color: var(--adriatic-color);
             background-color: rgba(0, 170, 255, 0.1);
         }
-        
+
         .league-gt.active {
             background-color: var(--gt-color);
             color: #000;
         }
-        
+
         .league-battle.active {
             background-color: var(--battle-color);
             color: #fff;
         }
-        
+
         .league-volta.active {
             background-color: var(--volta-color);
             color: #000;
         }
-        
+
         .league-h2h.active {
             background-color: var(--h2h-color);
             color: #fff;
         }
-        
+
         .league-adriatic.active {
             background-color: var(--adriatic-color);
             color: #fff;
         }
-        
-        .form-control, .form-select {
+
+        .form-control,
+        .form-select {
             background-color: var(--secondary-bg);
             border-color: rgba(255, 255, 255, 0.1);
             color: var(--text-color);
         }
-        
-        .form-control:focus, .form-select:focus {
+
+        .form-control:focus,
+        .form-select:focus {
             background-color: var(--secondary-bg);
             color: var(--text-color);
             border-color: var(--primary-accent);
             box-shadow: 0 0 0 0.25rem rgba(0, 204, 102, 0.25);
         }
-        
+
         .form-text {
             color: var(--muted-text);
         }
-        
+
         .back-button {
             display: inline-flex;
             align-items: center;
@@ -447,12 +476,12 @@
             transition: all 0.2s;
             text-decoration: none;
         }
-        
+
         .back-button:hover {
             background-color: #3a3f4d;
             color: var(--text-color);
         }
-        
+
         .league-tag {
             display: inline-block;
             padding: 3px 8px;
@@ -461,32 +490,32 @@
             font-weight: 600;
             margin-right: 5px;
         }
-        
+
         .league-tag.gt {
             background-color: rgba(0, 255, 102, 0.2);
             color: var(--gt-color);
         }
-        
+
         .league-tag.battle {
             background-color: rgba(255, 58, 94, 0.2);
             color: var(--battle-color);
         }
-        
+
         .league-tag.volta {
             background-color: rgba(255, 204, 0, 0.2);
             color: var(--volta-color);
         }
-        
+
         .league-tag.h2h {
             background-color: rgba(166, 77, 255, 0.2);
             color: var(--h2h-color);
         }
-        
+
         .league-tag.adriatic {
             background-color: rgba(0, 170, 255, 0.2);
             color: var(--adriatic-color);
         }
-        
+
         .title-gradient {
             background: linear-gradient(90deg, #00cc66, #000000);
             -webkit-background-clip: text;
@@ -499,7 +528,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        
+
         .best-players-container {
             display: flex;
             flex-wrap: wrap;
@@ -528,6 +557,11 @@
             gap: 10px;
             transition: transform 0.2s, box-shadow 0.2s;
             font-size: 0.9rem;
+        }
+
+        .best-player-card.highlight {
+            border: 2px solid var(--success-color);
+            box-shadow: 0 4px 15px rgba(0, 204, 102, 0.3);
         }
 
         .best-player-card:hover {
@@ -583,12 +617,17 @@
             margin-bottom: 30px;
         }
 
-        .tab-content > .tab-pane {
+        .tab-content>.tab-pane {
             display: none;
         }
 
-        .tab-content > .tab-pane.active {
+        .tab-content>.tab-pane.active {
             display: block;
+        }
+
+        .highlight-row {
+            background-color: rgba(0, 204, 102, 0.1) !important;
+            font-weight: bold;
         }
 
         @media (max-width: 992px) {
@@ -601,7 +640,7 @@
             .title-gradient {
                 font-size: 1.5rem;
             }
-            
+
             .logo-text {
                 font-size: 1.2rem;
             }
@@ -626,12 +665,14 @@
         }
     </style>
 </head>
+
 <body>
     <div class="header">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="logo-container">
-                    <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo">
+                    <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png"
+                        alt="RW Tips Logo" class="logo">
                     <h2 class="logo-text"><span class="crown">👑</span> RW TIPS <span class="game">🎮</span></h2>
                 </div>
                 <div class="last-updated-header">
@@ -646,49 +687,52 @@
             </div>
         </div>
     </div>
-    
+
     <div class="container">
         <h1 class="title-gradient">RW TIPS - ANÁLISE DE CENÁRIOS</h1>
-        
+
         <div id="bestPlayersByLeague" class="best-players-container">
             <!-- Melhores jogadores por liga serão inseridos aqui -->
         </div>
-        
-        <div class="games-filter">
-            <div class="filter-title">Filtrar por Jogos:</div>
-            <div id="gamesFilter">
-                <button type="button" class="filter-btn active" data-games="all">Todos</button>
-                <button type="button" class="filter-btn" data-games="5">5 Jogos</button>
-                <button type="button" class="filter-btn" data-games="10">10 Jogos</button>
-                <button type="button" class="filter-btn" data-games="15">15 Jogos</button>
-            </div>
-        </div>
-        
-        <div id="leagueFilters" class="league-filter">
-            <div class="filter-title">Filtrar por Liga:</div>
-            <div id="leagueBadges">
-                <button class="league-badge active">Todas</button>
-                <button class="league-badge league-gt">GT Leagues 12m</button>
-                <button class="league-badge league-battle">Battle 8m</button>
-                <button class="league-badge league-volta">Battle Volta 6m</button>
-                <button class="league-badge league-h2h">H2H GG 8m</button>
-                <button class="league-badge league-adriatic">Adriatic League 10m</button>
-            </div>
-        </div>
-        
+
         <!-- Navegação por Abas -->
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true">Visão Geral</button>
+                <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview"
+                    type="button" role="tab" aria-controls="overview" aria-selected="true">Visão Geral</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="market-analysis-tab" data-bs-toggle="tab" data-bs-target="#market-analysis" type="button" role="tab" aria-controls="market-analysis" aria-selected="false">Análise de Mercados</button>
+                <button class="nav-link" id="market-analysis-tab" data-bs-toggle="tab" data-bs-target="#market-analysis"
+                    type="button" role="tab" aria-controls="market-analysis" aria-selected="false">Análise de
+                    Mercados</button>
             </li>
         </ul>
-        
+
         <div class="tab-content" id="myTabContent">
             <!-- Aba Visão Geral -->
             <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+                <div class="league-filter" id="leagueFiltersOverview">
+                    <div class="filter-title">Filtrar por Liga:</div>
+                    <div id="leagueBadgesOverview">
+                        <button class="league-badge active">Todas</button>
+                        <button class="league-badge league-gt">GT Leagues 12m</button>
+                        <button class="league-badge league-battle">Battle 8m</button>
+                        <button class="league-badge league-volta">Battle Volta 6m</button>
+                        <button class="league-badge league-h2h">H2H GG 8m</button>
+                        <button class="league-badge league-adriatic">Adriatic League 10m</button>
+                    </div>
+                </div>
+
+                <div class="games-filter" id="gamesFilterOverview">
+                    <div class="filter-title">Filtrar por Jogos:</div>
+                    <div id="gamesFilterButtonsOverview">
+                        <button type="button" class="filter-btn active" data-games="all">Todos</button>
+                        <button type="button" class="filter-btn" data-games="5">5 Jogos</button>
+                        <button type="button" class="filter-btn" data-games="10">10 Jogos</button>
+                        <button type="button" class="filter-btn" data-games="15">15 Jogos</button>
+                    </div>
+                </div>
+
                 <div class="row charts-row">
                     <div class="col-md-6">
                         <div class="chart-container">
@@ -701,7 +745,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <h2 class="section-title">Análise por Liga</h2>
                 <div class="table-responsive">
                     <table class="table table-dark table-hover" id="leagueTable">
@@ -720,7 +764,7 @@
                         </tbody>
                     </table>
                 </div>
-                
+
                 <h2 class="section-title">Jogos Recentes</h2>
                 <div class="table-responsive">
                     <table class="table table-dark table-hover" id="recentGamesTable">
@@ -740,48 +784,59 @@
                         </tbody>
                     </table>
                 </div>
-                
+
                 <nav aria-label="Paginação">
                     <ul class="pagination" id="pagination">
                         <!-- Paginação será inserida aqui -->
                     </ul>
                 </nav>
             </div>
-            
+
             <!-- Aba Análise de Mercados -->
             <div class="tab-pane fade" id="market-analysis" role="tabpanel" aria-labelledby="market-analysis-tab">
+                <div class="league-filter" id="leagueFiltersMarket">
+                    <div class="filter-title">Selecionar Liga:</div>
+                    <div id="leagueBadgesMarket">
+                        <button class="league-badge active">Todas</button>
+                        <button class="league-badge league-gt">GT Leagues 12m</button>
+                        <button class="league-badge league-battle">Battle 8m</button>
+                        <button class="league-badge league-volta">Battle Volta 6m</button>
+                        <button class="league-badge league-h2h">H2H GG 8m</button>
+                        <button class="league-badge league-adriatic">Adriatic League 10m</button>
+                    </div>
+                </div>
+
+                <div class="games-filter" id="gamesFilterMarket">
+                    <div class="filter-title">Selecionar Quantidade de Jogos:</div>
+                    <div id="gamesFilterButtonsMarket">
+                        <button type="button" class="filter-btn active" data-games="5">5 Jogos</button>
+                        <button type="button" class="filter-btn" data-games="10">10 Jogos</button>
+                        <button type="button" class="filter-btn" data-games="15">15 Jogos</button>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <div class="filter-title">Selecionar Mercado:</div>
+                    <select id="marketSelector" class="form-select">
+                        <option value="btts_sim_ft">BTTS Sim (FT)</option>
+                        <option value="over_2.5_ft">Over 2.5 (FT)</option>
+                        <option value="over_3.5_ft">Over 3.5 (FT)</option>
+                        <option value="over_4.5_ft">Over 4.5 (FT)</option>
+                        <option value="btts_sim_ht">BTTS Sim (HT)</option>
+                        <option value="over_0.5_ht">Over 0.5 (HT)</option>
+                        <option value="over_1.5_ht">Over 1.5 (HT)</option>
+                        <option value="over_2.5_ht">Over 2.5 (HT)</option>
+                    </select>
+                </div>
+
                 <div class="card">
                     <div class="card-header">
                         Análise Detalhada de Mercados
                     </div>
                     <div class="card-body">
-                        <div class="league-filter mb-3">
-                            <div class="filter-title">Selecionar Liga:</div>
-                            <div id="detailedLeagueBadges"></div>
-                        </div>
-                        <div class="games-filter mb-3">
-                            <div class="filter-title">Selecionar Quantidade de Jogos:</div>
-                            <div id="detailedGamesFilter">
-                                <button type="button" class="filter-btn active" data-games="5">5 Jogos</button>
-                                <button type="button" class="filter-btn" data-games="10">10 Jogos</button>
-                                <button type="button" class="filter-btn" data-games="15">15 Jogos</button>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <div class="filter-title">Selecionar Mercado:</div>
-                            <select id="marketSelector" class="form-select">
-                                <option value="btts_sim_ft">BTTS Sim (FT)</option>
-                                <option value="over_2.5_ft">Over 2.5 (FT)</option>
-                                <option value="over_3.5_ft">Over 3.5 (FT)</option>
-                                <option value="over_4.5_ft">Over 4.5 (FT)</option>
-                                <option value="btts_sim_ht">BTTS Sim (HT)</option>
-                                <option value="over_0.5_ht">Over 0.5 (HT)</option>
-                                <option value="over_1.5_ht">Over 1.5 (HT)</option>
-                                <option value="over_2.5_ht">Over 2.5 (HT)</option>
-                            </select>
-                        </div>
                         <div id="marketAnalysisResult">
-                            <h5>Resultados da Análise</h5>
+                            <h5>Melhores Mercados <i class="bi bi-star-fill" style="color: var(--success-color);"></i>
+                            </h5>
                             <table class="table table-dark table-hover">
                                 <thead>
                                     <tr>
@@ -794,18 +849,23 @@
                                 </thead>
                                 <tbody id="marketAnalysisTable"></tbody>
                             </table>
-                            <h5>Confrontos Mais Overs</h5>
-                            <table class="table table-dark table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Confronto</th>
-                                        <th>Total de Gols</th>
-                                        <th>Jogos</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="topOversTable"></tbody>
-                            </table>
-                            <h5>Melhores Jogadores</h5>
+
+                            <h5>Melhores Confrontos <i class="bi bi-trophy-fill" style="color: #ffd700;"></i></h5>
+                            <div class="table-responsive">
+                                <table class="table table-dark table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Confronto</th>
+                                            <th>Média Gols</th>
+                                            <th>Jogos</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="topOversTable"></tbody>
+                                </table>
+                            </div>
+
+                            <h5>Melhores Jogadores <i class="bi bi-person-fill"
+                                    style="color: var(--primary-accent);"></i></h5>
                             <div id="topPlayersList" class="best-players-container"></div>
                         </div>
                     </div>
@@ -813,16 +873,16 @@
             </div>
         </div>
     </div>
-    
+
     <div class="loading" id="loading">
         <div class="spinner-border text-success" role="status">
             <span class="visually-hidden">Carregando...</span>
         </div>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Verificar login
             if (!sessionStorage.getItem('loggedIn')) {
                 window.location.href = 'index.html';
@@ -831,65 +891,87 @@
 
             const lastUpdatedElement = document.getElementById('lastUpdated');
             const refreshBtn = document.getElementById('refreshBtn');
-            const leagueBadgesElement = document.getElementById('leagueBadges');
+            const leagueBadgesOverview = document.getElementById('leagueBadgesOverview');
+            const gamesFilterButtonsOverview = document.getElementById('gamesFilterButtonsOverview');
             const leagueTableBody = document.getElementById('leagueTable').querySelector('tbody');
             const recentGamesTableBody = document.getElementById('recentGamesTable').querySelector('tbody');
             const bestPlayersByLeagueElement = document.getElementById('bestPlayersByLeague');
             const loadingElement = document.getElementById('loading');
             const paginationElement = document.getElementById('pagination');
-            const gamesFilterButtons = document.querySelectorAll('#gamesFilter .filter-btn');
-            
+            const leagueBadgesMarket = document.getElementById('leagueBadgesMarket');
+            const gamesFilterButtonsMarket = document.getElementById('gamesFilterButtonsMarket');
+            const marketSelector = document.getElementById('marketSelector');
+            const marketAnalysisTable = document.getElementById('marketAnalysisTable');
+            const topOversTable = document.getElementById('topOversTable');
+            const topPlayersList = document.getElementById('topPlayersList');
+
             let allGames = [];
-            let filteredGames = [];
+            let filteredGamesOverview = [];
+            let filteredGamesMarket = [];
             let currentPage = 1;
             let itemsPerPage = 20;
-            let selectedLeague = 'all';
-            let selectedGames = 'all';
+            let selectedLeagueOverview = 'all';
+            let selectedGamesOverview = 'all';
+            let selectedLeagueMarket = 'all';
+            let selectedGamesMarket = '5';
+            let selectedMarket = 'btts_sim_ft';
             let goalsChart, bttsChart;
             let isLoading = false;
-            
+
             const maxPages = 2;
             const daysBack = 1;
-            
-            let selectedDetailedLeague = 'all';
-            let selectedDetailedGames = '5';
-            let selectedMarket = 'btts_sim_ft';
+
+            function toggleFilters() {
+                const overviewTab = document.querySelector('#overview-tab');
+                const marketTab = document.querySelector('#market-analysis-tab');
+                const isOverviewActive = overviewTab.classList.contains('active');
+
+                document.getElementById('leagueFiltersOverview').style.display = isOverviewActive ? 'block' : 'none';
+                document.getElementById('gamesFilterOverview').style.display = isOverviewActive ? 'block' : 'none';
+                document.getElementById('leagueFiltersMarket').style.display = !isOverviewActive ? 'block' : 'none';
+                document.getElementById('gamesFilterMarket').style.display = !isOverviewActive ? 'block' : 'none';
+            }
+
+            document.querySelectorAll('#myTab button').forEach(button => {
+                button.addEventListener('shown.bs.tab', toggleFilters);
+            });
+            toggleFilters(); // Inicializa os filtros visíveis
 
             async function fetchData() {
                 if (isLoading) return;
-                
+
                 loadingElement.style.display = 'flex';
                 isLoading = true;
-                
+
                 try {
                     allGames = [];
-                    
+
                     for (let page = 1; page <= maxPages; page++) {
                         const apiUrl = `https://caveira-proxy.onrender.com/api/historico/partidas?page=${page}&limit=100`;
-                        
+
                         try {
                             const response = await fetch(apiUrl);
-                            
+
                             if (!response.ok) {
                                 throw new Error(`Erro na API (página ${page}): ${response.status}`);
                             }
-                            
+
                             const data = await response.json();
-                            
+
                             if (!data.partidas || !Array.isArray(data.partidas)) {
                                 throw new Error(`Formato de resposta inválido (página ${page})`);
                             }
-                            
+
                             const now = new Date();
                             const cutoffDate = new Date();
                             cutoffDate.setDate(now.getDate() - daysBack);
-                            
+
                             const pageGames = data.partidas
                                 .filter(game => {
                                     const isESoccer = game.league_name?.toLowerCase().includes('esoccer') ||
-                                                    game.league_name?.toLowerCase().includes('e-soccer') ||
-                                                    game.league_name?.toLowerCase().includes('fifa') ||
-                                                    game.league_name?.toLowerCase().includes('cyber');
+                                        game.league_name?.toLowerCase().includes('e-soccer') ||
+                                        game.league_name?.toLowerCase().includes('fifa') ||
+                                        game.league_name?.toLowerCase().includes('cyber');
                                     const gameDate = new Date(game.data_realizacao);
                                     const isRecentGame = gameDate >= cutoffDate;
                                     const isFinished = game.score_home !== null && game.score_away !== null;
@@ -910,64 +992,72 @@
                                     },
                                     time_status: "3"
                                 }));
-                            
+
                             allGames = [...allGames, ...pageGames];
-                            
+
                             if (data.partidas.length < 100) {
                                 break;
                             }
-                            
+
                         } catch (error) {
                             console.error(`Erro ao buscar página ${page}:`, error);
                         }
                     }
-                    
+
                     const uniqueGames = [];
                     const gameIds = new Set();
-                    
+
                     allGames.forEach(game => {
                         if (!gameIds.has(game.id)) {
                             gameIds.add(game.id);
                             uniqueGames.push(game);
                         }
                     });
-                    
+
                     allGames = uniqueGames;
-                    
+
                     if (allGames.length > 0) {
                         const now = new Date();
                         lastUpdatedElement.textContent = now.toLocaleString();
                         processData();
                     } else {
-                        leagueBadgesElement.innerHTML = '<button class="league-badge active">Todas</button>';
+                        leagueBadgesOverview.innerHTML = '<button class="league-badge active">Todas</button>';
                         leagueTableBody.innerHTML = '';
                         recentGamesTableBody.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum jogo encontrado</td></tr>';
                         bestPlayersByLeagueElement.innerHTML = '';
                         paginationElement.innerHTML = '';
                         if (goalsChart) goalsChart.destroy();
                         if (bttsChart) bttsChart.destroy();
+                        leagueBadgesMarket.innerHTML = '<button class="league-badge active">Todas</button>';
+                        marketAnalysisTable.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum jogo encontrado</td></tr>';
+                        topOversTable.innerHTML = '<tr><td colspan="3" class="text-center">Nenhum confronto encontrado</td></tr>';
+                        topPlayersList.innerHTML = '<p class="text-center">Nenhum jogador encontrado</p>';
                     }
-                    
+
                 } catch (error) {
                     console.error('Erro ao buscar dados:', error);
-                    leagueBadgesElement.innerHTML = '<button class="league-badge active">Todas</button>';
+                    leagueBadgesOverview.innerHTML = '<button class="league-badge active">Todas</button>';
                     leagueTableBody.innerHTML = '';
                     recentGamesTableBody.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum jogo encontrado</td></tr>';
                     bestPlayersByLeagueElement.innerHTML = '';
                     paginationElement.innerHTML = '';
                     if (goalsChart) goalsChart.destroy();
                     if (bttsChart) bttsChart.destroy();
+                    leagueBadgesMarket.innerHTML = '<button class="league-badge active">Todas</button>';
+                    marketAnalysisTable.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum jogo encontrado</td></tr>';
+                    topOversTable.innerHTML = '<tr><td colspan="3" class="text-center">Nenhum confronto encontrado</td></tr>';
+                    topPlayersList.innerHTML = '<p class="text-center">Nenhum jogador encontrado</p>';
                 } finally {
                     loadingElement.style.display = 'none';
                     isLoading = false;
                 }
             }
-            
+
             function normalizeLeagueName(leagueName) {
                 if (!leagueName) return leagueName;
                 return leagueName.replace(/-/g, '–');
             }
-            
+
             function processData() {
                 allGames = allGames.map(game => {
                     if (game.league && game.league.name) {
@@ -975,56 +1065,71 @@
                     }
                     return game;
                 });
-                
-                if (selectedLeague !== 'all') {
-                    selectedLeague = normalizeLeagueName(selectedLeague);
+
+                if (selectedLeagueOverview !== 'all') {
+                    selectedLeagueOverview = normalizeLeagueName(selectedLeagueOverview);
                 }
-                
+                if (selectedLeagueMarket !== 'all') {
+                    selectedLeagueMarket = normalizeLeagueName(selectedLeagueMarket);
+                }
+
                 applyFilters();
-                updateLeagueFilters();
+                updateLeagueFiltersOverview();
+                updateGamesFilterButtonsOverview();
                 updateCharts();
                 updateLeagueTable();
                 updateRecentGamesTable();
                 updateBestPlayersByLeague();
-                updateDetailedLeagueFilters();
-                updateDetailedGamesFilter();
-                updateMarketSelector();
+                updateLeagueFiltersMarket();
+                updateGamesFilterButtonsMarket();
                 updateMarketAnalysis();
             }
-            
+
             function applyFilters() {
-                let gamesFilteredByLeague = [];
-                if (selectedLeague === 'all') {
-                    gamesFilteredByLeague = [...allGames];
+                let gamesFilteredByLeagueOverview = [];
+                if (selectedLeagueOverview === 'all') {
+                    gamesFilteredByLeagueOverview = [...allGames];
                 } else {
-                    gamesFilteredByLeague = allGames.filter(game => 
-                        game.league.name.toLowerCase() === selectedLeague.toLowerCase()
+                    gamesFilteredByLeagueOverview = allGames.filter(game =>
+                        game.league.name.toLowerCase() === selectedLeagueOverview.toLowerCase()
                     );
                 }
-                
-                if (selectedGames === 'all') {
-                    filteredGames = gamesFilteredByLeague;
+
+                if (selectedGamesOverview === 'all') {
+                    filteredGamesOverview = gamesFilteredByLeagueOverview;
                 } else {
-                    const sortedGames = [...gamesFilteredByLeague].sort((a, b) => b.time - a.time);
-                    filteredGames = sortedGames.slice(0, parseInt(selectedGames));
+                    const sortedGames = [...gamesFilteredByLeagueOverview].sort((a, b) => b.time - a.time);
+                    filteredGamesOverview = sortedGames.slice(0, parseInt(selectedGamesOverview));
                 }
+
+                let gamesFilteredByLeagueMarket = [];
+                if (selectedLeagueMarket === 'all') {
+                    gamesFilteredByLeagueMarket = [...allGames];
+                } else {
+                    gamesFilteredByLeagueMarket = allGames.filter(game =>
+                        game.league.name.toLowerCase() === selectedLeagueMarket.toLowerCase()
+                    );
+                }
+
+                const sortedGamesMarket = [...gamesFilteredByLeagueMarket].sort((a, b) => b.time - a.time);
+                filteredGamesMarket = sortedGamesMarket.slice(0, parseInt(selectedGamesMarket));
             }
-            
-            function updateLeagueFilters() {
+
+            function updateLeagueFiltersOverview() {
                 const uniqueLeagues = new Set();
                 allGames.forEach(game => uniqueLeagues.add(game.league.name));
-                
-                leagueBadgesElement.innerHTML = '';
-                
+
+                leagueBadgesOverview.innerHTML = '';
+
                 const allBadge = document.createElement('button');
-                allBadge.className = `league-badge ${selectedLeague === 'all' ? 'active' : ''}`;
+                allBadge.className = `league-badge ${selectedLeagueOverview === 'all' ? 'active' : ''}`;
                 allBadge.textContent = 'Todas';
                 allBadge.addEventListener('click', () => {
-                    selectedLeague = 'all';
+                    selectedLeagueOverview = 'all';
                     processData();
                 });
-                leagueBadgesElement.appendChild(allBadge);
-                
+                leagueBadgesOverview.appendChild(allBadge);
+
                 uniqueLeagues.forEach(league => {
                     const badge = document.createElement('button');
                     let leagueClass = '';
@@ -1039,24 +1144,36 @@
                     } else if (league.toLowerCase().includes('h2h') || league.toLowerCase().includes('gg')) {
                         leagueClass = 'league-h2h';
                     }
-                    
-                    badge.className = `league-badge ${leagueClass} ${selectedLeague === league ? 'active' : ''}`;
+
+                    badge.className = `league-badge ${leagueClass} ${selectedLeagueOverview === league ? 'active' : ''}`;
                     badge.textContent = league;
                     badge.addEventListener('click', () => {
-                        selectedLeague = league;
+                        selectedLeagueOverview = league;
                         processData();
                     });
-                    leagueBadgesElement.appendChild(badge);
+                    leagueBadgesOverview.appendChild(badge);
                 });
             }
-            
+
+            function updateGamesFilterButtonsOverview() {
+                const buttons = gamesFilterButtonsOverview.querySelectorAll('.filter-btn');
+                buttons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        buttons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+                        selectedGamesOverview = button.getAttribute('data-games');
+                        processData();
+                    });
+                });
+            }
+
             function updateCharts() {
                 if (goalsChart) goalsChart.destroy();
                 if (bttsChart) bttsChart.destroy();
-                
+
                 const goalsDistribution = Array(10).fill(0);
-                
-                filteredGames.forEach(game => {
+
+                filteredGamesOverview.forEach(game => {
                     if (game.ss && game.ss.includes('-')) {
                         const [homeScore, awayScore] = game.ss.split('-').map(Number);
                         const totalGoals = homeScore + awayScore;
@@ -1067,11 +1184,11 @@
                         }
                     }
                 });
-                
-                const goalsPercentages = goalsDistribution.map(count => 
-                    filteredGames.length > 0 ? (count / filteredGames.length * 100).toFixed(1) : 0
+
+                const goalsPercentages = goalsDistribution.map(count =>
+                    filteredGamesOverview.length > 0 ? (count / filteredGamesOverview.length * 100).toFixed(1) : 0
                 );
-                
+
                 const goalsCtx = document.getElementById('goalsChart').getContext('2d');
                 goalsChart = new Chart(goalsCtx, {
                     type: 'bar',
@@ -1129,11 +1246,11 @@
                         }
                     }
                 });
-                
+
                 let bttsYesCount = 0;
                 let bttsNoCount = 0;
-                
-                filteredGames.forEach(game => {
+
+                filteredGamesOverview.forEach(game => {
                     if (game.ss && game.ss.includes('-')) {
                         const [homeScore, awayScore] = game.ss.split('-').map(Number);
                         if (homeScore > 0 && awayScore > 0) {
@@ -1143,7 +1260,7 @@
                         }
                     }
                 });
-                
+
                 const bttsCtx = document.getElementById('bttsChart').getContext('2d');
                 bttsChart = new Chart(bttsCtx, {
                     type: 'pie',
@@ -1151,8 +1268,8 @@
                         labels: ['BTTS Sim', 'BTTS Não'],
                         datasets: [{
                             data: [
-                                filteredGames.length > 0 ? (bttsYesCount / filteredGames.length * 100).toFixed(1) : 0,
-                                filteredGames.length > 0 ? (bttsNoCount / filteredGames.length * 100).toFixed(1) : 0
+                                filteredGamesOverview.length > 0 ? (bttsYesCount / filteredGamesOverview.length * 100).toFixed(1) : 0,
+                                filteredGamesOverview.length > 0 ? (bttsNoCount / filteredGamesOverview.length * 100).toFixed(1) : 0
                             ],
                             backgroundColor: [
                                 'rgba(0, 204, 102, 0.7)',
@@ -1176,7 +1293,7 @@
                             },
                             tooltip: {
                                 callbacks: {
-                                    label: function(context) {
+                                    label: function (context) {
                                         return context.label + ': ' + context.raw + '%';
                                     }
                                 }
@@ -1190,15 +1307,15 @@
                     }
                 });
             }
-            
+
             function updateLeagueTable() {
                 leagueTableBody.innerHTML = '';
-                
+
                 const leagueStats = {};
-                
-                allGames.forEach(game => {
+
+                filteredGamesOverview.forEach(game => {
                     const leagueName = game.league.name;
-                    
+
                     if (!leagueStats[leagueName]) {
                         leagueStats[leagueName] = {
                             name: leagueName,
@@ -1209,38 +1326,38 @@
                             over35Count: 0
                         };
                     }
-                    
+
                     if (game.ss && game.ss.includes('-')) {
                         const [homeScore, awayScore] = game.ss.split('-').map(Number);
                         const totalGoals = homeScore + awayScore;
-                        
+
                         leagueStats[leagueName].games++;
                         leagueStats[leagueName].totalGoals += totalGoals;
-                        
+
                         if (homeScore > 0 && awayScore > 0) {
                             leagueStats[leagueName].bttsCount++;
                         }
-                        
+
                         if (totalGoals > 2.5) {
                             leagueStats[leagueName].over25Count++;
                         }
-                        
+
                         if (totalGoals > 3.5) {
                             leagueStats[leagueName].over35Count++;
                         }
                     }
                 });
-                
-                const sortedLeagues = Object.values(leagueStats).sort((a, b) => 
+
+                const sortedLeagues = Object.values(leagueStats).sort((a, b) =>
                     (b.totalGoals / b.games) - (a.totalGoals / a.games)
                 );
-                
+
                 sortedLeagues.forEach(league => {
                     const avgGoals = (league.totalGoals / league.games).toFixed(2);
                     const bttsPercentage = (league.bttsCount / league.games * 100).toFixed(1);
                     const over25Percentage = (league.over25Count / league.games * 100).toFixed(1);
                     const over35Percentage = (league.over35Count / league.games * 100).toFixed(1);
-                    
+
                     let leagueTagClass = '';
                     if (league.name.toLowerCase().includes('adriatic') || league.name.toLowerCase().includes('10 mins')) {
                         leagueTagClass = 'adriatic';
@@ -1253,7 +1370,7 @@
                     } else if (league.name.toLowerCase().includes('h2h') || league.name.toLowerCase().includes('gg')) {
                         leagueTagClass = 'h2h';
                     }
-                    
+
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td><span class="league-tag ${leagueTagClass}">${league.name}</span></td>
@@ -1266,54 +1383,54 @@
                     leagueTableBody.appendChild(row);
                 });
             }
-            
+
             function updateRecentGamesTable() {
                 recentGamesTableBody.innerHTML = '';
-                
-                if (filteredGames.length === 0) {
+
+                if (filteredGamesOverview.length === 0) {
                     const row = document.createElement('tr');
                     row.innerHTML = `<td colspan="7" class="text-center">Nenhum jogo encontrado com os filtros atuais</td>`;
                     recentGamesTableBody.appendChild(row);
                     paginationElement.innerHTML = '';
                     return;
                 }
-                
-                const sortedGames = [...filteredGames].sort((a, b) => b.time - a.time);
+
+                const sortedGames = [...filteredGamesOverview].sort((a, b) => b.time - a.time);
                 const totalPages = Math.ceil(sortedGames.length / itemsPerPage);
-                
+
                 if (currentPage > totalPages) {
                     currentPage = 1;
                 }
-                
+
                 const startIndex = (currentPage - 1) * itemsPerPage;
                 const endIndex = Math.min(startIndex + itemsPerPage, sortedGames.length);
                 const currentGames = sortedGames.slice(startIndex, endIndex);
-                
+
                 currentGames.forEach(game => {
                     const gameDate = new Date(game.time * 1000);
-                    const formattedDate = gameDate.toLocaleDateString('pt-BR') + ' ' + 
-                        gameDate.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-    
+                    const formattedDate = gameDate.toLocaleDateString('pt-BR') + ' ' +
+                        gameDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
                     let homeScore = 0;
                     let awayScore = 0;
                     let totalGoals = 0;
                     let btts = 'Não';
                     let bttsClass = 'text-danger';
-    
+
                     if (game.ss && game.ss.includes('-')) {
                         [homeScore, awayScore] = game.ss.split('-').map(Number);
                         totalGoals = homeScore + awayScore;
                         btts = homeScore > 0 && awayScore > 0 ? 'Sim' : 'Não';
                         bttsClass = btts === 'Sim' ? 'text-success' : 'text-danger';
                     }
-                    
+
                     let htScore = 'N/A';
                     if (game.scores && game.scores["1"]) {
                         const homeScoreHT = parseInt(game.scores["1"].home) || 0;
                         const awayScoreHT = parseInt(game.scores["1"].away) || 0;
                         htScore = `${homeScoreHT}-${awayScoreHT}`;
                     }
-                    
+
                     let leagueTagClass = '';
                     if (game.league.name.toLowerCase().includes('adriatic') || game.league.name.toLowerCase().includes('10 mins')) {
                         leagueTagClass = 'adriatic';
@@ -1326,11 +1443,11 @@
                     } else if (game.league.name.toLowerCase().includes('h2h') || game.league.name.toLowerCase().includes('gg')) {
                         leagueTagClass = 'h2h';
                     }
-    
+
                     const row = document.createElement('tr');
                     row.className = 'game-row';
                     row.setAttribute('data-game-id', game.id);
-    
+
                     row.innerHTML = `
                         <td>${formattedDate}</td>
                         <td><span class="league-tag ${leagueTagClass}">${game.league.name}</span></td>
@@ -1340,7 +1457,7 @@
                         <td>${totalGoals}</td>
                         <td class="${bttsClass}">${btts}</td>
                     `;
-                    
+
                     const detailsRow = document.createElement('tr');
                     detailsRow.className = 'game-details-row';
                     detailsRow.innerHTML = `
@@ -1380,14 +1497,14 @@
                             </div>
                         </td>
                     `;
-                    
+
                     recentGamesTableBody.appendChild(row);
                     recentGamesTableBody.appendChild(detailsRow);
-                    
-                    row.addEventListener('click', function() {
+
+                    row.addEventListener('click', function () {
                         const gameId = this.getAttribute('data-game-id');
                         const detailsElement = document.getElementById(`game-details-${gameId}`);
-                        
+
                         if (detailsElement.style.display === 'block') {
                             detailsElement.style.display = 'none';
                         } else {
@@ -1398,17 +1515,17 @@
                         }
                     });
                 });
-                
+
                 updatePagination(totalPages);
             }
-            
+
             function updatePagination(totalPages) {
                 paginationElement.innerHTML = '';
-                
+
                 if (totalPages <= 1) {
                     return;
                 }
-                
+
                 const prevLi = document.createElement('li');
                 prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
                 prevLi.innerHTML = `<a class="page-link" href="#" aria-label="Anterior"><span aria-hidden="true">«</span></a>`;
@@ -1420,11 +1537,11 @@
                     }
                 });
                 paginationElement.appendChild(prevLi);
-                
+
                 for (let i = 1; i <= totalPages; i++) {
                     if (
-                        i === 1 || 
-                        i === totalPages || 
+                        i === 1 ||
+                        i === totalPages ||
                         (i >= currentPage - 2 && i <= currentPage + 2)
                     ) {
                         const pageLi = document.createElement('li');
@@ -1437,7 +1554,7 @@
                         });
                         paginationElement.appendChild(pageLi);
                     } else if (
-                        i === currentPage - 3 || 
+                        i === currentPage - 3 ||
                         i === currentPage + 3
                     ) {
                         const ellipsisLi = document.createElement('li');
@@ -1446,7 +1563,7 @@
                         paginationElement.appendChild(ellipsisLi);
                     }
                 }
-                
+
                 const nextLi = document.createElement('li');
                 nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
                 nextLi.innerHTML = `<a class="page-link" href="#" aria-label="Próximo"><span aria-hidden="true">»</span></a>`;
@@ -1459,40 +1576,40 @@
                 });
                 paginationElement.appendChild(nextLi);
             }
-            
+
             function extractPlayerName(teamName) {
                 const match = teamName.match(/\((.*?)\)/);
                 return match ? match[1] : teamName;
             }
-            
+
             function updateBestPlayersByLeague() {
                 bestPlayersByLeagueElement.innerHTML = '';
-                
+
                 const leagueStats = {};
-                
-                filteredGames.forEach(game => {
+
+                filteredGamesOverview.forEach(game => {
                     const leagueName = game.league.name;
                     if (!leagueStats[leagueName]) {
                         leagueStats[leagueName] = {};
                     }
-                    
+
                     const homePlayer = extractPlayerName(game.home.name);
                     const awayPlayer = extractPlayerName(game.away.name);
-                    
+
                     if (!leagueStats[leagueName][homePlayer]) {
                         leagueStats[leagueName][homePlayer] = { games: [] };
                     }
                     if (!leagueStats[leagueName][awayPlayer]) {
                         leagueStats[leagueName][awayPlayer] = { games: [] };
                     }
-                    
+
                     leagueStats[leagueName][homePlayer].games.push(game);
                     leagueStats[leagueName][awayPlayer].games.push(game);
                 });
-                
+
                 Object.entries(leagueStats).forEach(([leagueName, players]) => {
                     const playerData = [];
-                    
+
                     Object.entries(players).forEach(([playerName, data]) => {
                         const recentGames = data.games.sort((a, b) => b.time - a.time).slice(0, 5);
                         let totalHtGoalsScored = 0;
@@ -1501,17 +1618,17 @@
                         let totalFtGoalsConceded = 0;
                         let wins = 0;
                         let gameCount = 0;
-                        
+
                         recentGames.forEach(game => {
                             if (game.ss && game.ss.includes('-')) {
                                 const [homeScoreFt, awayScoreFt] = game.ss.split('-').map(Number);
                                 let homeScoreHt = 0, awayScoreHt = 0;
-                                
+
                                 if (game.scores && game.scores["1"]) {
                                     homeScoreHt = parseInt(game.scores["1"].home) || 0;
                                     awayScoreHt = parseInt(game.scores["1"].away) || 0;
                                 }
-                                
+
                                 const isHomePlayer = extractPlayerName(game.home.name) === playerName;
                                 if (isHomePlayer) {
                                     totalHtGoalsScored += homeScoreHt;
@@ -1529,7 +1646,7 @@
                                 gameCount++;
                             }
                         });
-                        
+
                         if (gameCount >= 3) {
                             const avgHtGoalsScored = (totalHtGoalsScored / gameCount).toFixed(2);
                             const avgFtGoalsScored = (totalFtGoalsScored / gameCount).toFixed(2);
@@ -1539,7 +1656,7 @@
                             const combinedGoals = (parseFloat(avgHtGoalsScored) + parseFloat(avgFtGoalsScored)).toFixed(2);
                             const concededGoals = (parseFloat(avgHtGoalsConceded) + parseFloat(avgFtGoalsConceded)).toFixed(2);
                             const score = (parseFloat(combinedGoals) * 2) - (parseFloat(concededGoals) * 1.5) + (parseFloat(winPercentage) / 10);
-                            
+
                             if (avgHtGoalsScored > 0 || avgFtGoalsScored > 0 || winPercentage > 0) {
                                 playerData.push({
                                     name: playerName,
@@ -1556,16 +1673,16 @@
                             }
                         }
                     });
-                    
+
                     if (playerData.length === 0) return;
-                    
+
                     const sortedPlayers = playerData.sort((a, b) => b.score - a.score);
                     const maxScore = sortedPlayers.length > 0 ? sortedPlayers[0].score : 0;
                     const bestPlayers = sortedPlayers.filter(player => player.score === maxScore);
-                    
+
                     const leagueSection = document.createElement('div');
                     leagueSection.className = 'best-player-section';
-                    
+
                     let leagueClass = '';
                     if (leagueName.toLowerCase().includes('adriatic') || leagueName.toLowerCase().includes('10 mins')) {
                         leagueClass = 'adriatic';
@@ -1578,16 +1695,17 @@
                     } else if (leagueName.toLowerCase().includes('h2h') || leagueName.toLowerCase().includes('gg')) {
                         leagueClass = 'h2h';
                     }
-                    
+
                     leagueSection.innerHTML = `
                         <div class="best-player-league">
                             <span class="league-tag ${leagueClass}">${leagueName}</span>
                         </div>
                     `;
-                    
+
                     bestPlayers.forEach(player => {
                         const playerCard = document.createElement('div');
                         playerCard.className = 'best-player-card';
+                        if (player.score > 2.5) playerCard.classList.add('highlight'); // Destaque para jogadores com alta pontuação
                         playerCard.innerHTML = `
                             <div class="best-player-info">
                                 <i class="bi bi-trophy-fill best-player-icon"></i>
@@ -1618,7 +1736,7 @@
                         `;
                         leagueSection.appendChild(playerCard);
                     });
-                    
+
                     if (bestPlayers.length === 0) {
                         const noPlayerCard = document.createElement('div');
                         noPlayerCard.className = 'best-player-card';
@@ -1652,28 +1770,27 @@
                         `;
                         leagueSection.appendChild(noPlayerCard);
                     }
-                    
+
                     bestPlayersByLeagueElement.appendChild(leagueSection);
                 });
-                
+
                 if (bestPlayersByLeagueElement.innerHTML === '') {
                     bestPlayersByLeagueElement.innerHTML = '<p class="text-center">Nenhum jogador com estatísticas relevantes encontrado.</p>';
                 }
             }
-            
-            function updateDetailedLeagueFilters() {
+
+            function updateLeagueFiltersMarket() {
                 const uniqueLeagues = new Set(allGames.map(game => game.league.name));
-                const detailedLeagueBadgesElement = document.getElementById('detailedLeagueBadges');
-                detailedLeagueBadgesElement.innerHTML = '';
+                leagueBadgesMarket.innerHTML = '';
 
                 const allBadge = document.createElement('button');
-                allBadge.className = `league-badge ${selectedDetailedLeague === 'all' ? 'active' : ''}`;
+                allBadge.className = `league-badge ${selectedLeagueMarket === 'all' ? 'active' : ''}`;
                 allBadge.textContent = 'Todas';
                 allBadge.addEventListener('click', () => {
-                    selectedDetailedLeague = 'all';
-                    updateMarketAnalysis();
+                    selectedLeagueMarket = 'all';
+                    processData();
                 });
-                detailedLeagueBadgesElement.appendChild(allBadge);
+                leagueBadgesMarket.appendChild(allBadge);
 
                 uniqueLeagues.forEach(league => {
                     const badge = document.createElement('button');
@@ -1684,53 +1801,30 @@
                     else if (league.toLowerCase().includes('battle')) leagueClass = 'league-battle';
                     else if (league.toLowerCase().includes('h2h') || league.toLowerCase().includes('gg')) leagueClass = 'league-h2h';
 
-                    badge.className = `league-badge ${leagueClass} ${selectedDetailedLeague === league ? 'active' : ''}`;
+                    badge.className = `league-badge ${leagueClass} ${selectedLeagueMarket === league ? 'active' : ''}`;
                     badge.textContent = league;
                     badge.addEventListener('click', () => {
-                        selectedDetailedLeague = league;
-                        updateMarketAnalysis();
+                        selectedLeagueMarket = league;
+                        processData();
                     });
-                    detailedLeagueBadgesElement.appendChild(badge);
+                    leagueBadgesMarket.appendChild(badge);
                 });
             }
 
-            function updateDetailedGamesFilter() {
-                const gamesFilterButtons = document.querySelectorAll('#detailedGamesFilter .filter-btn');
-                gamesFilterButtons.forEach(button => {
+            function updateGamesFilterButtonsMarket() {
+                const buttons = gamesFilterButtonsMarket.querySelectorAll('.filter-btn');
+                buttons.forEach(button => {
                     button.addEventListener('click', () => {
-                        gamesFilterButtons.forEach(btn => btn.classList.remove('active'));
+                        buttons.forEach(btn => btn.classList.remove('active'));
                         button.classList.add('active');
-                        selectedDetailedGames = button.getAttribute('data-games');
-                        updateMarketAnalysis();
+                        selectedGamesMarket = button.getAttribute('data-games');
+                        processData();
                     });
-                });
-            }
-
-            function updateMarketSelector() {
-                const marketSelector = document.getElementById('marketSelector');
-                marketSelector.addEventListener('change', (e) => {
-                    selectedMarket = e.target.value;
-                    updateMarketAnalysis();
                 });
             }
 
             function updateMarketAnalysis() {
-                let filteredGames = [...allGames];
-                
-                // Filtrar por liga
-                if (selectedDetailedLeague !== 'all') {
-                    filteredGames = filteredGames.filter(game => 
-                        game.league.name.toLowerCase() === selectedDetailedLeague.toLowerCase()
-                    );
-                }
-
-                // Ordenar por data (mais recentes primeiro) e limitar por quantidade de jogos
-                filteredGames = filteredGames.sort((a, b) => b.time - a.time).slice(0, parseInt(selectedDetailedGames));
-
-                const totalGames = filteredGames.length;
-                const marketAnalysisTable = document.getElementById('marketAnalysisTable');
-                const topOversTable = document.getElementById('topOversTable');
-                const topPlayersList = document.getElementById('topPlayersList');
+                const totalGames = filteredGamesMarket.length;
                 marketAnalysisTable.innerHTML = '';
                 topOversTable.innerHTML = '';
                 topPlayersList.innerHTML = '';
@@ -1746,7 +1840,7 @@
                 let avgOdd = 0;
 
                 // Calcular ocorrências com base no mercado selecionado
-                filteredGames.forEach(game => {
+                filteredGamesMarket.forEach(game => {
                     if (game.ss && game.ss.includes('-')) {
                         const [homeScoreFt, awayScoreFt] = game.ss.split('-').map(Number);
                         const totalGoalsFt = homeScoreFt + awayScoreFt;
@@ -1797,7 +1891,9 @@
                 const percentage = (count / totalGames * 100).toFixed(1);
                 const fairOdd = (1 / (count / totalGames) || 0).toFixed(2);
                 const value = isFinite(parseFloat(fairOdd)) ? (avgOdd / parseFloat(fairOdd)).toFixed(2) : 'N/A';
-                const valueClass = value >= 1.1 ? 'high-value' : value >= 0.95 ? 'medium-value' : 'low-value';
+                let valueClass = 'low-value';
+                if (value >= 1.1) valueClass = 'high-value';
+                else if (value >= 0.95) valueClass = 'medium-value';
 
                 const marketNames = {
                     'btts_sim_ft': 'BTTS Sim (FT)',
@@ -1810,49 +1906,50 @@
                     'over_2.5_ht': 'Over 2.5 (HT)'
                 };
 
-                const row = document.createElement('tr');
-                row.innerHTML = `
+                const marketRow = document.createElement('tr');
+                marketRow.innerHTML = `
                     <td>${marketNames[selectedMarket]}</td>
                     <td>${count}/${totalGames}</td>
                     <td>${percentage}%</td>
                     <td>${fairOdd}</td>
                     <td class="${valueClass}">${value}</td>
                 `;
-                marketAnalysisTable.appendChild(row);
+                if (percentage > 50 || value >= 1.1) marketRow.classList.add('highlight-row');
+                marketAnalysisTable.appendChild(marketRow);
 
                 // Confrontos mais overs
                 const matchTotals = {};
-                filteredGames.forEach(game => {
+                filteredGamesMarket.forEach(game => {
                     const matchKey = `${game.home.name} vs ${game.away.name}`;
                     if (game.ss && game.ss.includes('-')) {
-                        const [homeScore, awayScore] = game.ss.split('-').map(Number);
-                        const totalGoals = homeScore + awayScore;
+                        const [homeScoreFt, awayScoreFt] = game.ss.split('-').map(Number);
+                        const totalGoalsFt = homeScoreFt + awayScoreFt;
                         if (!matchTotals[matchKey]) {
                             matchTotals[matchKey] = { totalGoals: 0, games: 0 };
                         }
-                        matchTotals[matchKey].totalGoals += totalGoals;
+                        matchTotals[matchKey].totalGoals += totalGoalsFt;
                         matchTotals[matchKey].games++;
                     }
                 });
 
-                const topOvers = Object.entries(matchTotals)
-                    .map(([match, data]) => ({ match, avgGoals: data.totalGoals / data.games, games: data.games }))
+                const topMatches = Object.entries(matchTotals)
+                    .map(([match, data]) => ({
+                        match,
+                        avgGoals: (data.totalGoals / data.games).toFixed(2),
+                        games: data.games
+                    }))
                     .sort((a, b) => b.avgGoals - a.avgGoals)
                     .slice(0, 5);
 
-                topOvers.forEach(item => {
+                topMatches.forEach(match => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${item.match}</td>
-                        <td>${item.avgGoals.toFixed(2)}</td>
-                        <td>${item.games}</td>
-                    `;
-                    topOversTable.appendChild(row);
-                });
 
+${match.match} ${match.avgGoals} ${match.games} `; if (match.avgGoals > 3.5) row.classList.add('highlight-row'); topOversTable.appendChild(row);
+                });
                 // Melhores jogadores
                 const playerStats = {};
-                filteredGames.forEach(game => {
+                filteredGamesMarket.forEach(game => {
                     const homePlayer = extractPlayerName(game.home.name);
                     const awayPlayer = extractPlayerName(game.away.name);
 
@@ -1860,23 +1957,29 @@
                         if (!playerStats[player]) {
                             playerStats[player] = { goalsScored: 0, gamesPlayed: 0, wins: 0 };
                         }
-                        if (game.ss && game.ss.includes('-')) {
-                            const [homeScore, awayScore] = game.ss.split('-').map(Number);
-                            const isHome = extractPlayerName(game.home.name) === player;
-                            playerStats[player].gamesPlayed++;
-                            playerStats[player].goalsScored += isHome ? homeScore : awayScore;
-                            if ((isHome && homeScore > awayScore) || (!isHome && awayScore > homeScore)) {
-                                playerStats[player].wins++;
-                            }
-                        }
                     });
+
+                    if (game.ss && game.ss.includes('-')) {
+                        const [homeScoreFt, awayScoreFt] = game.ss.split('-').map(Number);
+                        const homeScoreHt = parseInt(game.scores["1"].home) || 0;
+                        const awayScoreHt = parseInt(game.scores["1"].away) || 0;
+
+                        playerStats[homePlayer].goalsScored += homeScoreFt + homeScoreHt;
+                        playerStats[awayPlayer].goalsScored += awayScoreFt + awayScoreHt;
+                        playerStats[homePlayer].gamesPlayed++;
+                        playerStats[awayPlayer].gamesPlayed++;
+
+                        if (homeScoreFt > awayScoreFt) playerStats[homePlayer].wins++;
+                        if (awayScoreFt > homeScoreFt) playerStats[awayPlayer].wins++;
+                    }
                 });
 
                 const topPlayers = Object.entries(playerStats)
                     .map(([player, stats]) => ({
-                        player,
-                        avgGoals: stats.goalsScored / stats.gamesPlayed,
-                        winRate: (stats.wins / stats.gamesPlayed * 100).toFixed(1)
+                        name: player,
+                        avgGoals: (stats.goalsScored / stats.gamesPlayed).toFixed(2),
+                        winRate: (stats.wins / stats.gamesPlayed * 100).toFixed(1),
+                        games: stats.gamesPlayed
                     }))
                     .sort((a, b) => b.avgGoals - a.avgGoals)
                     .slice(0, 5);
@@ -1884,41 +1987,25 @@
                 topPlayers.forEach(player => {
                     const playerCard = document.createElement('div');
                     playerCard.className = 'best-player-card';
+                    if (player.avgGoals > 1.5 || player.winRate > 50) playerCard.classList.add('highlight');
                     playerCard.innerHTML = `
-                        <div class="best-player-info">
-                            <i class="bi bi-trophy-fill best-player-icon"></i>
-                            <span class="best-player-name">${player.player}</span>
-                        </div>
-                        <div class="best-player-stats">
-                            <div class="stat-item">
-                                <span class="stat-value">${player.avgGoals.toFixed(2)}</span>
-                                <span class="stat-label">Média Gols</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-value">${player.winRate}%</span>
-                                <span class="stat-label">Vitórias</span>
-                            </div>
-                        </div>
-                    `;
-                    topPlayersList.appendChild(playerCard);
+
+${player.name}
+${player.avgGoals} Média Gols
+${player.winRate}% Vitórias
+${player.games} Jogos
+`; topPlayersList.appendChild(playerCard);
                 });
             }
-            
-            gamesFilterButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    gamesFilterButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                    selectedGames = button.getAttribute('data-games');
-                    processData();
-                });
+            marketSelector.addEventListener('change', (e) => {
+                selectedMarket = e.target.value;
+                processData();
             });
-            
-            refreshBtn.addEventListener('click', () => {
-                fetchData();
-            });
-            
+
+            refreshBtn.addEventListener('click', fetchData);
             fetchData();
         });
     </script>
 </body>
+
 </html>
