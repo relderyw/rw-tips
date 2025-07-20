@@ -1072,8 +1072,8 @@
             let goalsChart, bttsChart;
             let isLoading = false;
 
-            const maxPages = 10;
-            const daysBack = 7;
+            const maxPages = 20;
+            const daysBack = 30;
 
             function toggleFilters() {
                 const overviewTab = document.querySelector('#overview-tab');
@@ -1125,7 +1125,11 @@
                                     const isESoccer = game.league_name?.toLowerCase().includes('esoccer') ||
                                         game.league_name?.toLowerCase().includes('e-soccer') ||
                                         game.league_name?.toLowerCase().includes('fifa') ||
-                                        game.league_name?.toLowerCase().includes('cyber');
+                                        game.league_name?.toLowerCase().includes('cyber') ||
+                                        game.league_name?.toLowerCase().includes('battle') ||
+                                        game.league_name?.toLowerCase().includes('gt') ||
+                                        game.league_name?.toLowerCase().includes('adriatic') ||
+                                        game.league_name?.toLowerCase().includes('liga pro');
                                     const gameDate = new Date(game.data_realizacao);
                                     const isRecentGame = gameDate >= cutoffDate;
                                     const isFinished = game.score_home !== null && game.score_away !== null;
