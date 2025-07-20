@@ -199,57 +199,82 @@
 
         .strategy-simulator-results {
             margin-top: 20px;
-            padding: 15px;
+            padding: 20px;
             background-color: var(--card-bg);
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .strategy-simulator-results h4 {
-            color: var(--text-color);
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--primary-accent);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
             padding-bottom: 10px;
         }
 
         .strategy-section {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             padding: 15px;
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 6px;
+            background-color: rgba(255,255,255,0.05);
+            border-radius: 8px;
         }
 
         .strategy-section h5 {
-            color: var(--primary-accent);
-            margin-bottom: 10px;
+            color: var(--text-color);
+            margin-bottom: 15px;
             font-size: 1.1rem;
         }
 
-        .strategy-section p {
-            color: var(--text-color);
-            margin-bottom: 15px;
+        .success-rate {
+            color: var(--success-color);
+            font-weight: bold;
         }
 
-        .successful-games {
-            background-color: rgba(0, 0, 0, 0.1);
-            padding: 10px;
-            border-radius: 4px;
+        .criteria-table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+
+        .criteria-table th, .criteria-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .criteria-table th {
+            background-color: rgba(0,0,0,0.2);
+            font-weight: bold;
         }
 
         .successful-games h6 {
             color: var(--text-color);
-            margin-bottom: 10px;
-            font-size: 0.9rem;
+            margin-bottom: 15px;
+            font-size: 1rem;
         }
 
         .game-result {
-            background-color: rgba(0, 204, 102, 0.1);
-            padding: 8px 12px;
-            margin-bottom: 8px;
-            border-radius: 4px;
+            background-color: rgba(0,204,102,0.05);
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary-accent);
+        }
+
+        .game-teams {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .game-scores {
             font-size: 0.9rem;
-            border-left: 3px solid var(--primary-accent);
+            margin-bottom: 5px;
+        }
+
+        .game-date {
+            font-size: 0.8rem;
+            color: var(--muted-text);
         }
 
         .high-value {
@@ -2057,101 +2082,111 @@ ${player.games} Jogos
                 const strategies = {
                     'Over_HT_GT': {
                         league: 'Esoccer GT Leagues – 12 mins play',
-                        criteria: {
-                            over_ht_2_5: game => {
+                        criteria: [
+                            { name: 'Over 2.5 HT', check: game => {
                                 if (game.scores && game.scores['1']) {
-                                    const homeScoreHt = parseInt(game.scores['1'].home) || 0;
-                                    const awayScoreHt = parseInt(game.scores['1'].away) || 0;
-                                    return homeScoreHt + awayScoreHt > 2.5;
+                                    const home = parseInt(game.scores['1'].home) || 0;
+                                    const away = parseInt(game.scores['1'].away) || 0;
+                                    return home + away > 2.5;
                                 }
                                 return false;
-                            },
-                            btts: game => {
+                            } },
+                            { name: 'BTTS HT', check: game => {
                                 if (game.scores && game.scores['1']) {
-                                    const homeScoreHt = parseInt(game.scores['1'].home) || 0;
-                                    const awayScoreHt = parseInt(game.scores['1'].away) || 0;
-                                    return homeScoreHt > 0 && awayScoreHt > 0;
+                                    const home = parseInt(game.scores['1'].home) || 0;
+                                    const away = parseInt(game.scores['1'].away) || 0;
+                                    return home > 0 && away > 0;
                                 }
                                 return false;
-                            }
-                        }
+                            } }
+                        ]
                     },
                     'Over_Gols_Battle': {
                         league: 'Esoccer Battle - 8 mins play',
-                        criteria: {
-                            over_ft_4_5: game => {
+                        criteria: [
+                            { name: 'Over 4.5 FT', check: game => {
                                 if (game.ss && game.ss.includes('-')) {
-                                    const [homeScoreFt, awayScoreFt] = game.ss.split('-').map(Number);
-                                    return homeScoreFt + awayScoreFt > 4.5;
+                                    const [home, away] = game.ss.split('-').map(Number);
+                                    return home + away > 4.5;
                                 }
                                 return false;
-                            },
-                            btts_ht: game => {
+                            } },
+                            { name: 'BTTS HT', check: game => {
                                 if (game.scores && game.scores['1']) {
-                                    const homeScoreHt = parseInt(game.scores['1'].home) || 0;
-                                    const awayScoreHt = parseInt(game.scores['1'].away) || 0;
-                                    return homeScoreHt > 0 && awayScoreHt > 0;
+                                    const home = parseInt(game.scores['1'].home) || 0;
+                                    const away = parseInt(game.scores['1'].away) || 0;
+                                    return home > 0 && away > 0;
                                 }
                                 return false;
-                            },
-                            over_ht_2_5: game => {
+                            } },
+                            { name: 'Over 2.5 HT', check: game => {
                                 if (game.scores && game.scores['1']) {
-                                    const homeScoreHt = parseInt(game.scores['1'].home) || 0;
-                                    const awayScoreHt = parseInt(game.scores['1'].away) || 0;
-                                    return homeScoreHt + awayScoreHt > 2.5;
+                                    const home = parseInt(game.scores['1'].home) || 0;
+                                    const away = parseInt(game.scores['1'].away) || 0;
+                                    return home + away > 2.5;
                                 }
                                 return false;
-                            }
-                        }
+                            } }
+                        ]
                     },
                     'Over_Volta': {
                         league: 'Esoccer Battle Volta - 6 mins play',
-                        criteria: {
-                            over_ft_6_0: game => {
+                        criteria: [
+                            { name: 'Over 6.0 FT', check: game => {
                                 if (game.ss && game.ss.includes('-')) {
-                                    const [homeScoreFt, awayScoreFt] = game.ss.split('-').map(Number);
-                                    return homeScoreFt + awayScoreFt > 6.0;
+                                    const [home, away] = game.ss.split('-').map(Number);
+                                    return home + away > 6.0;
                                 }
                                 return false;
-                            },
-                            btts_ht: game => {
+                            } },
+                            { name: 'BTTS HT', check: game => {
                                 if (game.scores && game.scores['1']) {
-                                    const homeScoreHt = parseInt(game.scores['1'].home) || 0;
-                                    const awayScoreHt = parseInt(game.scores['1'].away) || 0;
-                                    return homeScoreHt > 0 && awayScoreHt > 0;
+                                    const home = parseInt(game.scores['1'].home) || 0;
+                                    const away = parseInt(game.scores['1'].away) || 0;
+                                    return home > 0 && away > 0;
                                 }
                                 return false;
-                            },
-                            over_ht_3_0: game => {
+                            } },
+                            { name: 'Over 3.0 HT', check: game => {
                                 if (game.scores && game.scores['1']) {
-                                    const homeScoreHt = parseInt(game.scores['1'].home) || 0;
-                                    const awayScoreHt = parseInt(game.scores['1'].away) || 0;
-                                    return homeScoreHt + awayScoreHt > 3.0;
+                                    const home = parseInt(game.scores['1'].home) || 0;
+                                    const away = parseInt(game.scores['1'].away) || 0;
+                                    return home + away > 3.0;
                                 }
                                 return false;
-                            }
-                        }
+                            } }
+                        ]
                     }
                 };
 
+                const numGames = parseInt(selectedGamesMarket) || 5;
+
                 const simulatorResults = document.createElement('div');
                 simulatorResults.className = 'strategy-simulator-results';
-                simulatorResults.innerHTML = '<h4>Simulador de Estratégias</h4>';
+                simulatorResults.innerHTML = '<h4>Simulador de Estratégias (Últimos ' + numGames + ' Jogos por Liga)</h4>';
 
                 Object.entries(strategies).forEach(([strategyName, strategy]) => {
-                    const leagueGames = filteredGamesMarket.filter(game => 
-                        game.league && game.league.name === strategy.league
-                    ).slice(0, parseInt(selectedGamesMarket) || 5);
+                    const leagueGames = allGames
+                        .filter(game => game.league && game.league.name === strategy.league)
+                        .sort((a, b) => b.time - a.time)
+                        .slice(0, numGames);
 
-                    if (leagueGames.length === 0) return;
+                    if (leagueGames.length === 0) {
+                        const emptySection = document.createElement('div');
+                        emptySection.className = 'strategy-section';
+                        emptySection.innerHTML = `<h5>${strategyName} - ${strategy.league}</h5><p>Nenhum jogo disponível para análise.</p>`;
+                        simulatorResults.appendChild(emptySection);
+                        return;
+                    }
 
                     const results = leagueGames.map(game => {
-                        const criteriaResults = Object.entries(strategy.criteria).map(([name, check]) => check(game));
+                        const criteriaResults = strategy.criteria.map(crit => ({name: crit.name, met: crit.check(game)}));
                         return {
                             game,
-                            success: criteriaResults.every(result => result === true),
-                            matchedCriteria: criteriaResults.filter(result => result === true).length,
-                            totalCriteria: criteriaResults.length
+                            success: criteriaResults.every(res => res.met),
+                            matched: criteriaResults.filter(res => res.met).length,
+                            total: criteriaResults.length,
+                            details: criteriaResults
                         };
                     });
 
@@ -2162,24 +2197,39 @@ ${player.games} Jogos
                     strategySection.className = 'strategy-section';
                     strategySection.innerHTML = `
                         <h5>${strategyName} - ${strategy.league}</h5>
-                        <p>Taxa de Sucesso: ${successRate}% (${successfulGames.length}/${leagueGames.length} jogos)</p>
+                        <p>Taxa de Sucesso: <span class="success-rate">${successRate}%</span> (${successfulGames.length}/${leagueGames.length} jogos)</p>
+                        <table class="criteria-table">
+                            <thead>
+                                <tr>
+                                    <th>Critério</th>
+                                    <th>Taxa de Acerto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${strategy.criteria.map(crit => {
+                                    const metCount = results.filter(r => r.details.find(d => d.name === crit.name).met).length;
+                                    const rate = (metCount / leagueGames.length * 100).toFixed(1);
+                                    return `<tr><td>${crit.name}</td><td>${rate}%</td></tr>`;
+                                }).join('')}
+                            </tbody>
+                        </table>
                         <div class="successful-games">
-                            <h6>Jogos que bateram 100% dos critérios:</h6>
-                            ${successfulGames.map(result => `
+                            <h6>Jogos que Bateram 100%:</h6>
+                            ${successfulGames.length > 0 ? successfulGames.map(result => `
                                 <div class="game-result">
-                                    ${result.game.home.name} vs ${result.game.away.name}
-                                    <br>
-                                    HT: ${result.game.scores['1'].home}-${result.game.scores['1'].away}
-                                    FT: ${result.game.ss}
+                                    <div class="game-teams">${result.game.home.name} vs ${result.game.away.name}</div>
+                                    <div class="game-scores">
+                                        HT: ${result.game.scores?.['1']?.home || 0}-${result.game.scores?.['1']?.away || 0}
+                                        FT: ${result.game.ss || 'N/A'}
+                                    </div>
+                                    <div class="game-date">${new Date(result.game.time * 1000).toLocaleString()}</div>
                                 </div>
-                            `).join('')}
+                            `).join('') : '<p>Nenhum jogo atendeu a todos os critérios.</p>'}
                         </div>
                     `;
-
                     simulatorResults.appendChild(strategySection);
                 });
 
-                // Substituir o conteúdo existente ou adicionar ao final da seção de análise de mercados
                 const marketAnalysisTab = document.getElementById('market-analysis');
                 const existingSimulator = marketAnalysisTab.querySelector('.strategy-simulator-results');
                 if (existingSimulator) {
