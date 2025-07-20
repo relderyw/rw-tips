@@ -1930,145 +1930,157 @@
             }
 
             function updateMarketAnalysis() {
-                const totalGames = filteredGamesMarket.length;
-                marketAnalysisTable.innerHTML = '';
-                topOversTable.innerHTML = '';
-                topPlayersList.innerHTML = '';
+    const totalGames = filteredGamesMarket.length;
+    const marketAnalysisContainer = document.getElementById('marketAnalysisContainer');
+    marketAnalysisContainer.innerHTML = '';
 
-                if (totalGames === 0) {
-                    marketAnalysisTable.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum jogo encontrado</td></tr>';
-                    topOversTable.innerHTML = '<tr><td colspan="3" class="text-center">Nenhum confronto encontrado</td></tr>';
-                    topPlayersList.innerHTML = '<p class="text-center">Nenhum jogador encontrado</p>';
-                    return;
-                }
+    if (totalGames === 0) {
+        marketAnalysisContainer.innerHTML = '<p class="no-data">Nenhum dado disponível para análise.</p>';
+        return;
+    }
 
-                let count = 0;
-                let avgOdd = 0;
+    // Cálculo de métricas do mercado (mesmo que antes)
+    let count = 0;
+    let avgOdd = 0;
+    filteredGamesMarket.forEach(game => {
+        if (game.ss && game.ss.includes('-')) {
+            const [homeScoreFt, awayScoreFt] = game.ss.split('-').map(Number);
+            const totalGoalsFt = homeScoreFt + awayScoreFt;
+            let homeScoreHt = 0, awayScoreHt = 0;
+            if (game.scores && game.scores["1"]) {
+                homeScoreHt = parseInt(game.scores["1"].home) || 0;
+                awayScoreHt = parseInt(game.scores["1"].away) || 0;
+            }
+            switch (selectedMarket) {
+                case 'btts_sim_ft':
+                    if (homeScoreFt > 0 && awayScoreFt > 0) count++;
+                    avgOdd = 1.80;
+                    break;
+                case 'over_2.5_ft':
+                    if (totalGoalsFt > 2.5) count++;
+                    avgOdd = 1.90;
+                    break;
+                case 'over_3.5_ft':
+                    if (totalGoalsFt > 3.5) count++;
+                    avgOdd = 2.70;
+                    break;
+                case 'over_4.5_ft':
+                    if (totalGoalsFt > 4.5) count++;
+                    avgOdd = 4.50;
+                    break;
+                case 'btts_sim_ht':
+                    if (homeScoreHt > 0 && awayScoreHt > 0) count++;
+                    avgOdd = 2.50;
+                    break;
+                case 'over_0.5_ht':
+                    if (homeScoreHt + awayScoreHt > 0.5) count++;
+                    avgOdd = 1.30;
+                    break;
+                case 'over_1.5_ht':
+                    if (homeScoreHt + awayScoreHt > 1.5) count++;
+                    avgOdd = 2.20;
+                    break;
+                case 'over_2.5_ht':
+                    if (homeScoreHt + awayScoreHt > 2.5) count++;
+                    avgOdd = 4.00;
+                    break;
+            }
+        }
+    });
 
-                // Calcular ocorrências com base no mercado selecionado
-                filteredGamesMarket.forEach(game => {
-                    if (game.ss && game.ss.includes('-')) {
-                        const [homeScoreFt, awayScoreFt] = game.ss.split('-').map(Number);
-                        const totalGoalsFt = homeScoreFt + awayScoreFt;
-                        let homeScoreHt = 0, awayScoreHt = 0;
+    const percentage = (count / totalGames * 100).toFixed(1);
+    const fairOdd = (1 / (count / totalGames) || 0).toFixed(2);
+    const value = isFinite(parseFloat(fairOdd)) ? (avgOdd / parseFloat(fairOdd)).toFixed(2) : 'N/A';
+    let valueClass = 'low-value';
+    if (value >= 1.1) valueClass = 'high-value';
+    else if (value >= 0.95) valueClass = 'medium-value';
 
-                        if (game.scores && game.scores["1"]) {
-                            homeScoreHt = parseInt(game.scores["1"].home) || 0;
-                            awayScoreHt = parseInt(game.scores["1"].away) || 0;
-                        }
+    const marketNames = {
+        'btts_sim_ft': 'BTTS Sim (FT)',
+        'over_2.5_ft': 'Over 2.5 (FT)',
+        'over_3.5_ft': 'Over 3.5 (FT)',
+        'over_4.5_ft': 'Over 4.5 (FT)',
+        'btts_sim_ht': 'BTTS Sim (HT)',
+        'over_0.5_ht': 'Over 0.5 (HT)',
+        'over_1.5_ht': 'Over 1.5 (HT)',
+        'over_2.5_ht': 'Over 2.5 (HT)'
+    };
 
-                        switch (selectedMarket) {
-                            case 'btts_sim_ft':
-                                if (homeScoreFt > 0 && awayScoreFt > 0) count++;
-                                avgOdd = 1.80;
-                                break;
-                            case 'over_2.5_ft':
-                                if (totalGoalsFt > 2.5) count++;
-                                avgOdd = 1.90;
-                                break;
-                            case 'over_3.5_ft':
-                                if (totalGoalsFt > 3.5) count++;
-                                avgOdd = 2.70;
-                                break;
-                            case 'over_4.5_ft':
-                                if (totalGoalsFt > 4.5) count++;
-                                avgOdd = 4.50;
-                                break;
-                            case 'btts_sim_ht':
-                                if (homeScoreHt > 0 && awayScoreHt > 0) count++;
-                                avgOdd = 2.50;
-                                break;
-                            case 'over_0.5_ht':
-                                if (homeScoreHt + awayScoreHt > 0.5) count++;
-                                avgOdd = 1.30;
-                                break;
-                            case 'over_1.5_ht':
-                                if (homeScoreHt + awayScoreHt > 1.5) count++;
-                                avgOdd = 2.20;
-                                break;
-                            case 'over_2.5_ht':
-                                if (homeScoreHt + awayScoreHt > 2.5) count++;
-                                avgOdd = 4.00;
-                                break;
-                        }
-                    }
-                });
+    // Novo layout para análise de mercado
+    const marketCard = document.createElement('div');
+    marketCard.className = 'strategy-card';
+    marketCard.innerHTML = `
+        <div class="strategy-header">
+            <i class="bi bi-graph-up"></i>
+            <span>${marketNames[selectedMarket]}</span>
+        </div>
+        <div class="success-metric ${percentage > 50 ? 'high-rate' : percentage > 30 ? 'medium-rate' : 'low-rate'}">${percentage}%</div>
+        <div class="criteria-list">
+            <div class="criteria-item"><span>Ocorrências</span><span>${count}/${totalGames}</span></div>
+            <div class="criteria-item"><span>Odd Justa</span><span>${fairOdd}</span></div>
+            <div class="criteria-item"><span>Valor</span><span class="${valueClass}">${value}</span></div>
+        </div>
+    `;
+    marketAnalysisContainer.appendChild(marketCard);
 
-                const percentage = (count / totalGames * 100).toFixed(1);
-                const fairOdd = (1 / (count / totalGames) || 0).toFixed(2);
-                const value = isFinite(parseFloat(fairOdd)) ? (avgOdd / parseFloat(fairOdd)).toFixed(2) : 'N/A';
-                let valueClass = 'low-value';
-                if (value >= 1.1) valueClass = 'high-value';
-                else if (value >= 0.95) valueClass = 'medium-value';
+    // Confrontos mais overs com cards
+    const matchTotals = {};
+    filteredGamesMarket.forEach(game => {
+        const matchKey = `${game.home.name} vs ${game.away.name}`;
+        if (game.ss && game.ss.includes('-')) {
+            const [homeScoreFt, awayScoreFt] = game.ss.split('-').map(Number);
+            const totalGoalsFt = homeScoreFt + awayScoreFt;
+            if (!matchTotals[matchKey]) {
+                matchTotals[matchKey] = { totalGoals: 0, games: 0 };
+            }
+            matchTotals[matchKey].totalGoals += totalGoalsFt;
+            matchTotals[matchKey].games++;
+        }
+    });
 
-                const marketNames = {
-                    'btts_sim_ft': 'BTTS Sim (FT)',
-                    'over_2.5_ft': 'Over 2.5 (FT)',
-                    'over_3.5_ft': 'Over 3.5 (FT)',
-                    'over_4.5_ft': 'Over 4.5 (FT)',
-                    'btts_sim_ht': 'BTTS Sim (HT)',
-                    'over_0.5_ht': 'Over 0.5 (HT)',
-                    'over_1.5_ht': 'Over 1.5 (HT)',
-                    'over_2.5_ht': 'Over 2.5 (HT)'
-                };
+    const topMatches = Object.entries(matchTotals)
+        .map(([match, data]) => ({
+            match,
+            avgGoals: (data.totalGoals / data.games).toFixed(2),
+            games: data.games
+        }))
+        .sort((a, b) => b.avgGoals - a.avgGoals)
+        .slice(0, 5);
 
-                const marketRow = document.createElement('tr');
-                marketRow.innerHTML = `
-                    <td>${marketNames[selectedMarket]}</td>
-                    <td>${count}/${totalGames}</td>
-                    <td>${percentage}%</td>
-                    <td>${fairOdd}</td>
-                    <td class="${valueClass}">${value}</td>
-                `;
-                if (percentage > 50 || value >= 1.1) marketRow.classList.add('highlight-row');
-                marketAnalysisTable.appendChild(marketRow);
+    const topOversSection = document.createElement('div');
+    topOversSection.className = 'top-section';
+    topOversSection.innerHTML = '<h5><i class="bi bi-fire"></i> Confrontos Mais Overs</h5>';
+    const oversGrid = document.createElement('div');
+    oversGrid.className = 'strategies-grid';
+    topMatches.forEach(match => {
+        const card = document.createElement('div');
+        card.className = 'strategy-card';
+        card.innerHTML = `
+            <div class="strategy-header">
+                <span>${match.match}</span>
+            </div>
+            <div class="success-metric ${match.avgGoals > 3.5 ? 'high-rate' : ''}">${match.avgGoals} Média</div>
+            <div class="criteria-list"><div class="criteria-item"><span>Jogos</span><span>${match.games}</span></div></div>
+        `;
+        oversGrid.appendChild(card);
+    });
+    topOversSection.appendChild(oversGrid);
+    marketAnalysisContainer.appendChild(topOversSection);
 
-                // Confrontos mais overs
-                const matchTotals = {};
-                filteredGamesMarket.forEach(game => {
-                    const matchKey = `${game.home.name} vs ${game.away.name}`;
-                    if (game.ss && game.ss.includes('-')) {
-                        const [homeScoreFt, awayScoreFt] = game.ss.split('-').map(Number);
-                        const totalGoalsFt = homeScoreFt + awayScoreFt;
-                        if (!matchTotals[matchKey]) {
-                            matchTotals[matchKey] = { totalGoals: 0, games: 0 };
-                        }
-                        matchTotals[matchKey].totalGoals += totalGoalsFt;
-                        matchTotals[matchKey].games++;
-                    }
-                });
-
-                const topMatches = Object.entries(matchTotals)
-                    .map(([match, data]) => ({
-                        match,
-                        avgGoals: (data.totalGoals / data.games).toFixed(2),
-                        games: data.games
-                    }))
-                    .sort((a, b) => b.avgGoals - a.avgGoals)
-                    .slice(0, 5);
-
-                topMatches.forEach(match => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-
-${match.match} ${match.avgGoals} ${match.games} `; if (match.avgGoals > 3.5) row.classList.add('highlight-row'); topOversTable.appendChild(row);
-                });
-                // Melhores jogadores
-                const playerStats = {};
-                filteredGamesMarket.forEach(game => {
-                    const homePlayer = extractPlayerName(game.home.name);
-                    const awayPlayer = extractPlayerName(game.away.name);
-
-                    [homePlayer, awayPlayer].forEach(player => {
-                        if (!playerStats[player]) {
-                            playerStats[player] = { goalsScored: 0, gamesPlayed: 0, wins: 0 };
-                        }
-                    });
-
-                    if (game.ss && game.ss.includes('-')) {
-                        const [homeScoreFt, awayScoreFt] = game.ss.split('-').map(Number);
-                        const homeScoreHt = parseInt(game.scores["1"].home) || 0;
-                        const awayScoreHt = parseInt(game.scores["1"].away) || 0;
+    // Melhores jogadores com cards
+    const playerStats = {};
+    filteredGamesMarket.forEach(game => {
+        const homePlayer = extractPlayerName(game.home.name);
+        const awayPlayer = extractPlayerName(game.away.name);
+        [homePlayer, awayPlayer].forEach(player => {
+            if (!playerStats[player]) {
+                playerStats[player] = { goalsScored: 0, gamesPlayed: 0, wins: 0 };
+            }
+        });
+        if (game.ss && game.ss.includes('-')) {
+            const [homeScoreFt, awayScoreFt] = game.ss.split('-').map(Number);
+            const homeScoreHt = parseInt(game.scores["1"].home) || 0;
+            const awayScoreHt = parseInt(game.scores["1"].away) || 0;
 
                         playerStats[homePlayer].goalsScored += homeScoreFt + homeScoreHt;
                         playerStats[awayPlayer].goalsScored += awayScoreFt + awayScoreHt;
@@ -2139,11 +2151,65 @@ ${player.games} Jogos
 
                 Object.entries(strategies).forEach(([strategyName, strategy]) => {
                     const leagueGames = allGames.filter(g => g.league?.name === strategy.league).sort((a, b) => b.time - a.time).slice(0, numGames);
-                    if (leagueGames.length === 0) return;
+                    let successRate = 0;
+                    let criteriaRates = strategy.criteria.map(() => ({ count: 0 }));
+                    let results = [];
 
-                    const results = leagueGames.map(game => ({
-                        game,
-                        details: strategy.criteria.map(crit => ({name: crit.name, met: crit.check(game)})),
+                    if (leagueGames.length > 0) {
+                        results = leagueGames.map(game => ({
+                            game,
+                            details: strategy.criteria.map(crit => ({name: crit.name, met: crit.check(game)})),
+                            success: strategy.criteria.every(crit => crit.check(game))
+                        }));
+                        const successCount = results.filter(r => r.success).length;
+                        successRate = (successCount / leagueGames.length * 100).toFixed(1);
+                        criteriaRates = strategy.criteria.map((crit, index) => {
+                            const metCount = results.filter(r => r.details[index].met).length;
+                            return (metCount / leagueGames.length * 100).toFixed(1);
+                        });
+                    }
+
+                    // Sempre criar o card, mesmo com 0 jogos
+                    const strategyCard = document.createElement('div');
+                    strategyCard.className = 'strategy-card';
+                    let icon = '';
+                    let leagueTag = '';
+                    if (strategyName === 'Over_HT_GT') {
+                        icon = 'bi-clock';
+                        leagueTag = '<span class="league-tag gt">GT League</span>';
+                    } else if (strategyName === 'Over_Gols_Battle') {
+                        icon = 'bi-shield';
+                        leagueTag = '<span class="league-tag battle">Battle League</span>';
+                    } else if (strategyName === 'Over_Volta') {
+                        icon = 'bi-arrow-repeat';
+                        leagueTag = '<span class="league-tag volta">Volta League</span>';
+                    }
+                    let rateClass = successRate >= 80 ? 'high-rate' : successRate >= 50 ? 'medium-rate' : 'low-rate';
+                    strategyCard.innerHTML = `
+                        <div class="strategy-header">
+                            <i class="bi ${icon}"></i>
+                            <span>${strategyName}</span>
+                            ${leagueTag}
+                        </div>
+                        <div class="success-metric ${rateClass}">${successRate}%</div>
+                        <div class="criteria-list">
+                            ${strategy.criteria.map((crit, i) => {
+                                const rate = criteriaRates[i] || 0;
+                                return `<div class="criteria-item"><span class="criteria-name">${crit.name}</span><span class="criteria-rate ${rate >= 80 ? 'high-rate' : ''}">${rate}%</span></div>`;
+                            }).join('')}
+                        </div>
+                        <div class="successful-games-list">
+                            <h6><i class="bi bi-check-circle"></i> Jogos 100% Sucesso</h6>
+                            ${leagueGames.length === 0 ? '<p class="no-data">Nenhum jogo disponível</p>' : results.filter(r => r.success).map(r => `
+                                <div class="game-card">
+                                    <div class="game-header">${r.game.home.name} vs ${r.game.away.name}</div>
+                                    <div class="game-scores">HT: ${r.game.scores?.['1']?.home || 0}-${r.game.scores?.['1']?.away || 0} | FT: ${r.game.ss || 'N/A'}</div>
+                                    <div class="game-time">${new Date(r.game.time * 1000).toLocaleDateString()}</div>
+                                </div>
+                            `).join('') || '<p class="no-data">Nenhum jogo encontrado</p>'}
+                        </div>
+                    `;
+                    strategiesGrid.appendChild(strategyCard);
                         success: strategy.criteria.every(crit => crit.check(game))
                     }));
 
