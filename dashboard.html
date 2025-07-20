@@ -197,85 +197,110 @@
             height: 3rem;
         }
 
-        .strategy-simulator-results {
-            margin-top: 20px;
+        .strategy-simulator-container {
+            margin-top: 30px;
             padding: 20px;
-            background-color: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #1a1f2e, #2a3145);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         }
-
-        .strategy-simulator-results h4 {
+        .simulator-title {
+            font-size: 1.4rem;
             color: var(--primary-accent);
-            margin-bottom: 20px;
-            font-size: 1.3rem;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 10px;
-        }
-
-        .strategy-section {
-            margin-bottom: 25px;
-            padding: 15px;
-            background-color: rgba(255,255,255,0.05);
-            border-radius: 8px;
-        }
-
-        .strategy-section h5 {
-            color: var(--text-color);
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-        }
-
-        .success-rate {
-            color: var(--success-color);
-            font-weight: bold;
-        }
-
-        .criteria-table {
-            width: 100%;
-            margin-bottom: 20px;
-            border-collapse: collapse;
-        }
-
-        .criteria-table th, .criteria-table td {
-            padding: 8px 12px;
-            text-align: left;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .criteria-table th {
-            background-color: rgba(0,0,0,0.2);
-            font-weight: bold;
-        }
-
-        .successful-games h6 {
-            color: var(--text-color);
-            margin-bottom: 15px;
-            font-size: 1rem;
-        }
-
-        .game-result {
-            background-color: rgba(0,204,102,0.05);
-            padding: 12px;
             margin-bottom: 10px;
-            border-radius: 6px;
-            border-left: 4px solid var(--primary-accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-
-        .game-teams {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .game-scores {
+        .simulator-subtitle {
             font-size: 0.9rem;
-            margin-bottom: 5px;
+            color: var(--muted-text);
+            margin-bottom: 20px;
         }
-
-        .game-date {
+        .strategies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .strategy-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .strategy-card:hover {
+            transform: translateY(-5px);
+        }
+        .card-header {
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card-header h5 {
+            margin: 0;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .league-tag {
             font-size: 0.8rem;
+            padding: 4px 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+        }
+        .success-metric {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .high-success { color: #00e676; }
+        .medium-success { color: #ffeb3b; }
+        .low-success { color: #ff1744; }
+        .metric-label {
+            font-size: 0.9rem;
             color: var(--muted-text);
         }
+        .criteria-list {
+            padding: 15px;
+        }
+        .criteria-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .criteria-name { font-size: 0.95rem; }
+        .criteria-rate { font-weight: bold; }
+        .high-rate { color: var(--success-color); }
+        .successful-games-list {
+            padding: 15px;
+            background: rgba(0,0,0,0.1);
+        }
+        .successful-games-list h6 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .game-card {
+            background: rgba(255,255,255,0.02);
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        .game-header { font-weight: bold; }
+        .game-scores { font-size: 0.9rem; color: var(--text-color); }
+        .game-time { font-size: 0.8rem; color: var(--muted-text); }
+        .no-data { color: var(--warning-color); text-align: center; }
 
         .high-value {
             color: var(--success-color);
@@ -2083,160 +2108,82 @@ ${player.games} Jogos
                     'Over_HT_GT': {
                         league: 'Esoccer GT Leagues – 12 mins play',
                         criteria: [
-                            { name: 'Over 2.5 HT', check: game => {
-                                if (game.scores && game.scores['1']) {
-                                    const home = parseInt(game.scores['1'].home) || 0;
-                                    const away = parseInt(game.scores['1'].away) || 0;
-                                    return home + away > 2.5;
-                                }
-                                return false;
-                            } },
-                            { name: 'BTTS HT', check: game => {
-                                if (game.scores && game.scores['1']) {
-                                    const home = parseInt(game.scores['1'].home) || 0;
-                                    const away = parseInt(game.scores['1'].away) || 0;
-                                    return home > 0 && away > 0;
-                                }
-                                return false;
-                            } }
+                            { name: 'Over 2.5 HT', check: game => game.scores?.['1'] ? (parseInt(game.scores['1'].home) || 0) + (parseInt(game.scores['1'].away) || 0) > 2.5 : false },
+                            { name: 'BTTS HT', check: game => game.scores?.['1'] ? (parseInt(game.scores['1'].home) || 0) > 0 && (parseInt(game.scores['1'].away) || 0) > 0 : false }
                         ]
                     },
                     'Over_Gols_Battle': {
                         league: 'Esoccer Battle - 8 mins play',
                         criteria: [
-                            { name: 'Over 4.5 FT', check: game => {
-                                if (game.ss && game.ss.includes('-')) {
-                                    const [home, away] = game.ss.split('-').map(Number);
-                                    return home + away > 4.5;
-                                }
-                                return false;
-                            } },
-                            { name: 'BTTS HT', check: game => {
-                                if (game.scores && game.scores['1']) {
-                                    const home = parseInt(game.scores['1'].home) || 0;
-                                    const away = parseInt(game.scores['1'].away) || 0;
-                                    return home > 0 && away > 0;
-                                }
-                                return false;
-                            } },
-                            { name: 'Over 2.5 HT', check: game => {
-                                if (game.scores && game.scores['1']) {
-                                    const home = parseInt(game.scores['1'].home) || 0;
-                                    const away = parseInt(game.scores['1'].away) || 0;
-                                    return home + away > 2.5;
-                                }
-                                return false;
-                            } }
+                            { name: 'Over 4.5 FT', check: game => game.ss?.includes('-') ? game.ss.split('-').map(Number).reduce((a, b) => a + b, 0) > 4.5 : false },
+                            { name: 'BTTS HT', check: game => game.scores?.['1'] ? (parseInt(game.scores['1'].home) || 0) > 0 && (parseInt(game.scores['1'].away) || 0) > 0 : false },
+                            { name: 'Over 2.5 HT', check: game => game.scores?.['1'] ? (parseInt(game.scores['1'].home) || 0) + (parseInt(game.scores['1'].away) || 0) > 2.5 : false }
                         ]
                     },
                     'Over_Volta': {
                         league: 'Esoccer Battle Volta - 6 mins play',
                         criteria: [
-                            { name: 'Over 6.0 FT', check: game => {
-                                if (game.ss && game.ss.includes('-')) {
-                                    const [home, away] = game.ss.split('-').map(Number);
-                                    return home + away > 6.0;
-                                }
-                                return false;
-                            } },
-                            { name: 'BTTS HT', check: game => {
-                                if (game.scores && game.scores['1']) {
-                                    const home = parseInt(game.scores['1'].home) || 0;
-                                    const away = parseInt(game.scores['1'].away) || 0;
-                                    return home > 0 && away > 0;
-                                }
-                                return false;
-                            } },
-                            { name: 'Over 3.0 HT', check: game => {
-                                if (game.scores && game.scores['1']) {
-                                    const home = parseInt(game.scores['1'].home) || 0;
-                                    const away = parseInt(game.scores['1'].away) || 0;
-                                    return home + away > 3.0;
-                                }
-                                return false;
-                            } }
+                            { name: 'Over 6.0 FT', check: game => game.ss?.includes('-') ? game.ss.split('-').map(Number).reduce((a, b) => a + b, 0) > 6.0 : false },
+                            { name: 'BTTS HT', check: game => game.scores?.['1'] ? (parseInt(game.scores['1'].home) || 0) > 0 && (parseInt(game.scores['1'].away) || 0) > 0 : false },
+                            { name: 'Over 3.0 HT', check: game => game.scores?.['1'] ? (parseInt(game.scores['1'].home) || 0) + (parseInt(game.scores['1'].away) || 0) > 3.0 : false }
                         ]
                     }
                 };
 
                 const numGames = parseInt(selectedGamesMarket) || 5;
-
-                const simulatorResults = document.createElement('div');
-                simulatorResults.className = 'strategy-simulator-results';
-                simulatorResults.innerHTML = '<h4>Simulador de Estratégias (Últimos ' + numGames + ' Jogos por Liga)</h4>';
+                const simulatorContainer = document.createElement('div');
+                simulatorContainer.className = 'strategy-simulator-container';
+                simulatorContainer.innerHTML = '<h4 class="simulator-title"><i class="bi bi-bar-chart-line"></i> Simulador de Estratégias</h4><p class="simulator-subtitle">Análise dos últimos ' + numGames + ' jogos por liga</p>';
+                const strategiesGrid = document.createElement('div');
+                strategiesGrid.className = 'strategies-grid';
 
                 Object.entries(strategies).forEach(([strategyName, strategy]) => {
-                    const leagueGames = allGames
-                        .filter(game => game.league && game.league.name === strategy.league)
-                        .sort((a, b) => b.time - a.time)
-                        .slice(0, numGames);
+                    const leagueGames = allGames.filter(g => g.league?.name === strategy.league).sort((a, b) => b.time - a.time).slice(0, numGames);
+                    if (leagueGames.length === 0) return;
 
-                    if (leagueGames.length === 0) {
-                        const emptySection = document.createElement('div');
-                        emptySection.className = 'strategy-section';
-                        emptySection.innerHTML = `<h5>${strategyName} - ${strategy.league}</h5><p>Nenhum jogo disponível para análise.</p>`;
-                        simulatorResults.appendChild(emptySection);
-                        return;
-                    }
+                    const results = leagueGames.map(game => ({
+                        game,
+                        details: strategy.criteria.map(crit => ({name: crit.name, met: crit.check(game)})),
+                        success: strategy.criteria.every(crit => crit.check(game))
+                    }));
 
-                    const results = leagueGames.map(game => {
-                        const criteriaResults = strategy.criteria.map(crit => ({name: crit.name, met: crit.check(game)}));
-                        return {
-                            game,
-                            success: criteriaResults.every(res => res.met),
-                            matched: criteriaResults.filter(res => res.met).length,
-                            total: criteriaResults.length,
-                            details: criteriaResults
-                        };
-                    });
-
-                    const successfulGames = results.filter(r => r.success);
-                    const successRate = (successfulGames.length / leagueGames.length * 100).toFixed(1);
-
-                    const strategySection = document.createElement('div');
-                    strategySection.className = 'strategy-section';
-                    strategySection.innerHTML = `
-                        <h5>${strategyName} - ${strategy.league}</h5>
-                        <p>Taxa de Sucesso: <span class="success-rate">${successRate}%</span> (${successfulGames.length}/${leagueGames.length} jogos)</p>
-                        <table class="criteria-table">
-                            <thead>
-                                <tr>
-                                    <th>Critério</th>
-                                    <th>Taxa de Acerto</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    const successRate = (results.filter(r => r.success).length / leagueGames.length * 100).toFixed(1);
+                    const strategyCard = document.createElement('div');
+                    strategyCard.className = 'strategy-card';
+                    strategyCard.innerHTML = `
+                        <div class="card-header">
+                            <h5><i class="bi bi-lightning-charge"></i> ${strategyName}</h5>
+                            <span class="league-tag">${strategy.league}</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="success-metric">
+                                <div class="metric-value ${successRate >= 70 ? 'high-success' : successRate >= 50 ? 'medium-success' : 'low-success'}">${successRate}%</div>
+                                <div class="metric-label">Taxa de Sucesso <span>(${results.filter(r => r.success).length}/${leagueGames.length})</span></div>
+                            </div>
+                            <div class="criteria-list">
                                 ${strategy.criteria.map(crit => {
-                                    const metCount = results.filter(r => r.details.find(d => d.name === crit.name).met).length;
-                                    const rate = (metCount / leagueGames.length * 100).toFixed(1);
-                                    return `<tr><td>${crit.name}</td><td>${rate}%</td></tr>`;
+                                    const rate = (results.filter(r => r.details.find(d => d.name === crit.name).met).length / leagueGames.length * 100).toFixed(1);
+                                    return `<div class="criteria-item"><span class="criteria-name">${crit.name}</span><span class="criteria-rate ${rate >= 80 ? 'high-rate' : ''}">${rate}%</span></div>`;
                                 }).join('')}
-                            </tbody>
-                        </table>
-                        <div class="successful-games">
-                            <h6>Jogos que Bateram 100%:</h6>
-                            ${successfulGames.length > 0 ? successfulGames.map(result => `
-                                <div class="game-result">
-                                    <div class="game-teams">${result.game.home.name} vs ${result.game.away.name}</div>
-                                    <div class="game-scores">
-                                        HT: ${result.game.scores?.['1']?.home || 0}-${result.game.scores?.['1']?.away || 0}
-                                        FT: ${result.game.ss || 'N/A'}
+                            </div>
+                            <div class="successful-games-list">
+                                <h6><i class="bi bi-check-circle"></i> Jogos 100% Sucesso</h6>
+                                ${results.filter(r => r.success).map(r => `
+                                    <div class="game-card">
+                                        <div class="game-header">${r.game.home.name} vs ${r.game.away.name}</div>
+                                        <div class="game-scores">HT: ${r.game.scores?.['1']?.home || 0}-${r.game.scores?.['1']?.away || 0} | FT: ${r.game.ss || 'N/A'}</div>
+                                        <div class="game-time">${new Date(r.game.time * 1000).toLocaleDateString()}</div>
                                     </div>
-                                    <div class="game-date">${new Date(result.game.time * 1000).toLocaleString()}</div>
-                                </div>
-                            `).join('') : '<p>Nenhum jogo atendeu a todos os critérios.</p>'}
+                                `).join('') || '<p class="no-data">Nenhum jogo encontrado</p>'}
+                            </div>
                         </div>
                     `;
-                    simulatorResults.appendChild(strategySection);
+                    strategiesGrid.appendChild(strategyCard);
                 });
 
+                simulatorContainer.appendChild(strategiesGrid);
                 const marketAnalysisTab = document.getElementById('market-analysis');
-                const existingSimulator = marketAnalysisTab.querySelector('.strategy-simulator-results');
-                if (existingSimulator) {
-                    existingSimulator.replaceWith(simulatorResults);
-                } else {
-                    marketAnalysisTab.appendChild(simulatorResults);
-                }
+                marketAnalysisTab.querySelector('.strategy-simulator-container')?.replaceWith(simulatorContainer) || marketAnalysisTab.appendChild(simulatorContainer);
             }
 
             marketSelector.addEventListener('change', (e) => {
