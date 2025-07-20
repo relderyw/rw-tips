@@ -86,6 +86,25 @@
             font-size: 1.8rem;
         }
         
+        .last-updated-header {
+            font-size: 0.9rem;
+            color: var(--muted-text);
+            font-family: 'Roboto', sans-serif;
+            margin: 0 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .refresh-btn {
+            cursor: pointer;
+            color: var(--primary-accent);
+            margin-left: 5px;
+        }
+        
+        .refresh-btn:hover {
+            color: #00b359;
+        }
+        
         .nav-buttons {
             display: flex;
             gap: 10px;
@@ -280,25 +299,6 @@
         
         .league-badge.active {
             box-shadow: 0 0 10px rgba(0, 204, 102, 0.5);
-        }
-        
-        .last-updated-header {
-            font-size: 0.9rem;
-            color: var(--muted-text);
-            font-family: 'Roboto', sans-serif;
-            margin: 0 20px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .refresh-btn {
-            cursor: pointer;
-            color: var(--primary-accent);
-            margin-left: 5px;
-        }
-        
-        .refresh-btn:hover {
-            color: #00b359;
         }
         
         .games-filter {
@@ -583,6 +583,14 @@
             margin-bottom: 30px;
         }
 
+        .tab-content > .tab-pane {
+            display: none;
+        }
+
+        .tab-content > .tab-pane.active {
+            display: block;
+        }
+
         @media (max-width: 992px) {
             .best-player-section {
                 flex: 1 1 calc(50% - 20px);
@@ -668,121 +676,139 @@
             </div>
         </div>
         
-        <div class="row charts-row">
-            <div class="col-md-6">
-                <div class="chart-container">
-                    <canvas id="goalsChart"></canvas>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="chart-container">
-                    <canvas id="bttsChart"></canvas>
-                </div>
-            </div>
-        </div>
+        <!-- Navegação por Abas -->
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true">Visão Geral</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="market-analysis-tab" data-bs-toggle="tab" data-bs-target="#market-analysis" type="button" role="tab" aria-controls="market-analysis" aria-selected="false">Análise de Mercados</button>
+            </li>
+        </ul>
         
-        <h2 class="section-title">Análise por Liga</h2>
-        <div class="table-responsive">
-            <table class="table table-dark table-hover" id="leagueTable">
-                <thead>
-                    <tr>
-                        <th>Liga</th>
-                        <th>Jogos</th>
-                        <th>Média de Gols</th>
-                        <th>BTTS %</th>
-                        <th>Over 2.5 %</th>
-                        <th>Over 3.5 %</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Dados serão inseridos aqui -->
-                </tbody>
-            </table>
-        </div>
-        
-        <h2 class="section-title">Jogos Recentes</h2>
-        <div class="table-responsive">
-            <table class="table table-dark table-hover" id="recentGamesTable">
-                <thead>
-                    <tr>
-                        <th>Data/Hora</th>
-                        <th>Liga</th>
-                        <th>Equipes</th>
-                        <th>Placar HT</th>
-                        <th>Placar FT</th>
-                        <th>Total Gols</th>
-                        <th>BTTS</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Dados serão inseridos aqui -->
-                </tbody>
-            </table>
-        </div>
-        
-        <nav aria-label="Paginação">
-            <ul class="pagination" id="pagination">
-                <!-- Paginação será inserida aqui -->
-            </ul>
-        </nav>
-        
-        <div class="card mt-4">
-            <div class="card-header">
-                Análise Detalhada de Mercados
-            </div>
-            <div class="card-body">
-                <div class="league-filter mb-3">
-                    <div class="filter-title">Selecionar Liga:</div>
-                    <div id="detailedLeagueBadges"></div>
-                </div>
-                <div class="games-filter mb-3">
-                    <div class="filter-title">Selecionar Quantidade de Jogos:</div>
-                    <div id="detailedGamesFilter">
-                        <button type="button" class="filter-btn active" data-games="5">5 Jogos</button>
-                        <button type="button" class="filter-btn" data-games="10">10 Jogos</button>
-                        <button type="button" class="filter-btn" data-games="15">15 Jogos</button>
+        <div class="tab-content" id="myTabContent">
+            <!-- Aba Visão Geral -->
+            <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+                <div class="row charts-row">
+                    <div class="col-md-6">
+                        <div class="chart-container">
+                            <canvas id="goalsChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="chart-container">
+                            <canvas id="bttsChart"></canvas>
+                        </div>
                     </div>
                 </div>
-                <div class="mb-3">
-                    <div class="filter-title">Selecionar Mercado:</div>
-                    <select id="marketSelector" class="form-select">
-                        <option value="btts_sim_ft">BTTS Sim (FT)</option>
-                        <option value="over_2.5_ft">Over 2.5 (FT)</option>
-                        <option value="over_3.5_ft">Over 3.5 (FT)</option>
-                        <option value="over_4.5_ft">Over 4.5 (FT)</option>
-                        <option value="btts_sim_ht">BTTS Sim (HT)</option>
-                        <option value="over_0.5_ht">Over 0.5 (HT)</option>
-                        <option value="over_1.5_ht">Over 1.5 (HT)</option>
-                        <option value="over_2.5_ht">Over 2.5 (HT)</option>
-                    </select>
-                </div>
-                <div id="marketAnalysisResult">
-                    <h5>Resultados da Análise</h5>
-                    <table class="table table-dark table-hover">
+                
+                <h2 class="section-title">Análise por Liga</h2>
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover" id="leagueTable">
                         <thead>
                             <tr>
-                                <th>Mercado</th>
-                                <th>Ocorrências</th>
-                                <th>Percentual (%)</th>
-                                <th>Odd Justa</th>
-                                <th>Valor</th>
-                            </tr>
-                        </thead>
-                        <tbody id="marketAnalysisTable"></tbody>
-                    </table>
-                    <h5>Confrontos Mais Overs</h5>
-                    <table class="table table-dark table-hover">
-                        <thead>
-                            <tr>
-                                <th>Confronto</th>
-                                <th>Total de Gols</th>
+                                <th>Liga</th>
                                 <th>Jogos</th>
+                                <th>Média de Gols</th>
+                                <th>BTTS %</th>
+                                <th>Over 2.5 %</th>
+                                <th>Over 3.5 %</th>
                             </tr>
                         </thead>
-                        <tbody id="topOversTable"></tbody>
+                        <tbody>
+                            <!-- Dados serão inseridos aqui -->
+                        </tbody>
                     </table>
-                    <h5>Melhores Jogadores</h5>
-                    <div id="topPlayersList" class="best-players-container"></div>
+                </div>
+                
+                <h2 class="section-title">Jogos Recentes</h2>
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover" id="recentGamesTable">
+                        <thead>
+                            <tr>
+                                <th>Data/Hora</th>
+                                <th>Liga</th>
+                                <th>Equipes</th>
+                                <th>Placar HT</th>
+                                <th>Placar FT</th>
+                                <th>Total Gols</th>
+                                <th>BTTS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dados serão inseridos aqui -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <nav aria-label="Paginação">
+                    <ul class="pagination" id="pagination">
+                        <!-- Paginação será inserida aqui -->
+                    </ul>
+                </nav>
+            </div>
+            
+            <!-- Aba Análise de Mercados -->
+            <div class="tab-pane fade" id="market-analysis" role="tabpanel" aria-labelledby="market-analysis-tab">
+                <div class="card">
+                    <div class="card-header">
+                        Análise Detalhada de Mercados
+                    </div>
+                    <div class="card-body">
+                        <div class="league-filter mb-3">
+                            <div class="filter-title">Selecionar Liga:</div>
+                            <div id="detailedLeagueBadges"></div>
+                        </div>
+                        <div class="games-filter mb-3">
+                            <div class="filter-title">Selecionar Quantidade de Jogos:</div>
+                            <div id="detailedGamesFilter">
+                                <button type="button" class="filter-btn active" data-games="5">5 Jogos</button>
+                                <button type="button" class="filter-btn" data-games="10">10 Jogos</button>
+                                <button type="button" class="filter-btn" data-games="15">15 Jogos</button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="filter-title">Selecionar Mercado:</div>
+                            <select id="marketSelector" class="form-select">
+                                <option value="btts_sim_ft">BTTS Sim (FT)</option>
+                                <option value="over_2.5_ft">Over 2.5 (FT)</option>
+                                <option value="over_3.5_ft">Over 3.5 (FT)</option>
+                                <option value="over_4.5_ft">Over 4.5 (FT)</option>
+                                <option value="btts_sim_ht">BTTS Sim (HT)</option>
+                                <option value="over_0.5_ht">Over 0.5 (HT)</option>
+                                <option value="over_1.5_ht">Over 1.5 (HT)</option>
+                                <option value="over_2.5_ht">Over 2.5 (HT)</option>
+                            </select>
+                        </div>
+                        <div id="marketAnalysisResult">
+                            <h5>Resultados da Análise</h5>
+                            <table class="table table-dark table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Mercado</th>
+                                        <th>Ocorrências</th>
+                                        <th>Percentual (%)</th>
+                                        <th>Odd Justa</th>
+                                        <th>Valor</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="marketAnalysisTable"></tbody>
+                            </table>
+                            <h5>Confrontos Mais Overs</h5>
+                            <table class="table table-dark table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Confronto</th>
+                                        <th>Total de Gols</th>
+                                        <th>Jogos</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="topOversTable"></tbody>
+                            </table>
+                            <h5>Melhores Jogadores</h5>
+                            <div id="topPlayersList" class="best-players-container"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -794,6 +820,7 @@
         </div>
     </div>
     
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Verificar login
