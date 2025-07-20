@@ -197,6 +197,61 @@
             height: 3rem;
         }
 
+        .strategy-simulator-results {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .strategy-simulator-results h4 {
+            color: var(--text-color);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .strategy-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+        }
+
+        .strategy-section h5 {
+            color: var(--primary-accent);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .strategy-section p {
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+
+        .successful-games {
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .successful-games h6 {
+            color: var(--text-color);
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .game-result {
+            background-color: rgba(0, 204, 102, 0.1);
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            border-left: 3px solid var(--primary-accent);
+        }
+
         .high-value {
             color: var(--success-color);
             font-weight: bold;
@@ -1083,6 +1138,7 @@
                 updateLeagueFiltersMarket();
                 updateGamesFilterButtonsMarket();
                 updateMarketAnalysis();
+                updateStrategySimulator();
             }
 
             function applyFilters() {
@@ -1997,6 +2053,142 @@ ${player.games} Jogos
 `; topPlayersList.appendChild(playerCard);
                 });
             }
+            function updateStrategySimulator() {
+                const strategies = {
+                    'Over_HT_GT': {
+                        league: 'Esoccer GT Leagues – 12 mins play',
+                        criteria: {
+                            over_ht_2_5: game => {
+                                if (game.scores && game.scores['1']) {
+                                    const homeScoreHt = parseInt(game.scores['1'].home) || 0;
+                                    const awayScoreHt = parseInt(game.scores['1'].away) || 0;
+                                    return homeScoreHt + awayScoreHt > 2.5;
+                                }
+                                return false;
+                            },
+                            btts: game => {
+                                if (game.scores && game.scores['1']) {
+                                    const homeScoreHt = parseInt(game.scores['1'].home) || 0;
+                                    const awayScoreHt = parseInt(game.scores['1'].away) || 0;
+                                    return homeScoreHt > 0 && awayScoreHt > 0;
+                                }
+                                return false;
+                            }
+                        }
+                    },
+                    'Over_Gols_Battle': {
+                        league: 'Esoccer Battle - 8 mins play',
+                        criteria: {
+                            over_ft_4_5: game => {
+                                if (game.ss && game.ss.includes('-')) {
+                                    const [homeScoreFt, awayScoreFt] = game.ss.split('-').map(Number);
+                                    return homeScoreFt + awayScoreFt > 4.5;
+                                }
+                                return false;
+                            },
+                            btts_ht: game => {
+                                if (game.scores && game.scores['1']) {
+                                    const homeScoreHt = parseInt(game.scores['1'].home) || 0;
+                                    const awayScoreHt = parseInt(game.scores['1'].away) || 0;
+                                    return homeScoreHt > 0 && awayScoreHt > 0;
+                                }
+                                return false;
+                            },
+                            over_ht_2_5: game => {
+                                if (game.scores && game.scores['1']) {
+                                    const homeScoreHt = parseInt(game.scores['1'].home) || 0;
+                                    const awayScoreHt = parseInt(game.scores['1'].away) || 0;
+                                    return homeScoreHt + awayScoreHt > 2.5;
+                                }
+                                return false;
+                            }
+                        }
+                    },
+                    'Over_Volta': {
+                        league: 'Esoccer Battle Volta - 6 mins play',
+                        criteria: {
+                            over_ft_6_0: game => {
+                                if (game.ss && game.ss.includes('-')) {
+                                    const [homeScoreFt, awayScoreFt] = game.ss.split('-').map(Number);
+                                    return homeScoreFt + awayScoreFt > 6.0;
+                                }
+                                return false;
+                            },
+                            btts_ht: game => {
+                                if (game.scores && game.scores['1']) {
+                                    const homeScoreHt = parseInt(game.scores['1'].home) || 0;
+                                    const awayScoreHt = parseInt(game.scores['1'].away) || 0;
+                                    return homeScoreHt > 0 && awayScoreHt > 0;
+                                }
+                                return false;
+                            },
+                            over_ht_3_0: game => {
+                                if (game.scores && game.scores['1']) {
+                                    const homeScoreHt = parseInt(game.scores['1'].home) || 0;
+                                    const awayScoreHt = parseInt(game.scores['1'].away) || 0;
+                                    return homeScoreHt + awayScoreHt > 3.0;
+                                }
+                                return false;
+                            }
+                        }
+                    }
+                };
+
+                const simulatorResults = document.createElement('div');
+                simulatorResults.className = 'strategy-simulator-results';
+                simulatorResults.innerHTML = '<h4>Simulador de Estratégias</h4>';
+
+                Object.entries(strategies).forEach(([strategyName, strategy]) => {
+                    const leagueGames = filteredGamesMarket.filter(game => 
+                        game.league && game.league.name === strategy.league
+                    ).slice(0, parseInt(selectedGamesMarket) || 5);
+
+                    if (leagueGames.length === 0) return;
+
+                    const results = leagueGames.map(game => {
+                        const criteriaResults = Object.entries(strategy.criteria).map(([name, check]) => check(game));
+                        return {
+                            game,
+                            success: criteriaResults.every(result => result === true),
+                            matchedCriteria: criteriaResults.filter(result => result === true).length,
+                            totalCriteria: criteriaResults.length
+                        };
+                    });
+
+                    const successfulGames = results.filter(r => r.success);
+                    const successRate = (successfulGames.length / leagueGames.length * 100).toFixed(1);
+
+                    const strategySection = document.createElement('div');
+                    strategySection.className = 'strategy-section';
+                    strategySection.innerHTML = `
+                        <h5>${strategyName} - ${strategy.league}</h5>
+                        <p>Taxa de Sucesso: ${successRate}% (${successfulGames.length}/${leagueGames.length} jogos)</p>
+                        <div class="successful-games">
+                            <h6>Jogos que bateram 100% dos critérios:</h6>
+                            ${successfulGames.map(result => `
+                                <div class="game-result">
+                                    ${result.game.home.name} vs ${result.game.away.name}
+                                    <br>
+                                    HT: ${result.game.scores['1'].home}-${result.game.scores['1'].away}
+                                    FT: ${result.game.ss}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+
+                    simulatorResults.appendChild(strategySection);
+                });
+
+                // Substituir o conteúdo existente ou adicionar ao final da seção de análise de mercados
+                const marketAnalysisTab = document.getElementById('market-analysis');
+                const existingSimulator = marketAnalysisTab.querySelector('.strategy-simulator-results');
+                if (existingSimulator) {
+                    existingSimulator.replaceWith(simulatorResults);
+                } else {
+                    marketAnalysisTab.appendChild(simulatorResults);
+                }
+            }
+
             marketSelector.addEventListener('change', (e) => {
                 selectedMarket = e.target.value;
                 processData();
