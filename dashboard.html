@@ -14,7 +14,7 @@
             --secondary-bg: #161923;
             --card-bg: #1c202b;
             --text-color: #e0e0e0;
-            --muted-text: #a0a0a0;
+            --muted-text: #c0c0c0;
 
             --gt-color: #00ff66;
             --battle-color: #ff3a5e;
@@ -37,6 +37,8 @@
             color: var(--text-color);
             padding: 0;
             margin: 0;
+            font-size: 1.1rem;
+            line-height: 1.6;
         }
 
         .header {
@@ -115,14 +117,14 @@
         }
 
         .nav-btn {
-            padding: 8px 16px;
-            border-radius: 6px;
+            padding: 10px 20px;
+            border-radius: 8px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 1rem;
             text-align: center;
             white-space: nowrap;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             border: none;
             color: var(--text-color);
         }
@@ -157,7 +159,8 @@
         }
 
         .card-body {
-            padding: 20px;
+            padding: 30px;
+            transition: all 0.3s ease;
         }
 
         .btn-primary {
@@ -236,6 +239,7 @@
 
         .strategy-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0, 204, 102, 0.2);
         }
 
         .card-header {
@@ -268,7 +272,7 @@
         }
 
         .metric-value {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: bold;
         }
 
@@ -301,7 +305,7 @@
         }
 
         .criteria-name {
-            font-size: 0.95rem;
+            font-size: 1.05rem;
         }
 
         .criteria-rate {
@@ -342,7 +346,7 @@
         }
 
         .game-time {
-            font-size: 0.8rem;
+            font-size: 1rem;
             color: var(--muted-text);
         }
 
@@ -383,10 +387,12 @@
             background-color: rgba(0, 0, 0, 0.2);
             color: var(--text-color);
             border-color: rgba(255, 255, 255, 0.05);
+            padding: 12px;
         }
 
         .table td {
             border-color: rgba(255, 255, 255, 0.05);
+            padding: 12px;
         }
 
         .badge {
