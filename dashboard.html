@@ -989,38 +989,7 @@
                     </div>
                     <div class="card-body">
                         <div id="marketAnalysisResult">
-                            <h5>Melhores Mercados <i class="bi bi-star-fill" style="color: var(--success-color);"></i>
-                            </h5>
-                            <table class="table table-dark table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Mercado</th>
-                                        <th>Ocorrências</th>
-                                        <th>Percentual (%)</th>
-                                        <th>Odd Justa</th>
-                                        <th>Valor</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="marketAnalysisTable"></tbody>
-                            </table>
-
-                            <h5>Melhores Confrontos <i class="bi bi-trophy-fill" style="color: #ffd700;"></i></h5>
-                            <div class="table-responsive">
-                                <table class="table table-dark table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Confronto</th>
-                                            <th>Média Gols</th>
-                                            <th>Jogos</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="topOversTable"></tbody>
-                                </table>
-                            </div>
-
-                            <h5>Melhores Jogadores <i class="bi bi-person-fill"
-                                    style="color: var(--primary-accent);"></i></h5>
-                            <div id="topPlayersList" class="best-players-container"></div>
+                            <!-- Conteúdo será inserido aqui -->
                         </div>
                     </div>
                 </div>
@@ -1055,9 +1024,7 @@
             const leagueBadgesMarket = document.getElementById('leagueBadgesMarket');
             const gamesFilterButtonsMarket = document.getElementById('gamesFilterButtonsMarket');
             const marketSelector = document.getElementById('marketSelector');
-            const marketAnalysisTable = document.getElementById('marketAnalysisTable');
-            const topOversTable = document.getElementById('topOversTable');
-            const topPlayersList = document.getElementById('topPlayersList');
+            const marketAnalysisResult = document.getElementById('marketAnalysisResult');
 
             let allGames = [];
             let filteredGamesOverview = [];
@@ -1191,9 +1158,7 @@
                         if (goalsChart) goalsChart.destroy();
                         if (bttsChart) bttsChart.destroy();
                         leagueBadgesMarket.innerHTML = '<button class="league-badge active">Todas</button>';
-                        marketAnalysisTable.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum jogo encontrado</td></tr>';
-                        topOversTable.innerHTML = '<tr><td colspan="3" class="text-center">Nenhum confronto encontrado</td></tr>';
-                        topPlayersList.innerHTML = '<p class="text-center">Nenhum jogador encontrado</p>';
+                        marketAnalysisResult.innerHTML = '<p class="text-center">Nenhum jogo encontrado</p>';
                     }
 
                 } catch (error) {
@@ -1207,9 +1172,7 @@
                     if (goalsChart) goalsChart.destroy();
                     if (bttsChart) bttsChart.destroy();
                     leagueBadgesMarket.innerHTML = '<button class="league-badge active">Todas</button>';
-                    marketAnalysisTable.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum jogo encontrado</td></tr>';
-                    topOversTable.innerHTML = '<tr><td colspan="3" class="text-center">Nenhum confronto encontrado</td></tr>';
-                    topPlayersList.innerHTML = '<p class="text-center">Nenhum jogador encontrado</p>';
+                    marketAnalysisResult.innerHTML = '<p class="text-center">Nenhum jogo encontrado</p>';
                 } finally {
                     loadingElement.style.display = 'none';
                     isLoading = false;
@@ -1989,15 +1952,14 @@
 
             function updateMarketAnalysis() {
                 const totalGames = filteredGamesMarket.length;
-                const marketAnalysisContainer = document.getElementById('marketAnalysisContainer');
-                marketAnalysisContainer.innerHTML = '';
+                marketAnalysisResult.innerHTML = '';
 
                 if (totalGames === 0) {
-                    marketAnalysisContainer.innerHTML = '<p class="no-data">Nenhum dado disponível para análise.</p>';
+                    marketAnalysisResult.innerHTML = '<p class="no-data">Nenhum dado disponível para análise.</p>';
                     return;
                 }
 
-                // Cálculo de métricas do mercado (mesmo que antes)
+                // Cálculo de métricas do mercado
                 let count = 0;
                 let avgOdd = 0;
                 filteredGamesMarket.forEach(game => {
@@ -2066,22 +2028,43 @@
 
                 // Novo layout para análise de mercado
                 const marketCard = document.createElement('div');
-                marketCard.className = 'strategy-card';
+                marketCard.className = 'card mb-4';
                 marketCard.innerHTML = `
-        <div class="strategy-header">
-            <i class="bi bi-graph-up"></i>
-            <span>${marketNames[selectedMarket]}</span>
-        </div>
-        <div class="success-metric ${percentage > 50 ? 'high-rate' : percentage > 30 ? 'medium-rate' : 'low-rate'}">${percentage}%</div>
-        <div class="criteria-list">
-            <div class="criteria-item"><span>Ocorrências</span><span>${count}/${totalGames}</span></div>
-            <div class="criteria-item"><span>Odd Justa</span><span>${fairOdd}</span></div>
-            <div class="criteria-item"><span>Valor</span><span class="${valueClass}">${value}</span></div>
-        </div>
-    `;
-                marketAnalysisContainer.appendChild(marketCard);
+                    <div class="card-header">
+                        <h5>${marketNames[selectedMarket]}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="metric-value ${percentage > 50 ? 'high-success' : percentage > 30 ? 'medium-success' : 'low-success'}">${percentage}%</div>
+                                    <div class="metric-label">Taxa de Sucesso</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="metric-value">${count}/${totalGames}</div>
+                                    <div class="metric-label">Ocorrências</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="metric-value">${fairOdd}</div>
+                                    <div class="metric-label">Odd Justa</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="metric-value ${valueClass}">${value}</div>
+                                    <div class="metric-label">Valor</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                marketAnalysisResult.appendChild(marketCard);
 
-                // Confrontos mais overs com cards
+                // Confrontos mais overs
                 const matchTotals = {};
                 filteredGamesMarket.forEach(game => {
                     const matchKey = `${game.home.name} vs ${game.away.name}`;
@@ -2106,26 +2089,37 @@
                     .slice(0, 5);
 
                 const topOversSection = document.createElement('div');
-                topOversSection.className = 'top-section';
-                topOversSection.innerHTML = '<h5><i class="bi bi-fire"></i> Confrontos Mais Overs</h5>';
-                const oversGrid = document.createElement('div');
-                oversGrid.className = 'strategies-grid';
-                topMatches.forEach(match => {
-                    const card = document.createElement('div');
-                    card.className = 'strategy-card';
-                    card.innerHTML = `
-            <div class="strategy-header">
-                <span>${match.match}</span>
-            </div>
-            <div class="success-metric ${match.avgGoals > 3.5 ? 'high-rate' : ''}">${match.avgGoals} Média</div>
-            <div class="criteria-list"><div class="criteria-item"><span>Jogos</span><span>${match.games}</span></div></div>
-        `;
-                    oversGrid.appendChild(card);
-                });
-                topOversSection.appendChild(oversGrid);
-                marketAnalysisContainer.appendChild(topOversSection);
+                topOversSection.className = 'card mb-4';
+                topOversSection.innerHTML = `
+                    <div class="card-header">
+                        <h5><i class="bi bi-fire"></i> Confrontos Mais Overs</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Confronto</th>
+                                        <th>Média Gols</th>
+                                        <th>Jogos</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="topOversTable">
+                                    ${topMatches.map(match => `
+                                        <tr>
+                                            <td>${match.match}</td>
+                                            <td>${match.avgGoals}</td>
+                                            <td>${match.games}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+                marketAnalysisResult.appendChild(topOversSection);
 
-                // Melhores jogadores com cards
+                // Melhores jogadores
                 const playerStats = {};
                 filteredGamesMarket.forEach(game => {
                     const homePlayer = extractPlayerName(game.home.name);
@@ -2161,27 +2155,41 @@
                     .slice(0, 5);
 
                 const topPlayersSection = document.createElement('div');
-                topPlayersSection.className = 'top-section';
-                topPlayersSection.innerHTML = '<h5><i class="bi bi-trophy"></i> Melhores Jogadores</h5>';
-                const topPlayersList = document.createElement('div');
-                topPlayersList.className = 'players-grid';
-
-                topPlayers.forEach(player => {
-                    const playerCard = document.createElement('div');
-                    playerCard.className = 'best-player-card';
-                    if (player.avgGoals > 1.5 || player.winRate > 50) playerCard.classList.add('highlight');
-                    playerCard.innerHTML = `
-                        <div>${player.name}</div>
-                        <div>${player.avgGoals} Média Gols</div>
-                        <div>${player.winRate}% Vitórias</div>
-                        <div>${player.games} Jogos</div>
-                    `;
-                    topPlayersList.appendChild(playerCard);
-                });
-
-                topPlayersSection.appendChild(topPlayersList);
-                marketAnalysisContainer.appendChild(topPlayersSection);
+                topPlayersSection.className = 'card';
+                topPlayersSection.innerHTML = `
+                    <div class="card-header">
+                        <h5><i class="bi bi-trophy"></i> Melhores Jogadores</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="best-players-container">
+                            ${topPlayers.map(player => `
+                                <div class="best-player-card ${player.avgGoals > 1.5 || player.winRate > 50 ? 'highlight' : ''}">
+                                    <div class="best-player-info">
+                                        <i class="bi bi-person-circle"></i>
+                                        <span class="best-player-name">${player.name}</span>
+                                    </div>
+                                    <div class="best-player-stats">
+                                        <div class="stat-item">
+                                            <span class="stat-value">${player.avgGoals}</span>
+                                            <span class="stat-label">Média Gols</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-value">${player.winRate}%</span>
+                                            <span class="stat-label">Vitórias</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-value">${player.games}</span>
+                                            <span class="stat-label">Jogos</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                marketAnalysisResult.appendChild(topPlayersSection);
             }
+
             function updateStrategySimulator() {
                 const strategies = {
                     'Over_HT_GT': {
@@ -2279,18 +2287,17 @@
                     strategiesGrid.appendChild(strategyCard);
                 });
 
-        simulatorContainer.appendChild(strategiesGrid);
-        const marketAnalysisTab = document.getElementById('market-analysis');
-        marketAnalysisTab.querySelector('.strategy-simulator-container')?.replaceWith(simulatorContainer) || marketAnalysisTab.appendChild(simulatorContainer);
+                simulatorContainer.appendChild(strategiesGrid);
+                marketAnalysisResult.appendChild(simulatorContainer);
             }
 
-        marketSelector.addEventListener('change', (e) => {
-            selectedMarket = e.target.value;
-            processData();
-        });
+            marketSelector.addEventListener('change', (e) => {
+                selectedMarket = e.target.value;
+                processData();
+            });
 
-        refreshBtn.addEventListener('click', fetchData);
-        fetchData();
+            refreshBtn.addEventListener('click', fetchData);
+            fetchData();
         });
     </script>
 </body>
