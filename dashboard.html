@@ -1111,6 +1111,7 @@
                             }
 
                             const data = await response.json();
+                            console.log(`Página ${page}: ${data.partidas ? data.partidas.length : 0} partidas totais`);
 
                             if (!data.partidas || !Array.isArray(data.partidas)) {
                                 throw new Error(`Formato de resposta inválido (página ${page})`);
@@ -1122,6 +1123,7 @@
 
                             const pageGames = data.partidas
                                 .filter(game => {
+                                    console.log(`Processando jogo: ${game.league_name}, data: ${game.data_realizacao}`);
                                     const isESoccer = game.league_name?.toLowerCase().includes('esoccer') ||
                                         game.league_name?.toLowerCase().includes('e-soccer') ||
                                         game.league_name?.toLowerCase().includes('fifa') ||
@@ -1152,6 +1154,7 @@
                                 }));
 
                             allGames = [...allGames, ...pageGames];
+                            console.log(`Página ${page}: ${pageGames.length} jogos filtrados`);
 
                             if (data.partidas.length < 100) {
                                 break;
@@ -1173,6 +1176,7 @@
                     });
 
                     allGames = uniqueGames;
+                    console.log(`Total de jogos únicos: ${allGames.length}`);
 
                     if (allGames.length > 0) {
                         const now = new Date();
@@ -1194,6 +1198,7 @@
 
                 } catch (error) {
                     console.error('Erro ao buscar dados:', error);
+                    console.log('Nenhum dado carregado devido a erro.');
                     leagueBadgesOverview.innerHTML = '<button class="league-badge active">Todas</button>';
                     leagueTableBody.innerHTML = '';
                     recentGamesTableBody.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum jogo encontrado</td></tr>';
