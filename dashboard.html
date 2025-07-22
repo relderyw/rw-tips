@@ -942,7 +942,7 @@
             .best-player-section {
                 flex: 1 1 calc(50% - 20px);
             }
-            
+
             .market-stats-container {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -960,9 +960,15 @@
             .logo {
                 height: 50px;
             }
-            
+
             .market-stats-container {
                 grid-template-columns: 1fr;
+            }
+
+            .market-analysis-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
             }
         }
 
@@ -977,12 +983,6 @@
 
             .best-player-stats {
                 grid-template-columns: 1fr 1fr;
-            }
-            
-            .market-analysis-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
             }
         }
     </style>
@@ -1211,7 +1211,7 @@
             let selectedLeagueMarket = 'all';
             let selectedGamesMarket = '5';
             let selectedMarket = 'btts_sim_ft';
-            let goalsChart, bttsChart;
+            let goalsChart, bttsChart, marketTrendChart;
             let isLoading = false;
 
             const maxPages = 20;
@@ -1265,7 +1265,6 @@
 
                             const pageGames = data.partidas
                                 .filter(game => {
-                                    console.log(`Processando jogo: ${game.league_name}, data: ${game.data_realizacao}`);
                                     const isESoccer = game.league_name?.toLowerCase().includes('esoccer') ||
                                         game.league_name?.toLowerCase().includes('e-soccer') ||
                                         game.league_name?.toLowerCase().includes('fifa') ||
@@ -1384,7 +1383,6 @@
                 updateLeagueFiltersMarket();
                 updateGamesFilterButtonsMarket();
                 updateMarketAnalysis();
-                updateStrategySimulator();
             }
 
             function applyFilters() {
@@ -2348,7 +2346,7 @@
                                         homeScoreHt = parseInt(game.scores["1"].home) || 0;
                                         awayScoreHt = parseInt(game.scores["1"].away) || 0;
                                     }
-                                    
+
                                     switch (selectedMarket) {
                                         case 'btts_sim_ft': return (homeScoreFt > 0 && awayScoreFt > 0) ? 1 : 0;
                                         case 'over_2.5_ft': return totalGoalsFt > 2.5 ? 1 : 0;
@@ -2418,13 +2416,13 @@
                             O mercado <span class="market-summary-highlight">${marketNames[selectedMarket]}</span> 
                             teve uma taxa de sucesso de <span class="market-summary-highlight">${percentage}%</span> 
                             nos últimos <span class="market-summary-highlight">${totalGames}</span> jogos analisados. 
-                            ${percentage > 60 ? 'Esta é uma taxa considerada alta, indicando uma boa oportunidade de apostas.' : 
-                            percentage > 40 ? 'Esta taxa é moderada, podendo valer a pena em combinação com outras análises.' : 
+                            ${percentage > 60 ? 'Esta é uma taxa considerada alta, indicando uma boa oportunidade de apostas.' :
+                        percentage > 40 ? 'Esta taxa é moderada, podendo valer a pena em combinação com outras análises.' :
                             'Esta taxa é baixa, sugerindo cautela ao apostar neste mercado.'}
                         </p>
                         <p class="market-summary-text">
-                            ${value >= 1.1 ? 'O valor encontrado é alto, indicando que as odds oferecidas podem estar superestimando a probabilidade real.' : 
-                            value >= 0.95 ? 'O valor encontrado é moderado, podendo representar uma boa oportunidade em certas situações.' : 
+                            ${value >= 1.1 ? 'O valor encontrado é alto, indicando que as odds oferecidas podem estar superestimando a probabilidade real.' :
+                        value >= 0.95 ? 'O valor encontrado é moderado, podendo representar uma boa oportunidade em certas situações.' :
                             'O valor encontrado é baixo, sugerindo que as odds oferecidas podem estar subestimando a probabilidade real.'}
                         </p>
                     </div>
@@ -2546,4 +2544,5 @@
         });
     </script>
 </body>
+
 </html>
