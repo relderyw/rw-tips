@@ -934,79 +934,79 @@
         <div id="gamesContainer"></div>
     </div>
 
-    <script>
-        // Função de verificação de login
-        function checkUserLogin() {
-            if (!sessionStorage.getItem('loggedIn')) {
-                window.location.replace('index.html');
-                return false;
-            }
-            return true;
+   <script>
+    // Função de verificação de login
+    function checkUserLogin() {
+        if (!sessionStorage.getItem('loggedIn')) {
+            window.location.replace('index.html');
+            return false;
         }
+        return true;
+    }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            // Verifica se o usuário está logado antes de prosseguir
-            if (!checkUserLogin()) return;
+    document.addEventListener('DOMContentLoaded', function () {
+        // Verifica se o usuário está logado antes de prosseguir
+        if (!checkUserLogin()) return;
 
-            const gamesContainer = document.getElementById('gamesContainer');
-            const searchFilter = document.getElementById('searchFilter');
-            const topNavButtons = document.querySelectorAll('.top-nav-button');
-            const viewUpcomingButton = document.getElementById('viewUpcomingButton');
-            const viewResultsButton = document.getElementById('viewResultsButton');
-            const viewLiveButton = document.getElementById('viewLiveButton');
-            const viewStatsButton = document.getElementById('viewStatsButton');
-            const registerBetsButton = document.getElementById('registerBetsButton');
-            const playerAnalysisButton = document.getElementById('playerAnalysisButton');
-            const dashboardButton = document.getElementById('dashboardButton');
-            const nbaStatsButton = document.getElementById('nbaStatsButton');
-            const radarButton = document.getElementById('radarButton');
-            const overButton = document.getElementById('overButton');
+        const gamesContainer = document.getElementById('gamesContainer');
+        const searchFilter = document.getElementById('searchFilter');
+        const topNavButtons = document.querySelectorAll('.top-nav-button');
+        const viewUpcomingButton = document.getElementById('viewUpcomingButton');
+        const viewResultsButton = document.getElementById('viewResultsButton');
+        const viewLiveButton = document.getElementById('viewLiveButton');
+        const viewStatsButton = document.getElementById('viewStatsButton');
+        const registerBetsButton = document.getElementById('registerBetsButton');
+        const playerAnalysisButton = document.getElementById('playerAnalysisButton');
+        const dashboardButton = document.getElementById('dashboardButton');
+        const nbaStatsButton = document.getElementById('nbaStatsButton');
+        const radarButton = document.getElementById('radarButton');
+        const overButton = document.getElementById('overButton');
 
-            let upcomingGamesData = [];
-            let pastGamesData = {};
-            let allGamesCache = [];
-            let latestTimestamp = 0;
-            let bestPlayersCache = {};
-            let updateInterval = null;
-            let selectedLeague = '';
-            let expandedLeagues = {};
+        let upcomingGamesData = [];
+        let pastGamesData = {};
+        let allGamesCache = [];
+        let latestTimestamp = 0;
+        let bestPlayersCache = {};
+        let updateInterval = null;
+        let selectedLeague = '';
+        let expandedLeagues = {};
 
-            const botToken = '6569266928:AAHm7pOJVsd3WKzJEgdVDez4ZYdCAlRoYO8';
-            const chatId = '-1001981134607';
+        const botToken = '6569266928:AAHm7pOJVsd3WKzJEgdVDez4ZYdCAlRoYO8';
+        const chatId = '-1001981134607';
 
-            const leagueClasses = {
-                "Esoccer Battle - 8 mins play": "battle-8m",
-                "Esoccer Battle Volta - 6 mins play": "battle-volta-6m",
-                "Esoccer GT Leagues – 12 mins play": "gt-leagues-12m",
-                "Esoccer H2H GG League - 8 mins play": "h2h-gg-8m",
-                "Esoccer Adriatic League - 10 mins play": "adriatic-10m"
-            };
+        const leagueClasses = {
+            "Esoccer Battle - 8 mins play": "battle-8m",
+            "Esoccer Battle Volta - 6 mins play": "battle-volta-6m",
+            "Esoccer GT Leagues – 12 mins play": "gt-leagues-12m",
+            "Esoccer H2H GG League - 8 mins play": "h2h-gg-8m",
+            "Esoccer Adriatic League - 10 mins play": "adriatic-10m"
+        };
 
-            async function sendTelegramMessage(matchData) {
-                const matchKey = `${matchData.player1}_vs_${matchData.player2}_${matchData.matchTime}_${matchData.league}`;
-                const sentMessages = JSON.parse(localStorage.getItem('sentTelegramMessages') || '{}');
-                if (sentMessages[matchKey]) {
-                    console.log(`Mensagem para o confronto ${matchKey} já enviada. Ignorando.`);
-                    return;
-                }
+        async function sendTelegramMessage(matchData) {
+            const matchKey = `${matchData.player1}_vs_${matchData.player2}_${matchData.matchTime}_${matchData.league}`;
+            const sentMessages = JSON.parse(localStorage.getItem('sentTelegramMessages') || '{}');
+            if (sentMessages[matchKey]) {
+                console.log(`Mensagem para o confronto ${matchKey} já enviada. Ignorando.`);
+                return;
+            }
 
-                // Calcular média de gols dos jogadores com base nos últimos 5 jogos
-                const homeGames = pastGamesData[matchData.player1] || [];
-                const awayGames = pastGamesData[matchData.player2] || [];
-                const homeAvgGoals = homeGames.length > 0 
-                    ? (homeGames.reduce((sum, g) => sum + g.goalsScored, 0) / homeGames.length).toFixed(1) 
-                    : 'N/A';
-                const awayAvgGoals = awayGames.length > 0 
-                    ? (awayGames.reduce((sum, g) => sum + g.goalsScored, 0) / awayGames.length).toFixed(1) 
-                    : 'N/A';
+            // Calcular média de gols dos jogadores com base nos últimos 5 jogos
+            const homeGames = pastGamesData[matchData.player1] || [];
+            const awayGames = pastGamesData[matchData.player2] || [];
+            const homeAvgGoals = homeGames.length > 0 
+                ? (homeGames.reduce((sum, g) => sum + g.goalsScored, 0) / homeGames.length).toFixed(1) 
+                : 'N/A';
+            const awayAvgGoals = awayGames.length > 0 
+                ? (awayGames.reduce((sum, g) => sum + g.goalsScored, 0) / awayGames.length).toFixed(1) 
+                : 'N/A';
 
-                // Determinar o jogador com maior forma
-                const homeStats = getPlayerStats(matchData.player1);
-                const awayStats = getPlayerStats(matchData.player2);
-                const featuredPlayer = homeStats.winRate >= awayStats.winRate ? matchData.player1 : matchData.player2;
-                const featuredForm = homeStats.winRate >= awayStats.winRate ? homeStats.winRate : awayStats.winRate;
+            // Determinar o jogador com maior forma
+            const homeStats = getPlayerStats(matchData.player1);
+            const awayStats = getPlayerStats(matchData.player2);
+            const featuredPlayer = homeStats.winRate >= awayStats.winRate ? matchData.player1 : matchData.player2;
+            const featuredForm = homeStats.winRate >= awayStats.winRate ? homeStats.winRate : awayStats.winRate;
 
-                const message = `
+            const message = `
 🔔 <b><i><u>CONFRONTO EM DESTAQUE</u></i></b>
 📅 <b>${matchData.matchTime}</b>
 🏆 <b>${matchData.league.toUpperCase()}</b>
@@ -1018,759 +1018,768 @@
 ⚽ <code>BTTS (Sim): ${matchData.metrics.btts || 'N/A'}%</code>
 ⭐ <b>${featuredPlayer}</b>: ${featuredForm || 'N/A'}%
 ⚽ Média de Gols: ${homeAvgGoals} ⚔️ ${awayAvgGoals}
-                `.trim();
+            `.trim();
 
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        text: message,
+                        parse_mode: 'HTML'
+                    })
+                });
+
+                const result = await response.json();
+                if (result.ok) {
+                    console.log('Mensagem enviada para o Telegram:', matchKey);
+                    sentMessages[matchKey] = true;
+                    localStorage.setItem('sentTelegramMessages', JSON.stringify(sentMessages));
+                } else {
+                    console.error('Falha ao enviar mensagem para o Telegram:', result.description);
+                }
+            } catch (error) {
+                console.error('Erro ao enviar mensagem para o Telegram:', error);
+            }
+        }
+
+        function extractPlayerName(text) {
+            if (!text || typeof text !== 'string') return 'Desconhecido';
+            return text;
+        }
+
+        function extractTeamName(text) {
+            if (!text || typeof text !== 'string') return 'N/A';
+            return text.trim();
+        }
+
+        function getShortLeagueName(leagueName) {
+            const shortNames = {
+                "Esoccer Battle - 8 mins play": "Battle 8m",
+                "Esoccer Battle Volta - 6 mins play": "Battle Volta 6m",
+                "Esoccer GT Leagues – 12 mins play": "GT Leagues 12m",
+                "Esoccer H2H GG League - 8 mins play": "H2H GG 8m",
+                "Esoccer Adriatic League - 10 mins play": "Adriatic 10m"
+            };
+            return shortNames[leagueName] || leagueName || 'Desconhecida';
+        }
+
+        function getLeagueDisplayName(leagueName) {
+            const leagueMappings = {
+                "Esoccer Battle - 8 mins play": { name: "Battle 8m", color: "#FF4C4C" },
+                "Esoccer Battle Volta - 6 mins play": { name: "Battle Volta 6m", color: "#FFD700" },
+                "Esoccer GT Leagues – 12 mins play": { name: "GT Leagues 12m", color: "#32CD32" },
+                "Esoccer H2H GG League - 8 mins play": { name: "H2H GG 8m", color: "#8A2BE2" },
+                "Esoccer Adriatic League - 10 mins play": { name: "Adriatic 10m", color: "#1E90FF" }
+            };
+            const shortName = getShortLeagueName(leagueName);
+            return leagueMappings[leagueName] || { name: shortName, color: "#FFFFFF" };
+        }
+
+        function parseScore(score) {
+            if (!score || !score.home || !score.away) return { homeGoals: 0, awayGoals: 0, totalGoals: 0 };
+            const homeGoals = parseInt(score.home) || 0;
+            const awayGoals = parseInt(score.away) || 0;
+            return { homeGoals, awayGoals, totalGoals: homeGoals + awayGoals };
+        }
+
+        async function fetchPastGames() {
+            const pagesToFetch = 5;
+            let newGames = [];
+            let hasNewData = false;
+
+            for (let page = 1; page <= pagesToFetch; page++) {
                 try {
-                    const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            chat_id: chatId,
-                            text: message,
-                            parse_mode: 'HTML'
-                        })
-                    });
-
-                    const result = await response.json();
-                    if (result.ok) {
-                        console.log('Mensagem enviada para o Telegram:', matchKey);
-                        sentMessages[matchKey] = true;
-                        localStorage.setItem('sentTelegramMessages', JSON.stringify(sentMessages));
-                    } else {
-                        console.error('Falha ao enviar mensagem para o Telegram:', result.description);
-                    }
-                } catch (error) {
-                    console.error('Erro ao enviar mensagem para o Telegram:', error);
-                }
-            }
-
-            function extractPlayerName(text) {
-                if (!text || typeof text !== 'string') return 'Desconhecido';
-                const match = text.match(/\(([^)]+)\)/);
-                return match ? match[1] : text;
-            }
-
-            function extractTeamName(text) {
-                if (!text || typeof text !== 'string') return 'N/A';
-                return text.replace(/\s*\([^)]*\)\s*/, '').trim();
-            }
-
-            function getShortLeagueName(leagueName) {
-                const shortNames = {
-                    "Esoccer Battle - 8 mins play": "Battle 8m",
-                    "Esoccer Battle Volta - 6 mins play": "Battle Volta 6m",
-                    "Esoccer GT Leagues – 12 mins play": "GT Leagues 12m",
-                    "Esoccer H2H GG League - 8 mins play": "H2H GG 8m",
-                    "Esoccer Adriatic League - 10 mins play": "Adriatic 10m"
-                };
-                return shortNames[leagueName] || leagueName || 'Desconhecida';
-            }
-
-            function getLeagueDisplayName(leagueName) {
-                const leagueMappings = {
-                    "Esoccer Battle - 8 mins play": { name: "Battle 8m", color: "#FF4C4C" },
-                    "Esoccer Battle Volta - 6 mins play": { name: "Battle Volta 6m", color: "#FFD700" },
-                    "Esoccer GT Leagues – 12 mins play": { name: "GT Leagues 12m", color: "#32CD32" },
-                    "Esoccer H2H GG League - 8 mins play": { name: "H2H GG 8m", color: "#8A2BE2" },
-                    "Esoccer Adriatic League - 10 mins play": { name: "Adriatic 10m", color: "#1E90FF" }
-                };
-                const shortName = getShortLeagueName(leagueName);
-                return leagueMappings[leagueName] || { name: shortName, color: "#FFFFFF" };
-            }
-
-            function parseScore(score) {
-                if (!score) return { homeGoals: 0, awayGoals: 0, totalGoals: 0 };
-                const [homeGoals, awayGoals] = score.split('-').map(Number);
-                return { homeGoals, awayGoals, totalGoals: homeGoals + awayGoals };
-            }
-
-            async function fetchPastGames() {
-                const pagesToFetch = 5;
-                let newGames = [];
-                let hasNewData = false;
-
-                for (let page = 1; page <= pagesToFetch; page++) {
-                    try {
-                        const response = await fetch(`https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=${page}`);
-                        if (!response.ok) {
-                            throw new Error(`Erro na API na página ${page}: ${response.status} - ${response.statusText}`);
-                        }
-                        const data = await response.json();
-                        const games = data.data;
-
-                        const newGamesOnPage = games.filter(game => game.timestamp > latestTimestamp);
-                        if (newGamesOnPage.length > 0) {
-                            hasNewData = true;
-                            newGames = newGames.concat(newGamesOnPage);
-                        }
-                    } catch (error) {
-                        console.error(`Erro ao buscar jogos da página ${page}:`, error.message);
-                        continue;
-                    }
-                }
-
-                if (hasNewData) {
-                    allGamesCache = [...newGames, ...allGamesCache].sort((a, b) => b.timestamp - a.timestamp).slice(0, 250);
-                    latestTimestamp = allGamesCache.length > 0 ? Math.max(...allGamesCache.map(g => g.timestamp)) : latestTimestamp;
-
-                    const playerGames = {};
-                    allGamesCache.forEach(game => {
-                        const homePlayer = extractPlayerName(game.home);
-                        const awayPlayer = extractPlayerName(game.away);
-                        const score = parseScore(game.score);
-                        const gameData = {
-                            goalsScored: 0,
-                            goalsConceded: 0,
-                            totalGoals: score.totalGoals,
-                            won: false,
-                            timestamp: game.timestamp
-                        };
-
-                        if (!playerGames[homePlayer]) playerGames[homePlayer] = [];
-                        gameData.goalsScored = score.homeGoals;
-                        gameData.goalsConceded = score.awayGoals;
-                        gameData.won = score.homeGoals > score.awayGoals;
-                        playerGames[homePlayer].push({...gameData});
-
-                        if (!playerGames[awayPlayer]) playerGames[awayPlayer] = [];
-                        const awayGameData = {...gameData};
-                        awayGameData.goalsScored = score.awayGoals;
-                        awayGameData.goalsConceded = score.homeGoals;
-                        awayGameData.won = score.awayGoals > score.homeGoals;
-                        playerGames[awayPlayer].push(awayGameData);
-                    });
-
-                    for (const player in playerGames) {
-                        playerGames[player] = playerGames[player]
-                            .sort((a, b) => b.timestamp - a.timestamp)
-                            .slice(0, 5);
-                    }
-
-                    pastGamesData = playerGames;
-                    bestPlayersCache = {};
-                }
-
-                return allGamesCache;
-            }
-
-            async function fetchUpcomingGames() {
-                try {
-                    const response = await fetch('https://api.green365.com.br/api/league/upcoming?sport=fifa&leagueId=&page=1');
+                    const response = await fetch(`https://api-v2.green365.com.br/api/v2/sport-events?page=${page}&limit=100&sport=esoccer&status=ended`);
                     if (!response.ok) {
-                        throw new Error(`Erro na API: ${response.status} - ${response.statusText}`);
+                        throw new Error(`Erro na API na página ${page}: ${response.status} - ${response.statusText}`);
                     }
                     const data = await response.json();
-                    console.log("Jogos futuros obtidos:", data.data.length);
-                    return data.data;
+                    const games = data.items || [];
+
+                    const newGamesOnPage = games.filter(game => game.startTime && new Date(game.startTime).getTime() > latestTimestamp);
+                    if (newGamesOnPage.length > 0) {
+                        hasNewData = true;
+                        newGames = newGames.concat(newGamesOnPage);
+                    }
                 } catch (error) {
-                    console.error('Erro ao buscar jogos futuros:', error.message);
-                    return [];
+                    console.error(`Erro ao buscar jogos da página ${page}:`, error.message);
+                    continue;
                 }
             }
 
-            function getBestPlayerForLeague(leagueName, games) {
-                if (bestPlayersCache[leagueName]) {
-                    return bestPlayersCache[leagueName];
-                }
+            if (hasNewData) {
+                allGamesCache = [...newGames, ...allGamesCache]
+                    .sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime())
+                    .slice(0, 250);
+                
+                latestTimestamp = allGamesCache.length > 0 ? 
+                    Math.max(...allGamesCache.map(g => new Date(g.startTime).getTime())) : 
+                    latestTimestamp;
 
-                const playerStats = {};
+                const playerGames = {};
+                allGamesCache.forEach(game => {
+                    const homePlayer = extractPlayerName(game.home?.name || '');
+                    const awayPlayer = extractPlayerName(game.away?.name || '');
+                    const score = parseScore(game.score);
+                    const gameData = {
+                        goalsScored: 0,
+                        goalsConceded: 0,
+                        totalGoals: score.totalGoals,
+                        won: false,
+                        timestamp: new Date(game.startTime).getTime()
+                    };
 
-                games.forEach(game => {
-                    if (game.leagueName !== leagueName) return;
-                    const homePlayer = extractPlayerName(game.home);
-                    const awayPlayer = extractPlayerName(game.away);
+                    if (!playerGames[homePlayer]) playerGames[homePlayer] = [];
+                    gameData.goalsScored = score.homeGoals;
+                    gameData.goalsConceded = score.awayGoals;
+                    gameData.won = score.homeGoals > score.awayGoals;
+                    playerGames[homePlayer].push({...gameData});
 
-                    if (!playerStats[homePlayer]) {
-                        playerStats[homePlayer] = {
-                            wins: 0,
-                            goalsScored: 0,
-                            goalsConceded: 0,
-                            games: pastGamesData[homePlayer] || []
-                        };
-                    }
-                    if (!playerStats[awayPlayer]) {
-                        playerStats[awayPlayer] = {
-                            wins: 0,
-                            goalsScored: 0,
-                            goalsConceded: 0,
-                            games: pastGamesData[awayPlayer] || []
-                        };
-                    }
-
-                    const homePastGames = playerStats[homePlayer].games;
-                    const awayPastGames = playerStats[awayPlayer].games;
-
-                    if (homePastGames.length === 5) {
-                        playerStats[homePlayer].wins = homePastGames.filter(g => g.won).length;
-                        playerStats[homePlayer].goalsScored = homePastGames.reduce((sum, g) => sum + g.goalsScored, 0);
-                        playerStats[homePlayer].goalsConceded = homePastGames.reduce((sum, g) => sum + g.goalsConceded, 0);
-                    }
-
-                    if (awayPastGames.length === 5) {
-                        playerStats[awayPlayer].wins = awayPastGames.filter(g => g.won).length;
-                        playerStats[awayPlayer].goalsScored = awayPastGames.reduce((sum, g) => sum + g.goalsScored, 0);
-                        playerStats[awayPlayer].goalsConceded = awayPastGames.reduce((sum, g) => sum + g.goalsConceded, 0);
-                    }
+                    if (!playerGames[awayPlayer]) playerGames[awayPlayer] = [];
+                    const awayGameData = {...gameData};
+                    awayGameData.goalsScored = score.awayGoals;
+                    awayGameData.goalsConceded = score.homeGoals;
+                    awayGameData.won = score.awayGoals > score.homeGoals;
+                    playerGames[awayPlayer].push(awayGameData);
                 });
 
-                const leagueCriteria = {
-                    "Esoccer GT Leagues – 12 mins play": { over1_5: 100, over2_5: 100, over3_5: 70 },
-                    "Esoccer Battle - 8 mins play": { over1_5: 100, over2_5: 88 },
-                    "Esoccer Battle Volta - 6 mins play": { over1_5: 100, over2_5: 100, over3_5: 70 },
-                    "Esoccer H2H GG League - 8 mins play": { over1_5: 100, over2_5: 50 }
-                };
-
-                const criteria = leagueCriteria[leagueName] || {};
-                const eligiblePlayers = [];
-
-                for (const player in playerStats) {
-                    const stats = playerStats[player];
-                    if (stats.games.length !== 5) continue;
-
-                    const over1_5Games = stats.games.filter(g => g.totalGoals > 1.5).length;
-                    const over2_5Games = stats.games.filter(g => g.totalGoals > 2.5).length;
-                    const over3_5Games = stats.games.filter(g => g.totalGoals > 3.5).length;
-
-                    const over1_5Rate = (over1_5Games / 5) * 100;
-                    const over2_5Rate = (over2_5Games / 5) * 100;
-                    const over3_5Rate = (over3_5Games / 5) * 100;
-
-                    let meetsCriteria = true;
-                    if (criteria.over1_5 && over1_5Rate < criteria.over1_5) meetsCriteria = false;
-                    if (criteria.over2_5 && over2_5Rate < criteria.over2_5) meetsCriteria = false;
-                    if (criteria.over3_5 && over3_5Rate < criteria.over3_5) meetsCriteria = false;
-
-                    if (meetsCriteria) {
-                        eligiblePlayers.push({
-                            name: player,
-                            wins: stats.wins,
-                            goalsScored: stats.goalsScored,
-                            goalsConceded: stats.goalsConceded,
-                            over2_5Rate: over2_5Rate,
-                            over3_5Rate: over3_5Rate
-                        });
-                    }
+                for (const player in playerGames) {
+                    playerGames[player] = playerGames[player]
+                        .sort((a, b) => b.timestamp - a.timestamp)
+                        .slice(0, 5);
                 }
 
-                if (eligiblePlayers.length === 0) {
-                    const result = { name: "Nenhum jogador destacado", wins: 0, goalsScored: 0, goalsConceded: 0 };
-                    bestPlayersCache[leagueName] = result;
-                    return result;
-                }
-
-                let maxWins = Math.max(...eligiblePlayers.map(p => p.wins));
-                let candidatesByWins = eligiblePlayers.filter(p => p.wins === maxWins);
-
-                if (candidatesByWins.length > 1) {
-                    let maxGoalsScored = Math.max(...candidatesByWins.map(p => p.goalsScored));
-                    let candidatesByGoalsScored = candidatesByWins.filter(p => p.goalsScored === maxGoalsScored);
-
-                    if (candidatesByGoalsScored.length > 1) {
-                        let minGoalsConceded = Math.min(...candidatesByGoalsScored.map(p => p.goalsConceded));
-                        let finalCandidates = candidatesByGoalsScored.filter(p => p.goalsConceded === minGoalsConceded);
-
-                        if (finalCandidates.length !== 1) {
-                            const result = { name: "Nenhum jogador destacado", wins: 0, goalsScored: 0, goalsConceded: 0 };
-                            bestPlayersCache[leagueName] = result;
-                            return result;
-                        }
-
-                        bestPlayersCache[leagueName] = finalCandidates[0];
-                        return finalCandidates[0];
-                    } else {
-                        bestPlayersCache[leagueName] = candidatesByGoalsScored[0];
-                        return candidatesByGoalsScored[0];
-                    }
-                } else {
-                    bestPlayersCache[leagueName] = candidatesByWins[0];
-                    return candidatesByWins[0];
-                }
+                pastGamesData = playerGames;
+                bestPlayersCache = {};
             }
 
-            function getPlayerStats(playerName) {
-                const games = pastGamesData[playerName] || [];
-                if (games.length === 0) {
-                    return { winRate: 0, last5Wins: 0, over15Rate: 0, over25Rate: 0, over35Rate: 0 };
+            return allGamesCache;
+        }
+
+        async function fetchUpcomingGames() {
+            try {
+                const response = await fetch('https://api-v2.green365.com.br/api/v2/sport-events?page=1&limit=100&sport=esoccer&status=upcoming');
+                if (!response.ok) {
+                    throw new Error(`Erro na API: ${response.status} - ${response.statusText}`);
                 }
+                const data = await response.json();
+                console.log("Jogos futuros obtidos:", data.items.length);
+                return data.items || [];
+            } catch (error) {
+                console.error('Erro ao buscar jogos futuros:', error.message);
+                return [];
+            }
+        }
 
-                const wins = games.filter(g => g.won).length;
-                const winRate = (wins / games.length) * 100;
-                const last5Wins = wins;
-                const over1_5Games = games.filter(g => g.totalGoals > 1.5).length;
-                const over2_5Games = games.filter(g => g.totalGoals > 2.5).length;
-                const over3_5Games = games.filter(g => g.totalGoals > 3.5).length;
-
-                return {
-                    winRate: Math.round(winRate),
-                    last5Wins: wins,
-                    over15Rate: Math.round((over1_5Games / games.length) * 100),
-                    over25Rate: Math.round((over2_5Games / games.length) * 100),
-                    over35Rate: Math.round((over3_5Games / games.length) * 100)
-                };
+        function getBestPlayerForLeague(leagueName, games) {
+            if (bestPlayersCache[leagueName]) {
+                return bestPlayersCache[leagueName];
             }
 
-            function calculateLeagueStats(leagueName, allGames) {
-                const leagueGames = allGames.filter(game => game.leagueName === leagueName).slice(0, 10);
-                if (leagueGames.length === 0) {
-                    return { over15Rate: 0, over25Rate: 0, over35Rate: 0, bttsRate: 0 };
+            const playerStats = {};
+
+            games.forEach(game => {
+                if (game.competition?.name !== leagueName) return;
+                const homePlayer = extractPlayerName(game.home?.name || '');
+                const awayPlayer = extractPlayerName(game.away?.name || '');
+
+                if (!playerStats[homePlayer]) {
+                    playerStats[homePlayer] = {
+                        wins: 0,
+                        goalsScored: 0,
+                        goalsConceded: 0,
+                        games: pastGamesData[homePlayer] || []
+                    };
+                }
+                if (!playerStats[awayPlayer]) {
+                    playerStats[awayPlayer] = {
+                        wins: 0,
+                        goalsScored: 0,
+                        goalsConceded: 0,
+                        games: pastGamesData[awayPlayer] || []
+                    };
                 }
 
-                const over1_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 1.5).length;
-                const over2_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 2.5).length;
-                const over3_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 3.5).length;
-                const bttsGames = leagueGames.filter(game => {
-                    const score = parseScore(game.score);
-                    return score.homeGoals > 0 && score.awayGoals > 0;
-                }).length;
+                const homePastGames = playerStats[homePlayer].games;
+                const awayPastGames = playerStats[awayPlayer].games;
 
-                return {
-                    over15Rate: Math.round((over1_5Games / leagueGames.length) * 100),
-                    over25Rate: Math.round((over2_5Games / leagueGames.length) * 100),
-                    over35Rate: Math.round((over3_5Games / leagueGames.length) * 100),
-                    bttsRate: Math.round((bttsGames / leagueGames.length) * 100)
-                };
-            }
-
-            function getMetrics(leagueName, homePlayer, awayPlayer, allGames) {
-                const leagueGames = allGames.filter(game => game.leagueName === leagueName).slice(0, 10);
-                if (leagueGames.length === 0) {
-                    return [
-                        { name: "Over 2.5 FT", value: 0, raw: "(0/0)" },
-                        { name: "Over 3.5 FT", value: 0, raw: "(0/0)" },
-                        { name: "League Avg Goals", value: 0, raw: "(Over 2.5: 0%)" }
-                    ];
+                if (homePastGames.length === 5) {
+                    playerStats[homePlayer].wins = homePastGames.filter(g => g.won).length;
+                    playerStats[homePlayer].goalsScored = homePastGames.reduce((sum, g) => sum + g.goalsScored, 0);
+                    playerStats[homePlayer].goalsConceded = homePastGames.reduce((sum, g) => sum + g.goalsConceded, 0);
                 }
 
-                const over1_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 1.5).length;
-                const over2_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 2.5).length;
-                const over3_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 3.5).length;
-                const bttsGames = leagueGames.filter(game => {
-                    const score = parseScore(game.score);
-                    return score.homeGoals > 0 && score.awayGoals > 0;
-                }).length;
-                const totalGoals = leagueGames.reduce((sum, game) => sum + parseScore(game.score).totalGoals, 0);
-                const avgGoals = (totalGoals / leagueGames.length).toFixed(1);
-
-                let metrics = [];
-                if (leagueName === "Esoccer Battle - 8 mins play" || leagueName === "Esoccer H2H GG League - 8 mins play") {
-                    metrics = [
-                        { name: "Over 1.5 FT", value: Math.round((over1_5Games / leagueGames.length) * 100), raw: `(${over1_5Games}/${leagueGames.length})` },
-                        { name: "Over 2.5 FT", value: Math.round((over2_5Games / leagueGames.length) * 100), raw: `(${over2_5Games}/${leagueGames.length})` },
-                        { name: "League Avg Goals", value: avgGoals, raw: `(Over 1.5: ${Math.round((over1_5Games / leagueGames.length) * 100)}%)` }
-                    ];
-                } else {
-                    metrics = [
-                        { name: "Over 2.5 FT", value: Math.round((over2_5Games / leagueGames.length) * 100), raw: `(${over2_5Games}/${leagueGames.length})` },
-                        { name: "Over 3.5 FT", value: Math.round((over3_5Games / leagueGames.length) * 100), raw: `(${over3_5Games}/${leagueGames.length})` },
-                        { name: "League Avg Goals", value: avgGoals, raw: `(Over 2.5: ${Math.round((over2_5Games / leagueGames.length) * 100)}%)` }
-                    ];
+                if (awayPastGames.length === 5) {
+                    playerStats[awayPlayer].wins = awayPastGames.filter(g => g.won).length;
+                    playerStats[awayPlayer].goalsScored = awayPastGames.reduce((sum, g) => sum + g.goalsScored, 0);
+                    playerStats[awayPlayer].goalsConceded = awayPastGames.reduce((sum, g) => sum + g.goalsConceded, 0);
                 }
+            });
 
-                const homeStats = getPlayerStats(homePlayer);
-                const awayStats = getPlayerStats(awayPlayer);
-                const featuredPlayer = homeStats.winRate >= awayStats.winRate ? homePlayer : awayPlayer;
-                const featuredStats = homeStats.winRate >= awayStats.winRate ? homeStats : awayStats;
+            const leagueCriteria = {
+                "Esoccer GT Leagues – 12 mins play": { over1_5: 100, over2_5: 100, over3_5: 70 },
+                "Esoccer Battle - 8 mins play": { over1_5: 100, over2_5: 88 },
+                "Esoccer Battle Volta - 6 mins play": { over1_5: 100, over2_5: 100, over3_5: 70 },
+                "Esoccer H2H GG League - 8 mins play": { over1_5: 100, over2_5: 50 },
+                "Esoccer Adriatic League - 10 mins play": { over1_5: 100, over2_5: 100, over3_5: 70 }
+            };
 
-                if (leagueName === "Esoccer Battle - 8 mins play" || leagueName === "Esoccer H2H GG League - 8 mins play") {
-                    metrics.splice(2, 0, {
-                        name: `${featuredPlayer} Over 1.5 FT`,
-                        value: featuredStats.over15Rate,
-                        raw: `(${Math.round((featuredStats.over15Rate / 100) * 10)}/10)`,
-                        isSpecial: true
-                    });
-                } else {
-                    metrics.splice(2, 0, {
-                        name: `${featuredPlayer} Over 2.5 FT`,
-                        value: featuredStats.over25Rate,
-                        raw: `(${Math.round((featuredStats.over25Rate / 100) * 10)}/10)`,
-                        isSpecial: true
+            const criteria = leagueCriteria[leagueName] || {};
+            const eligiblePlayers = [];
+
+            for (const player in playerStats) {
+                const stats = playerStats[player];
+                if (stats.games.length !== 5) continue;
+
+                const over1_5Games = stats.games.filter(g => g.totalGoals > 1.5).length;
+                const over2_5Games = stats.games.filter(g => g.totalGoals > 2.5).length;
+                const over3_5Games = stats.games.filter(g => g.totalGoals > 3.5).length;
+
+                const over1_5Rate = (over1_5Games / 5) * 100;
+                const over2_5Rate = (over2_5Games / 5) * 100;
+                const over3_5Rate = (over3_5Games / 5) * 100;
+
+                let meetsCriteria = true;
+                if (criteria.over1_5 && over1_5Rate < criteria.over1_5) meetsCriteria = false;
+                if (criteria.over2_5 && over2_5Rate < criteria.over2_5) meetsCriteria = false;
+                if (criteria.over3_5 && over3_5Rate < criteria.over3_5) meetsCriteria = false;
+
+                if (meetsCriteria) {
+                    eligiblePlayers.push({
+                        name: player,
+                        wins: stats.wins,
+                        goalsScored: stats.goalsScored,
+                        goalsConceded: stats.goalsConceded,
+                        over2_5Rate: over2_5Rate,
+                        over3_5Rate: over3_5Rate
                     });
                 }
+            }
 
-                metrics.push({
-                    name: `${featuredPlayer} Form`,
-                    value: featuredStats.winRate,
-                    raw: `(Wins: ${featuredStats.last5Wins}/5)`,
+            if (eligiblePlayers.length === 0) {
+                const result = { name: "Nenhum jogador destacado", wins: 0, goalsScored: 0, goalsConceded: 0 };
+                bestPlayersCache[leagueName] = result;
+                return result;
+            }
+
+            let maxWins = Math.max(...eligiblePlayers.map(p => p.wins));
+            let candidatesByWins = eligiblePlayers.filter(p => p.wins === maxWins);
+
+            if (candidatesByWins.length > 1) {
+                let maxGoalsScored = Math.max(...candidatesByWins.map(p => p.goalsScored));
+                let candidatesByGoalsScored = candidatesByWins.filter(p => p.goalsScored === maxGoalsScored);
+
+                if (candidatesByGoalsScored.length > 1) {
+                    let minGoalsConceded = Math.min(...candidatesByGoalsScored.map(p => p.goalsConceded));
+                    let finalCandidates = candidatesByGoalsScored.filter(p => p.goalsConceded === minGoalsConceded);
+
+                    if (finalCandidates.length !== 1) {
+                        const result = { name: "Nenhum jogador destacado", wins: 0, goalsScored: 0, goalsConceded: 0 };
+                        bestPlayersCache[leagueName] = result;
+                        return result;
+                    }
+
+                    bestPlayersCache[leagueName] = finalCandidates[0];
+                    return finalCandidates[0];
+                } else {
+                    bestPlayersCache[leagueName] = candidatesByGoalsScored[0];
+                    return candidatesByGoalsScored[0];
+                }
+            } else {
+                bestPlayersCache[leagueName] = candidatesByWins[0];
+                return candidatesByWins[0];
+            }
+        }
+
+        function getPlayerStats(playerName) {
+            const games = pastGamesData[playerName] || [];
+            if (games.length === 0) {
+                return { winRate: 0, last5Wins: 0, over15Rate: 0, over25Rate: 0, over35Rate: 0 };
+            }
+
+            const wins = games.filter(g => g.won).length;
+            const winRate = (wins / games.length) * 100;
+            const last5Wins = wins;
+            const over1_5Games = games.filter(g => g.totalGoals > 1.5).length;
+            const over2_5Games = games.filter(g => g.totalGoals > 2.5).length;
+            const over3_5Games = games.filter(g => g.totalGoals > 3.5).length;
+
+            return {
+                winRate: Math.round(winRate),
+                last5Wins: wins,
+                over15Rate: Math.round((over1_5Games / games.length) * 100),
+                over25Rate: Math.round((over2_5Games / games.length) * 100),
+                over35Rate: Math.round((over3_5Games / games.length) * 100)
+            };
+        }
+
+        function calculateLeagueStats(leagueName, allGames) {
+            const leagueGames = allGames.filter(game => game.competition?.name === leagueName).slice(0, 10);
+            if (leagueGames.length === 0) {
+                return { over15Rate: 0, over25Rate: 0, over35Rate: 0, bttsRate: 0 };
+            }
+
+            const over1_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 1.5).length;
+            const over2_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 2.5).length;
+            const over3_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 3.5).length;
+            const bttsGames = leagueGames.filter(game => {
+                const score = parseScore(game.score);
+                return score.homeGoals > 0 && score.awayGoals > 0;
+            }).length;
+
+            return {
+                over15Rate: Math.round((over1_5Games / leagueGames.length) * 100),
+                over25Rate: Math.round((over2_5Games / leagueGames.length) * 100),
+                over35Rate: Math.round((over3_5Games / leagueGames.length) * 100),
+                bttsRate: Math.round((bttsGames / leagueGames.length) * 100)
+            };
+        }
+
+        function getMetrics(leagueName, homePlayer, awayPlayer, allGames) {
+            const leagueGames = allGames.filter(game => game.competition?.name === leagueName).slice(0, 10);
+            if (leagueGames.length === 0) {
+                return [
+                    { name: "Over 2.5 FT", value: 0, raw: "(0/0)" },
+                    { name: "Over 3.5 FT", value: 0, raw: "(0/0)" },
+                    { name: "League Avg Goals", value: 0, raw: "(Over 2.5: 0%)" }
+                ];
+            }
+
+            const over1_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 1.5).length;
+            const over2_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 2.5).length;
+            const over3_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 3.5).length;
+            const bttsGames = leagueGames.filter(game => {
+                const score = parseScore(game.score);
+                return score.homeGoals > 0 && score.awayGoals > 0;
+            }).length;
+            const totalGoals = leagueGames.reduce((sum, game) => sum + parseScore(game.score).totalGoals, 0);
+            const avgGoals = (totalGoals / leagueGames.length).toFixed(1);
+
+            let metrics = [];
+            if (leagueName === "Esoccer Battle - 8 mins play" || leagueName === "Esoccer H2H GG League - 8 mins play") {
+                metrics = [
+                    { name: "Over 1.5 FT", value: Math.round((over1_5Games / leagueGames.length) * 100), raw: `(${over1_5Games}/${leagueGames.length})` },
+                    { name: "Over 2.5 FT", value: Math.round((over2_5Games / leagueGames.length) * 100), raw: `(${over2_5Games}/${leagueGames.length})` },
+                    { name: "League Avg Goals", value: avgGoals, raw: `(Over 1.5: ${Math.round((over1_5Games / leagueGames.length) * 100)}%)` }
+                ];
+            } else {
+                metrics = [
+                    { name: "Over 2.5 FT", value: Math.round((over2_5Games / leagueGames.length) * 100), raw: `(${over2_5Games}/${leagueGames.length})` },
+                    { name: "Over 3.5 FT", value: Math.round((over3_5Games / leagueGames.length) * 100), raw: `(${over3_5Games}/${leagueGames.length})` },
+                    { name: "League Avg Goals", value: avgGoals, raw: `(Over 2.5: ${Math.round((over2_5Games / leagueGames.length) * 100)}%)` }
+                ];
+            }
+
+            const homeStats = getPlayerStats(homePlayer);
+            const awayStats = getPlayerStats(awayPlayer);
+            const featuredPlayer = homeStats.winRate >= awayStats.winRate ? homePlayer : awayPlayer;
+            const featuredStats = homeStats.winRate >= awayStats.winRate ? homeStats : awayStats;
+
+            if (leagueName === "Esoccer Battle - 8 mins play" || leagueName === "Esoccer H2H GG League - 8 mins play") {
+                metrics.splice(2, 0, {
+                    name: `${featuredPlayer} Over 1.5 FT`,
+                    value: featuredStats.over15Rate,
+                    raw: `(${Math.round((featuredStats.over15Rate / 100) * 10)}/10)`,
                     isSpecial: true
                 });
-
-                return {
-                    items: metrics,
-                    over15: Math.round((over1_5Games / leagueGames.length) * 100),
-                    over25: Math.round((over2_5Games / leagueGames.length) * 100),
-                    over35: Math.round((over3_5Games / leagueGames.length) * 100),
-                    btts: Math.round((bttsGames / leagueGames.length) * 100),
-                    form: featuredStats.winRate
-                };
+            } else {
+                metrics.splice(2, 0, {
+                    name: `${featuredPlayer} Over 2.5 FT`,
+                    value: featuredStats.over25Rate,
+                    raw: `(${Math.round((featuredStats.over25Rate / 100) * 10)}/10)`,
+                    isSpecial: true
+                });
             }
 
-            function meetsCriteria(leagueName, metrics, allGames) {
-                const leagueStats = calculateLeagueStats(leagueName, allGames);
-                const formMetric = metrics.items.find(m => m.name.endsWith("Form"));
+            metrics.push({
+                name: `${featuredPlayer} Form`,
+                value: featuredStats.winRate,
+                raw: `(Wins: ${featuredStats.last5Wins}/5)`,
+                isSpecial: true
+            });
 
-                if (!formMetric || formMetric.value <= 45) return false;
+            return {
+                items: metrics,
+                over15: Math.round((over1_5Games / leagueGames.length) * 100),
+                over25: Math.round((over2_5Games / leagueGames.length) * 100),
+                over35: Math.round((over3_5Games / leagueGames.length) * 100),
+                btts: Math.round((bttsGames / leagueGames.length) * 100),
+                form: featuredStats.winRate
+            };
+        }
 
-                const is8MinLeague = [
-                    "Esoccer Battle - 8 mins play",
-                    "Esoccer Battle Volta - 6 mins play",
-                    "Esoccer H2H GG League - 8 mins play"
-                ].includes(leagueName);
-                const isGtLeague = leagueName === "Esoccer GT Leagues – 12 mins play";
+        function meetsCriteria(leagueName, metrics, allGames) {
+            const leagueStats = calculateLeagueStats(leagueName, allGames);
+            const formMetric = metrics.items.find(m => m.name.endsWith("Form"));
 
-                if (is8MinLeague) {
-                    return (
-                        leagueStats.over15Rate === 100 &&
-                        leagueStats.over25Rate >= 85 &&
-                        leagueStats.bttsRate >= 80
-                    );
-                } else if (isGtLeague) {
-                    return (
-                        leagueStats.over25Rate === 100 &&
-                        leagueStats.over35Rate >= 85 &&
-                        leagueStats.bttsRate >= 90
-                    );
-                }
+            if (!formMetric || formMetric.value <= 45) return false;
 
-                return false;
+            const is8MinLeague = [
+                "Esoccer Battle - 8 mins play",
+                "Esoccer Battle Volta - 6 mins play",
+                "Esoccer H2H GG League - 8 mins play"
+            ].includes(leagueName);
+            const isGtLeague = leagueName === "Esoccer GT Leagues – 12 mins play" || leagueName === "Esoccer Adriatic League - 10 mins play";
+
+            if (is8MinLeague) {
+                return (
+                    leagueStats.over15Rate === 100 &&
+                    leagueStats.over25Rate >= 85 &&
+                    leagueStats.bttsRate >= 80
+                );
+            } else if (isGtLeague) {
+                return (
+                    leagueStats.over25Rate === 100 &&
+                    leagueStats.over35Rate >= 85 &&
+                    leagueStats.bttsRate >= 90
+                );
             }
 
-            function toggleLeagueExpansion(leagueName) {
-                expandedLeagues[leagueName] = !expandedLeagues[leagueName];
-                renderGames(allGamesCache);
+            return false;
+        }
+
+        function toggleLeagueExpansion(leagueName) {
+            expandedLeagues[leagueName] = !expandedLeagues[leagueName];
+            renderGames(allGamesCache);
+        }
+
+        async function updateGames() {
+            gamesContainer.innerHTML = '';
+            const placeholderCount = 4;
+            for (let i = 0; i < placeholderCount; i++) {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'card-placeholder';
+                placeholder.innerHTML = '<div class="loading-indicator"></div> Carregando...';
+                gamesContainer.appendChild(placeholder);
             }
 
-            async function updateGames() {
-                gamesContainer.innerHTML = '';
-                const placeholderCount = 4;
-                for (let i = 0; i < placeholderCount; i++) {
-                    const placeholder = document.createElement('div');
-                    placeholder.className = 'card-placeholder';
-                    placeholder.innerHTML = '<div class="loading-indicator"></div> Carregando...';
-                    gamesContainer.appendChild(placeholder);
-                }
-
-                try {
-                    const allGames = await fetchPastGames();
-                    const upcomingGames = await fetchUpcomingGames();
-                    const targetLeagues = [
-                        "Esoccer GT Leagues – 12 mins play",
-                        "Esoccer Battle - 8 mins play",
-                        "Esoccer Battle Volta - 6 mins play",
-                        "Esoccer H2H GG League - 8 mins play"
-                    ];
-
-                    const gamesByLeague = {};
-                    upcomingGames.forEach(game => {
-                        const leagueName = game.leagueName;
-                        if (targetLeagues.includes(leagueName)) {
-                            if (!gamesByLeague[leagueName]) {
-                                gamesByLeague[leagueName] = [];
-                            }
-                            gamesByLeague[leagueName].push(game);
-                        }
-                    });
-
-                    upcomingGamesData = [];
-                    for (const league in gamesByLeague) {
-                        upcomingGamesData = upcomingGamesData.concat(gamesByLeague[league]);
-                    }
-
-                    renderGames(allGames);
-                } catch (error) {
-                    console.error('Erro ao buscar dados:', error.message);
-                    gamesContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Erro ao carregar dados. Verifique sua conexão ou tente novamente mais tarde.</div>';
-                }
-            }
-
-            async function renderGames(allGames) {
-                gamesContainer.innerHTML = '';
-
-                if (!upcomingGamesData || upcomingGamesData.length === 0) {
-                    gamesContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Nenhum jogo disponível no momento.</div>';
-                    return;
-                }
-
-                const gamesByLeague = upcomingGamesData.reduce((acc, game) => {
-                    const leagueName = game.leagueName || 'Desconhecida';
-                    if (!acc[leagueName]) {
-                        acc[leagueName] = [];
-                    }
-                    acc[leagueName].push(game);
-                    return acc;
-                }, {});
-
+            try {
+                const allGames = await fetchPastGames();
+                const upcomingGames = await fetchUpcomingGames();
                 const targetLeagues = [
                     "Esoccer GT Leagues – 12 mins play",
                     "Esoccer Battle - 8 mins play",
                     "Esoccer Battle Volta - 6 mins play",
-                    "Esoccer H2H GG League - 8 mins play"
+                    "Esoccer H2H GG League - 8 mins play",
+                     "Esoccer Adriatic League - 10 mins play"
                 ];
 
-                for (const leagueName of targetLeagues) {
-                    if (!gamesByLeague[leagueName] || gamesByLeague[leagueName].length === 0) continue;
-                    
-                    const leagueSection = document.createElement('div');
-                    leagueSection.className = 'league-section';
-                    leagueSection.dataset.leagueName = getShortLeagueName(leagueName);
-
-                    const leagueInfo = getLeagueDisplayName(leagueName);
-                    const leagueHeader = document.createElement('h2');
-                    leagueHeader.className = `league-header ${leagueClasses[leagueName] || ''}`;
-                    leagueHeader.innerText = leagueInfo.name;
-                    leagueHeader.style.color = leagueInfo.color;
-                    leagueSection.appendChild(leagueHeader);
-
-                    const bestPlayer = getBestPlayerForLeague(leagueName, allGames);
-                    const bestPlayerCard = document.createElement('div');
-                    bestPlayerCard.className = 'best-player-card';
-                    bestPlayerCard.innerHTML = `
-                        <div class="last-games-header">Últimos 5 Jogos</div>
-                        <h3><span>🏆</span> Melhor Jogador da Liga</h3>
-                        <p><span>🎮</span> ${bestPlayer.name}</p>
-                        <p><span>🏆</span> ${bestPlayer.wins}/5 vitórias</p>
-                        <p><span>⚽</span> ${bestPlayer.goalsScored} gols marcados</p>
-                        <p><span>🥅</span> ${bestPlayer.goalsConceded} gols sofridos</p>
-                    `;
-                    leagueSection.appendChild(bestPlayerCard);
-
-                    const leagueGamesGrid = document.createElement('div');
-                    leagueGamesGrid.className = 'games-grid';
-
-                    const isExpanded = expandedLeagues[leagueName] || false;
-                    const gamesToShow = isExpanded ? gamesByLeague[leagueName] : gamesByLeague[leagueName].slice(0, 2);
-
-                    for (const game of gamesToShow) {
-                        const gameId = game.gameID || game.id || `${game.home}-${game.away}-${game.day}-${game.hour}`;
-                        const homePlayer = extractPlayerName(game.home);
-                        const awayPlayer = extractPlayerName(game.away);
-                        const homeTeam = extractTeamName(game.home);
-                        const awayTeam = extractTeamName(game.away);
-
-                        const card = document.createElement('div');
-                        card.className = `card ${leagueClasses[leagueName] || ''}`;
-
-                        const metrics = getMetrics(leagueName, homePlayer, awayPlayer, allGames);
-                        const isHighlighted = meetsCriteria(leagueName, metrics, allGames);
-                        if (isHighlighted) {
-                            card.classList.add('highlight-card');
-                            const matchData = {
-                                player1: homePlayer,
-                                player2: awayPlayer,
-                                league: getShortLeagueName(leagueName),
-                                matchTime: `${game.day || 'N/A'} ${game.hour || 'N/A'}`,
-                                metrics: {
-                                    over15: metrics.over15,
-                                    over25: metrics.over25,
-                                    over35: metrics.over35,
-                                    btts: metrics.btts,
-                                    form: metrics.form
-                                }
-                            };
-                            sendTelegramMessage(matchData);
+                const gamesByLeague = {};
+                upcomingGames.forEach(game => {
+                    const leagueName = game.competition?.name;
+                    if (targetLeagues.includes(leagueName)) {
+                        if (!gamesByLeague[leagueName]) {
+                            gamesByLeague[leagueName] = [];
                         }
-
-                        const teams = document.createElement('div');
-                        teams.className = 'teams';
-
-                        const homeTeamElement = document.createElement('div');
-                        homeTeamElement.className = 'team';
-                        homeTeamElement.innerHTML = `
-                            <img src="${game.homeImage || 'https://via.placeholder.com/40?text=🏠'}" alt="${homeTeam || 'Time Desconhecido'}">
-                            <span>${homePlayer}</span>
-                            <span class="team-name">${homeTeam}</span>`;
-
-                        const awayTeamElement = document.createElement('div');
-                        awayTeamElement.className = 'team';
-                        awayTeamElement.innerHTML = `
-                            <img src="${game.awayImage || 'https://via.placeholder.com/40?text=🛡️'}" alt="${awayTeam || 'Time Desconhecido'}">
-                            <span>${awayPlayer}</span>
-                            <span class="team-name">${awayTeam}</span>`;
-
-                        teams.appendChild(homeTeamElement);
-                        teams.appendChild(awayTeamElement);
-
-                        const matchTime = document.createElement('div');
-                        matchTime.className = 'match-time';
-                        matchTime.innerText = `${game.day || 'N/A'} ${game.hour || 'N/A'}`;
-
-                        const metricsContainer = document.createElement('div');
-                        metricsContainer.className = 'metrics-container';
-                        metricsContainer.innerHTML = metrics.items.map(metric => {
-                            let icon = '⬤';
-                            if (metric.name.includes('1.5 FT')) icon = '📈';
-                            else if (metric.name.includes('2.5 FT')) icon = '📊';
-                            else if (metric.name.includes('3.5 FT')) icon = '📉';
-                            else if (metric.name.includes('Avg Goals')) icon = '⚽';
-                            else if (metric.name.includes('Form')) icon = '👑';
-                            if (metric.isSpecial) icon = '👑';
-                            return `
-                                <div class="metric-item ${metric.isSpecial ? 'special' : ''}">
-                                    <span class="metric-name"><span class="metric-icon">${icon}</span>${metric.name}</span>
-                                    <span class="metric-value">${metric.value}${metric.name.includes('Form') || metric.name.includes('Avg Goals') ? '' : '%'} <span class="metric-raw">${metric.raw}</span></span>
-                                </div>
-                            `;
-                        }).join('');
-
-                        const h2hButton = document.createElement('button');
-                        h2hButton.className = 'h2h-button';
-                        h2hButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg> Ver H2H';
-                        h2hButton.onclick = () => {
-                            window.location.href = `h2h_analysis.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${game.homeID || ''}&awayID=${game.awayID || ''}&leagueID=${game.leagueID || ''}`;
-                        };
-
-                        card.appendChild(teams);
-                        card.appendChild(matchTime);
-                        card.appendChild(metricsContainer);
-                        card.appendChild(h2hButton);
-                        leagueGamesGrid.appendChild(card);
+                        gamesByLeague[leagueName].push(game);
                     }
-
-                    if (gamesByLeague[leagueName].length > 2) {
-                        const viewMoreButton = document.createElement('button');
-                        viewMoreButton.className = `view-more-button ${leagueClasses[leagueName] || ''}`;
-                        
-                        if (isExpanded) {
-                            viewMoreButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg> Mostrar menos';
-                        } else {
-                            const remainingGames = gamesByLeague[leagueName].length - 2;
-                            viewMoreButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg> Ver mais ${remainingGames} jogos`;
-                        }
-                        
-                        viewMoreButton.onclick = () => {
-                            toggleLeagueExpansion(leagueName);
-                        };
-                        
-                        leagueGamesGrid.appendChild(viewMoreButton);
-                    }
-
-                    leagueSection.appendChild(leagueGamesGrid);
-                    gamesContainer.appendChild(leagueSection);
-                }
-
-                applyFilters();
-            }
-
-            function applyFilters() {
-                if (!upcomingGamesData) return;
-
-                const searchTerm = searchFilter.value.toLowerCase();
-                const leagueSections = gamesContainer.getElementsByClassName('league-section');
-
-                for (let i = 0; i < leagueSections.length; i++) {
-                    const leagueSection = leagueSections[i];
-                    const leagueName = leagueSection.dataset.leagueName || '';
-                    const cards = leagueSection.getElementsByClassName('card');
-                    let hasVisibleCards = false;
-
-                    for (let j = 0; j < cards.length; j++) {
-                        if (cards[j].classList.contains('view-more-button')) continue;
-                        
-                        const teams = cards[j].getElementsByClassName('team');
-                        let homePlayer = '', awayPlayer = '', homeTeam = '', awayTeam = '';
-                        if (teams.length >= 2) {
-                            homePlayer = teams[0].getElementsByTagName('span')[0]?.innerText.toLowerCase() || '';
-                            awayPlayer = teams[1].getElementsByTagName('span')[0]?.innerText.toLowerCase() || '';
-                            homeTeam = teams[0].getElementsByTagName('span')[1]?.innerText.toLowerCase() || '';
-                            awayTeam = teams[1].getElementsByTagName('span')[1]?.innerText.toLowerCase() || '';
-                        }
-
-                        const leagueMatch = selectedLeague === "" || selectedLeague === leagueName;
-                        const searchMatch = searchTerm === "" || 
-                            homePlayer.includes(searchTerm) || 
-                            awayPlayer.includes(searchTerm) || 
-                            homeTeam.includes(searchTerm) || 
-                            awayTeam.includes(searchTerm);
-
-                        cards[j].style.display = leagueMatch && searchMatch ? '' : 'none';
-                        if (leagueMatch && searchMatch) {
-                            hasVisibleCards = true;
-                        }
-                    }
-
-                    leagueSection.style.display = hasVisibleCards ? '' : 'none';
-                }
-            }
-
-            function startUpdateInterval() {
-                if (updateInterval) {
-                    clearInterval(updateInterval);
-                }
-                updateInterval = setInterval(() => {
-                    updateGames();
-                }, 60000);
-            }
-
-            function setActiveMainNavButton(button) {
-                document.querySelectorAll('.main-nav-button').forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-            }
-
-            topNavButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    topNavButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                    selectedLeague = button.dataset.league;
-                    applyFilters();
                 });
+
+                upcomingGamesData = [];
+                for (const league in gamesByLeague) {
+                    upcomingGamesData = upcomingGamesData.concat(gamesByLeague[league]);
+                }
+
+                renderGames(allGames);
+            } catch (error) {
+                console.error('Erro ao buscar dados:', error.message);
+                gamesContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Erro ao carregar dados. Verifique sua conexão ou tente novamente mais tarde.</div>';
+            }
+        }
+
+        async function renderGames(allGames) {
+            gamesContainer.innerHTML = '';
+
+            if (!upcomingGamesData || upcomingGamesData.length === 0) {
+                gamesContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Nenhum jogo disponível no momento.</div>';
+                return;
+            }
+
+            const gamesByLeague = upcomingGamesData.reduce((acc, game) => {
+                const leagueName = game.competition?.name || 'Desconhecida';
+                if (!acc[leagueName]) {
+                    acc[leagueName] = [];
+                }
+                acc[leagueName].push(game);
+                return acc;
+            }, {});
+
+            const targetLeagues = [
+                "Esoccer GT Leagues – 12 mins play",
+                "Esoccer Battle - 8 mins play",
+                "Esoccer Battle Volta - 6 mins play",
+                "Esoccer H2H GG League - 8 mins play",
+                 "Esoccer Adriatic League - 10 mins play"
+            ];
+
+            for (const leagueName of targetLeagues) {
+                if (!gamesByLeague[leagueName] || gamesByLeague[leagueName].length === 0) continue;
+                
+                const leagueSection = document.createElement('div');
+                leagueSection.className = 'league-section';
+                leagueSection.dataset.leagueName = getShortLeagueName(leagueName);
+
+                const leagueInfo = getLeagueDisplayName(leagueName);
+                const leagueHeader = document.createElement('h2');
+                leagueHeader.className = `league-header ${leagueClasses[leagueName] || ''}`;
+                leagueHeader.innerText = leagueInfo.name;
+                leagueHeader.style.color = leagueInfo.color;
+                leagueSection.appendChild(leagueHeader);
+
+                const bestPlayer = getBestPlayerForLeague(leagueName, allGames);
+                const bestPlayerCard = document.createElement('div');
+                bestPlayerCard.className = 'best-player-card';
+                bestPlayerCard.innerHTML = `
+                    <div class="last-games-header">Últimos 5 Jogos</div>
+                    <h3><span>🏆</span> Melhor Jogador da Liga</h3>
+                    <p><span>🎮</span> ${bestPlayer.name}</p>
+                    <p><span>🏆</span> ${bestPlayer.wins}/5 vitórias</p>
+                    <p><span>⚽</span> ${bestPlayer.goalsScored} gols marcados</p>
+                    <p><span>🥅</span> ${bestPlayer.goalsConceded} gols sofridos</p>
+                `;
+                leagueSection.appendChild(bestPlayerCard);
+
+                const leagueGamesGrid = document.createElement('div');
+                leagueGamesGrid.className = 'games-grid';
+
+                const isExpanded = expandedLeagues[leagueName] || false;
+                const gamesToShow = isExpanded ? gamesByLeague[leagueName] : gamesByLeague[leagueName].slice(0, 2);
+
+                for (const game of gamesToShow) {
+                    const gameId = game.eventID || game.id || `${game.home?.name}-${game.away?.name}-${game.startTime}`;
+                    const homePlayer = extractPlayerName(game.home?.name || '');
+                    const awayPlayer = extractPlayerName(game.away?.name || '');
+                    const homeTeam = extractTeamName(game.home?.teamName || '');
+                    const awayTeam = extractTeamName(game.away?.teamName || '');
+
+                    const card = document.createElement('div');
+                    card.className = `card ${leagueClasses[leagueName] || ''}`;
+
+                    const metrics = getMetrics(leagueName, homePlayer, awayPlayer, allGames);
+                    const isHighlighted = meetsCriteria(leagueName, metrics, allGames);
+                    if (isHighlighted) {
+                        card.classList.add('highlight-card');
+                        const matchData = {
+                            player1: homePlayer,
+                            player2: awayPlayer,
+                            league: getShortLeagueName(leagueName),
+                            matchTime: game.startTime ? new Date(game.startTime).toLocaleString() : 'N/A',
+                            metrics: {
+                                over15: metrics.over15,
+                                over25: metrics.over25,
+                                over35: metrics.over35,
+                                btts: metrics.btts,
+                                form: metrics.form
+                            }
+                        };
+                        sendTelegramMessage(matchData);
+                    }
+
+                    const teams = document.createElement('div');
+                    teams.className = 'teams';
+
+                    const homeTeamElement = document.createElement('div');
+                    homeTeamElement.className = 'team';
+                    homeTeamElement.innerHTML = `
+                        <img src="${game.home?.imageUrl || 'https://via.placeholder.com/40?text=🏠'}" alt="${homeTeam || 'Time Desconhecido'}">
+                        <span>${homePlayer}</span>
+                        <span class="team-name">${homeTeam}</span>`;
+
+                    const awayTeamElement = document.createElement('div');
+                    awayTeamElement.className = 'team';
+                    awayTeamElement.innerHTML = `
+                        <img src="${game.away?.imageUrl || 'https://via.placeholder.com/40?text=🛡️'}" alt="${awayTeam || 'Time Desconhecido'}">
+                        <span>${awayPlayer}</span>
+                        <span class="team-name">${awayTeam}</span>`;
+
+                    teams.appendChild(homeTeamElement);
+                    teams.appendChild(awayTeamElement);
+
+                    const matchTime = document.createElement('div');
+                    matchTime.className = 'match-time';
+                    const startTime = game.startTime ? new Date(game.startTime) : null;
+                    matchTime.innerText = startTime ? startTime.toLocaleString() : 'Horário não disponível';
+
+                    const metricsContainer = document.createElement('div');
+                    metricsContainer.className = 'metrics-container';
+                    metricsContainer.innerHTML = metrics.items.map(metric => {
+                        let icon = '⬤';
+                        if (metric.name.includes('1.5 FT')) icon = '📈';
+                        else if (metric.name.includes('2.5 FT')) icon = '📊';
+                        else if (metric.name.includes('3.5 FT')) icon = '📉';
+                        else if (metric.name.includes('Avg Goals')) icon = '⚽';
+                        else if (metric.name.includes('Form')) icon = '👑';
+                        if (metric.isSpecial) icon = '👑';
+                        return `
+                            <div class="metric-item ${metric.isSpecial ? 'special' : ''}">
+                                <span class="metric-name"><span class="metric-icon">${icon}</span>${metric.name}</span>
+                                <span class="metric-value">${metric.value}${metric.name.includes('Form') || metric.name.includes('Avg Goals') ? '' : '%'} <span class="metric-raw">${metric.raw}</span></span>
+                            </div>
+                        `;
+                    }).join('');
+
+                    const h2hButton = document.createElement('button');
+                    h2hButton.className = 'h2h-button';
+                    h2hButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg> Ver H2H';
+                    h2hButton.onclick = () => {
+                        window.location.href = `h2h_analysis.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&homeID=${game.home?.id || ''}&awayID=${game.away?.id || ''}&leagueID=${game.competition?.id || ''}`;
+                    };
+
+                    card.appendChild(teams);
+                    card.appendChild(matchTime);
+                    card.appendChild(metricsContainer);
+                    card.appendChild(h2hButton);
+                    leagueGamesGrid.appendChild(card);
+                }
+
+                if (gamesByLeague[leagueName].length > 2) {
+                    const viewMoreButton = document.createElement('button');
+                    viewMoreButton.className = `view-more-button ${leagueClasses[leagueName] || ''}`;
+                    
+                    if (isExpanded) {
+                        viewMoreButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg> Mostrar menos';
+                    } else {
+                        const remainingGames = gamesByLeague[leagueName].length - 2;
+                        viewMoreButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg> Ver mais ${remainingGames} jogos`;
+                    }
+                    
+                    viewMoreButton.onclick = () => {
+                        toggleLeagueExpansion(leagueName);
+                    };
+                    
+                    leagueGamesGrid.appendChild(viewMoreButton);
+                }
+
+                leagueSection.appendChild(leagueGamesGrid);
+                gamesContainer.appendChild(leagueSection);
+            }
+
+            applyFilters();
+        }
+
+        function applyFilters() {
+            if (!upcomingGamesData) return;
+
+            const searchTerm = searchFilter.value.toLowerCase();
+            const leagueSections = gamesContainer.getElementsByClassName('league-section');
+
+            for (let i = 0; i < leagueSections.length; i++) {
+                const leagueSection = leagueSections[i];
+                const leagueName = leagueSection.dataset.leagueName || '';
+                const cards = leagueSection.getElementsByClassName('card');
+                let hasVisibleCards = false;
+
+                for (let j = 0; j < cards.length; j++) {
+                    if (cards[j].classList.contains('view-more-button')) continue;
+                    
+                    const teams = cards[j].getElementsByClassName('team');
+                    let homePlayer = '', awayPlayer = '', homeTeam = '', awayTeam = '';
+                    if (teams.length >= 2) {
+                        homePlayer = teams[0].getElementsByTagName('span')[0]?.innerText.toLowerCase() || '';
+                        awayPlayer = teams[1].getElementsByTagName('span')[0]?.innerText.toLowerCase() || '';
+                        homeTeam = teams[0].getElementsByTagName('span')[1]?.innerText.toLowerCase() || '';
+                        awayTeam = teams[1].getElementsByTagName('span')[1]?.innerText.toLowerCase() || '';
+                    }
+
+                    const leagueMatch = selectedLeague === "" || selectedLeague === leagueName;
+                    const searchMatch = searchTerm === "" || 
+                        homePlayer.includes(searchTerm) || 
+                        awayPlayer.includes(searchTerm) || 
+                        homeTeam.includes(searchTerm) || 
+                        awayTeam.includes(searchTerm);
+
+                    cards[j].style.display = leagueMatch && searchMatch ? '' : 'none';
+                    if (leagueMatch && searchMatch) {
+                        hasVisibleCards = true;
+                    }
+                }
+
+                leagueSection.style.display = hasVisibleCards ? '' : 'none';
+            }
+        }
+
+        function startUpdateInterval() {
+            if (updateInterval) {
+                clearInterval(updateInterval);
+            }
+            updateInterval = setInterval(() => {
+                updateGames();
+            }, 60000);
+        }
+
+        function setActiveMainNavButton(button) {
+            document.querySelectorAll('.main-nav-button').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+        }
+
+        topNavButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                topNavButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                selectedLeague = button.dataset.league;
+                applyFilters();
             });
-
-            searchFilter.addEventListener('input', applyFilters);
-
-            viewUpcomingButton.addEventListener('click', () => {
-                setActiveMainNavButton(viewUpcomingButton);
-                window.location.href = 'index.html';
-            });
-
-            viewResultsButton.addEventListener('click', () => {
-                setActiveMainNavButton(viewResultsButton);
-                window.location.href = 'results.html';
-            });
-
-            viewLiveButton.addEventListener('click', () => {
-                setActiveMainNavButton(viewLiveButton);
-                window.location.href = 'live_v2.html';
-            });
-
-            viewStatsButton.addEventListener('click', () => {
-                setActiveMainNavButton(viewStatsButton);
-                window.location.href = 'statistics.html';
-            });
-
-            registerBetsButton.addEventListener('click', () => {
-                setActiveMainNavButton(registerBetsButton);
-                window.location.href = 'formularioApostas.html';
-            });
-
-            playerAnalysisButton.addEventListener('click', () => {
-                setActiveMainNavButton(playerAnalysisButton);
-                window.location.href = 'players.html';
-            });
-
-            dashboardButton.addEventListener('click', () => {
-                setActiveMainNavButton(dashboardButton);
-                window.location.href = 'dashboard.html';
-            });
-
-            nbaStatsButton.addEventListener('click', () => {
-                setActiveMainNavButton(nbaStatsButton);
-                window.location.href = 'NBA.html';
-            });
-
-            radarButton.addEventListener('click', () => {
-                setActiveMainNavButton(radarButton);
-                window.location.href = 'radar.html';
-            });
-
-            overButton.addEventListener('click', () => {
-                setActiveMainNavButton(overButton);
-                window.location.href = 'over.html';
-            });
-
-            updateGames();
-            startUpdateInterval();
         });
-    </script>
+
+        searchFilter.addEventListener('input', applyFilters);
+
+        viewUpcomingButton.addEventListener('click', () => {
+            setActiveMainNavButton(viewUpcomingButton);
+            window.location.href = 'index.html';
+        });
+
+        viewResultsButton.addEventListener('click', () => {
+            setActiveMainNavButton(viewResultsButton);
+            window.location.href = 'results.html';
+        });
+
+        viewLiveButton.addEventListener('click', () => {
+            setActiveMainNavButton(viewLiveButton);
+            window.location.href = 'live_v2.html';
+        });
+
+        viewStatsButton.addEventListener('click', () => {
+            setActiveMainNavButton(viewStatsButton);
+            window.location.href = 'statistics.html';
+        });
+
+        registerBetsButton.addEventListener('click', () => {
+            setActiveMainNavButton(registerBetsButton);
+            window.location.href = 'formularioApostas.html';
+        });
+
+        playerAnalysisButton.addEventListener('click', () => {
+            setActiveMainNavButton(playerAnalysisButton);
+            window.location.href = 'players.html';
+        });
+
+        dashboardButton.addEventListener('click', () => {
+            setActiveMainNavButton(dashboardButton);
+            window.location.href = 'dashboard.html';
+        });
+
+        nbaStatsButton.addEventListener('click', () => {
+            setActiveMainNavButton(nbaStatsButton);
+            window.location.href = 'NBA.html';
+        });
+
+        radarButton.addEventListener('click', () => {
+            setActiveMainNavButton(radarButton);
+            window.location.href = 'radar.html';
+        });
+
+        overButton.addEventListener('click', () => {
+            setActiveMainNavButton(overButton);
+            window.location.href = 'over.html';
+        });
+
+        updateGames();
+        startUpdateInterval();
+    });
+</script>
 </body>
 </html>
