@@ -1611,7 +1611,7 @@
 
                     const metricsContainer = document.createElement('div');
                     metricsContainer.className = 'metrics-container';
-                    metricsContainer.innerHTML = metrics.items.map(metric => {
+                    metricsContainer.innerHTML = metrics?.items?.map(metric => {
                         let icon = '⬤';
                         if (metric.name.includes('1.5 FT')) icon = '📈';
                         else if (metric.name.includes('2.5 FT')) icon = '📊';
