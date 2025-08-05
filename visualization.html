@@ -1419,7 +1419,7 @@
 
         function meetsCriteria(leagueName, metrics, allGames) {
             const leagueStats = calculateLeagueStats(leagueName, allGames);
-            const formMetric = metrics.items.find(m => m.name.endsWith("Form"));
+            const formMetric = metrics?.items?.find(m => m.name.endsWith("Form"));
 
             if (!formMetric || formMetric.value <= 45) return false;
 
