@@ -289,8 +289,7 @@
         }
 
         function extractPlayerName(text) {
-            const match = text.match(/\(([^)]+)\)/);
-            return match ? match[1] : text;
+            return text || 'Jogador Desconhecido'; // Simplificado para usar o nome diretamente
         }
 
         function getLeagueDisplayName(leagueName) {
@@ -306,7 +305,7 @@
 
         function updateResults() {
             console.log('Iniciando busca de resultados...');
-            fetch('https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=1')
+            fetch('https://api-v2.green365.com.br/api/v2/sport-events?page=1&limit=150&sport=esoccer&status=ended')
                 .then(response => {
                     console.log('Resposta recebida:', response.status);
                     if (!response.ok) {
@@ -317,12 +316,12 @@
                 .then(data => {
                     console.log('Dados recebidos:', data);
 
-                    // Verifica se data.data existe e é um array
-                    if (!data || !data.data || !Array.isArray(data.data)) {
+                    // Verifica se data.items existe e é um array
+                    if (!data || !data.items || !Array.isArray(data.items)) {
                         throw new Error('Formato de dados inválido');
                     }
 
-                    const results = data.data;
+                    const results = data.items;
                     console.log('Número de resultados:', results.length);
 
                     const resultsContainer = document.getElementById('resultsContainer');
@@ -341,44 +340,44 @@
                         console.log(`Processando resultado ${index + 1}:`, result);
 
                         try {
-                            const homePlayer = result.home ? extractPlayerName(result.home) : 'Jogador Casa';
-                            const awayPlayer = result.away ? extractPlayerName(result.away) : 'Jogador Visitante';
+                            const homePlayer = extractPlayerName(result.home.name);
+                            const awayPlayer = extractPlayerName(result.away.name);
 
                             const card = document.createElement('div');
                             card.className = 'result-card';
 
-                            const leagueInfo = getLeagueDisplayName(result.leagueName || 'Liga Desconhecida');
+                            const leagueInfo = getLeagueDisplayName(result.competition.name);
 
                             let scoreClass = '';
-                            if (result.score && result.score.includes('-')) {
-                                const [homeScore, awayScore] = result.score.split('-').map(Number);
-                                if (!isNaN(homeScore) && !isNaN(awayScore)) {
-                                    if (homeScore > awayScore) scoreClass = 'home-win';
-                                    else if (awayScore > homeScore) scoreClass = 'away-win';
-                                    else scoreClass = 'draw';
-                                }
+                            if (result.score && result.score.home !== undefined && result.score.away !== undefined) {
+                                if (result.score.home > result.score.away) scoreClass = 'home-win';
+                                else if (result.score.away > result.score.home) scoreClass = 'away-win';
+                                else scoreClass = 'draw';
                             }
+
+                            const totalScore = `${result.score.home || 0}-${result.score.away || 0}`;
+                            const htScore = `${result.scoreHT.home || 0}-${result.scoreHT.away || 0}`;
 
                             card.innerHTML = `
                                 <div class="league-name" style="color: ${leagueInfo.color}">${leagueInfo.name}</div>
                                 <div class="match-info">
                                     <div class="team">
-                                        <img src="${result.homeImage || 'https://via.placeholder.com/70'}" alt="${result.home_team_name || 'Time Casa'}" 
+                                        <img src="${result.home.imageUrl || 'https://via.placeholder.com/70'}" alt="${result.home.teamName || 'Time Casa'}" 
                                              onerror="this.src='https://via.placeholder.com/70'">
-                                        <div class="team-name">${result.home_team_name || 'Time Casa'}</div>
+                                        <div class="team-name">${result.home.teamName || 'Time Casa'}</div>
                                         <div class="player-name">${homePlayer}</div>
                                     </div>
-                                    <div class="score ${scoreClass}">${result.score || '0-0'}</div>
+                                    <div class="score ${scoreClass}">${totalScore}</div>
                                     <div class="team">
-                                        <img src="${result.awayImage || 'https://via.placeholder.com/70'}" alt="${result.away_team_name || 'Time Visitante'}"
+                                        <img src="${result.away.imageUrl || 'https://via.placeholder.com/70'}" alt="${result.away.teamName || 'Time Visitante'}"
                                              onerror="this.src='https://via.placeholder.com/70'">
-                                        <div class="team-name">${result.away_team_name || 'Time Visitante'}</div>
+                                        <div class="team-name">${result.away.teamName || 'Time Visitante'}</div>
                                         <div class="player-name">${awayPlayer}</div>
                                     </div>
                                 </div>
                                 <div class="match-details">
-                                    <div>HT: ${result.scoreHT || '0-0'}</div>
-                                    <div>${result.day || ''} ${result.hour || ''}</div>
+                                    <div>HT: ${htScore}</div>
+                                    <div>${new Date(result.startTime).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}</div>
                                 </div>
                             `;
 
