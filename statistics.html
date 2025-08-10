@@ -420,6 +420,7 @@
                 .then(response => response.json())
                 .then(data => {
                     const games = data.items.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
+                    console.log('Games fetched and sorted:', games);
                     games.forEach(game => {
                         const leagueName = game.competition.name;
                         if (!leagues[leagueName]) {
@@ -427,6 +428,7 @@
                         }
                         leagues[leagueName].push(game);
                     });
+                    console.log('Leagues organized:', leagues);
                     applyFilter();
                 })
                 .catch(error => {
@@ -434,19 +436,23 @@
                     alert('Erro ao carregar estatísticas. Por favor, tente novamente.');
                 });
 
-            function applyFilter() {
+            window.applyFilter = function() {
                 const filterValue = document.getElementById('gameFilter').value;
+                console.log('Filter changed to:', filterValue);
                 const statsContainer = document.getElementById('statsContainer');
                 statsContainer.innerHTML = '';
 
                 for (const league in leagues) {
                     const leagueInfo = leagueMapping[league] || { name: league, color: "#FFFFFF" };
-                    let filteredGames = [...leagues[league]]; // Cria uma cópia para evitar modificar o original
+                    let filteredGames = [...leagues[league]]; // Cria uma cópia
+                    console.log(`Processing league: ${league}, Total games: ${filteredGames.length}`);
                     if (filterValue !== 'all') {
                         const limit = parseInt(filterValue);
                         filteredGames = filteredGames.slice(0, limit);
+                        console.log(`Filtered to ${limit} games:`, filteredGames);
                     }
                     const leagueStats = calculateStats(filteredGames);
+                    console.log(`Stats for ${league}:`, leagueStats);
                     const isStarred = leagueStats['Over 1.5 HT'] === 100 &&
                         leagueStats['Over 2.5 HT'] === 100 &&
                         leagueStats['Over 3.5 FT'] >= 85 &&
@@ -480,7 +486,7 @@
                     `;
                     statsContainer.appendChild(leagueDiv);
                 }
-            }
+            };
         });
 
         function calculateStats(games) {
