@@ -392,14 +392,14 @@
                 window.location.href = 'visualization.html';
             });
 
-            fetch('https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=1')
+            fetch('https://api-v2.green365.com.br/api/v2/sport-events?page=1&limit=150&sport=esoccer&status=ended')
                 .then(response => response.json())
                 .then(data => {
-                    const games = data.data;
+                    const games = data.items;
                     const leagues = {};
 
                     games.forEach(game => {
-                        const leagueName = game.leagueName;
+                        const leagueName = game.competition.name;
                         if (!leagues[leagueName]) {
                             leagues[leagueName] = [];
                         }
@@ -409,11 +409,11 @@
                     const statsContainer = document.getElementById('statsContainer');
                     for (const league in leagues) {
                         const leagueStats = calculateStats(leagues[league]);
-                        const isStarred = leagueStats['Over 1.5'] === 100 &&
-                            leagueStats['Over 2.5'] === 100 &&
-                            leagueStats['Over 3.5'] >= 85 &&
-                            leagueStats['Ambos Marcam'] >= 85 &&
-                            leagueStats['0x0'] === 0;
+                        const isStarred = leagueStats['Over 1.5 HT'] === 100 &&
+                            leagueStats['Over 2.5 HT'] === 100 &&
+                            leagueStats['Over 3.5 FT'] >= 85 &&
+                            leagueStats['BTTS FT'] >= 85 &&
+                            leagueStats['0 X 0 FT'] === 100;
                         const star = isStarred ? '<div class="star">⭐</div>' : '';
                         const highlightClass = isStarred ? 'highlight' : '';
                         const leagueDiv = document.createElement('div');
@@ -421,15 +421,22 @@
                         leagueDiv.innerHTML = `
                             ${star}
                             <div class="league-name">${league}</div>
-                            ${generateBar('Over 0.5', leagueStats['Over 0.5'])}
-                            ${generateBar('Over 1.5', leagueStats['Over 1.5'])}
-                            ${generateBar('Over 2.5', leagueStats['Over 2.5'])}
-                            ${generateBar('Over 3.5', leagueStats['Over 3.5'])}
-                            ${generateBar('Over 4.5', leagueStats['Over 4.5'])}
-                            ${generateBar('Over 5.5', leagueStats['Over 5.5'])}
-                            ${generateBar('Over 6.5', leagueStats['Over 6.5'])}
-                            ${generateBar('Ambos Marcam', leagueStats['Ambos Marcam'])}
-                            ${generateBar('0x0', leagueStats['0x0'], true)}
+                            <div class="stat">
+                                <span>Partidas</span>
+                                <span>${leagueStats['Partidas']}</span>
+                            </div>
+                            <div class="stat-title">Mercados HT</div>
+                            ${generateBar('Over 1.5 HT', leagueStats['Over 1.5 HT'])}
+                            ${generateBar('Over 2.5 HT', leagueStats['Over 2.5 HT'])}
+                            ${generateBar('BTTS HT', leagueStats['BTTS HT'])}
+                            ${generateBar('0 X 0 HT', leagueStats['0 X 0 HT'])}
+                            <div class="stat-title">Mercados FT</div>
+                            ${generateBar('Over 1.5 FT', leagueStats['Over 1.5 FT'])}
+                            ${generateBar('Over 2.5 FT', leagueStats['Over 2.5 FT'])}
+                            ${generateBar('Over 3.5 FT', leagueStats['Over 3.5 FT'])}
+                            ${generateBar('Over 4.5 FT', leagueStats['Over 4.5 FT'])}
+                            ${generateBar('BTTS FT', leagueStats['BTTS FT'])}
+                            ${generateBar('0 X 0 FT', leagueStats['0 X 0 FT'])}
                         `;
                         statsContainer.appendChild(leagueDiv);
                     }
@@ -441,43 +448,61 @@
         });
 
         function calculateStats(games) {
-            const totalGames = games.filter(game => game.score).length;
+            const totalGames = games.length;
             const stats = {
-                'Over 0.5': 0, 'Over 1.5': 0, 'Over 2.5': 0, 'Over 3.5': 0,
-                'Over 4.5': 0, 'Over 5.5': 0, 'Over 6.5': 0,
-                'Ambos Marcam': 0, '0x0': 0
+                'Partidas': totalGames,
+                'Over 1.5 HT': 0,
+                'Over 2.5 HT': 0,
+                'BTTS HT': 0,
+                '0 X 0 HT': 0,
+                'Over 1.5 FT': 0,
+                'Over 2.5 FT': 0,
+                'Over 3.5 FT': 0,
+                'Over 4.5 FT': 0,
+                'BTTS FT': 0,
+                '0 X 0 FT': 0
             };
 
+            let countZeroHT = 0;
+            let countZeroFT = 0;
+
             games.forEach(game => {
-                if (!game.score) return;
-                const [homeScore, awayScore] = game.score.split('-').map(Number);
-                const totalGoals = homeScore + awayScore;
+                const htGoals = game.scoreHT.home + game.scoreHT.away;
+                const ftGoals = game.score.home + game.score.away;
 
-                Object.keys(stats).forEach(key => {
-                    if (key.startsWith('Over') && totalGoals > parseFloat(key.split(' ')[1])) {
-                        stats[key]++;
-                    }
-                });
+                if (htGoals > 1.5) stats['Over 1.5 HT']++;
+                if (htGoals > 2.5) stats['Over 2.5 HT']++;
+                if (game.scoreHT.home > 0 && game.scoreHT.away > 0) stats['BTTS HT']++;
+                if (htGoals === 0) countZeroHT++;
 
-                if (homeScore > 0 && awayScore > 0) stats['Ambos Marcam']++;
-                if (totalGoals === 0) stats['0x0']++;
+                if (ftGoals > 1.5) stats['Over 1.5 FT']++;
+                if (ftGoals > 2.5) stats['Over 2.5 FT']++;
+                if (ftGoals > 3.5) stats['Over 3.5 FT']++;
+                if (ftGoals > 4.5) stats['Over 4.5 FT']++;
+                if (game.score.home > 0 && game.score.away > 0) stats['BTTS FT']++;
+                if (ftGoals === 0) countZeroFT++;
             });
 
-            for (const key in stats) {
-                stats[key] = totalGames ? Math.round((stats[key] / totalGames) * 100) : 0;
-            }
+            Object.keys(stats).forEach(key => {
+                if (key !== 'Partidas') {
+                    stats[key] = Math.round((stats[key] / totalGames) * 100);
+                }
+            });
+
+            stats['0 X 0 HT'] = 100 - Math.round((countZeroHT / totalGames) * 100);
+            stats['0 X 0 FT'] = 100 - Math.round((countZeroFT / totalGames) * 100);
 
             return stats;
         }
 
-        function generateBar(label, percentage, isZero) {
+        function generateBar(label, percentage) {
             return `
                 <div class="stat">
                     <span>${label}</span>
                     <span>${percentage}%</span>
                 </div>
                 <div class="bar-container">
-                    <div class="${isZero ? 'bar zero' : 'bar'}" style="width: ${percentage}%"></div>
+                    <div class="bar" style="width: ${percentage}%"></div>
                 </div>
             `;
         }
