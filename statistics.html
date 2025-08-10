@@ -378,7 +378,6 @@
     <div id="statsContainer" class="leagues-container"></div>
 
     <script>
-        // Função de verificação de login
         function checkUserLogin() {
             if (!sessionStorage.getItem('loggedIn')) {
                 window.location.replace('index.html');
@@ -387,7 +386,6 @@
             return true;
         }
 
-        // Função de logout
         function logout() {
             sessionStorage.removeItem('loggedIn');
             localStorage.removeItem('currentUser');
@@ -395,19 +393,14 @@
             window.location.replace('index.html');
         }
 
-        // Verificar login ao carregar a página
         document.addEventListener('DOMContentLoaded', () => {
             if (!checkUserLogin()) return;
 
-            // Adicionar evento ao botão de logout
             document.getElementById('logoutButton').addEventListener('click', logout);
-
-            // Restante do código original
             document.getElementById('viewResultsButton').addEventListener('click', function () {
                 localStorage.setItem('needsUpdate', 'true');
                 window.location.href = 'results.html';
             });
-
             document.getElementById('backButton').addEventListener('click', function () {
                 localStorage.setItem('needsUpdate', 'true');
                 window.location.href = 'visualization.html';
@@ -426,7 +419,7 @@
             fetch('https://api-v2.green365.com.br/api/v2/sport-events?page=1&limit=150&sport=esoccer&status=ended')
                 .then(response => response.json())
                 .then(data => {
-                    const games = data.items.sort((a, b) => new Date(b.startTime) - new Date(a.startTime)); // Ordena por data decrescente
+                    const games = data.items.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
                     games.forEach(game => {
                         const leagueName = game.competition.name;
                         if (!leagues[leagueName]) {
@@ -448,10 +441,10 @@
 
                 for (const league in leagues) {
                     const leagueInfo = leagueMapping[league] || { name: league, color: "#FFFFFF" };
-                    let filteredGames = leagues[league];
+                    let filteredGames = [...leagues[league]]; // Cria uma cópia para evitar modificar o original
                     if (filterValue !== 'all') {
                         const limit = parseInt(filterValue);
-                        filteredGames = leagues[league].slice(0, limit); // Pega os últimos jogos
+                        filteredGames = filteredGames.slice(0, limit);
                     }
                     const leagueStats = calculateStats(filteredGames);
                     const isStarred = leagueStats['Over 1.5 HT'] === 100 &&
