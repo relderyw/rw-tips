@@ -43,7 +43,6 @@
                 opacity: 0;
                 transform: translateY(-20px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -78,13 +77,10 @@
 
         @keyframes neonPulse {
             from {
-                text-shadow: 0 0 10px rgba(0, 255, 136, 0.5),
-                    0 0 20px rgba(0, 255, 136, 0.3);
+                text-shadow: 0 0 10px rgba(0, 255, 136, 0.5), 0 0 20px rgba(0, 255, 136, 0.3);
             }
-
             to {
-                text-shadow: 0 0 15px rgba(0, 255, 136, 0.7),
-                    0 0 25px rgba(0, 255, 136, 0.5);
+                text-shadow: 0 0 15px rgba(0, 255, 136, 0.7), 0 0 25px rgba(0, 255, 136, 0.5);
             }
         }
 
@@ -165,11 +161,9 @@
             0% {
                 transform: scale(1) rotate(0deg);
             }
-
             50% {
                 transform: scale(1.2) rotate(180deg);
             }
-
             100% {
                 transform: scale(1) rotate(360deg);
             }
@@ -291,7 +285,6 @@
             from {
                 text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
             }
-
             to {
                 text-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
             }
@@ -392,6 +385,14 @@
                 window.location.href = 'visualization.html';
             });
 
+            const leagueMapping = {
+                "Esoccer Battle - 8 mins play": { name: "Battle 8m", color: "#FF4C4C" },
+                "Esoccer Battle Volta - 6 mins play": { name: "Battle Volta 6m", color: "#FFD700" },
+                "Esoccer GT Leagues – 12 mins play": { name: "GT Leagues 12m", color: "#32CD32" },
+                "Esoccer H2H GG League - 8 mins play": { name: "H2H GG 8m", color: "#8A2BE2" },
+                "Esoccer Adriatic League - 10 mins play": { name: "Adriatic 10m", color: "#1E90FF" }
+            };
+
             fetch('https://api-v2.green365.com.br/api/v2/sport-events?page=1&limit=150&sport=esoccer&status=ended')
                 .then(response => response.json())
                 .then(data => {
@@ -408,6 +409,7 @@
 
                     const statsContainer = document.getElementById('statsContainer');
                     for (const league in leagues) {
+                        const leagueInfo = leagueMapping[league] || { name: league, color: "#FFFFFF" };
                         const leagueStats = calculateStats(leagues[league]);
                         const isStarred = leagueStats['Over 1.5 HT'] === 100 &&
                             leagueStats['Over 2.5 HT'] === 100 &&
@@ -418,9 +420,11 @@
                         const highlightClass = isStarred ? 'highlight' : '';
                         const leagueDiv = document.createElement('div');
                         leagueDiv.className = `league-stats ${highlightClass}`;
+                        leagueDiv.style.background = `linear-gradient(145deg, ${leagueInfo.color}22, ${leagueInfo.color}44)`;
+                        leagueDiv.style.borderColor = leagueInfo.color;
                         leagueDiv.innerHTML = `
                             ${star}
-                            <div class="league-name">${league}</div>
+                            <div class="league-name">${leagueInfo.name}</div>
                             <div class="stat">
                                 <span>Partidas</span>
                                 <span>${leagueStats['Partidas']}</span>
