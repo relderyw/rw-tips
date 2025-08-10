@@ -112,6 +112,27 @@
             box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
         }
 
+        .filter-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #gameFilter {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--primary-color);
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #gameFilter:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
         .leagues-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -347,6 +368,13 @@
         <button id="backButton" class="action-button">Voltar para Próximos Jogos</button>
         <button id="logoutButton" class="action-button">Sair</button>
     </div>
+    <div class="filter-container">
+        <select id="gameFilter" onchange="applyFilter()">
+            <option value="all">Todos os jogos</option>
+            <option value="10">Últimos 10 jogos</option>
+            <option value="5">Últimos 5 jogos</option>
+        </select>
+    </div>
     <div id="statsContainer" class="leagues-container"></div>
 
     <script>
@@ -393,12 +421,12 @@
                 "Esoccer Adriatic League - 10 mins play": { name: "Adriatic 10m", color: "#1E90FF" }
             };
 
+            let leagues = {};
+
             fetch('https://api-v2.green365.com.br/api/v2/sport-events?page=1&limit=150&sport=esoccer&status=ended')
                 .then(response => response.json())
                 .then(data => {
                     const games = data.items;
-                    const leagues = {};
-
                     games.forEach(game => {
                         const leagueName = game.competition.name;
                         if (!leagues[leagueName]) {
@@ -406,49 +434,60 @@
                         }
                         leagues[leagueName].push(game);
                     });
-
-                    const statsContainer = document.getElementById('statsContainer');
-                    for (const league in leagues) {
-                        const leagueInfo = leagueMapping[league] || { name: league, color: "#FFFFFF" };
-                        const leagueStats = calculateStats(leagues[league]);
-                        const isStarred = leagueStats['Over 1.5 HT'] === 100 &&
-                            leagueStats['Over 2.5 HT'] === 100 &&
-                            leagueStats['Over 3.5 FT'] >= 85 &&
-                            leagueStats['BTTS FT'] >= 85 &&
-                            leagueStats['0 X 0 FT'] === 100;
-                        const star = isStarred ? '<div class="star">⭐</div>' : '';
-                        const highlightClass = isStarred ? 'highlight' : '';
-                        const leagueDiv = document.createElement('div');
-                        leagueDiv.className = `league-stats ${highlightClass}`;
-                        leagueDiv.style.background = `linear-gradient(145deg, ${leagueInfo.color}22, ${leagueInfo.color}44)`;
-                        leagueDiv.style.borderColor = leagueInfo.color;
-                        leagueDiv.innerHTML = `
-                            ${star}
-                            <div class="league-name">${leagueInfo.name}</div>
-                            <div class="stat">
-                                <span>Partidas</span>
-                                <span>${leagueStats['Partidas']}</span>
-                            </div>
-                            <div class="stat-title">Mercados HT</div>
-                            ${generateBar('Over 1.5 HT', leagueStats['Over 1.5 HT'])}
-                            ${generateBar('Over 2.5 HT', leagueStats['Over 2.5 HT'])}
-                            ${generateBar('BTTS HT', leagueStats['BTTS HT'])}
-                            ${generateBar('0 X 0 HT', leagueStats['0 X 0 HT'])}
-                            <div class="stat-title">Mercados FT</div>
-                            ${generateBar('Over 1.5 FT', leagueStats['Over 1.5 FT'])}
-                            ${generateBar('Over 2.5 FT', leagueStats['Over 2.5 FT'])}
-                            ${generateBar('Over 3.5 FT', leagueStats['Over 3.5 FT'])}
-                            ${generateBar('Over 4.5 FT', leagueStats['Over 4.5 FT'])}
-                            ${generateBar('BTTS FT', leagueStats['BTTS FT'])}
-                            ${generateBar('0 X 0 FT', leagueStats['0 X 0 FT'])}
-                        `;
-                        statsContainer.appendChild(leagueDiv);
-                    }
+                    applyFilter();
                 })
                 .catch(error => {
                     console.error('Erro ao buscar dados:', error);
                     alert('Erro ao carregar estatísticas. Por favor, tente novamente.');
                 });
+
+            function applyFilter() {
+                const filterValue = document.getElementById('gameFilter').value;
+                const statsContainer = document.getElementById('statsContainer');
+                statsContainer.innerHTML = '';
+
+                for (const league in leagues) {
+                    const leagueInfo = leagueMapping[league] || { name: league, color: "#FFFFFF" };
+                    let filteredGames = leagues[league];
+                    if (filterValue !== 'all') {
+                        const limit = parseInt(filterValue);
+                        filteredGames = leagues[league].slice(0, limit);
+                    }
+                    const leagueStats = calculateStats(filteredGames);
+                    const isStarred = leagueStats['Over 1.5 HT'] === 100 &&
+                        leagueStats['Over 2.5 HT'] === 100 &&
+                        leagueStats['Over 3.5 FT'] >= 85 &&
+                        leagueStats['BTTS FT'] >= 85 &&
+                        leagueStats['0 X 0 FT'] === 100;
+                    const star = isStarred ? '<div class="star">⭐</div>' : '';
+                    const highlightClass = isStarred ? 'highlight' : '';
+                    const leagueDiv = document.createElement('div');
+                    leagueDiv.className = `league-stats ${highlightClass}`;
+                    leagueDiv.style.background = `linear-gradient(145deg, ${leagueInfo.color}22, ${leagueInfo.color}44)`;
+                    leagueDiv.style.borderColor = leagueInfo.color;
+                    leagueDiv.innerHTML = `
+                        ${star}
+                        <div class="league-name">${leagueInfo.name}</div>
+                        <div class="stat">
+                            <span>Partidas</span>
+                            <span>${leagueStats['Partidas']}</span>
+                        </div>
+                        <div class="stat-title">Mercados HT</div>
+                        ${generateBar('Over 1.5 HT', leagueStats['Over 1.5 HT'])}
+                        ${generateBar('Over 2.5 HT', leagueStats['Over 2.5 HT'])}
+                        ${generateBar('BTTS HT', leagueStats['BTTS HT'])}
+                        ${generateBar('0 X 0 HT', leagueStats['0 X 0 HT'])}
+                        <div class="stat-title">Mercados FT</div>
+                        ${generateBar('Over 1.5 FT', leagueStats['Over 1.5 FT'])}
+                        ${generateBar('Over 2.5 FT', leagueStats['Over 2.5 FT'])}
+                        ${generateBar('Over 3.5 FT', leagueStats['Over 3.5 FT'])}
+                        ${generateBar('Over 4.5 FT', leagueStats['Over 4.5 FT'])}
+                        ${generateBar('BTTS FT', leagueStats['BTTS FT'])}
+                        ${generateBar('0 X 0 FT', leagueStats['0 X 0 FT'])}
+                    `;
+                    statsContainer.appendChild(leagueDiv);
+                }
+            }
         });
 
         function calculateStats(games) {
