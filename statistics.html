@@ -426,7 +426,7 @@
             fetch('https://api-v2.green365.com.br/api/v2/sport-events?page=1&limit=150&sport=esoccer&status=ended')
                 .then(response => response.json())
                 .then(data => {
-                    const games = data.items;
+                    const games = data.items.sort((a, b) => new Date(b.startTime) - new Date(a.startTime)); // Ordena por data decrescente
                     games.forEach(game => {
                         const leagueName = game.competition.name;
                         if (!leagues[leagueName]) {
@@ -451,7 +451,7 @@
                     let filteredGames = leagues[league];
                     if (filterValue !== 'all') {
                         const limit = parseInt(filterValue);
-                        filteredGames = leagues[league].slice(0, limit);
+                        filteredGames = leagues[league].slice(0, limit); // Pega os últimos jogos
                     }
                     const leagueStats = calculateStats(filteredGames);
                     const isStarred = leagueStats['Over 1.5 HT'] === 100 &&
@@ -528,12 +528,12 @@
 
             Object.keys(stats).forEach(key => {
                 if (key !== 'Partidas') {
-                    stats[key] = Math.round((stats[key] / totalGames) * 100);
+                    stats[key] = totalGames > 0 ? Math.round((stats[key] / totalGames) * 100) : 0;
                 }
             });
 
-            stats['0 X 0 HT'] = 100 - Math.round((countZeroHT / totalGames) * 100);
-            stats['0 X 0 FT'] = 100 - Math.round((countZeroFT / totalGames) * 100);
+            stats['0 X 0 HT'] = totalGames > 0 ? 100 - Math.round((countZeroHT / totalGames) * 100) : 0;
+            stats['0 X 0 FT'] = totalGames > 0 ? 100 - Math.round((countZeroFT / totalGames) * 100) : 0;
 
             return stats;
         }
