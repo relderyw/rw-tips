@@ -392,7 +392,7 @@
                 window.location.href = 'visualization.html';
             });
 
-            fetch('https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=1')
+            fetch('https://api-v2.green365.com.br/api/v2/sport-events?page=1&limit=150&sport=esoccer&status=ended')
                 .then(response => response.json())
                 .then(data => {
                     const games = data.data;
