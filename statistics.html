@@ -157,6 +157,7 @@
         .league-stats:hover {
             transform: translateY(-5px);
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            background: var(--card-hover);
         }
 
         .highlight {
@@ -461,7 +462,7 @@
                     const highlightClass = isStarred ? 'highlight' : '';
                     const leagueDiv = document.createElement('div');
                     leagueDiv.className = `league-stats ${highlightClass}`;
-                    leagueDiv.style.background = `linear-gradient(145deg, ${leagueInfo.color}22, ${leagueInfo.color}44)`;
+                    leagueDiv.style.background = 'var(--card-bg)'; // Forces black background
                     leagueDiv.style.borderColor = leagueInfo.color;
                     leagueDiv.innerHTML = `
                         ${star}
