@@ -63,7 +63,7 @@
         }
 
         .logo-text {
-            font-size: 1.8rem;
+            font-size: 2rem; /* Aumentado para melhor legibilidade */
             background: linear-gradient(45deg, #00ff88, #00ffaa);
             -webkit-background-clip: text;
             background-clip: text;
@@ -94,7 +94,7 @@
 
         .action-button {
             padding: 15px 35px;
-            font-size: 16px;
+            font-size: 1.1rem; /* Aumentado para melhor legibilidade */
             font-weight: 600;
             color: var(--text-primary);
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
@@ -118,8 +118,8 @@
         }
 
         #gameFilter {
-            padding: 10px;
-            font-size: 16px;
+            padding: 12px; /* Aumentado para melhor usabilidade */
+            font-size: 1.1rem; /* Aumentado para melhor legibilidade */
             border-radius: 12px;
             border: 1px solid var(--primary-color);
             background-color: var(--card-bg);
@@ -212,7 +212,7 @@
 
         .league-name {
             font-weight: 600;
-            font-size: 1.2rem;
+            font-size: 1.5rem; /* Aumentado para melhor legibilidade */
             margin-bottom: 20px;
             text-align: center;
             background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
@@ -227,7 +227,7 @@
 
         .stat {
             margin: 15px 0;
-            font-size: 0.9rem;
+            font-size: 1.1rem; /* Aumentado para melhor legibilidade */
             color: var(--text-secondary);
             display: flex;
             justify-content: space-between;
@@ -243,12 +243,18 @@
             transform: translateX(5px);
         }
 
+        .stat .value-100 {
+            color: var(--accent-color); /* Destaque para 100% */
+            font-weight: 700; /* Negrito para destacar */
+            text-shadow: 0 0 5px rgba(0, 255, 136, 0.7); /* Efeito de glow */
+        }
+
         .bar-container {
             background-color: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
             overflow: hidden;
             margin: 8px 0;
-            height: 8px;
+            height: 10px; /* Aumentado para melhor visibilidade */
             position: relative;
         }
 
@@ -259,6 +265,11 @@
             transition: width 0.6s ease-in-out;
             position: relative;
             overflow: hidden;
+        }
+
+        .bar-100 {
+            background: var(--accent-color); /* Cor sólida para 100% */
+            box-shadow: 0 0 10px var(--accent-color); /* Destaque visual */
         }
 
         .bar::after {
@@ -284,7 +295,7 @@
 
         h1 {
             text-align: center;
-            font-size: 2.5rem;
+            font-size: 3rem; /* Aumentado para melhor legibilidade */
             font-weight: 600;
             margin: 30px 0;
             background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
@@ -343,7 +354,7 @@
             }
 
             h1 {
-                font-size: 1.8rem;
+                font-size: 2rem; /* Ajuste para mobile */
                 padding: 0 15px;
                 margin: 20px 0;
             }
@@ -462,7 +473,7 @@
                     const highlightClass = isStarred ? 'highlight' : '';
                     const leagueDiv = document.createElement('div');
                     leagueDiv.className = `league-stats ${highlightClass}`;
-                    leagueDiv.style.background = 'var(--card-bg)'; // Forces black background
+                    leagueDiv.style.setProperty('background', 'var(--card-bg)');
                     leagueDiv.style.borderColor = leagueInfo.color;
                     leagueDiv.innerHTML = `
                         ${star}
@@ -538,13 +549,14 @@
         }
 
         function generateBar(label, percentage) {
+            const isHundred = percentage === 100;
             return `
                 <div class="stat">
                     <span>${label}</span>
-                    <span>${percentage}%</span>
+                    <span class="${isHundred ? 'value-100' : ''}">${percentage}%</span>
                 </div>
                 <div class="bar-container">
-                    <div class="bar" style="width: ${percentage}%"></div>
+                    <div class="bar ${isHundred ? 'bar-100' : ''}" style="width: ${percentage}%"></div>
                 </div>
             `;
         }
