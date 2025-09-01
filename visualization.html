@@ -696,7 +696,7 @@
 <body>
     <header class="header">
         <div class="logo-container">
-            <img src="https://i.ibb.co/G4Y8sHM/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
+            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
             <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
         </div>
     </header>
@@ -1005,17 +1005,22 @@
             renderGames();
         }
         async function updateGames() {
-            gamesContainer.innerHTML = '';
-            const placeholderCount = 5;
-            for (let i = 0; i < placeholderCount; i++) {
-                const placeholder = document.createElement('div');
-                placeholder.className = 'card-placeholder';
-                placeholder.innerHTML = '<div class="loading-indicator"></div> Carregando...';
-                gamesContainer.appendChild(placeholder);
-            }
+            gamesContainer.innerHTML = '<div class="card-placeholder" style="width: 100%;"><div class="loading-indicator"></div> Carregando todas as seções...</div>';
             try {
                 const upcomingGames = await fetchUpcomingGames();
                 upcomingGamesData = upcomingGames;
+
+                // Paralelizar chamadas H2H para todos os jogos
+                const h2hPromises = upcomingGames.map(game => 
+                    fetchH2HMetrics(game.home_player_name || 'Desconhecido', game.away_player_name || 'Desconhecido')
+                );
+                const h2hDataArray = await Promise.all(h2hPromises);
+
+                // Associar H2H data aos jogos
+                upcomingGames.forEach((game, index) => {
+                    game.h2hData = h2hDataArray[index];
+                });
+
                 renderGames();
             } catch (error) {
                 console.error('Erro ao buscar dados:', error.message);
@@ -1064,7 +1069,7 @@
                     const awayPlayer = game.away_player_name || 'Desconhecido';
                     const homeTeam = game.home_team_name || 'N/A';
                     const awayTeam = game.away_team_name || 'N/A';
-                    const h2hData = await fetchH2HMetrics(homePlayer, awayPlayer);
+                    const h2hData = game.h2hData; // Usar os dados H2H pré-carregados
                     const card = document.createElement('div');
                     card.className = `card ${leagueClasses[leagueName] || ''}`;
                     card.dataset.h2h = JSON.stringify(h2hData);
