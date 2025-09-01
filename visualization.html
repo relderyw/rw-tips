@@ -1007,24 +1007,26 @@
             `;
         }
         function meetsCriteria(leagueName, metrics, allGames) {
-            const leagueStats = calculateLeagueStats(leagueName, allGames);
             const is8MinLeague = [
                 "Esoccer Battle - 8 mins play",
                 "Esoccer Battle Volta - 6 mins play",
                 "Esoccer H2H GG League - 8 mins play"
             ].includes(leagueName);
             const isGtLeague = leagueName === "Esoccer GT Leagues - 12 mins play" || leagueName === "Esoccer Adriatic League - 10 mins play";
+
+            // Usar métricas H2H como proxy para os critérios
+            const avgFtGoals = parseFloat(metrics.avgFtGoals) || 0;
+            const pctBttsSecond = parseFloat(metrics.pctBttsSecond) || 0;
+
             if (is8MinLeague) {
                 return (
-                    leagueStats.over15Rate === 100 &&
-                    leagueStats.over25Rate >= 85 &&
-                    leagueStats.bttsRate >= 80
+                    avgFtGoals >= 2.5 && // Aproximação de over 2.5
+                    pctBttsSecond >= 80  // BTTS no segundo tempo como proxy
                 );
             } else if (isGtLeague) {
                 return (
-                    leagueStats.over25Rate === 100 &&
-                    leagueStats.over35Rate >= 85 &&
-                    leagueStats.bttsRate >= 90
+                    avgFtGoals >= 3.5 && // Aproximação de over 3.5
+                    pctBttsSecond >= 90  // BTTS no segundo tempo como proxy
                 );
             }
             return false;
@@ -1108,10 +1110,10 @@
                             league: getShortLeagueName(leagueName),
                             matchTime: game.scheduled_time_brt ? new Date(game.scheduled_time_brt.replace(' ', 'T')).toLocaleString() : 'N/A',
                             metrics: {
-                                over15: metrics.over15,
-                                over25: metrics.over25,
-                                over35: metrics.over35,
-                                btts: metrics.btts,
+                                over15: metrics.avgFtGoals >= 1.5 ? 100 : 0,
+                                over25: metrics.avgFtGoals >= 2.5 ? 100 : 0,
+                                over35: metrics.avgFtGoals >= 3.5 ? 100 : 0,
+                                btts: metrics.pctBttsSecond,
                                 form: metrics.form
                             }
                         };
