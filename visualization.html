@@ -696,7 +696,7 @@
 <body>
     <header class="header">
         <div class="logo-container">
-            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
+            <img src="https://i.ibb.co/G4Y8sHM/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
             <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
         </div>
     </header>
@@ -876,17 +876,25 @@
                 return [];
             }
         }
-        async function fetchH2HMetrics(homePlayer, awayPlayer) {
-            try {
-                const response = await fetch(`https://caveira-proxy.onrender.com/api/v1/historico/confronto/${encodeURIComponent(homePlayer)}/${encodeURIComponent(awayPlayer)}?page=1&limit=20`);
-                if (!response.ok) {
-                    throw new Error(`Erro ao buscar H2H: ${response.status}`);
+        async function fetchH2HMetrics(homePlayer, awayPlayer, retries = 3) {
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(`https://caveira-proxy.onrender.com/api/v1/historico/confronto/${encodeURIComponent(homePlayer)}/${encodeURIComponent(awayPlayer)}?page=1&limit=20`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    if (!response.ok) {
+                        throw new Error(`Erro ao buscar H2H: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    return data;
+                } catch (error) {
+                    console.error(`Tentativa ${i + 1} falhou:`, error);
+                    if (i === retries - 1) throw error;
+                    await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1))); // Atraso crescente
                 }
-                const data = await response.json();
-                return data;
-            } catch (error) {
-                console.error('Erro ao buscar H2H:', error);
-                return { matches: [], player1: homePlayer, player2: awayPlayer, player1_wins: 0, player2_wins: 0 };
             }
         }
         function calculateMetrics(h2hData, numGames = 5) {
