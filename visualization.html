@@ -343,15 +343,6 @@
             text-align: center;
             flex: 1;
         }
-        .team img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            margin: 0;
-            border: 1px solid var(--border-color);
-            object-fit: cover;
-            background-color: #2a2a35;
-        }
         .team span {
             display: block;
             font-size: 1.1rem;
@@ -563,10 +554,6 @@
                 gap: 15px;
                 margin-bottom: 15px;
             }
-            .team img {
-                width: 45px;
-                height: 45px;
-            }
             .team span {
                 font-size: 1rem;
             }
@@ -589,10 +576,6 @@
         @media (max-width: 768px) {
             #gamesContainer {
                 grid-template-columns: 1fr;
-            }
-            .team img {
-                width: 40px;
-                height: 40px;
             }
             .team span {
                 font-size: 0.9rem;
@@ -686,10 +669,6 @@
             }
             .card {
                 padding: 12px;
-            }
-            .team img {
-                width: 35px;
-                height: 35px;
             }
             .team span {
                 font-size: 0.85rem;
@@ -1121,18 +1100,14 @@
                     }
                     const teams = document.createElement('div');
                     teams.className = 'teams';
-                    const homeTeamNoSpace = (homeTeam || '').replace(/\s/g, '');
-                    const awayTeamNoSpace = (awayTeam || '').replace(/\s/g, '');
                     const homeTeamElement = document.createElement('div');
                     homeTeamElement.className = 'team';
                     homeTeamElement.innerHTML = `
-                        <img src="https://via.placeholder.com/50?text=${homeTeamNoSpace[0] || '?'}" alt="${homeTeam}">
                         <span>${homePlayer}</span>
                         <span class="team-name">${homeTeam}</span>`;
                     const awayTeamElement = document.createElement('div');
                     awayTeamElement.className = 'team';
                     awayTeamElement.innerHTML = `
-                        <img src="https://via.placeholder.com/50?text=${awayTeamNoSpace[0] || '?'}" alt="${awayTeam}">
                         <span>${awayPlayer}</span>
                         <span class="team-name">${awayTeam}</span>`;
                     teams.appendChild(homeTeamElement);
