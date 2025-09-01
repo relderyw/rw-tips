@@ -347,7 +347,7 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            margin-bottom: 10px;
+            margin: 0;
             border: 1px solid var(--border-color);
             object-fit: cover;
             background-color: #2a2a35;
@@ -717,7 +717,7 @@
 <body>
     <header class="header">
         <div class="logo-container">
-            <img src="https://i.ibb.co/G4Y8sHM/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
+            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
             <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
         </div>
     </header>
@@ -793,8 +793,6 @@
         const radarButton = document.getElementById('radarButton');
         const overButton = document.getElementById('overButton');
         let upcomingGamesData = [];
-        let pastGamesData = {};
-        let allGamesCache = [];
         let latestTimestamp = 0;
         let updateInterval = null;
         let selectedLeague = '';
@@ -885,68 +883,6 @@
             const awayGoals = parseInt(score.away) || 0;
             return { homeGoals, awayGoals, totalGoals: homeGoals + awayGoals };
         }
-        async function fetchPastGames() {
-            const pagesToFetch = 5;
-            let newGames = [];
-            let hasNewData = false;
-            for (let page = 1; page <= pagesToFetch; page++) {
-                try {
-                    const response = await fetch(`https://api-v2.green365.com.br/api/v2/sport-events?page=${page}&limit=100&sport=esoccer&status=ended`);
-                    if (!response.ok) {
-                        throw new Error(`Erro na API na página ${page}: ${response.status} - ${response.statusText}`);
-                    }
-                    const data = await response.json();
-                    const games = data.items || [];
-                    const newGamesOnPage = games.filter(game => game.startTime && new Date(game.startTime).getTime() > latestTimestamp);
-                    if (newGamesOnPage.length > 0) {
-                        hasNewData = true;
-                        newGames = newGames.concat(newGamesOnPage);
-                    }
-                } catch (error) {
-                    console.error(`Erro ao buscar jogos da página ${page}:`, error.message);
-                    continue;
-                }
-            }
-            if (hasNewData) {
-                allGamesCache = [...newGames, ...allGamesCache]
-                    .sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime())
-                    .slice(0, 250);
-                latestTimestamp = allGamesCache.length > 0 ?
-                    Math.max(...allGamesCache.map(g => new Date(g.startTime).getTime())) :
-                    latestTimestamp;
-                const playerGames = {};
-                allGamesCache.forEach(game => {
-                    const homePlayer = extractPlayerName(game.home?.name || '');
-                    const awayPlayer = extractPlayerName(game.away?.name || '');
-                    const score = parseScore(game.score);
-                    const gameData = {
-                        goalsScored: 0,
-                        goalsConceded: 0,
-                        totalGoals: score.totalGoals,
-                        won: false,
-                        timestamp: new Date(game.startTime).getTime()
-                    };
-                    if (!playerGames[homePlayer]) playerGames[homePlayer] = [];
-                    gameData.goalsScored = score.homeGoals;
-                    gameData.goalsConceded = score.awayGoals;
-                    gameData.won = score.homeGoals > score.awayGoals;
-                    playerGames[homePlayer].push({...gameData});
-                    if (!playerGames[awayPlayer]) playerGames[awayPlayer] = [];
-                    const awayGameData = {...gameData};
-                    awayGameData.goalsScored = score.awayGoals;
-                    awayGameData.goalsConceded = score.homeGoals;
-                    awayGameData.won = score.awayGoals > score.homeGoals;
-                    playerGames[awayPlayer].push(awayGameData);
-                });
-                for (const player in playerGames) {
-                    playerGames[player] = playerGames[player]
-                        .sort((a, b) => b.timestamp - a.timestamp)
-                        .slice(0, 5);
-                }
-                pastGamesData = playerGames;
-            }
-            return allGamesCache;
-        }
         async function fetchUpcomingGames() {
             try {
                 const response = await fetch('https://caveira-proxy.onrender.com/api/scraped-matches?league_ids=10047781,10083563,10082427,10048705');
@@ -960,25 +896,6 @@
                 console.error('Erro ao buscar jogos futuros:', error.message);
                 return [];
             }
-        }
-        function calculateLeagueStats(leagueName, allGames) {
-            const leagueGames = allGames.filter(game => game.competition?.name === leagueName).slice(0, 10);
-            if (leagueGames.length === 0) {
-                return { over15Rate: 0, over25Rate: 0, over35Rate: 0, bttsRate: 0 };
-            }
-            const over1_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 1.5).length;
-            const over2_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 2.5).length;
-            const over3_5Games = leagueGames.filter(game => parseScore(game.score).totalGoals > 3.5).length;
-            const bttsGames = leagueGames.filter(game => {
-                const score = parseScore(game.score);
-                return score.homeGoals > 0 && score.awayGoals > 0;
-            }).length;
-            return {
-                over15Rate: Math.round((over1_5Games / leagueGames.length) * 100),
-                over25Rate: Math.round((over2_5Games / leagueGames.length) * 100),
-                over35Rate: Math.round((over3_5Games / leagueGames.length) * 100),
-                bttsRate: Math.round((bttsGames / leagueGames.length) * 100)
-            };
         }
         async function fetchH2HMetrics(homePlayer, awayPlayer) {
             try {
@@ -1114,7 +1031,7 @@
         }
         function toggleLeagueExpansion(leagueName) {
             expandedLeagues[leagueName] = !expandedLeagues[leagueName];
-            renderGames(allGamesCache);
+            renderGames();
         }
         async function updateGames() {
             gamesContainer.innerHTML = '';
@@ -1126,36 +1043,15 @@
                 gamesContainer.appendChild(placeholder);
             }
             try {
-                const allGames = await fetchPastGames();
                 const upcomingGames = await fetchUpcomingGames();
-                const targetLeagues = [
-                    "Esoccer GT Leagues - 12 mins play",
-                    "Esoccer Battle - 8 mins play",
-                    "Esoccer Battle Volta - 6 mins play",
-                    "Esoccer H2H GG League - 8 mins play",
-                    "Esoccer Adriatic League - 10 mins play"
-                ];
-                const gamesByLeague = {};
-                upcomingGames.forEach(game => {
-                    const leagueName = game.league_name;
-                    if (targetLeagues.includes(leagueName)) {
-                        if (!gamesByLeague[leagueName]) {
-                            gamesByLeague[leagueName] = [];
-                        }
-                        gamesByLeague[leagueName].push(game);
-                    }
-                });
-                upcomingGamesData = [];
-                for (const league in gamesByLeague) {
-                    upcomingGamesData = upcomingGamesData.concat(gamesByLeague[league]);
-                }
-                renderGames(allGames);
+                upcomingGamesData = upcomingGames;
+                renderGames();
             } catch (error) {
                 console.error('Erro ao buscar dados:', error.message);
                 gamesContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Erro ao carregar dados. Verifique sua conexão ou tente novamente mais tarde.</div>';
             }
         }
-        async function renderGames(allGames) {
+        async function renderGames() {
             gamesContainer.innerHTML = '';
             if (!upcomingGamesData || upcomingGamesData.length === 0) {
                 gamesContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Nenhum jogo disponível no momento.</div>';
@@ -1203,7 +1099,7 @@
                     card.dataset.h2h = JSON.stringify(h2hData);
                     card.dataset.currentLimit = '0'; // 0 for all
                     const metrics = calculateMetrics(h2hData);
-                    const isHighlighted = meetsCriteria(leagueName, metrics, allGames);
+                    const isHighlighted = meetsCriteria(leagueName, metrics, []);
                     if (isHighlighted) {
                         card.classList.add('highlight-card');
                         const matchData = {
@@ -1223,16 +1119,16 @@
                     }
                     const teams = document.createElement('div');
                     teams.className = 'teams';
+                    const homeTeamNoSpace = (homeTeam || '').replace(/\s/g, '');
+                    const awayTeamNoSpace = (awayTeam || '').replace(/\s/g, '');
                     const homeTeamElement = document.createElement('div');
                     homeTeamElement.className = 'team';
-                    const homeTeamNoSpace = homeTeam.replace(/\s/g, '');
                     homeTeamElement.innerHTML = `
                         <img src="https://via.placeholder.com/50?text=${homeTeamNoSpace[0] || '?'}" alt="${homeTeam}">
                         <span>${homePlayer}</span>
                         <span class="team-name">${homeTeam}</span>`;
                     const awayTeamElement = document.createElement('div');
                     awayTeamElement.className = 'team';
-                    const awayTeamNoSpace = awayTeam.replace(/\s/g, '');
                     awayTeamElement.innerHTML = `
                         <img src="https://via.placeholder.com/50?text=${awayTeamNoSpace[0] || '?'}" alt="${awayTeam}">
                         <span>${awayPlayer}</span>
