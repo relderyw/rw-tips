@@ -876,25 +876,17 @@
                 return [];
             }
         }
-        async function fetchH2HMetrics(homePlayer, awayPlayer, retries = 3) {
-            for (let i = 0; i < retries; i++) {
-                try {
-                    const response = await fetch(`https://caveira-proxy.onrender.com/api/v1/historico/confronto/${encodeURIComponent(homePlayer)}/${encodeURIComponent(awayPlayer)}?page=1&limit=20`, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                    if (!response.ok) {
-                        throw new Error(`Erro ao buscar H2H: ${response.status}`);
-                    }
-                    const data = await response.json();
-                    return data;
-                } catch (error) {
-                    console.error(`Tentativa ${i + 1} falhou:`, error);
-                    if (i === retries - 1) throw error;
-                    await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1))); // Atraso crescente
+        async function fetchH2HMetrics(homePlayer, awayPlayer) {
+            try {
+                const response = await fetch(`https://caveira-proxy.onrender.com/api/v1/historico/confronto/${encodeURIComponent(homePlayer)}/${encodeURIComponent(awayPlayer)}?page=1&limit=20`);
+                if (!response.ok) {
+                    throw new Error(`Erro ao buscar H2H: ${response.status}`);
                 }
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Erro ao buscar H2H:', error);
+                return { matches: [], player1: homePlayer, player2: awayPlayer, player1_wins: 0, player2_wins: 0 };
             }
         }
         function calculateMetrics(h2hData, numGames = 5) {
@@ -1013,22 +1005,17 @@
             renderGames();
         }
         async function updateGames() {
-            gamesContainer.innerHTML = '<div class="card-placeholder" style="width: 100%;"><div class="loading-indicator"></div> Carregando todas as seções...</div>';
+            gamesContainer.innerHTML = '';
+            const placeholderCount = 5;
+            for (let i = 0; i < placeholderCount; i++) {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'card-placeholder';
+                placeholder.innerHTML = '<div class="loading-indicator"></div> Carregando...';
+                gamesContainer.appendChild(placeholder);
+            }
             try {
                 const upcomingGames = await fetchUpcomingGames();
                 upcomingGamesData = upcomingGames;
-
-                // Paralelizar chamadas H2H para todos os jogos
-                const h2hPromises = upcomingGames.map(game => 
-                    fetchH2HMetrics(game.home_player_name || 'Desconhecido', game.away_player_name || 'Desconhecido')
-                );
-                const h2hDataArray = await Promise.all(h2hPromises);
-
-                // Associar H2H data aos jogos
-                upcomingGames.forEach((game, index) => {
-                    game.h2hData = h2hDataArray[index];
-                });
-
                 renderGames();
             } catch (error) {
                 console.error('Erro ao buscar dados:', error.message);
@@ -1077,7 +1064,7 @@
                     const awayPlayer = game.away_player_name || 'Desconhecido';
                     const homeTeam = game.home_team_name || 'N/A';
                     const awayTeam = game.away_team_name || 'N/A';
-                    const h2hData = game.h2hData; // Usar os dados H2H pré-carregados
+                    const h2hData = await fetchH2HMetrics(homePlayer, awayPlayer);
                     const card = document.createElement('div');
                     card.className = `card ${leagueClasses[leagueName] || ''}`;
                     card.dataset.h2h = JSON.stringify(h2hData);
