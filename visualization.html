@@ -696,7 +696,7 @@
 <body>
     <header class="header">
         <div class="logo-container">
-            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
+            <img src="https://i.ibb.co/G4Y8sHM/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
             <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
         </div>
     </header>
@@ -889,7 +889,7 @@
                 return { matches: [], player1: homePlayer, player2: awayPlayer, player1_wins: 0, player2_wins: 0 };
             }
         }
-        function calculateMetrics(h2hData, numGames = 0) {
+        function calculateMetrics(h2hData, numGames = 5) {
             let matches = h2hData.matches || [];
             if (numGames > 0) {
                 matches = matches.slice(0, numGames);
@@ -986,27 +986,17 @@
             `;
         }
         function meetsCriteria(leagueName, metrics, allGames) {
-            const is8MinLeague = [
-                "Esoccer Battle - 8 mins play",
-                "Esoccer Battle Volta - 6 mins play",
-                "Esoccer H2H GG League - 8 mins play"
-            ].includes(leagueName);
-            const isGtLeague = leagueName === "Esoccer GT Leagues - 12 mins play" || leagueName === "Esoccer Adriatic League - 10 mins play";
-
-            // Usar métricas H2H como proxy para os critérios
-            const avgFtGoals = parseFloat(metrics.avgFtGoals) || 0;
+            const avgHtGoals = parseFloat(metrics.avgHtGoals) || 0;
+            const pctBttsHt = parseFloat(metrics.pctBttsHt) || 0;
             const pctBttsSecond = parseFloat(metrics.pctBttsSecond) || 0;
+            const avgFtGoals = parseFloat(metrics.avgFtGoals) || 0;
 
-            if (is8MinLeague) {
-                return (
-                    avgFtGoals >= 2.5 && // Aproximação de over 2.5
-                    pctBttsSecond >= 80  // BTTS no segundo tempo como proxy
-                );
-            } else if (isGtLeague) {
-                return (
-                    avgFtGoals >= 3.5 && // Aproximação de over 3.5
-                    pctBttsSecond >= 90  // BTTS no segundo tempo como proxy
-                );
+            if (leagueName === "Esoccer H2H GG League - 8 mins play" || leagueName === "Esoccer Battle - 8 mins play") {
+                return avgHtGoals >= 2.5 && pctBttsHt >= 88 && pctBttsSecond === 100 && avgFtGoals >= 4.0;
+            } else if (leagueName === "Esoccer Battle Volta - 6 mins play") {
+                return avgHtGoals >= 3.5 && pctBttsHt >= 100 && pctBttsSecond === 100 && avgFtGoals >= 6.0;
+            } else if (leagueName === "Esoccer GT Leagues - 12 mins play") {
+                return avgHtGoals >= 3.0 && pctBttsHt >= 95 && pctBttsSecond === 100 && avgFtGoals >= 5.0;
             }
             return false;
         }
@@ -1078,8 +1068,8 @@
                     const card = document.createElement('div');
                     card.className = `card ${leagueClasses[leagueName] || ''}`;
                     card.dataset.h2h = JSON.stringify(h2hData);
-                    card.dataset.currentLimit = '0'; // 0 for all
-                    const metrics = calculateMetrics(h2hData);
+                    card.dataset.currentLimit = '5'; // Default to 5 games
+                    const metrics = calculateMetrics(h2hData, 5); // Default to 5 games
                     const isHighlighted = meetsCriteria(leagueName, metrics, []);
                     if (isHighlighted) {
                         card.classList.add('highlight-card');
@@ -1119,7 +1109,7 @@
                     const limitButtons = document.createElement('div');
                     limitButtons.className = 'limit-buttons';
                     const btn5 = document.createElement('button');
-                    btn5.className = 'limit-button';
+                    btn5.className = 'limit-button active'; // Default active
                     btn5.innerText = '5 Jogos';
                     btn5.onclick = () => updateCardMetrics(card, 5);
                     const btn10 = document.createElement('button');
