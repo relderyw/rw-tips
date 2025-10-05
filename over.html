@@ -3,22 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Análise eSoccer - Green365</title>
+    <title>Análise eSoccer - RW Tips</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         :root {
             --primary: #22c55e;
             --primary-dark: #16a34a;
             --secondary: #64748b;
-            --bg-dark: #000000;
-            --bg-card: #111111;
-            --bg-surface: #1e293b;
-            --text-primary: #ffffff;
-            --text-secondary: #a3bffa;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-surface: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
             --text-muted: #94a3b8;
-            --border: #2d3748;
-            --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            --radius: 6px;
+            --border: #374151;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius: 8px;
         }
 
         * {
@@ -29,14 +33,15 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-dark);
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1a202c 100%);
             color: var(--text-primary);
-            line-height: 1.5;
-            padding: 15px;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
@@ -171,7 +176,8 @@
             text-align: left;
             font-weight: 600;
             border-bottom: 2px solid var(--border);
-            white-space: nowrap; /* Evita quebra de linha nos cabeçalhos */
+            white-space: nowrap;
+            min-width: 120px; /* Largura mínima para colunas */
         }
 
         th:hover {
@@ -187,8 +193,8 @@
             padding: 0.7rem 1rem;
             border-bottom: 1px solid var(--border);
             vertical-align: middle;
-            white-space: nowrap; /* Evita quebra de linha nas células */
-            min-width: 120px; /* Largura mínima para evitar quebras */
+            white-space: nowrap;
+            min-width: 120px;
         }
 
         tbody tr:hover {
@@ -340,7 +346,7 @@
         @media (max-width: 768px) {
             th, td {
                 padding: 0.6rem 0.8rem;
-                min-width: 100px; /* Ajuste menor para mobile */
+                min-width: 100px;
             }
 
             .league-name {
