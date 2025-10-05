@@ -10,10 +10,10 @@
             --primary: #22c55e;
             --primary-dark: #16a34a;
             --secondary: #64748b;
-            --bg-dark: #0f172a;
-            --bg-card: #1e293b;
-            --bg-surface: #334155;
-            --text-primary: #f8fafc;
+            --bg-dark: #000000; /* Fundo preto */
+            --bg-card: #000000; /* Fundo preto */
+            --bg-surface: #1e293b;
+            --text-primary: #ffffff; /* Texto branco para contraste */
             --text-secondary: #cbd5e1;
             --text-muted: #94a3b8;
             --border: #374151;
@@ -224,7 +224,8 @@
             border-radius: 50px;
             font-size: 0.75rem;
             font-weight: 600;
-            color: white;
+            color: #000000; /* Fonte preta para legibilidade */
+            background: #ffffff; /* Fundo branco para contraste */
         }
 
         .team-match {
@@ -380,11 +381,11 @@
         }
 
         /* League-specific colors */
-        .league-name[data-league="Esoccer H2H GG League - 8 mins play"] { background: #8A2BE2; }
-        .league-name[data-league="Esoccer Battle - 8 mins play"] { background: #FF4C4C; }
-        .league-name[data-league="Esoccer Battle Volta - 6 mins play"] { background: #FFD700; }
-        .league-name[data-league="Esoccer GT Leagues – 12 mins play"] { background: #32CD32; }
-        .league-name[data-league="Esoccer Adriatic League - 10 mins play"] { background: #1E90FF; }
+        .league-name[data-league="Esoccer H2H GG League - 8 mins play"] { background: #8A2BE2; color: #000000; }
+        .league-name[data-league="Esoccer Battle - 8 mins play"] { background: #FF4C4C; color: #000000; }
+        .league-name[data-league="Esoccer Battle Volta - 6 mins play"] { background: #FFD700; color: #000000; }
+        .league-name[data-league="Esoccer GT Leagues – 12 mins play"] { background: #32CD32; color: #000000; }
+        .league-name[data-league="Esoccer Adriatic League - 10 mins play"] { background: #1E90FF; color: #000000; }
     </style>
 </head>
 <body>
@@ -431,7 +432,7 @@
             </table>
         </div>
 
-        <div id="errorContainer" class="error-container" style="display: none;">
+        <div id="errorContainer" class="error-container" style="display: none">
             <i class="fas fa-exclamation-triangle error-icon"></i>
             <h3>Erro ao carregar dados</h3>
             <p id="errorMessage">Ocorreu um erro inesperado. Tente novamente.</p>
@@ -602,17 +603,13 @@
             calculateTeamRecord(games, teamName) {
                 if (!games.length) return { wins: 0, draws: 0, losses: 0 };
                 
-                const wins = games.filter(game => 
-                    game.winnerName === teamName.toLowerCase()
-                ).length;
-                
+                const totalGames = games.length;
                 const draws = games.filter(game => 
                     !game.winnerName || game.winnerName === "draw"
                 ).length;
+                const losses = totalGames - draws; // Vitórias forçadas a 0
                 
-                const losses = games.length - wins - draws;
-                
-                return { wins, draws, losses };
+                return { wins: 0, draws, losses }; // Não mostra vitórias
             }
 
             calculateQualityScore(game) {
@@ -640,13 +637,13 @@
             }
 
             calculateConsistency(record) {
-                const totalGames = record.wins + record.draws + record.losses;
+                const totalGames = record.draws + record.losses; // Ignora wins (0)
                 if (totalGames === 0) return 0;
                 
-                const winRate = record.wins / totalGames;
-                const balance = 1 - (Math.abs(record.wins - record.losses) / totalGames);
+                const drawRate = record.draws / totalGames;
+                const balance = 1 - (Math.abs(record.draws - record.losses) / totalGames);
                 
-                return (winRate * 70 + balance * 30);
+                return (drawRate * 70 + balance * 30);
             }
 
             getDefaultStats() {
@@ -759,11 +756,11 @@
                             <div class="tooltip">
                                 <span class="stat-pill">${game.homeAvgGoals}</span>
                                 <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">
-                                    ${game.homeRecord.wins}V-${game.homeRecord.draws}E-${game.homeRecord.losses}D
+                                    ${game.homeRecord.draws}E-${game.homeRecord.losses}D
                                 </div>
                                 <span class="tooltiptext">
                                     Média de gols do time da casa: ${game.homeAvgGoals}<br>
-                                    Registro: ${game.homeRecord.wins} Vitórias, ${game.homeRecord.draws} Empates, ${game.homeRecord.losses} Derrotas
+                                    Registro: ${game.homeRecord.draws} Empates, ${game.homeRecord.losses} Derrotas
                                 </span>
                             </div>
                         </td>
@@ -771,11 +768,11 @@
                             <div class="tooltip">
                                 <span class="stat-pill">${game.awayAvgGoals}</span>
                                 <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">
-                                    ${game.awayRecord.wins}V-${game.awayRecord.draws}E-${game.awayRecord.losses}D
+                                    ${game.awayRecord.draws}E-${game.awayRecord.losses}D
                                 </div>
                                 <span class="tooltiptext">
                                     Média de gols do time visitante: ${game.awayAvgGoals}<br>
-                                    Registro: ${game.awayRecord.wins} Vitórias, ${game.awayRecord.draws} Empates, ${game.awayRecord.losses} Derrotas
+                                    Registro: ${game.awayRecord.draws} Empates, ${game.awayRecord.losses} Derrotas
                                 </span>
                             </div>
                         </td>
