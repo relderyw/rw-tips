@@ -10,7 +10,7 @@
             --primary: #22c55e;
             --primary-dark: #16a34a;
             --secondary: #6b7280;
-            --bg-primary: #0f1a2c;
+            --bg-primary: #000000;
             --bg-card: #1e2a44;
             --bg-surface: #24364a;
             --text-primary: #ffffff;
@@ -21,7 +21,7 @@
             --warning: #f59e0b;
             --danger: #ef4444;
             --info: #3b82f6;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             --radius: 10px;
             --font-size-base: 1rem;
             --spacing: 1rem;
@@ -35,7 +35,7 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #0f1a2c 0%, #1e2a44 100%);
+            background: var(--bg-primary);
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
@@ -43,7 +43,7 @@
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1600px; /* Aumentado para suportar mais colunas */
             width: 100%;
             margin: 0 auto;
             padding: 0 var(--spacing);
@@ -175,7 +175,7 @@
             border-collapse: separate;
             border-spacing: 0;
             font-size: var(--font-size-base);
-            min-width: 1200px; /* Largura mínima maior para suportar dados */
+            min-width: 1800px; /* Aumentado para exibir todas as colunas sem corte */
         }
 
         th {
