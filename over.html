@@ -8,30 +8,12 @@
     <style>
         :root {
             --primary: #10b981;
-            --primary-dark: #059669;
-            --primary-light: #34d399;
-            --secondary: #8b5cf6;
-            --accent: #f59e0b;
             --bg-primary: #0a0e1a;
-            --bg-secondary: #111827;
             --bg-card: #1a1f35;
-            --bg-surface: #1f2937;
-            --bg-hover: #2d3548;
             --text-primary: #f9fafb;
-            --text-secondary: #e5e7eb;
             --text-muted: #9ca3af;
             --border: #374151;
-            --border-light: #4b5563;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --info: #3b82f6;
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-            --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.5);
-            --radius-sm: 6px;
-            --radius: 10px;
-            --radius-lg: 14px;
+            --radius: 6px;
             --font-size-base: 0.9rem;
             --spacing: 1rem;
         }
@@ -44,7 +26,7 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, var(--bg-primary) 0%, #0f1419 100%);
+            background: var(--bg-primary);
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
@@ -55,62 +37,43 @@
             max-width: 100%;
             width: 100%;
             margin: 0 auto;
-            padding: 1rem;
+            padding: var(--spacing);
         }
 
         header {
-            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-surface) 100%);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: var(--shadow-lg);
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin-bottom: var(--spacing);
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 1rem;
             border: 1px solid var(--border);
-            position: relative;
-            overflow: hidden;
-        }
-
-        header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
         }
 
         .logo-container {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
         }
 
         .logo-img {
-            width: 48px;
-            height: 48px;
-            border-radius: 10px;
-            box-shadow: var(--shadow-md);
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
         }
 
         .logo-text {
-            font-size: 1.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
         }
 
         h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            letter-spacing: -0.5px;
+            font-size: 1.5rem;
+            font-weight: 600;
         }
 
         .button-group {
@@ -119,61 +82,50 @@
         }
 
         .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
+            padding: 0.6rem 1.2rem;
+            border: 1px solid var(--border);
             border-radius: var(--radius);
-            font-weight: 600;
-            font-size: 0.95rem;
+            font-weight: 500;
+            font-size: 0.9rem;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            box-shadow: var(--shadow-sm);
+            transition: background 0.2s;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background: var(--primary);
             color: white;
         }
 
         .btn-primary:hover {
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            background: #059669;
         }
 
         .btn-secondary {
-            background: var(--bg-surface);
+            background: transparent;
             color: var(--text-primary);
-            border: 1px solid var(--border-light);
         }
 
         .btn-secondary:hover {
-            background: var(--bg-hover);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            background: #2d3548;
         }
 
         .loading-container {
-            background: linear-gradient(135deg, var(--bg-card), var(--bg-surface));
-            border-radius: var(--radius-lg);
-            padding: 3rem 2rem;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 1.5rem;
             text-align: center;
-            box-shadow: var(--shadow-lg);
-            margin-bottom: var(--spacing);
             border: 1px solid var(--border);
+            margin-bottom: var(--spacing);
         }
 
         .spinner {
-            width: 50px;
-            height: 50px;
-            margin: 0 auto 1.5rem;
-            border: 4px solid rgba(16, 185, 129, 0.2);
-            border-top: 4px solid var(--primary);
-            border-right: 4px solid var(--secondary);
+            width: 30px;
+            height: 30px;
+            margin: 0 auto 1rem;
+            border: 3px solid rgba(16, 185, 129, 0.2);
+            border-top: 3px solid var(--primary);
             border-radius: 50%;
-            animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+            animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
@@ -181,239 +133,137 @@
             100% { transform: rotate(360deg); }
         }
 
-        #loadingText {
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
         .error-container {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05));
+            background: rgba(239, 68, 68, 0.1);
             border: 1px solid rgba(239, 68, 68, 0.4);
-            border-radius: var(--radius-lg);
-            padding: 2.5rem 2rem;
+            border-radius: var(--radius);
+            padding: 1.5rem;
             text-align: center;
             margin-bottom: var(--spacing);
-            color: #fca5a5;
-            box-shadow: var(--shadow-md);
+            color: #ef4444;
         }
 
         .error-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: var(--danger);
-        }
-
-        .error-container h3 {
-            color: var(--text-primary);
+            font-size: 2rem;
             margin-bottom: 0.5rem;
         }
 
         .table-container {
             background: var(--bg-card);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-lg);
-            overflow: hidden;
-            margin-bottom: var(--spacing);
+            border-radius: var(--radius);
             border: 1px solid var(--border);
-        }
-
-        .table-wrapper {
             overflow-x: auto;
-            overflow-y: auto;
-            max-height: calc(100vh - 250px);
+            margin-bottom: var(--spacing);
         }
 
         table {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
+            border-collapse: collapse;
             font-size: var(--font-size-base);
             min-width: 1400px;
         }
 
         th {
-            background: linear-gradient(180deg, var(--bg-surface), var(--bg-card));
-            color: var(--text-secondary);
-            padding: 1rem 0.75rem;
+            background: #1f2937;
+            color: var(--text-muted);
+            padding: 0.75rem;
             text-align: left;
-            font-weight: 700;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid var(--border-light);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
             white-space: nowrap;
             position: sticky;
             top: 0;
-            z-index: 10;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            z-index: 1;
         }
 
         th:hover {
-            background: linear-gradient(180deg, var(--bg-hover), var(--bg-surface));
-            color: var(--primary-light);
+            color: var(--text-primary);
         }
 
         th.filtered {
             border-bottom: 2px solid var(--primary);
             color: var(--primary);
-            background: linear-gradient(180deg, rgba(16, 185, 129, 0.1), var(--bg-card));
-        }
-
-        th .filter-icon {
-            margin-left: 0.4rem;
-            font-size: 0.75rem;
-            opacity: 0.6;
-            transition: opacity 0.3s;
-        }
-
-        th:hover .filter-icon {
-            opacity: 1;
         }
 
         td {
-            padding: 1rem 0.75rem;
-            border-bottom: 1px solid rgba(75, 85, 99, 0.3);
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
             vertical-align: middle;
         }
 
-        tbody tr {
-            transition: all 0.3s ease;
-        }
-
         tbody tr:hover {
-            background: linear-gradient(90deg, rgba(16, 185, 129, 0.05), transparent);
-            transform: scale(1.002);
+            background: rgba(16, 185, 129, 0.05);
         }
 
         .league-name {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
             font-size: 0.8rem;
-            font-weight: 700;
+            font-weight: 600;
             color: #ffffff;
             max-width: 180px;
             overflow: hidden;
             text-overflow: ellipsis;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s ease;
-        }
-
-        .league-name:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .league-name i {
-            font-size: 0.9rem;
         }
 
         .team-match {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
         }
 
         .team-name {
-            font-weight: 600;
+            font-weight: 500;
             max-width: 140px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            color: var(--text-primary);
         }
 
         .vs {
             color: var(--text-muted);
-            font-size: 0.8rem;
-            font-weight: 600;
-            padding: 0.2rem 0.5rem;
-            background: rgba(107, 114, 128, 0.2);
-            border-radius: 4px;
+            font-size: 0.75rem;
         }
 
         .date-time {
             display: flex;
             flex-direction: column;
-            gap: 0.25rem;
+            gap: 0.1rem;
         }
 
         .date-time .date {
-            font-weight: 600;
+            font-weight: 500;
             color: var(--text-primary);
-            font-size: 0.9rem;
         }
 
         .date-time .time {
             color: var(--text-muted);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
         .stat-pill {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.4rem 1rem;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            min-width: 60px;
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            min-width: 50px;
             text-align: center;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s ease;
         }
 
-        .stat-pill:hover {
-            transform: scale(1.05);
-            box-shadow: var(--shadow-md);
-        }
-
-        .positive-high { 
-            background: linear-gradient(135deg, #059669, #10b981);
-            color: white; 
-        }
-        .positive-medium { 
-            background: linear-gradient(135deg, #10b981, #34d399);
-            color: white; 
-        }
-        .positive-low { 
-            background: linear-gradient(135deg, #34d399, #6ee7b7);
-            color: white; 
-        }
-        .neutral { 
-            background: linear-gradient(135deg, #6b7280, #9ca3af);
-            color: white; 
-        }
-        .negative-low { 
-            background: linear-gradient(135deg, #fb923c, #f87171);
-            color: white; 
-        }
-        .negative-medium { 
-            background: linear-gradient(135deg, #f87171, #ef4444);
-            color: white; 
-        }
-        .negative-high { 
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white; 
-        }
+        .positive-high { background: #10b981; color: white; }
+        .positive-medium { background: #34d399; color: white; }
+        .positive-low { background: #6ee7b7; color: white; }
+        .neutral { background: #6b7280; color: white; }
+        .negative-low { background: #f87171; color: white; }
+        .negative-medium { background: #ef4444; color: white; }
+        .negative-high { background: #dc2626; color: white; }
 
         .top-match {
-            background: linear-gradient(90deg, rgba(16, 185, 129, 0.1), transparent);
-            border-left: 3px solid var(--primary);
-            position: relative;
-        }
-
-        .top-match::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 3px;
-            height: 100%;
-            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            border-left: 2px solid var(--primary);
         }
 
         .tooltip {
@@ -424,33 +274,20 @@
 
         .tooltip .tooltiptext {
             visibility: hidden;
-            width: 160px;
-            background: linear-gradient(135deg, var(--bg-surface), var(--bg-card));
+            width: 120px;
+            background: var(--bg-card);
             color: var(--text-primary);
             text-align: center;
             border-radius: var(--radius);
-            padding: 0.75rem;
+            padding: 0.5rem;
             position: absolute;
             z-index: 20;
             bottom: 125%;
             left: 50%;
             transform: translateX(-50%);
             opacity: 0;
-            transition: opacity 0.3s ease;
-            font-size: 0.8rem;
-            box-shadow: var(--shadow-lg);
+            transition: opacity 0.2s;
             border: 1px solid var(--border);
-        }
-
-        .tooltip .tooltiptext::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -5px;
-            border-width: 5px;
-            border-style: solid;
-            border-color: var(--bg-surface) transparent transparent transparent;
         }
 
         .tooltip:hover .tooltiptext {
@@ -464,26 +301,13 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, var(--bg-card), var(--bg-surface));
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-lg);
-            padding: 2rem;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 1.5rem;
             z-index: 1000;
-            max-width: 450px;
+            max-width: 400px;
             width: 90%;
-            border: 1px solid var(--border-light);
-            animation: modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -45%);
-            }
-            to {
-                opacity: 1;
-                transform: translate(-50%, -50%);
-            }
+            border: 1px solid var(--border);
         }
 
         .filter-modal.active {
@@ -491,200 +315,86 @@
         }
 
         .filter-modal h3 {
-            font-size: 1.3rem;
-            margin-bottom: 1.5rem;
-            color: var(--text-primary);
-            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
         }
 
         .filter-options {
-            max-height: 350px;
+            max-height: 250px;
             overflow-y: auto;
-            margin-bottom: 1.5rem;
-            border-radius: var(--radius);
-            background: rgba(0, 0, 0, 0.2);
-            padding: 0.5rem;
+            margin-bottom: 1rem;
         }
 
         .filter-options label {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            color: var(--text-secondary);
+            gap: 0.5rem;
+            padding: 0.5rem;
         }
 
         .filter-options label:hover {
-            background: var(--bg-hover);
-            color: var(--text-primary);
-        }
-
-        .filter-options input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            accent-color: var(--primary);
+            background: #2d3548;
         }
 
         .filter-modal .buttons {
             display: flex;
-            gap: 0.75rem;
+            gap: 0.5rem;
             justify-content: flex-end;
         }
 
-        .filter-options::-webkit-scrollbar {
-            width: 6px;
-        }
-        .filter-options::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 3px;
-        }
-
-        .table-wrapper::-webkit-scrollbar {
-            width: 10px;
-            height: 10px;
-        }
-        .table-wrapper::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, var(--primary), var(--secondary));
-            border-radius: 5px;
-        }
-        .table-wrapper::-webkit-scrollbar-track {
-            background: var(--bg-surface);
-        }
-        .table-wrapper::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(180deg, var(--primary-dark), var(--secondary));
-        }
-
-        .league-name[data-league="Esoccer H2H GG League - 8 mins play"] { 
-            background: linear-gradient(135deg, #8b5cf6, #a855f7);
-        }
-        .league-name[data-league="Esoccer Battle - 8 mins play"] { 
-            background: linear-gradient(135deg, #f59e0b, #f97316);
-        }
-        .league-name[data-league="Esoccer Battle Volta - 6 mins play"] { 
-            background: linear-gradient(135deg, #facc15, #fbbf24);
-        }
-        .league-name[data-league="Esoccer GT Leagues – 12 mins play"] { 
-            background: linear-gradient(135deg, #10b981, #34d399);
-        }
-        .league-name[data-league="Esoccer Adriatic League - 10 mins play"] { 
-            background: linear-gradient(135deg, #3b82f6, #60a5fa);
-        }
+        .league-name[data-league="Esoccer H2H GG League - 8 mins play"] { background: #a855f7; }
+        .league-name[data-league="Esoccer Battle - 8 mins play"] { background: #f97316; }
+        .league-name[data-league="Esoccer Battle Volta - 6 mins play"] { background: #fbbf24; }
+        .league-name[data-league="Esoccer GT Leagues – 12 mins play"] { background: #34d399; }
+        .league-name[data-league="Esoccer Adriatic League - 10 mins play"] { background: #60a5fa; }
 
         @media (max-width: 1024px) {
             th, td {
-                padding: 0.75rem 0.6rem;
-                font-size: 0.85rem;
+                padding: 0.6rem;
             }
 
             .league-name {
                 max-width: 140px;
                 font-size: 0.75rem;
-                padding: 0.4rem 0.8rem;
             }
 
             .team-name {
                 max-width: 110px;
-                font-size: 0.85rem;
             }
 
             .stat-pill {
-                padding: 0.3rem 0.75rem;
-                font-size: 0.8rem;
-                min-width: 50px;
-            }
-
-            h1 {
-                font-size: 1.5rem;
-            }
-
-            .btn {
-                padding: 0.65rem 1.2rem;
-                font-size: 0.9rem;
+                padding: 0.2rem 0.6rem;
+                font-size: 0.75rem;
             }
         }
 
         @media (max-width: 768px) {
-            .container {
-                padding: 0.5rem;
-            }
-
             header {
-                padding: 1rem;
                 flex-direction: column;
                 align-items: flex-start;
             }
 
             .button-group {
                 width: 100%;
-                justify-content: stretch;
-            }
-
-            .btn {
-                flex: 1;
-                justify-content: center;
+                justify-content: space-between;
             }
 
             th, td {
-                padding: 0.6rem 0.5rem;
+                padding: 0.5rem;
                 font-size: 0.8rem;
             }
 
             .league-name {
                 max-width: 120px;
                 font-size: 0.7rem;
-                padding: 0.35rem 0.7rem;
             }
 
             .team-name {
                 max-width: 90px;
-                font-size: 0.8rem;
             }
 
             .stat-pill {
-                padding: 0.25rem 0.6rem;
-                font-size: 0.75rem;
-                min-width: 45px;
-            }
-
-            h1 {
-                font-size: 1.3rem;
-            }
-
-            .logo-img {
-                width: 40px;
-                height: 40px;
-            }
-
-            .logo-text {
-                font-size: 1.2rem;
-            }
-
-            .filter-modal {
-                max-width: 95%;
-                padding: 1.5rem;
-            }
-
-            .table-wrapper {
-                max-height: calc(100vh - 300px);
-            }
-        }
-
-        @media (max-width: 480px) {
-            table {
-                min-width: 1200px;
-            }
-
-            th, td {
-                padding: 0.5rem 0.4rem;
-                font-size: 0.75rem;
-            }
-
-            .stat-pill {
-                padding: 0.2rem 0.5rem;
+                padding: 0.15rem 0.5rem;
                 font-size: 0.7rem;
             }
         }
@@ -700,7 +410,7 @@
             <h1>Análise eSoccer</h1>
             <div class="button-group">
                 <button id="resetFilters" class="btn btn-secondary">
-                    <i class="fas fa-sync-alt"></i> Limpar Filtros
+                    <i class="fas fa-sync-alt"></i> Limpar
                 </button>
                 <button class="btn btn-primary" onclick="window.location.href='visualization.html'">
                     <i class="fas fa-arrow-left"></i> Voltar
@@ -710,36 +420,33 @@
 
         <div id="loadingContainer" class="loading-container">
             <div class="spinner"></div>
-            <div id="loadingText">Carregando dados, por favor aguarde...</div>
+            <div id="loadingText">Carregando...</div>
         </div>
 
         <div id="tableContainer" class="table-container" style="display: none;">
-            <div class="table-wrapper">
-                <table id="gamesTable">
-                    <thead>
-                        <tr>
-                            <th data-column="leagueName">Liga <i class="fas fa-filter filter-icon"></i></th>
-                            <th data-column="match">Partida <i class="fas fa-filter filter-icon"></i></th>
-                            <th data-column="dateTime">Data/Hora <i class="fas fa-filter filter-icon"></i></th>
-                            <th data-column="avgGoals">Média Gols <i class="fas fa-filter filter-icon"></i></th>
-                            <th data-column="homeAvgGoals">Casa <i class="fas fa-filter filter-icon"></i></th>
-                            <th data-column="awayAvgGoals">Fora <i class="fas fa-filter filter-icon"></i></th>
-                            <th data-column="bttsPercent">BTTS % <i class="fas fa-filter filter-icon"></i></th>
-                            <th data-column="over15">Over 1.5 % <i class="fas fa-filter filter-icon"></i></th>
-                            <th data-column="over25">Over 2.5 % <i class="fas fa-filter filter-icon"></i></th>
-                            <th data-column="over35">Over 3.5 % <i class="fas fa-filter filter-icon"></i></th>
-                            <th data-column="qualityScore">Qualidade % <i class="fas fa-filter filter-icon"></i></th>
-                        </tr>
-                    </thead>
-                    <tbody id="gamesTableBody"></tbody>
-                </table>
-            </div>
+            <table id="gamesTable">
+                <thead>
+                    <tr>
+                        <th data-column="leagueName">Liga <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="match">Partida <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="dateTime">Data/Hora <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="avgGoals">Média Gols <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="homeAvgGoals">Casa <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="awayAvgGoals">Fora <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="bttsPercent">BTTS % <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="over15">Over 1.5 % <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="over25">Over 2.5 % <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="over35">Over 3.5 % <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="qualityScore">Qualidade % <i class="fas fa-filter filter-icon"></i></th>
+                    </tr>
+                </thead>
+                <tbody id="gamesTableBody"></tbody>
+            </table>
         </div>
 
         <div id="errorContainer" class="error-container" style="display: none">
             <i class="fas fa-exclamation-triangle error-icon"></i>
-            <h3>Erro ao carregar dados</h3>
-            <p id="errorMessage">Ocorreu um erro inesperado. Tente novamente.</p>
+            <p id="errorMessage">Erro ao carregar. Tente novamente.</p>
         </div>
 
         <div class="filter-modal" id="filterModal">
@@ -795,17 +502,17 @@
 
             async fetchGames() {
                 try {
-                    this.showLoading('Buscando jogos próximos...');
+                    this.showLoading('Buscando jogos...');
                     
                     const response = await fetch("https://api.green365.com.br/api/league/upcoming?sport=fifa&leagueId=&page=1");
                     if (!response.ok) throw new Error(`Erro na requisição: ${response.status}`);
                     
                     const data = await response.json();
-                    this.showLoading('Processando estatísticas...');
+                    this.showLoading('Processando dados...');
                     
                     this.gamesData = await Promise.all(
                         data.data.map(async (game, index) => {
-                            this.showLoading(`Processando jogo ${index + 1}/${data.data.length}...`);
+                            this.showLoading(`Jogo ${index + 1}/${data.data.length}...`);
                             const stats = await this.fetchGameStats(game);
                             const processedGame = { ...game, ...stats };
                             processedGame.qualityScore = this.calculateQualityScore(processedGame);
@@ -818,7 +525,7 @@
                     this.setupColumnFilters();
                     
                 } catch (error) {
-                    this.showError(`Erro ao carregar os dados: ${error.message}`);
+                    this.showError(`Erro: ${error.message}`);
                 }
             }
 
@@ -834,7 +541,7 @@
                     return this.processGameStats(data, game);
                     
                 } catch (error) {
-                    console.error(`Erro ao buscar estatísticas para ${game.home} vs ${game.away}:`, error);
+                    console.error(`Erro em ${game.home} vs ${game.away}:`, error);
                     return this.getDefaultStats();
                 }
             }
@@ -868,35 +575,25 @@
 
             calculateAverageGoals(games, position) {
                 if (!games.length) return 0;
-                
-                const totalGoals = games.reduce((sum, game) => {
-                    const scores = game.score.split('-');
-                    const goals = parseInt(scores[position]) || 0;
-                    return sum + goals;
-                }, 0);
-                
+                const totalGoals = games.reduce((sum, game) => sum + (parseInt(game.score.split('-')[position]) || 0), 0);
                 return totalGoals / games.length;
             }
 
             calculateBTTS(games) {
                 if (!games.length) return 0;
-                
                 const bttsGames = games.filter(game => {
                     const [homeScore, awayScore] = game.score.split('-').map(Number);
                     return homeScore > 0 && awayScore > 0;
                 }).length;
-                
                 return Math.round((bttsGames / games.length) * 100);
             }
 
             calculateOverStats(games) {
                 if (!games.length) return { over15: 0, over25: 0, over35: 0 };
-                
                 const totalGoals = games.map(game => {
                     const [homeScore, awayScore] = game.score.split('-').map(Number);
                     return (homeScore || 0) + (awayScore || 0);
                 });
-                
                 return {
                     over15: Math.round((totalGoals.filter(g => g > 1.5).length / totalGoals.length) * 100),
                     over25: Math.round((totalGoals.filter(g => g > 2.5).length / totalGoals.length) * 100),
@@ -906,60 +603,40 @@
 
             calculateTeamRecord(games, teamName) {
                 if (!games.length) return { wins: 0, draws: 0, losses: 0 };
-                
                 const totalGames = games.length;
-                const draws = games.filter(game => 
-                    !game.winnerName || game.winnerName === "draw"
-                ).length;
+                const draws = games.filter(game => !game.winnerName || game.winnerName === "draw").length;
                 const losses = totalGames - draws;
-                
                 return { wins: 0, draws, losses };
             }
 
             calculateQualityScore(game) {
-                const weights = {
-                    avgGoals: 0.25,
-                    btts: 0.25,
-                    over25: 0.30,
-                    consistency: 0.20
-                };
-
+                const weights = { avgGoals: 0.25, btts: 0.25, over25: 0.30, consistency: 0.20 };
                 const avgGoalsScore = Math.min((game.avgGoals / 4) * 100, 100);
                 const bttsScore = game.bttsPercent;
                 const over25Score = game.over25;
                 const homeConsistency = this.calculateConsistency(game.homeRecord);
                 const awayConsistency = this.calculateConsistency(game.awayRecord);
                 const consistencyScore = (homeConsistency + awayConsistency) / 2;
-
-                const qualityScore = 
+                return Math.round(Math.min(
                     (avgGoalsScore * weights.avgGoals) +
                     (bttsScore * weights.btts) +
                     (over25Score * weights.over25) +
-                    (consistencyScore * weights.consistency);
-
-                return Math.round(Math.min(qualityScore, 100));
+                    (consistencyScore * weights.consistency), 100
+                ));
             }
 
             calculateConsistency(record) {
                 const totalGames = record.draws + record.losses;
                 if (totalGames === 0) return 0;
-                
                 const drawRate = record.draws / totalGames;
                 const balance = 1 - (Math.abs(record.draws - record.losses) / totalGames);
-                
                 return (drawRate * 70 + balance * 30);
             }
 
             getDefaultStats() {
                 return {
-                    avgGoals: 0,
-                    homeAvgGoals: 0,
-                    awayAvgGoals: 0,
-                    bttsPercent: 0,
-                    over15: 0,
-                    over25: 0,
-                    over35: 0,
-                    homeRecord: { wins: 0, draws: 0, losses: 0 },
+                    avgGoals: 0, homeAvgGoals: 0, awayAvgGoals: 0, bttsPercent: 0,
+                    over15: 0, over25: 0, over35: 0, homeRecord: { wins: 0, draws: 0, losses: 0 },
                     awayRecord: { wins: 0, draws: 0, losses: 0 }
                 };
             }
@@ -977,7 +654,6 @@
 
             applyFilters() {
                 this.filteredGames = [...this.gamesData];
-
                 for (let column in this.columnFilters) {
                     if (this.columnFilters[column].values?.length > 0) {
                         this.filteredGames = this.filteredGames.filter(game => {
@@ -996,7 +672,6 @@
                         });
                     }
                 }
-
                 this.displayGames();
                 this.updateFilteredColumns();
             }
@@ -1021,78 +696,30 @@
             displayGames() {
                 const tableBody = document.getElementById("gamesTableBody");
                 tableBody.innerHTML = "";
-
                 if (!this.filteredGames || this.filteredGames.length === 0) {
-                    this.showError("Nenhum jogo encontrado com os filtros atuais.");
+                    this.showError("Nenhum jogo encontrado.");
                     return;
                 }
-
                 this.filteredGames.forEach(game => {
                     const qualityScore = game.qualityScore.toFixed(0);
                     const isTopMatch = qualityScore >= 80;
                     const row = document.createElement("tr");
                     row.className = isTopMatch ? 'top-match' : '';
-
                     row.innerHTML = `
-                        <td>
-                            <div class="league-name" data-league="${game.leagueName}">
-                                <i class="fas fa-trophy"></i>
-                                ${game.leagueName}
-                            </div>
-                        </td>
-                        <td>
-                            <div class="team-match">
-                                <span class="team-name">${game.home}</span>
-                                <span class="vs">vs</span>
-                                <span class="team-name">${game.away}</span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="date-time">
-                                <span class="date">${game.day || game.date}</span>
-                                <span class="time">${game.hour || game.time}</span>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="stat-pill">${game.avgGoals}</span>
-                        </td>
-                        <td>
-                            <div class="tooltip">
-                                <span class="stat-pill">${game.homeAvgGoals}</span>
-                                <span class="tooltiptext">
-                                    Média de gols: ${game.homeAvgGoals}
-                                </span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="tooltip">
-                                <span class="stat-pill">${game.awayAvgGoals}</span>
-                                <span class="tooltiptext">
-                                    Média de gols: ${game.awayAvgGoals}
-                                </span>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="stat-pill ${this.getPercentClass(game.bttsPercent)}">${game.bttsPercent}%</span>
-                        </td>
-                        <td>
-                            <span class="stat-pill ${this.getPercentClass(game.over15)}">${game.over15}%</span>
-                        </td>
-                        <td>
-                            <span class="stat-pill ${this.getPercentClass(game.over25)}">${game.over25}%</span>
-                        </td>
-                        <td>
-                            <span class="stat-pill ${this.getPercentClass(game.over35)}">${game.over35}%</span>
-                        </td>
-                        <td>
-                            <span class="stat-pill ${this.getPercentClass(game.qualityScore)}">
-                                ${qualityScore}% ${isTopMatch ? '<i class="fas fa-star"></i>' : ''}
-                            </span>
-                        </td>
+                        <td><div class="league-name" data-league="${game.leagueName}">${game.leagueName}</div></td>
+                        <td><div class="team-match"><span class="team-name">${game.home}</span><span class="vs">vs</span><span class="team-name">${game.away}</span></div></td>
+                        <td><div class="date-time"><span class="date">${game.day || game.date}</span><span class="time">${game.hour || game.time}</span></div></td>
+                        <td><span class="stat-pill">${game.avgGoals}</span></td>
+                        <td><div class="tooltip"><span class="stat-pill">${game.homeAvgGoals}</span><span class="tooltiptext">Média: ${game.homeAvgGoals}</span></div></td>
+                        <td><div class="tooltip"><span class="stat-pill">${game.awayAvgGoals}</span><span class="tooltiptext">Média: ${game.awayAvgGoals}</span></div></td>
+                        <td><span class="stat-pill ${this.getPercentClass(game.bttsPercent)}">${game.bttsPercent}%</span></td>
+                        <td><span class="stat-pill ${this.getPercentClass(game.over15)}">${game.over15}%</span></td>
+                        <td><span class="stat-pill ${this.getPercentClass(game.over25)}">${game.over25}%</span></td>
+                        <td><span class="stat-pill ${this.getPercentClass(game.over35)}">${game.over35}%</span></td>
+                        <td><span class="stat-pill ${this.getPercentClass(game.qualityScore)}">${qualityScore}%${isTopMatch ? '★' : ''}</span></td>
                     `;
                     tableBody.appendChild(row);
                 });
-
                 document.getElementById('tableContainer').style.display = 'block';
                 document.getElementById('loadingContainer').style.display = 'none';
                 document.getElementById('errorContainer').style.display = 'none';
@@ -1113,19 +740,15 @@
                 const modal = document.getElementById('filterModal');
                 const title = document.getElementById('filterModalTitle');
                 const options = document.getElementById('filterOptions');
-
                 title.textContent = `Filtrar por ${this.getColumnLabel(this.activeColumn)}`;
                 const uniqueValues = [...new Set(this.gamesData.map(game => this.getColumnValue(game, this.activeColumn).toString()))].sort();
                 options.innerHTML = `
-                    <label><input type="checkbox" data-action="sort-asc" ${this.columnFilters[this.activeColumn]?.sort === 'asc' ? 'checked' : ''}> Ascendente</label>
-                    <label><input type="checkbox" data-action="sort-desc" ${this.columnFilters[this.activeColumn]?.sort === 'desc' ? 'checked' : ''}> Descendente</label>
+                    <label><input type="checkbox" data-action="sort-asc" ${this.columnFilters[this.activeColumn]?.sort === 'asc' ? 'checked' : ''}> Asc</label>
+                    <label><input type="checkbox" data-action="sort-desc" ${this.columnFilters[this.activeColumn]?.sort === 'desc' ? 'checked' : ''}> Desc</label>
                     <hr>
-                    ${uniqueValues.map(value => `
-                        <label><input type="checkbox" value="${value}" ${this.columnFilters[this.activeColumn]?.values?.includes(value) ? 'checked' : ''}> ${value}</label>
-                    `).join('')}
+                    ${uniqueValues.map(value => `<label><input type="checkbox" value="${value}" ${this.columnFilters[this.activeColumn]?.values?.includes(value) ? 'checked' : ''}> ${value}</label>`).join('')}
                 `;
                 modal.classList.add('active');
-
                 document.addEventListener('click', function closeModal(event) {
                     if (!modal.contains(event.target) && !event.target.closest('th')) {
                         modal.classList.remove('active');
@@ -1136,17 +759,9 @@
 
             getColumnLabel(column) {
                 const labels = {
-                    leagueName: 'Liga',
-                    match: 'Partida',
-                    dateTime: 'Data/Hora',
-                    avgGoals: 'Média Gols',
-                    homeAvgGoals: 'Casa',
-                    awayAvgGoals: 'Fora',
-                    bttsPercent: 'BTTS',
-                    over15: 'Over 1.5',
-                    over25: 'Over 2.5',
-                    over35: 'Over 3.5',
-                    qualityScore: 'Qualidade'
+                    leagueName: 'Liga', match: 'Partida', dateTime: 'Data/Hora', avgGoals: 'Média Gols',
+                    homeAvgGoals: 'Casa', awayAvgGoals: 'Fora', bttsPercent: 'BTTS', over15: 'Over 1.5',
+                    over25: 'Over 2.5', over35: 'Over 3.5', qualityScore: 'Qualidade'
                 };
                 return labels[column] || column;
             }
@@ -1155,19 +770,13 @@
                 const options = document.getElementById('filterOptions');
                 const checkboxes = options.querySelectorAll('input[type="checkbox"]');
                 this.columnFilters[this.activeColumn] = { values: [], sort: null };
-
                 checkboxes.forEach(checkbox => {
                     if (checkbox.checked) {
-                        if (checkbox.dataset.action === "sort-asc") {
-                            this.columnFilters[this.activeColumn].sort = "asc";
-                        } else if (checkbox.dataset.action === "sort-desc") {
-                            this.columnFilters[this.activeColumn].sort = "desc";
-                        } else {
-                            this.columnFilters[this.activeColumn].values.push(checkbox.value);
-                        }
+                        if (checkbox.dataset.action === "sort-asc") this.columnFilters[this.activeColumn].sort = "asc";
+                        else if (checkbox.dataset.action === "sort-desc") this.columnFilters[this.activeColumn].sort = "desc";
+                        else this.columnFilters[this.activeColumn].values.push(checkbox.value);
                     }
                 });
-
                 this.applyFilters();
                 document.getElementById('filterModal').classList.remove('active');
             }
