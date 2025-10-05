@@ -221,7 +221,6 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.5rem 1rem;
-            background: linear-gradient(135deg, var(--info), #1e40af);
             border-radius: 50px;
             font-size: 0.75rem;
             font-weight: 600;
@@ -379,6 +378,13 @@
                 width: 95%;
             }
         }
+
+        /* League-specific colors */
+        .league-name[data-league="Esoccer H2H GG League - 8 mins play"] { background: #8A2BE2; }
+        .league-name[data-league="Esoccer Battle - 8 mins play"] { background: #FF4C4C; }
+        .league-name[data-league="Esoccer Battle Volta - 6 mins play"] { background: #FFD700; }
+        .league-name[data-league="Esoccer GT Leagues – 12 mins play"] { background: #32CD32; }
+        .league-name[data-league="Esoccer Adriatic League - 10 mins play"] { background: #1E90FF; }
     </style>
 </head>
 <body>
@@ -601,7 +607,7 @@
                 ).length;
                 
                 const draws = games.filter(game => 
-                    game.winnerName === "draw"
+                    !game.winnerName || game.winnerName === "draw"
                 ).length;
                 
                 const losses = games.length - wins - draws;
@@ -728,7 +734,7 @@
 
                     row.innerHTML = `
                         <td>
-                            <div class="league-name">
+                            <div class="league-name" data-league="${game.leagueName}">
                                 <i class="fas fa-trophy"></i>
                                 ${game.leagueName}
                             </div>
