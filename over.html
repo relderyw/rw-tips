@@ -171,6 +171,7 @@
             text-align: left;
             font-weight: 600;
             border-bottom: 2px solid var(--border);
+            white-space: nowrap; /* Evita quebra de linha nos cabeçalhos */
         }
 
         th:hover {
@@ -186,6 +187,8 @@
             padding: 0.7rem 1rem;
             border-bottom: 1px solid var(--border);
             vertical-align: middle;
+            white-space: nowrap; /* Evita quebra de linha nas células */
+            min-width: 120px; /* Largura mínima para evitar quebras */
         }
 
         tbody tr:hover {
@@ -238,6 +241,12 @@
         .top-match {
             background: #1e293b;
             border-left: 4px solid var(--primary);
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
         }
 
         .tooltip .tooltiptext {
@@ -331,6 +340,7 @@
         @media (max-width: 768px) {
             th, td {
                 padding: 0.6rem 0.8rem;
+                min-width: 100px; /* Ajuste menor para mobile */
             }
 
             .league-name {
@@ -710,24 +720,16 @@
                         <td>
                             <div class="tooltip">
                                 <span class="stat-pill">${game.homeAvgGoals}</span>
-                                <div style="font-size: 0.7rem; color: var(--text-secondary);">
-                                    ${game.homeRecord.draws}E-${game.homeRecord.losses}D
-                                </div>
                                 <span class="tooltiptext">
-                                    Média de gols: ${game.homeAvgGoals}<br>
-                                    Registro: ${game.homeRecord.draws}E-${game.homeRecord.losses}D
+                                    Média de gols: ${game.homeAvgGoals}
                                 </span>
                             </div>
                         </td>
                         <td>
                             <div class="tooltip">
                                 <span class="stat-pill">${game.awayAvgGoals}</span>
-                                <div style="font-size: 0.7rem; color: var(--text-secondary);">
-                                    ${game.awayRecord.draws}E-${game.awayRecord.losses}D
-                                </div>
                                 <span class="tooltiptext">
-                                    Média de gols: ${game.awayAvgGoals}<br>
-                                    Registro: ${game.awayRecord.draws}E-${game.awayRecord.losses}D
+                                    Média de gols: ${game.awayAvgGoals}
                                 </span>
                             </div>
                         </td>
