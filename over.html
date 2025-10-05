@@ -33,7 +33,7 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, var(--bg-dark) 0%, #1a202c 100%);
+            background: var(--bg-dark);
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
@@ -41,8 +41,10 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 100%;
+            width: 100%;
             margin: 0 auto;
+            padding: 0 10px;
         }
 
         header {
@@ -160,13 +162,16 @@
             background: var(--bg-card);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            overflow-x: auto;
+            overflow-x: auto; /* Rolagem horizontal se necessário */
+            margin-bottom: 1.5rem;
         }
 
         table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             font-size: 0.9rem;
+            min-width: 900px; /* Largura mínima para evitar corte */
         }
 
         th {
@@ -177,7 +182,9 @@
             font-weight: 600;
             border-bottom: 2px solid var(--border);
             white-space: nowrap;
-            min-width: 120px; /* Largura mínima para colunas */
+            position: sticky;
+            top: 0;
+            z-index: 1;
         }
 
         th:hover {
@@ -194,7 +201,6 @@
             border-bottom: 1px solid var(--border);
             vertical-align: middle;
             white-space: nowrap;
-            min-width: 120px;
         }
 
         tbody tr:hover {
@@ -211,21 +217,33 @@
             font-weight: 600;
             color: #000000;
             background: #e5e7eb;
+            max-width: 100px; /* Limita largura para evitar estouro */
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .team-match, .date-time {
+        .team-match {
             display: flex;
-            flex-direction: column;
-            gap: 0.2rem;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .team-name {
             font-weight: 500;
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .vs {
             color: var(--text-muted);
             font-size: 0.75rem;
+        }
+
+        .date-time {
+            display: flex;
+            flex-direction: column;
+            gap: 0.1rem;
         }
 
         .stat-pill {
@@ -234,6 +252,8 @@
             border-radius: 12px;
             font-size: 0.75rem;
             font-weight: 500;
+            min-width: 40px;
+            text-align: center;
         }
 
         .positive-high { background: #10b981; color: white; }
@@ -257,7 +277,7 @@
 
         .tooltip .tooltiptext {
             visibility: hidden;
-            width: 180px;
+            width: 120px;
             background: var(--bg-surface);
             color: var(--text-primary);
             text-align: center;
@@ -345,16 +365,22 @@
 
         @media (max-width: 768px) {
             th, td {
-                padding: 0.6rem 0.8rem;
-                min-width: 100px;
+                padding: 0.5rem 0.7rem;
+                min-width: 80px;
             }
 
             .league-name {
                 font-size: 0.7rem;
+                max-width: 80px;
+            }
+
+            .team-name {
+                max-width: 80px;
             }
 
             .stat-pill {
                 padding: 0.15rem 0.5rem;
+                min-width: 35px;
             }
         }
     </style>
@@ -392,11 +418,11 @@
                         <th data-column="avgGoals">Média Gols <i class="fas fa-filter filter-icon"></i></th>
                         <th data-column="homeAvgGoals">Casa <i class="fas fa-filter filter-icon"></i></th>
                         <th data-column="awayAvgGoals">Fora <i class="fas fa-filter filter-icon"></i></th>
-                        <th data-column="bttsPercent">BTTS <i class="fas fa-filter filter-icon"></i></th>
-                        <th data-column="over15">Over 1.5 <i class="fas fa-filter filter-icon"></i></th>
-                        <th data-column="over25">Over 2.5 <i class="fas fa-filter filter-icon"></i></th>
-                        <th data-column="over35">Over 3.5 <i class="fas fa-filter filter-icon"></i></th>
-                        <th data-column="qualityScore">Qualidade <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="bttsPercent">BTTS % <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="over15">Over 1.5 % <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="over25">Over 2.5 % <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="over35">Over 3.5 % <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="qualityScore">Qualidade % <i class="fas fa-filter filter-icon"></i></th>
                     </tr>
                 </thead>
                 <tbody id="gamesTableBody"></tbody>
