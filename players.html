@@ -375,7 +375,7 @@
             }
         }
 
-        // Funções para a aba Geral (mantidas do código original, assumindo API original)
+        // Funções para a aba Geral
         async function updatePlayersList() {
             const leagueFilter = document.getElementById('leagueFilter');
             const player1Filter = document.getElementById('player1Filter');
@@ -387,6 +387,7 @@
             const data = await fetchData('https://caveira-proxy.onrender.com/api/historico/partidas?page=1&limit=30');
             if (!data?.partidas) return;
 
+            // Update league options and preserve selection
             const uniqueLeagues = new Set(data.partidas.map(m => m.league_name));
             leagueFilter.innerHTML = '<option value="">Todas as Ligas</option>';
             Array.from(uniqueLeagues).sort().forEach(league => {
@@ -397,6 +398,7 @@
             });
             leagueFilter.value = currentLeague;
 
+            // Filter players based on selected league
             const uniquePlayers = new Set(data.partidas
                 .filter(match => !currentLeague || match.league_name === currentLeague)
                 .flatMap(match => [match.home_player, match.away_player]));
@@ -410,9 +412,11 @@
                 player2Filter.innerHTML += `<option value="${player}">${player}</option>`;
             });
 
+            // Restore selected players if they exist
             if (playersList.includes(currentPlayer1)) player1Filter.value = currentPlayer1;
             if (playersList.includes(currentPlayer2)) player2Filter.value = currentPlayer2;
 
+            // Trigger analysis update if players are selected
             if (player1Filter.value && player2Filter.value && player1Filter.value !== player2Filter.value) {
                 updatePlayerAnalysis();
             }
@@ -432,6 +436,7 @@
                 const awayFTGoals = parseInt(match.score_away) || 0;
                 const isPlayer1Home = match.home_player.toLowerCase() === player1.toLowerCase();
 
+                // Win/Draw stats
                 if (homeFTGoals > awayFTGoals) {
                     isPlayer1Home ? winPlayer1++ : winPlayer2++;
                 } else if (awayFTGoals > homeFTGoals) {
@@ -440,6 +445,7 @@
                     draw++;
                 }
 
+                // HT stats
                 const htTotal = homeHTGoals + awayHTGoals;
                 if (htTotal > 0) over0_5HT++;
                 if (htTotal > 1) over1_5HT++;
@@ -447,6 +453,7 @@
                 if (homeHTGoals > 0 && awayHTGoals > 0) bttsHT++;
                 totalGoalsHT += htTotal;
 
+                // FT stats
                 const ftTotal = homeFTGoals + awayFTGoals;
                 if (ftTotal > 0) over0_5FT++;
                 if (ftTotal > 1) over1_5FT++;
@@ -505,27 +512,27 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <h4>Over 0.5 HT</h4>
-                        <div class="highlight">${((stats.over0_5HT / totalGames) * 100).toFixed(1)}%</div>
+                        <div class="highlight">${totalGames ? ((stats.over0_5HT / totalGames) * 100).toFixed(1) : 0}%</div>
                         <p>Em ${stats.over0_5HT} de ${totalGames} jogos</p>
                     </div>
                     <div class="stat-card">
                         <h4>Over 1.5 HT</h4>
-                        <div class="highlight">${((stats.over1_5HT / totalGames) * 100).toFixed(1)}%</div>
+                        <div class="highlight">${totalGames ? ((stats.over1_5HT / totalGames) * 100).toFixed(1) : 0}%</div>
                         <p>Em ${stats.over1_5HT} de ${totalGames} jogos</p>
                     </div>
                     <div class="stat-card">
                         <h4>Over 2.5 HT</h4>
-                        <div class="highlight">${((stats.over2_5HT / totalGames) * 100).toFixed(1)}%</div>
+                        <div class="highlight">${totalGames ? ((stats.over2_5HT / totalGames) * 100).toFixed(1) : 0}%</div>
                         <p>Em ${stats.over2_5HT} de ${totalGames} jogos</p>
                     </div>
                     <div class="stat-card">
                         <h4>BTTS HT</h4>
-                        <div class="highlight">${((stats.bttsHT / totalGames) * 100).toFixed(1)}%</div>
+                        <div class="highlight">${totalGames ? ((stats.bttsHT / totalGames) * 100).toFixed(1) : 0}%</div>
                         <p>Em ${stats.bttsHT} de ${totalGames} jogos</p>
                     </div>
                     <div class="stat-card">
                         <h4>Média Gols HT</h4>
-                        <div class="highlight">${(stats.totalGoalsHT / totalGames).toFixed(2)}</div>
+                        <div class="highlight">${totalGames ? (stats.totalGoalsHT / totalGames).toFixed(2) : 0}</div>
                         <p>Total: ${stats.totalGoalsHT} gols</p>
                     </div>
                 </div>
@@ -533,37 +540,37 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <h4>Over 0.5 FT</h4>
-                        <div class="highlight">${((stats.over0_5FT / totalGames) * 100).toFixed(1)}%</div>
+                        <div class="highlight">${totalGames ? ((stats.over0_5FT / totalGames) * 100).toFixed(1) : 0}%</div>
                         <p>Em ${stats.over0_5FT} de ${totalGames} jogos</p>
                     </div>
                     <div class="stat-card">
                         <h4>Over 1.5 FT</h4>
-                        <div class="highlight">${((stats.over1_5FT / totalGames) * 100).toFixed(1)}%</div>
+                        <div class="highlight">${totalGames ? ((stats.over1_5FT / totalGames) * 100).toFixed(1) : 0}%</div>
                         <p>Em ${stats.over1_5FT} de ${totalGames} jogos</p>
                     </div>
                     <div class="stat-card">
                         <h4>Over 2.5 FT</h4>
-                        <div class="highlight">${((stats.over2_5FT / totalGames) * 100).toFixed(1)}%</div>
+                        <div class="highlight">${totalGames ? ((stats.over2_5FT / totalGames) * 100).toFixed(1) : 0}%</div>
                         <p>Em ${stats.over2_5FT} de ${totalGames} jogos</p>
                     </div>
                     <div class="stat-card">
                         <h4>Over 3.5 FT</h4>
-                        <div class="highlight">${((stats.over3_5FT / totalGames) * 100).toFixed(1)}%</div>
+                        <div class="highlight">${totalGames ? ((stats.over3_5FT / totalGames) * 100).toFixed(1) : 0}%</div>
                         <p>Em ${stats.over3_5FT} de ${totalGames} jogos</p>
                     </div>
                     <div class="stat-card">
                         <h4>Over 4.5 FT</h4>
-                        <div class="highlight">${((stats.over4_5FT / totalGames) * 100).toFixed(1)}%</div>
+                        <div class="highlight">${totalGames ? ((stats.over4_5FT / totalGames) * 100).toFixed(1) : 0}%</div>
                         <p>Em ${stats.over4_5FT} de ${totalGames} jogos</p>
                     </div>
                     <div class="stat-card">
                         <h4>BTTS FT</h4>
-                        <div class="highlight">${((stats.bttsFT / totalGames) * 100).toFixed(1)}%</div>
+                        <div class="highlight">${totalGames ? ((stats.bttsFT / totalGames) * 100).toFixed(1) : 0}%</div>
                         <p>Em ${stats.bttsFT} de ${totalGames} jogos</p>
                     </div>
                     <div class="stat-card">
                         <h4>Média Gols FT</h4>
-                        <div class="highlight">${(stats.totalGoalsFT / totalGames).toFixed(2)}</div>
+                        <div class="highlight">${totalGames ? (stats.totalGoalsFT / totalGames).toFixed(2) : 0}</div>
                         <p>Total: ${stats.totalGoalsFT} gols</p>
                     </div>
                 </div>
@@ -647,7 +654,6 @@
             let page = 1;
             let totalPages = 1;
 
-            // Paginação manual para coletar todos os itens (assumindo até 100 páginas ou pare quando vazio)
             while (page <= totalPages) {
                 const data = await fetchData(`https://api-v2.green365.com.br/api/v2/sport-events?page=${page}&limit=34&sport=esoccer&status=all&competitionID=33440`);
                 if (!data || !data.items) break;
@@ -658,7 +664,22 @@
 
             if (allItems.length === 0) return;
 
-            const uniquePlayers = new Set(allItems.flatMap(match => [match.home.name, match.away.name]));
+            const playerIds = {};
+            const uniquePlayers = new Set();
+
+            allItems.forEach(match => {
+                if (match.home && match.home.name) {
+                    const lowerName = match.home.name.toLowerCase();
+                    uniquePlayers.add(match.home.name);
+                    if (!playerIds[lowerName]) playerIds[lowerName] = match.home.id;
+                }
+                if (match.away && match.away.name) {
+                    const lowerName = match.away.name.toLowerCase();
+                    uniquePlayers.add(match.away.name);
+                    if (!playerIds[lowerName]) playerIds[lowerName] = match.away.id;
+                }
+            });
+
             const playersList = Array.from(uniquePlayers).sort();
 
             player1Filter.innerHTML = '<option value="">Jogador 1</option>';
@@ -672,60 +693,97 @@
             if (playersList.includes(currentPlayer1)) player1Filter.value = currentPlayer1;
             if (playersList.includes(currentPlayer2)) player2Filter.value = currentPlayer2;
 
+            window.adriaticPlayerIds = playerIds;  // Armazena IDs
+
             if (player1Filter.value && player2Filter.value && player1Filter.value !== player2Filter.value) {
                 updateAdriaticAnalysis();
             }
         }
 
-        function processAdriaticH2HStats(matches, player1, player2) {
-            // Mesma lógica de processH2HStats, adaptada para estrutura da API Adriatic
-            let winPlayer1 = 0, winPlayer2 = 0, draw = 0;
-            let over0_5HT = 0, over1_5HT = 0, over2_5HT = 0;
-            let over0_5FT = 0, over1_5FT = 0, over2_5FT = 0, over3_5FT = 0, over4_5FT = 0;
-            let bttsHT = 0, bttsFT = 0;
-            let totalGoalsHT = 0, totalGoalsFT = 0;
+        function getPercentValue(cell) {
+            if (!cell) return 0;
+            if (cell.value && cell.value.endsWith('%')) return parseFloat(cell.value);
+            if (cell.isVip) return 50;  // Assumindo VIP como 50% ou ajuste conforme necessidade
+            if (cell.backgroundColor === 'bg-green-1') return 100;
+            if (cell.backgroundColor === 'bg-red-1') return 0;
+            if (cell.backgroundColor === 'bg-blue-1') return 50;
+            return 0;
+        }
 
-            matches.forEach(match => {
-                const homeHTGoals = match.scoreHT.home || 0;
-                const awayHTGoals = match.scoreHT.away || 0;
-                const homeFTGoals = match.score.home || 0;
-                const awayFTGoals = match.score.away || 0;
-                const isPlayer1Home = match.home.name.toLowerCase() === player1.toLowerCase();
+        function processAdriaticH2HStats(data) {
+            const stats = {
+                totalGames: 0,
+                winPlayer1: 0,
+                winPlayer2: 0,
+                draw: 0,
+                over0_5HT: 0, over1_5HT: 0, over2_5HT: 0,
+                over0_5FT: 0, over1_5FT: 0, over2_5FT: 0, over3_5FT: 0, over4_5FT: 0,
+                bttsHT: 0, bttsFT: 0,
+                totalGoalsHT: 0, totalGoalsFT: 0
+            };
 
-                if (homeFTGoals > awayFTGoals) {
-                    isPlayer1Home ? winPlayer1++ : winPlayer2++;
-                } else if (awayFTGoals > homeFTGoals) {
-                    isPlayer1Home ? winPlayer2++ : winPlayer1++;
-                } else {
-                    draw++;
-                }
+            // De confrontation-stats
+            const confrontationTable = data.sessions.sessionTables.find(t => t.id === 'confrontation-stats');
+            if (confrontationTable) {
+                stats.totalGames = parseInt(confrontationTable.rows.find(r => r.columns[0].value === 'Nº Jogos')?.columns[1].value || 0);
 
-                const htTotal = homeHTGoals + awayHTGoals;
-                if (htTotal > 0) over0_5HT++;
-                if (htTotal > 1) over1_5HT++;
-                if (htTotal > 2) over2_5HT++;
-                if (homeHTGoals > 0 && awayHTGoals > 0) bttsHT++;
-                totalGoalsHT += htTotal;
+                const homeWinPercent = getPercentValue(confrontationTable.rows.find(r => r.columns[0].value === data.info.home.name)?.columns[1]);
+                const drawPercent = getPercentValue(confrontationTable.rows.find(r => r.columns[0].value === 'Empate')?.columns[1]);
+                const awayWinPercent = 100 - homeWinPercent - drawPercent;
 
-                const ftTotal = homeFTGoals + awayFTGoals;
-                if (ftTotal > 0) over0_5FT++;
-                if (ftTotal > 1) over1_5FT++;
-                if (ftTotal > 2) over2_5FT++;
-                if (ftTotal > 3) over3_5FT++;
-                if (ftTotal > 4) over4_5FT++;
-                if (homeFTGoals > 0 && awayFTGoals > 0) bttsFT++;
-                totalGoalsFT += ftTotal;
+                stats.winPlayer1 = Math.round((homeWinPercent / 100) * stats.totalGames);
+                stats.draw = Math.round((drawPercent / 100) * stats.totalGames);
+                stats.winPlayer2 = Math.round((awayWinPercent / 100) * stats.totalGames);
+
+                const avgTotalGoals = parseFloat(confrontationTable.rows.find(r => r.columns[0].value === 'Média Total Gols')?.columns[1].value || 0);
+                stats.totalGoalsFT = Math.round(avgTotalGoals * stats.totalGames);
+            }
+
+            // BTTS FT de both-score-stats
+            const bttsTable = data.sessions.sessionTables.find(t => t.id === 'both-score-stats');
+            if (bttsTable) {
+                const bttsYesPercent = getPercentValue(bttsTable.rows.find(r => r.columns[0].value === 'Ambos Marcam - Sim')?.columns[1]);
+                stats.bttsFT = Math.round((bttsYesPercent / 100) * stats.totalGames);
+            }
+
+            // Over/Under FT
+            const ftOuTable = data.sessions.sessionTables.find(t => t.id === 'over-under-FT-stats');
+            if (ftOuTable && stats.totalGames > 0) {
+                ftOuTable.rows.slice(1).forEach(row => {
+                    const line = parseFloat(row.columns[0].value);
+                    const overPercent = getPercentValue(row.columns[1]);
+                    const count = Math.round((overPercent / 100) * stats.totalGames);
+                    if (line === 0.5) stats.over0_5FT = count;
+                    if (line === 1.5) stats.over1_5FT = count;
+                    if (line === 2.5) stats.over2_5FT = count;
+                    if (line === 3.5) stats.over3_5FT = count;
+                    if (line === 4.5) stats.over4_5FT = count;
+                });
+            }
+
+            // Over/Under HT
+            const htOuTable = data.sessions.sessionTables.find(t => t.id === 'over-under-ht-stats');
+            if (htOuTable && stats.totalGames > 0) {
+                htOuTable.rows.slice(1).forEach(row => {
+                    const line = parseFloat(row.columns[0].value);
+                    const overPercent = getPercentValue(row.columns[1]);
+                    const count = Math.round((overPercent / 100) * stats.totalGames);
+                    if (line === 0.5) stats.over0_5HT = count;
+                    if (line === 1.5) stats.over1_5HT = count;
+                    if (line === 2.5) stats.over2_5HT = count;
+                });
+            }
+
+            // Para BTTS HT e totalGoalsHT, usar headToHeadEvents se necessário
+            const h2hEvents = data.sessions.sessionEvents.headToHeadEvents || [];
+            h2hEvents.forEach(event => {
+                const htHome = event.scoreHT.home || 0;
+                const htAway = event.scoreHT.away || 0;
+                stats.totalGoalsHT += htHome + htAway;
+                if (htHome > 0 && htAway > 0) stats.bttsHT++;
             });
 
-            return {
-                totalGames: matches.length,
-                winPlayer1, winPlayer2, draw,
-                over0_5HT, over1_5HT, over2_5HT,
-                over0_5FT, over1_5FT, over2_5FT, over3_5FT, over4_5FT,
-                bttsHT, bttsFT,
-                totalGoalsHT, totalGoalsFT,
-                matches // Para lista de jogos
-            };
+            return { ...stats, h2hEvents };
         }
 
         function renderAdriaticProbabilities(stats, player1, player2) {
@@ -764,54 +822,104 @@
             container.innerHTML = `
                 <h3>Estatísticas HT</h3>
                 <div class="stats-grid">
-                    <!-- Mesmas stats do renderH2HAnalysis -->
                     <div class="stat-card">
                         <h4>Over 0.5 HT</h4>
-                        <div class="highlight">${((stats.over0_5HT / totalGames) * 100).toFixed(1)}%</div>
+                        <div class="highlight">${totalGames ? ((stats.over0_5HT / totalGames) * 100).toFixed(1) : 0}%</div>
                         <p>Em ${stats.over0_5HT} de ${totalGames} jogos</p>
                     </div>
-                    <!-- Adicione as outras como no original -->
+                    <div class="stat-card">
+                        <h4>Over 1.5 HT</h4>
+                        <div class="highlight">${totalGames ? ((stats.over1_5HT / totalGames) * 100).toFixed(1) : 0}%</div>
+                        <p>Em ${stats.over1_5HT} de ${totalGames} jogos</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Over 2.5 HT</h4>
+                        <div class="highlight">${totalGames ? ((stats.over2_5HT / totalGames) * 100).toFixed(1) : 0}%</div>
+                        <p>Em ${stats.over2_5HT} de ${totalGames} jogos</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>BTTS HT</h4>
+                        <div class="highlight">${totalGames ? ((stats.bttsHT / totalGames) * 100).toFixed(1) : 0}%</div>
+                        <p>Em ${stats.bttsHT} de ${totalGames} jogos</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Média Gols HT</h4>
+                        <div class="highlight">${totalGames ? (stats.totalGoalsHT / totalGames).toFixed(2) : 0}</div>
+                        <p>Total: ${stats.totalGoalsHT} gols</p>
+                    </div>
                 </div>
                 <h3>Estatísticas FT</h3>
                 <div class="stats-grid">
-                    <!-- Similar -->
+                    <div class="stat-card">
+                        <h4>Over 0.5 FT</h4>
+                        <div class="highlight">${totalGames ? ((stats.over0_5FT / totalGames) * 100).toFixed(1) : 0}%</div>
+                        <p>Em ${stats.over0_5FT} de ${totalGames} jogos</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Over 1.5 FT</h4>
+                        <div class="highlight">${totalGames ? ((stats.over1_5FT / totalGames) * 100).toFixed(1) : 0}%</div>
+                        <p>Em ${stats.over1_5FT} de ${totalGames} jogos</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Over 2.5 FT</h4>
+                        <div class="highlight">${totalGames ? ((stats.over2_5FT / totalGames) * 100).toFixed(1) : 0}%</div>
+                        <p>Em ${stats.over2_5FT} de ${totalGames} jogos</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Over 3.5 FT</h4>
+                        <div class="highlight">${totalGames ? ((stats.over3_5FT / totalGames) * 100).toFixed(1) : 0}%</div>
+                        <p>Em ${stats.over3_5FT} de ${totalGames} jogos</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Over 4.5 FT</h4>
+                        <div class="highlight">${totalGames ? ((stats.over4_5FT / totalGames) * 100).toFixed(1) : 0}%</div>
+                        <p>Em ${stats.over4_5FT} de ${totalGames} jogos</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>BTTS FT</h4>
+                        <div class="highlight">${totalGames ? ((stats.bttsFT / totalGames) * 100).toFixed(1) : 0}%</div>
+                        <p>Em ${stats.bttsFT} de ${totalGames} jogos</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Média Gols FT</h4>
+                        <div class="highlight">${totalGames ? (stats.totalGoalsFT / totalGames).toFixed(2) : 0}</div>
+                        <p>Total: ${stats.totalGoalsFT} gols</p>
+                    </div>
                 </div>
             `;
-            // Preencha com todas as stats similar ao renderH2HAnalysis
         }
 
-        function renderAdriaticGamesList(stats, player1, player2) {
+        function renderAdriaticGamesList(h2hEvents, player1, player2) {
             const container = document.getElementById('adriaticH2hGamesList');
-            const matches = stats.matches || [];
-            if (!matches.length) {
+            if (!h2hEvents.length) {
                 container.innerHTML = '<p>Nenhum jogo encontrado.</p>';
                 return;
             }
 
             container.innerHTML = `
                 <div class="games-section">
-                    ${matches.map(match => {
-                        const homeHTGoals = match.scoreHT.home || 0;
-                        const awayHTGoals = match.scoreHT.away || 0;
-                        const homeFTGoals = match.score.home || 0;
-                        const awayFTGoals = match.score.away || 0;
-                        const isPlayer1Home = match.home.name.toLowerCase() === player1.toLowerCase();
+                    ${h2hEvents.map(game => {
+                        const homeHTGoals = game.scoreHT.home || 0;
+                        const awayHTGoals = game.scoreHT.away || 0;
+                        const homeFTGoals = game.score.home || 0;
+                        const awayFTGoals = game.score.away || 0;
+                        const isPlayer1Home = game.home.name.toLowerCase() === player1.toLowerCase();
                         const result = homeFTGoals > awayFTGoals ? (isPlayer1Home ? player1 : player2) :
                                       awayFTGoals > homeFTGoals ? (isPlayer1Home ? player2 : player1) : 'Empate';
 
                         return `
                             <div class="game-card">
-                                <div class="game-teams">${match.home.teamName} vs ${match.away.teamName}</div>
+                                <div class="game-teams">${game.home.teamName || ''} vs ${game.away.teamName || ''}</div>
                                 <div class="game-players">
-                                    <span>${match.home.name}</span>
+                                    <span>${game.home.name}</span>
                                     <span>vs</span>
-                                    <span>${match.away.name}</span>
+                                    <span>${game.away.name}</span>
                                 </div>
                                 <div class="game-scores">
                                     <span>HT: ${homeHTGoals}-${awayHTGoals}</span>
                                     <span class="ft">FT: ${homeFTGoals}-${awayFTGoals}</span>
                                 </div>
-                                <div class="game-details">Data: ${new Date(match.startTime).toLocaleString()}</div>
+                                <div class="game-details">Data: ${new Date(game.startTime).toLocaleString()}</div>
                                 <div class="game-result">${result}</div>
                             </div>
                         `;
@@ -831,28 +939,19 @@
                 return;
             }
 
-            let allItems = [];
-            let page = 1;
-            let totalPages = 1;
+            const lowerPlayer1 = player1.toLowerCase();
+            const lowerPlayer2 = player2.toLowerCase();
+            const homeID = window.adriaticPlayerIds[lowerPlayer1] || 0;
+            const awayID = window.adriaticPlayerIds[lowerPlayer2] || 0;
 
-            while (page <= totalPages) {
-                const data = await fetchData(`https://api-v2.green365.com.br/api/v2/sport-events?page=${page}&limit=34&sport=esoccer&status=all&competitionID=33440`);
-                if (!data || !data.items) break;
-                allItems = allItems.concat(data.items.filter(item => item.status === 'ended' && item.score.home !== null));
-                totalPages = data.pagination.totalPages;
-                page++;
-            }
+            const apiUrl = `https://api-v2.green365.com.br/api/v2/analysis/sport?type=h2h&sport=esoccer&status=manual&competitionID=33440&home=${encodeURIComponent(player1)}&away=${encodeURIComponent(player2)}&homeID=${homeID}&awayID=${awayID}`;
+            const data = await fetchData(apiUrl);
 
-            const matches = allItems.filter(match => 
-                (match.home.name.toLowerCase() === player1.toLowerCase() && match.away.name.toLowerCase() === player2.toLowerCase()) ||
-                (match.home.name.toLowerCase() === player2.toLowerCase() && match.away.name.toLowerCase() === player1.toLowerCase())
-            );
-
-            if (matches.length > 0) {
-                const stats = processAdriaticH2HStats(matches, player1, player2);
-                renderAdriaticProbabilities(stats, player1, player2);
-                renderAdriaticH2HAnalysis(stats);
-                renderAdriaticGamesList(stats, player1, player2);
+            if (data && data.sessions) {
+                const processed = processAdriaticH2HStats(data);
+                renderAdriaticProbabilities(processed, player1, player2);
+                renderAdriaticH2HAnalysis(processed);
+                renderAdriaticGamesList(processed.h2hEvents, player1, player2);
             } else {
                 document.getElementById('adriaticProbabilityCards').innerHTML = '<p>Erro ao carregar dados.</p>';
                 document.getElementById('adriaticH2hStatsGrid').innerHTML = '';
@@ -860,7 +959,7 @@
             }
         }
 
-        // Tabs switching
+        // Inicialização e eventos
         document.addEventListener('DOMContentLoaded', () => {
             const tabs = document.querySelectorAll('.tab-button');
             const contents = document.querySelectorAll('.tab-content');
@@ -880,10 +979,8 @@
                 });
             });
 
-            // Inicial Geral
             updatePlayersList();
 
-            // Eventos Geral
             document.getElementById('leagueFilter').addEventListener('change', () => {
                 updatePlayersList();
                 updatePlayerAnalysis();
@@ -891,12 +988,12 @@
             document.getElementById('player1Filter').addEventListener('change', updatePlayerAnalysis);
             document.getElementById('player2Filter').addEventListener('change', updatePlayerAnalysis);
 
-            // Eventos Adriatic
             document.getElementById('adriaticPlayer1Filter').addEventListener('change', updateAdriaticAnalysis);
             document.getElementById('adriaticPlayer2Filter').addEventListener('change', updateAdriaticAnalysis);
 
             setInterval(() => {
-                if (document.querySelector('.tab-button.active').dataset.tab === 'adriatic') {
+                const activeTab = document.querySelector('.tab-button.active').dataset.tab;
+                if (activeTab === 'adriatic') {
                     updateAdriaticPlayersList();
                 } else {
                     updatePlayersList();
