@@ -1178,8 +1178,28 @@
     let bancaInicial = 0;
     let valorUnidade = 0;
     
+    // Função para calcular o valor da unidade
+    function calcularValorUnidade() {
+      valorUnidade = bancaInicial / 100;
+      document.getElementById('valor-unidade').textContent = valorUnidade.toFixed(2);
+    }
+    
     // Carregar banca inicial do localStorage ao iniciar
     document.addEventListener('DOMContentLoaded', function() {
+      // Verificar se há uma banca inicial salva
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+          currentUser = user.uid;
+          const bancaSalva = localStorage.getItem('bancaInicial_' + currentUser);
+          if (bancaSalva) {
+            bancaInicial = parseFloat(bancaSalva);
+            document.getElementById('banca-inicial').value = bancaInicial;
+            calcularValorUnidade();
+          }
+          carregarApostas();
+        }
+      });
+      
       // Configurar evento para salvar banca inicial
       document.getElementById('salvar-banca').addEventListener('click', function() {
         const valor = parseFloat(document.getElementById('banca-inicial').value);
@@ -1448,11 +1468,23 @@
       if (todasApostas.length === 0) {
         apostasLista.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Nenhuma aposta registrada</div>';
         document.getElementById("grafico").innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Sem dados para exibir</div>';
+        
+        // Zerar contadores
+        document.getElementById('total-green').textContent = '0';
+        document.getElementById('total-red').textContent = '0';
+        document.getElementById('total-reembolso').textContent = '0';
+        document.getElementById('total-aguardando').textContent = '0';
         return;
       }
 
       let ganhoTotal = 0;
       let perdaTotal = 0;
+      
+      // Contadores para estatísticas
+      let totalGreen = 0;
+      let totalRed = 0;
+      let totalReembolso = 0;
+      let totalAguardando = 0;
 
       apostasLista.innerHTML = "";
 
@@ -1468,18 +1500,30 @@
           case "green":
             valorFinal = stake * (odds - 1);
             ganhoTotal += valorFinal;
+            totalGreen++;
             break;
           case "red":
             valorFinal = -stake;
             perdaTotal += stake;
+            totalRed++;
             break;
           case "meio-green":
             valorFinal = (stake / 2) * (odds - 1);
             ganhoTotal += valorFinal;
+            totalGreen++;
             break;
           case "meio-red":
             valorFinal = -stake / 2;
             perdaTotal += stake / 2;
+            totalRed++;
+            break;
+          case "reembolso":
+            valorFinal = 0;
+            totalReembolso++;
+            break;
+          case "aguardando":
+            valorFinal = 0;
+            totalAguardando++;
             break;
         }
 
@@ -1532,6 +1576,12 @@
       document.getElementById("ganho-total").textContent = formatarMoeda(ganhoTotal);
       document.getElementById("perda-total").textContent = formatarMoeda(perdaTotal);
       document.getElementById("saldo-total").textContent = formatarMoeda(ganhoTotal - perdaTotal);
+      
+      // Atualizar contadores de status
+      document.getElementById("total-green").textContent = totalGreen;
+      document.getElementById("total-red").textContent = totalRed;
+      document.getElementById("total-reembolso").textContent = totalReembolso;
+      document.getElementById("total-aguardando").textContent = totalAguardando;
 
       // Criar gráfico inicial com 7 dias
       criarGrafico(7);
