@@ -1448,6 +1448,15 @@
       if (todasApostas.length === 0) {
         apostasLista.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Nenhuma aposta registrada</div>';
         document.getElementById("grafico").innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Sem dados para exibir</div>';
+        document.getElementById("ganho-total").textContent = formatarMoeda(0);
+        document.getElementById("perda-total").textContent = formatarMoeda(0);
+        document.getElementById("saldo-total").textContent = formatarMoeda(0);
+        document.getElementById("total-greens").textContent = "0";
+        document.getElementById("total-reds").textContent = "0";
+        document.getElementById("total-reembolsos").textContent = "0";
+        document.getElementById("total-aguardando").textContent = "0";
+        document.getElementById("unidades-ganhas").textContent = "0";
+        document.getElementById("unidades-perdidas").textContent = "0";
         return;
       }
 
@@ -1459,10 +1468,10 @@
       let countAguardando = 0;
       let countMeioGreen = 0;
       let countMeioRed = 0;
-      
+
       // Carregar banca inicial do localStorage
-      const bancaInicial = parseFloat(localStorage.getItem('bancaInicial') || '0');
-      
+      const bancaInicial = parseFloat(localStorage.getItem('bancaInicial_' + currentUser) || '0');
+
       apostasLista.innerHTML = "";
 
       todasApostas.forEach((aposta) => {
@@ -1553,19 +1562,19 @@
       document.getElementById("ganho-total").textContent = formatarMoeda(ganhoTotal);
       document.getElementById("perda-total").textContent = formatarMoeda(perdaTotal);
       document.getElementById("saldo-total").textContent = formatarMoeda(ganhoTotal - perdaTotal);
-      
+
       // Atualizar contadores
-      document.getElementById("count-green").textContent = countGreen + countMeioGreen;
-      document.getElementById("count-red").textContent = countRed + countMeioRed;
-      document.getElementById("count-reembolso").textContent = countReembolso;
-      document.getElementById("count-aguardando").textContent = countAguardando;
-      
+      document.getElementById("total-greens").textContent = countGreen + countMeioGreen;
+      document.getElementById("total-reds").textContent = countRed + countMeioRed;
+      document.getElementById("total-reembolsos").textContent = countReembolso;
+      document.getElementById("total-aguardando").textContent = countAguardando;
+
       // Calcular e atualizar unidades
       calcularValorUnidade();
-      
-      // Atualizar saldo em unidades
-      const saldoEmUnidades = valorUnidade > 0 ? ((ganhoTotal - perdaTotal) / valorUnidade).toFixed(2) : "0.00";
-      document.getElementById("saldo-unidades").textContent = saldoEmUnidades + " un";
+      const unidadesGanhas = valorUnidade > 0 ? (ganhoTotal / valorUnidade).toFixed(2) : "0.00";
+      const unidadesPerdidas = valorUnidade > 0 ? (perdaTotal / valorUnidade).toFixed(2) : "0.00";
+      document.getElementById("unidades-ganhas").textContent = unidadesGanhas;
+      document.getElementById("unidades-perdidas").textContent = unidadesPerdidas;
 
       // Criar gráfico inicial com 7 dias
       criarGrafico(7);
