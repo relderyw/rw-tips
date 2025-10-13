@@ -1191,26 +1191,6 @@
     
     // Carregar banca inicial do localStorage ao iniciar
     document.addEventListener('DOMContentLoaded', function() {
-      // Verificar se há uma banca inicial salva
-      firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-          currentUser = user.uid;
-          console.log("Usuário autenticado:", currentUser);
-          
-          const bancaSalva = localStorage.getItem('bancaInicial_' + currentUser);
-          console.log("Banca salva:", bancaSalva);
-          
-          if (bancaSalva) {
-            bancaInicial = parseFloat(bancaSalva);
-            document.getElementById('banca-inicial').value = bancaInicial;
-            calcularValorUnidade();
-            console.log("Banca inicial carregada:", bancaInicial);
-            console.log("Valor unidade calculado:", valorUnidade);
-          }
-          carregarApostas();
-        }
-      });
-      
       // Configurar evento para salvar banca inicial
       document.getElementById('salvar-banca').addEventListener('click', function() {
         const valor = parseFloat(document.getElementById('banca-inicial').value);
@@ -1220,11 +1200,24 @@
         }
         
         bancaInicial = valor;
-        localStorage.setItem('bancaInicial_' + currentUser, bancaInicial);
+        localStorage.setItem('bancaInicial', bancaInicial);
         calcularValorUnidade();
         atualizarInterfaceApostas();
         alert('Banca inicial salva com sucesso!');
       });
+      
+      // Carregar banca inicial do localStorage
+      const bancaSalva = localStorage.getItem('bancaInicial');
+      if (bancaSalva) {
+        bancaInicial = parseFloat(bancaSalva);
+        document.getElementById('banca-inicial').value = bancaInicial;
+        calcularValorUnidade();
+      }
+      
+      // Inicializar Firebase e carregar apostas
+      setTimeout(function() {
+        carregarApostas();
+      }, 500);
     });
 
     // Função para atualizar o resultado de uma aposta
