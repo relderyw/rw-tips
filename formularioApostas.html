@@ -1453,7 +1453,16 @@
 
       let ganhoTotal = 0;
       let perdaTotal = 0;
-
+      let countGreen = 0;
+      let countRed = 0;
+      let countReembolso = 0;
+      let countAguardando = 0;
+      let countMeioGreen = 0;
+      let countMeioRed = 0;
+      
+      // Carregar banca inicial do localStorage
+      const bancaInicial = parseFloat(localStorage.getItem('bancaInicial') || '0');
+      
       apostasLista.innerHTML = "";
 
       todasApostas.forEach((aposta) => {
@@ -1468,18 +1477,30 @@
           case "green":
             valorFinal = stake * (odds - 1);
             ganhoTotal += valorFinal;
+            countGreen++;
             break;
           case "red":
             valorFinal = -stake;
             perdaTotal += stake;
+            countRed++;
             break;
           case "meio-green":
             valorFinal = (stake / 2) * (odds - 1);
             ganhoTotal += valorFinal;
+            countMeioGreen++;
             break;
           case "meio-red":
             valorFinal = -stake / 2;
             perdaTotal += stake / 2;
+            countMeioRed++;
+            break;
+          case "reembolso":
+            valorFinal = 0;
+            countReembolso++;
+            break;
+          case "aguardando":
+            valorFinal = 0;
+            countAguardando++;
             break;
         }
 
@@ -1532,6 +1553,19 @@
       document.getElementById("ganho-total").textContent = formatarMoeda(ganhoTotal);
       document.getElementById("perda-total").textContent = formatarMoeda(perdaTotal);
       document.getElementById("saldo-total").textContent = formatarMoeda(ganhoTotal - perdaTotal);
+      
+      // Atualizar contadores
+      document.getElementById("count-green").textContent = countGreen + countMeioGreen;
+      document.getElementById("count-red").textContent = countRed + countMeioRed;
+      document.getElementById("count-reembolso").textContent = countReembolso;
+      document.getElementById("count-aguardando").textContent = countAguardando;
+      
+      // Calcular e atualizar unidades
+      calcularValorUnidade();
+      
+      // Atualizar saldo em unidades
+      const saldoEmUnidades = valorUnidade > 0 ? ((ganhoTotal - perdaTotal) / valorUnidade).toFixed(2) : "0.00";
+      document.getElementById("saldo-unidades").textContent = saldoEmUnidades + " un";
 
       // Criar gráfico inicial com 7 dias
       criarGrafico(7);
@@ -1597,8 +1631,11 @@
 
     // Função para calcular o valor da unidade
     function calcularValorUnidade() {
-      valorUnidade = bancaInicial / 10;
+      const banca = parseFloat(localStorage.getItem('bancaInicial_' + currentUser) || '0');
+      const valor = banca / 10;
+      valorUnidade = valor > 0 ? valor : 0;
       document.getElementById('valor-unidade').textContent = formatarMoeda(valorUnidade);
+      return valorUnidade;
     }
 
     // Função para atualizar resultado de uma aposta
