@@ -69,3 +69,66 @@
   background-color: #95a5a6;
   color: white;
 }
+
+/* Estilos para os botões de edição */
+.botoes-edicao {
+  display: flex;
+  gap: 5px;
+  margin-top: 5px;
+  flex-wrap: wrap;
+}
+
+.botao-green, .botao-meio-green, .botao-red, .botao-meio-red, .botao-reembolso {
+  padding: 3px 8px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 3px;
+}
+
+.botao-green {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.botao-green:hover {
+  background-color: #45a049;
+}
+
+.botao-meio-green {
+  background-color: #8BC34A;
+  color: white;
+}
+
+.botao-meio-green:hover {
+  background-color: #7CB342;
+}
+
+.botao-red {
+  background-color: #f44336;
+  color: white;
+}
+
+.botao-red:hover {
+  background-color: #d32f2f;
+}
+
+.botao-meio-red {
+  background-color: #FF9800;
+  color: white;
+}
+
+.botao-meio-red:hover {
+  background-color: #F57C00;
+}
+
+.botao-reembolso {
+  background-color: #9e9e9e;
+  color: white;
+}
+
+.botao-reembolso:hover {
+  background-color: #757575;
+}
