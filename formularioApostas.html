@@ -6,10 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema de Apostas</title>
   <link rel="stylesheet" href="styles.css">
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <style>
     /* Todo o CSS permanece o mesmo */
     :root {
@@ -653,57 +649,57 @@
       font-weight: 600;
       text-shadow: 0 0 5px rgba(239, 68, 68, 0.3);
     }
-    
+
     .status-blue {
       color: #3b82f6;
       font-weight: 600;
       text-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
     }
-    
+
     .banca-inicial-container {
       display: flex;
       gap: 1rem;
       margin-bottom: 0.5rem;
     }
-    
+
     .banca-inicial-container input {
       flex: 1;
     }
-    
+
     .banca-inicial-container button {
       width: auto;
       padding: 0.875rem 1.25rem;
     }
-    
+
     .unidade-info {
       font-size: 0.9rem;
       color: var(--color-text-secondary);
       margin-top: 0.5rem;
     }
-    
+
     .sub-value {
       font-size: 0.85rem;
       color: var(--color-text-tertiary);
       margin-top: 0.5rem;
     }
-    
+
     .stats-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 0.5rem;
       margin-top: 0.5rem;
     }
-    
+
     .stat-item {
       display: flex;
       justify-content: space-between;
       font-size: 0.9rem;
     }
-    
+
     .stat-label {
       color: var(--color-text-tertiary);
     }
-    
+
     .stat-value {
       font-weight: 600;
       color: var(--color-text-primary);
@@ -982,7 +978,7 @@
             <span id="valor-unidade">R$ 0,00</span>
           </div>
         </div>
-        
+
         <div class="summary">
           <div class="summary-item gain">
             <div class="label">Ganho Total</div>
@@ -1171,9 +1167,8 @@
       measurementId: "G-64HF8TWQV4",
     };
 
-    // Inicialização do Firebase
-    var app = firebase.initializeApp(firebaseConfig);
-    var db = firebase.firestore();
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
     // Variáveis globais
     let currentUser = null;
@@ -1182,67 +1177,29 @@
     let todasApostas = [];
     let bancaInicial = 0;
     let valorUnidade = 0;
-    
-    // Função para calcular o valor da unidade
-    function calcularValorUnidade() {
-      if (bancaInicial > 0) {
-        valorUnidade = bancaInicial / 100;
-        document.getElementById('valor-unidade').textContent = valorUnidade.toFixed(2);
-        console.log("Valor da unidade calculado:", valorUnidade);
-      } else {
-        console.log("Banca inicial é zero ou inválida:", bancaInicial);
-      }
-    }
-    
-    // Remover configuração duplicada do Firebase
-    
-    // Autenticação
-    firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        currentUser = user.uid;
-        document.getElementById('user-email').textContent = user.email;
-        console.log("Usuário autenticado:", user.email);
-        
-        // Carregar banca inicial
-        const bancaSalva = localStorage.getItem('bancaInicial');
-        if (bancaSalva) {
-          bancaInicial = parseFloat(bancaSalva);
-          document.getElementById('banca-inicial').value = bancaInicial;
-          calcularValorUnidade();
+
+    // Carregar banca inicial do localStorage ao iniciar
+    document.addEventListener('DOMContentLoaded', function () {
+      // Configurar evento para salvar banca inicial
+      document.getElementById('salvar-banca').addEventListener('click', function () {
+        const valor = parseFloat(document.getElementById('banca-inicial').value);
+        if (isNaN(valor) || valor <= 0) {
+          alert('Por favor, insira um valor válido para a banca inicial.');
+          return;
         }
-        
-        // Carregar apostas
-        carregarApostas();
-      } else {
-        console.log("Usuário não autenticado");
-        window.location.href = "index.html";
-      }
-    });
-    
-    // Evento para salvar banca inicial
-    document.addEventListener('DOMContentLoaded', function() {
-      var btnSalvarBanca = document.getElementById('salvar-banca');
-      if (btnSalvarBanca) {
-        btnSalvarBanca.onclick = function() {
-          var valor = parseFloat(document.getElementById('banca-inicial').value);
-          if (isNaN(valor) || valor <= 0) {
-            alert('Por favor, insira um valor válido para a banca inicial.');
-            return;
-          }
-          
-          bancaInicial = valor;
-          localStorage.setItem('bancaInicial', bancaInicial);
-          calcularValorUnidade();
-          atualizarInterfaceApostas();
-          alert('Banca inicial salva com sucesso!');
-        };
-      }
+
+        bancaInicial = valor;
+        localStorage.setItem('bancaInicial_' + currentUser, bancaInicial);
+        calcularValorUnidade();
+        atualizarInterfaceApostas();
+        alert('Banca inicial salva com sucesso!');
+      });
     });
 
     // Função para atualizar o resultado de uma aposta
-    window.atualizarResultado = async function(apostaId, novoResultado) {
+    window.atualizarResultado = async function (apostaId, novoResultado) {
       if (!confirm(`Tem certeza que deseja alterar o resultado para ${novoResultado}?`)) return;
-      
+
       try {
         const apostaRef = doc(db, "apostas", apostaId);
         await setDoc(apostaRef, { resultado: novoResultado }, { merge: true });
@@ -1253,7 +1210,7 @@
         alert("Erro ao atualizar resultado: " + error.message);
       }
     }
-    
+
     // Função de logout
     window.logout = function () {
       sessionStorage.removeItem('loggedIn');
@@ -1491,23 +1448,11 @@
       if (todasApostas.length === 0) {
         apostasLista.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Nenhuma aposta registrada</div>';
         document.getElementById("grafico").innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Sem dados para exibir</div>';
-        
-        // Zerar contadores
-        document.getElementById('total-green').textContent = '0';
-        document.getElementById('total-red').textContent = '0';
-        document.getElementById('total-reembolso').textContent = '0';
-        document.getElementById('total-aguardando').textContent = '0';
         return;
       }
 
       let ganhoTotal = 0;
       let perdaTotal = 0;
-      
-      // Contadores para estatísticas
-      let totalGreen = 0;
-      let totalRed = 0;
-      let totalReembolso = 0;
-      let totalAguardando = 0;
 
       apostasLista.innerHTML = "";
 
@@ -1523,30 +1468,18 @@
           case "green":
             valorFinal = stake * (odds - 1);
             ganhoTotal += valorFinal;
-            totalGreen++;
             break;
           case "red":
             valorFinal = -stake;
             perdaTotal += stake;
-            totalRed++;
             break;
           case "meio-green":
             valorFinal = (stake / 2) * (odds - 1);
             ganhoTotal += valorFinal;
-            totalGreen++;
             break;
           case "meio-red":
             valorFinal = -stake / 2;
             perdaTotal += stake / 2;
-            totalRed++;
-            break;
-          case "reembolso":
-            valorFinal = 0;
-            totalReembolso++;
-            break;
-          case "aguardando":
-            valorFinal = 0;
-            totalAguardando++;
             break;
         }
 
@@ -1578,7 +1511,7 @@
             </div>
           `;
         }
-        
+
         apostaItem.innerHTML = `
           <div class="aposta-info">
             <strong>${aposta.liga}</strong> · <span class="${statusClass}">${statusText}${valorFinalText}</span><br>
@@ -1599,12 +1532,6 @@
       document.getElementById("ganho-total").textContent = formatarMoeda(ganhoTotal);
       document.getElementById("perda-total").textContent = formatarMoeda(perdaTotal);
       document.getElementById("saldo-total").textContent = formatarMoeda(ganhoTotal - perdaTotal);
-      
-      // Atualizar contadores de status
-      document.getElementById("total-green").textContent = totalGreen;
-      document.getElementById("total-red").textContent = totalRed;
-      document.getElementById("total-reembolso").textContent = totalReembolso;
-      document.getElementById("total-aguardando").textContent = totalAguardando;
 
       // Criar gráfico inicial com 7 dias
       criarGrafico(7);
@@ -1617,17 +1544,6 @@
 
       try {
         console.log("Carregando apostas para usuário:", currentUser);
-        
-        // Verificar se a banca inicial está definida
-        if (!bancaInicial || bancaInicial <= 0) {
-          const bancaSalva = localStorage.getItem('bancaInicial_' + currentUser);
-          if (bancaSalva) {
-            bancaInicial = parseFloat(bancaSalva);
-            document.getElementById('banca-inicial').value = bancaInicial;
-            calcularValorUnidade();
-            console.log("Banca inicial carregada no carregarApostas:", bancaInicial);
-          }
-        }
 
         // Consulta com filtro por usuário atual
         const apostasRef = query(
@@ -1678,15 +1594,15 @@
       };
       return statusMap[resultado] || 'status-green';
     }
-    
+
     // Função para calcular o valor da unidade
     function calcularValorUnidade() {
       valorUnidade = bancaInicial / 10;
       document.getElementById('valor-unidade').textContent = formatarMoeda(valorUnidade);
     }
-    
+
     // Função para atualizar resultado de uma aposta
-    window.atualizarResultado = async function(id, novoResultado) {
+    window.atualizarResultado = async function (id, novoResultado) {
       try {
         const apostaRef = doc(db, "apostas", id);
         await setDoc(apostaRef, { resultado: novoResultado }, { merge: true });
