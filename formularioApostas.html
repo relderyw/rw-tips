@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema de Apostas</title>
+  <link rel="stylesheet" href="styles.css">
   <style>
     /* Todo o CSS permanece o mesmo */
     :root {
@@ -1195,6 +1196,21 @@
       });
     });
 
+    // Função para atualizar o resultado de uma aposta
+    window.atualizarResultado = async function(apostaId, novoResultado) {
+      if (!confirm(`Tem certeza que deseja alterar o resultado para ${novoResultado}?`)) return;
+      
+      try {
+        const apostaRef = doc(db, "apostas", apostaId);
+        await setDoc(apostaRef, { resultado: novoResultado }, { merge: true });
+        alert("Resultado atualizado com sucesso!");
+        await carregarApostas();
+      } catch (error) {
+        console.error("Erro ao atualizar resultado:", error);
+        alert("Erro ao atualizar resultado: " + error.message);
+      }
+    }
+    
     // Função de logout
     window.logout = function () {
       sessionStorage.removeItem('loggedIn');
@@ -1482,12 +1498,27 @@
           }
         }
 
+        // Adicionar botões de edição para apostas com status "aguardando"
+        let botoesEdicao = '';
+        if (aposta.resultado === 'aguardando') {
+          botoesEdicao = `
+            <div class="botoes-edicao">
+              <button class="botao-green" onclick="atualizarResultado('${aposta.id}', 'green')">Green</button>
+              <button class="botao-meio-green" onclick="atualizarResultado('${aposta.id}', 'meio-green')">Meio Green</button>
+              <button class="botao-red" onclick="atualizarResultado('${aposta.id}', 'red')">Red</button>
+              <button class="botao-meio-red" onclick="atualizarResultado('${aposta.id}', 'meio-red')">Meio Red</button>
+              <button class="botao-reembolso" onclick="atualizarResultado('${aposta.id}', 'reembolso')">Reembolso</button>
+            </div>
+          `;
+        }
+        
         apostaItem.innerHTML = `
           <div class="aposta-info">
             <strong>${aposta.liga}</strong> · <span class="${statusClass}">${statusText}${valorFinalText}</span><br>
             ${aposta.jogador1} vs ${aposta.jogador2}<br>
             <small>${aposta.mercado} · Stake: ${formatarMoeda(stake)} · Odds: ${odds}</small><br>
             <small>${dataFormatada}</small>
+            ${botoesEdicao}
           </div>
           <div class="aposta-actions">
             <button onclick="removerAposta('${aposta.id}')">Remover</button>
