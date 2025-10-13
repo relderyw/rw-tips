@@ -1180,8 +1180,13 @@
     
     // Função para calcular o valor da unidade
     function calcularValorUnidade() {
-      valorUnidade = bancaInicial / 100;
-      document.getElementById('valor-unidade').textContent = valorUnidade.toFixed(2);
+      if (bancaInicial > 0) {
+        valorUnidade = bancaInicial / 100;
+        document.getElementById('valor-unidade').textContent = valorUnidade.toFixed(2);
+        console.log("Valor da unidade calculado:", valorUnidade);
+      } else {
+        console.log("Banca inicial é zero ou inválida:", bancaInicial);
+      }
     }
     
     // Carregar banca inicial do localStorage ao iniciar
@@ -1190,11 +1195,17 @@
       firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
           currentUser = user.uid;
+          console.log("Usuário autenticado:", currentUser);
+          
           const bancaSalva = localStorage.getItem('bancaInicial_' + currentUser);
+          console.log("Banca salva:", bancaSalva);
+          
           if (bancaSalva) {
             bancaInicial = parseFloat(bancaSalva);
             document.getElementById('banca-inicial').value = bancaInicial;
             calcularValorUnidade();
+            console.log("Banca inicial carregada:", bancaInicial);
+            console.log("Valor unidade calculado:", valorUnidade);
           }
           carregarApostas();
         }
@@ -1594,6 +1605,17 @@
 
       try {
         console.log("Carregando apostas para usuário:", currentUser);
+        
+        // Verificar se a banca inicial está definida
+        if (!bancaInicial || bancaInicial <= 0) {
+          const bancaSalva = localStorage.getItem('bancaInicial_' + currentUser);
+          if (bancaSalva) {
+            bancaInicial = parseFloat(bancaSalva);
+            document.getElementById('banca-inicial').value = bancaInicial;
+            calcularValorUnidade();
+            console.log("Banca inicial carregada no carregarApostas:", bancaInicial);
+          }
+        }
 
         // Consulta com filtro por usuário atual
         const apostasRef = query(
