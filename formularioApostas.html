@@ -6,6 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema de Apostas</title>
   <link rel="stylesheet" href="styles.css">
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <style>
     /* Todo o CSS permanece o mesmo */
     :root {
@@ -1167,8 +1171,9 @@
       measurementId: "G-64HF8TWQV4",
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    // Inicialização do Firebase
+    var app = firebase.initializeApp(firebaseConfig);
+    var db = firebase.firestore();
 
     // Variáveis globais
     let currentUser = null;
@@ -1189,35 +1194,49 @@
       }
     }
     
-    // Carregar banca inicial do localStorage ao iniciar
-    document.addEventListener('DOMContentLoaded', function() {
-      // Configurar evento para salvar banca inicial
-      document.getElementById('salvar-banca').addEventListener('click', function() {
-        const valor = parseFloat(document.getElementById('banca-inicial').value);
-        if (isNaN(valor) || valor <= 0) {
-          alert('Por favor, insira um valor válido para a banca inicial.');
-          return;
+    // Remover configuração duplicada do Firebase
+    
+    // Autenticação
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        currentUser = user.uid;
+        document.getElementById('user-email').textContent = user.email;
+        console.log("Usuário autenticado:", user.email);
+        
+        // Carregar banca inicial
+        const bancaSalva = localStorage.getItem('bancaInicial');
+        if (bancaSalva) {
+          bancaInicial = parseFloat(bancaSalva);
+          document.getElementById('banca-inicial').value = bancaInicial;
+          calcularValorUnidade();
         }
         
-        bancaInicial = valor;
-        localStorage.setItem('bancaInicial', bancaInicial);
-        calcularValorUnidade();
-        atualizarInterfaceApostas();
-        alert('Banca inicial salva com sucesso!');
-      });
-      
-      // Carregar banca inicial do localStorage
-      const bancaSalva = localStorage.getItem('bancaInicial');
-      if (bancaSalva) {
-        bancaInicial = parseFloat(bancaSalva);
-        document.getElementById('banca-inicial').value = bancaInicial;
-        calcularValorUnidade();
-      }
-      
-      // Inicializar Firebase e carregar apostas
-      setTimeout(function() {
+        // Carregar apostas
         carregarApostas();
-      }, 500);
+      } else {
+        console.log("Usuário não autenticado");
+        window.location.href = "index.html";
+      }
+    });
+    
+    // Evento para salvar banca inicial
+    document.addEventListener('DOMContentLoaded', function() {
+      var btnSalvarBanca = document.getElementById('salvar-banca');
+      if (btnSalvarBanca) {
+        btnSalvarBanca.onclick = function() {
+          var valor = parseFloat(document.getElementById('banca-inicial').value);
+          if (isNaN(valor) || valor <= 0) {
+            alert('Por favor, insira um valor válido para a banca inicial.');
+            return;
+          }
+          
+          bancaInicial = valor;
+          localStorage.setItem('bancaInicial', bancaInicial);
+          calcularValorUnidade();
+          atualizarInterfaceApostas();
+          alert('Banca inicial salva com sucesso!');
+        };
+      }
     });
 
     // Função para atualizar o resultado de uma aposta
