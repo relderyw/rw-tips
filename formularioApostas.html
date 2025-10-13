@@ -656,25 +656,14 @@
       text-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
     }
 
-    .banca-inicial-container {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .banca-inicial-container input {
-      flex: 1;
-    }
-
-    .banca-inicial-container button {
-      width: auto;
-      padding: 0.875rem 1.25rem;
-    }
-
     .unidade-info {
       font-size: 0.9rem;
       color: var(--color-text-secondary);
       margin-top: 0.5rem;
+      background: rgba(0, 255, 100, 0.1);
+      padding: 0.75rem;
+      border-radius: var(--radius-sm);
+      border-left: 3px solid var(--color-primary);
     }
 
     .sub-value {
@@ -968,13 +957,13 @@
       <!-- Dashboard Tab -->
       <div class="tab-content active" id="dashboard-tab">
         <div class="form-group">
-          <label for="banca-inicial">Banca Inicial</label>
+          <label for="valor-unidade-input">Valor da Unidade</label>
           <div class="banca-inicial-container">
-            <input type="number" id="banca-inicial" placeholder="Valor da banca inicial" min="0" step="0.01">
-            <button id="salvar-banca" class="submit-button">Salvar</button>
+            <input type="number" id="valor-unidade-input" placeholder="Valor da unidade (ex: 10.00)" min="0.01" step="0.01">
+            <button id="salvar-unidade" class="submit-button">Salvar Unidade</button>
           </div>
           <div class="unidade-info">
-            <span>Unidade (10 partes): </span>
+            <span>Valor da Unidade Atual: </span>
             <span id="valor-unidade">R$ 0,00</span>
           </div>
         </div>
@@ -1175,24 +1164,31 @@
     let currentUserKey = null;
     let chart = null;
     let todasApostas = [];
-    let bancaInicial = 0;
     let valorUnidade = 0;
 
-    // Carregar banca inicial do localStorage ao iniciar
+    // Carregar valor da unidade do localStorage ao iniciar
     document.addEventListener('DOMContentLoaded', function () {
-      // Configurar evento para salvar banca inicial
-      document.getElementById('salvar-banca').addEventListener('click', function () {
-        const valor = parseFloat(document.getElementById('banca-inicial').value);
+      // Carregar valor da unidade salvo
+      const savedUnidade = localStorage.getItem('valorUnidade_' + currentUser);
+      if (savedUnidade) {
+        valorUnidade = parseFloat(savedUnidade);
+        document.getElementById('valor-unidade-input').value = valorUnidade;
+        document.getElementById('valor-unidade').textContent = formatarMoeda(valorUnidade);
+      }
+
+      // Configurar evento para salvar valor da unidade
+      document.getElementById('salvar-unidade').addEventListener('click', function () {
+        const valor = parseFloat(document.getElementById('valor-unidade-input').value);
         if (isNaN(valor) || valor <= 0) {
-          alert('Por favor, insira um valor válido para a banca inicial.');
+          alert('Por favor, insira um valor válido para a unidade (maior que zero).');
           return;
         }
 
-        bancaInicial = valor;
-        localStorage.setItem('bancaInicial_' + currentUser, bancaInicial);
-        calcularValorUnidade();
+        valorUnidade = valor;
+        localStorage.setItem('valorUnidade_' + currentUser, valorUnidade);
+        document.getElementById('valor-unidade').textContent = formatarMoeda(valorUnidade);
         atualizarInterfaceApostas();
-        alert('Banca inicial salva com sucesso!');
+        alert('Valor da unidade salvo com sucesso!');
       });
     });
 
@@ -1216,6 +1212,7 @@
       sessionStorage.removeItem('loggedIn');
       localStorage.removeItem('currentUser');
       localStorage.removeItem('currentUserKey');
+      localStorage.removeItem('valorUnidade_' + currentUser);
       window.location.replace('index.html');
     };
 
@@ -1469,9 +1466,6 @@
       let countMeioGreen = 0;
       let countMeioRed = 0;
 
-      // Carregar banca inicial do localStorage
-      const bancaInicial = parseFloat(localStorage.getItem('bancaInicial_' + currentUser) || '0');
-
       apostasLista.innerHTML = "";
 
       todasApostas.forEach((aposta) => {
@@ -1570,7 +1564,6 @@
       document.getElementById("total-aguardando").textContent = countAguardando;
 
       // Calcular e atualizar unidades
-      calcularValorUnidade();
       const unidadesGanhas = valorUnidade > 0 ? (ganhoTotal / valorUnidade).toFixed(2) : "0.00";
       const unidadesPerdidas = valorUnidade > 0 ? (perdaTotal / valorUnidade).toFixed(2) : "0.00";
       document.getElementById("unidades-ganhas").textContent = unidadesGanhas;
@@ -1638,12 +1631,17 @@
       return statusMap[resultado] || 'status-green';
     }
 
-    // Função para calcular o valor da unidade
-    function calcularValorUnidade() {
-      const banca = parseFloat(localStorage.getItem('bancaInicial_' + currentUser) || '0');
-      const valor = banca / 10;
-      valorUnidade = valor > 0 ? valor : 0;
-      document.getElementById('valor-unidade').textContent = formatarMoeda(valorUnidade);
+    // Função para carregar o valor da unidade
+    function carregarValorUnidade() {
+      const savedUnidade = localStorage.getItem('valorUnidade_' + currentUser);
+      if (savedUnidade) {
+        valorUnidade = parseFloat(savedUnidade);
+        document.getElementById('valor-unidade-input').value = valorUnidade;
+        document.getElementById('valor-unidade').textContent = formatarMoeda(valorUnidade);
+      } else {
+        valorUnidade = 0;
+        document.getElementById('valor-unidade').textContent = formatarMoeda(0);
+      }
       return valorUnidade;
     }
 
@@ -1968,6 +1966,9 @@
       try {
         // Verificar login
         if (!checkUserLogin()) return;
+
+        // Carregar valor da unidade
+        carregarValorUnidade();
 
         // Inicializar a página
         setupTabs();
