@@ -831,6 +831,58 @@
             color: var(--text-muted);
         }
 
+        /* Compact sizing for recent games analysis cards */
+        .player-match-history .stats-overview {
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .player-match-history .stat-card {
+            padding: 10px;
+        }
+        .player-match-history .stat-card .stat-value {
+            font-size: 1.4rem;
+        }
+        .player-match-history .stat-card .stat-label {
+            font-size: 0.8rem;
+        }
+
+        .h2h-history-section .stats-overview {
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .h2h-history-section .stat-card {
+            padding: 10px;
+        }
+        .h2h-history-section .stat-card .stat-value {
+            font-size: 1.4rem;
+        }
+        .h2h-history-section .stat-card .stat-label {
+            font-size: 0.8rem;
+        }
+
+        /* Extra compact on small screens */
+        @media (max-width: 768px) {
+            .player-match-history .stats-overview,
+            .h2h-history-section .stats-overview {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 8px;
+            }
+            .player-match-history .stat-card,
+            .h2h-history-section .stat-card {
+                padding: 8px;
+            }
+            .player-match-history .stat-card .stat-value,
+            .h2h-history-section .stat-card .stat-value {
+                font-size: 1.2rem;
+            }
+            .player-match-history .stat-card .stat-label,
+            .h2h-history-section .stat-card .stat-label {
+                font-size: 0.75rem;
+            }
+        }
+
         /* Metrics Grid */
         .metrics-grid {
             display: grid;
