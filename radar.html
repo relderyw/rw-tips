@@ -192,20 +192,6 @@
             display: none;
         }
 
-        .export-btn {
-            padding: 8px 15px;
-            background: var(--primary);
-            color: var(--text);
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-
-        .export-btn:hover {
-            background: var(--secondary-color);
-        }
-
         @media (max-width: 768px) {
             .header { padding: 10px; }
             .content { padding: 70px 10px 10px; }
@@ -242,7 +228,6 @@
                     <option value="winRate">Vitória %</option>
                     <option value="avgGoals">Gols Média</option>
                 </select>
-                <button class="export-btn" onclick="exportToCSV('playersTable')">Exportar CSV</button>
             </div>
             <div class="table-container">
                 <table id="playersTable">
@@ -275,7 +260,6 @@
                     <option value="avgGoals">Gols Média</option>
                     <option value="btts">BTTS %</option>
                 </select>
-                <button class="export-btn" onclick="exportToCSV('matchesTable')">Exportar CSV</button>
             </div>
             <div class="table-container">
                 <table id="matchesTable">
@@ -452,7 +436,7 @@
             }
         }
 
-        // Renderizar tabelas
+        // Renderizar tabelas com correção do erro
         function renderTable(tableId, data, columns, searchId = null) {
             const tbody = document.querySelector(`#${tableId} tbody`);
             tbody.innerHTML = '';
@@ -464,7 +448,10 @@
                     columns.forEach(col => {
                         const td = document.createElement('td');
                         td.textContent = item[col.key] || '-';
-                        if (col.classFn) td.classList.add(col.classFn(item[col.key]));
+                        if (col.classFn) {
+                            const className = col.classFn(item[col.key]);
+                            if (className) td.classList.add(className); // Só adiciona se a classe for válida
+                        }
                         if (col.tooltip) td.title = col.tooltip(item);
                         row.appendChild(td);
                     });
@@ -516,23 +503,6 @@
                 },
                 options: { scales: { y: { beginAtZero: true } }, plugins: { legend: { position: 'top' } } }
             });
-        }
-
-        // Exportar para CSV
-        function exportToCSV(tableId) {
-            const table = document.getElementById(tableId);
-            let csv = [];
-            const headers = Array.from(table.querySelectorAll('th')).map(th => th.textContent);
-            csv.push(headers.join(','));
-            Array.from(table.querySelectorAll('tbody tr')).forEach(row => {
-                const rowData = Array.from(row.querySelectorAll('td')).map(td => `"${td.textContent}"`);
-                csv.push(rowData.join(','));
-            });
-            const csvContent = 'data:text/csv;charset=utf-8,' + csv.join('\n');
-            const link = document.createElement('a');
-            link.setAttribute('href', csvContent);
-            link.setAttribute('download', `${tableId}_data.csv`);
-            link.click();
         }
 
         // Inicialização
