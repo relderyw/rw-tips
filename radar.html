@@ -421,16 +421,16 @@
     <script>
         let allGames = [], playerStats = {}, matchupStats = [], leagueStats = {}, leagues = new Set();
 
-        // Fetch limitado a 5 páginas
+        // Fetch limitado a 2 páginas
         async function fetchGames() {
             let games = [];
-            for (let page = 1; page <= 5; page++) {
+            for (let page = 1; page <= 2; page++) {
                 try {
-                    const response = await fetch(`https://api.green365.com.br/api/events/ended?sport_id=4&page=${page}`);
+                    const response = await fetch(`https://api-v2.green365.com.br/api/v2/sport-events?page=${page}&limit=150&sport=esoccer&status=ended`);
                     if (!response.ok) throw new Error('Erro na API');
                     const data = await response.json();
-                    if (data.data?.length > 0) {
-                        games = games.concat(data.data);
+                    if (data.items?.length > 0) {
+                        games = games.concat(data.items);
                     } else break;
                 } catch (error) {
                     console.error(`Erro página ${page}:`, error);
@@ -440,23 +440,18 @@
             return games;
         }
 
-        function extractPlayerName(text) {
-            const match = text.match(/\(([^)]+)\)/);
-            return match ? match[1] : text.split(' ')[0];
-        }
-
         function calculateStats() {
             playerStats = {}; matchupStats = []; leagueStats = {}; leagues.clear();
 
             allGames.forEach(game => {
-                const homePlayer = extractPlayerName(game.home);
-                const awayPlayer = extractPlayerName(game.away);
-                const league = game.leagueName || 'Unknown';
-                const scoreFT = game.score.split('-').map(Number);
-                const scoreHT = game.scoreHT ? game.scoreHT.split('-').map(Number) : [0, 0];
+                const homePlayer = game.home.name;
+                const awayPlayer = game.away.name;
+                const league = game.competition.name;
+                const homeGoalsFT = game.score.home;
+                const awayGoalsFT = game.score.away;
+                const homeGoalsHT = game.scoreHT ? game.scoreHT.home : 0;
+                const awayGoalsHT = game.scoreHT ? game.scoreHT.away : 0;
                 
-                const homeGoalsFT = scoreFT[0], awayGoalsFT = scoreFT[1];
-                const homeGoalsHT = scoreHT[0], awayGoalsHT = scoreHT[1];
                 const totalGoalsFT = homeGoalsFT + awayGoalsFT;
                 const totalGoalsHT = homeGoalsHT + awayGoalsHT;
                 const isBTTS = homeGoalsFT > 0 && awayGoalsFT > 0;
@@ -465,12 +460,10 @@
                 leagues.add(league);
 
                 // Estatísticas de jogadores
-                [homePlayer, awayPlayer].forEach((player, i) => {
-                    const goalsFT = i === 0 ? homeGoalsFT : awayGoalsFT;
-                    const goalsHT = i === 0 ? homeGoalsHT : awayGoalsHT;
-                    const goalsConceded = i === 0 ? awayGoalsFT : homeGoalsFT;
-                    const won = i === 0 ? homeGoalsFT > awayGoalsFT : awayGoalsFT > homeGoalsFT;
-                    const draw = homeGoalsFT === awayGoalsFT;
+                [ {player: homePlayer, goalsFT: homeGoalsFT, goalsHT: homeGoalsHT, goalsConceded: awayGoalsFT}, 
+                  {player: awayPlayer, goalsFT: awayGoalsFT, goalsHT: awayGoalsHT, goalsConceded: homeGoalsFT} ].forEach(({player, goalsFT, goalsHT, goalsConceded}) => {
+                    const won = goalsFT > goalsConceded;
+                    const draw = goalsFT === goalsConceded;
 
                     if (!playerStats[player]) playerStats[player] = {};
                     if (!playerStats[player][league]) playerStats[player][league] = { games: [] };
@@ -509,7 +502,7 @@
             // Processar jogadores (últimos 5 jogos)
             for (let player in playerStats) {
                 for (let league in playerStats[player]) {
-                    const games = playerStats[player][league].games.slice(0, 5);
+                    const games = playerStats[player][league].games.slice(-5); // Últimos 5 (mais recentes)
                     if (games.length < 5) continue;
 
                     const wins = games.filter(g => g.won).length;
@@ -535,7 +528,7 @@
 
             // Processar confrontos (últimos 5 jogos)
             matchupStats.forEach(m => {
-                const games = m.games.slice(0, 5);
+                const games = m.games.slice(-5); // Últimos 5
                 if (games.length < 5) {
                     m.avgGoalsFT = 0;
                     m.avgGoalsHT = 0;
