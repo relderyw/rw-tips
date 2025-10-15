@@ -680,7 +680,7 @@
                 trends.push({
                     title: '🎯 Jogadores Mais Consistentes',
                     content: consistent.slice(0, 5).map(p => 
-                        `<strong>${p.player}</strong> (${p.league}): ${p.consistency} desvio - ${p.winRate}% vitórias`
+                        `💠<strong>${p.player}</strong> (${p.league}): ${p.consistency} desvio - ${p.winRate}% vitórias<br><br>`
                     ).join('<br>')
                 });
             }
@@ -778,7 +778,7 @@
                 trends.push({
                     title: '🔥 Jogadores em Sequência',
                     content: hotStreaks.map(h => 
-                        `<strong>${h.player}</strong> (${h.league}): ${h.streak} vitórias seguidas - ${h.avgGoals} gols/jogo<br><br>`
+                        `💠<strong>${h.player}</strong> (${h.league}): ${h.streak} vitórias seguidas - ${h.avgGoals} gols/jogo<br><br>`
                     ).join('')
                 });
             }
