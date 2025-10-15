@@ -1997,7 +1997,9 @@
                 const teamPlayer = isHome ? `${match.home_player} (${match.home_team})` : `${match.away_player} (${match.away_team})`;
                 const opponent = isHome ? `${match.away_player} (${match.away_team})` : `${match.home_player} (${match.home_team})`;
                 const scoreFT = `${isHome ? scoreHome : scoreAway} x ${isHome ? scoreAway : scoreHome}`;
-                const scoreHT = htHome !== undefined && htAway !== undefined ? `HT: ${htHome}-${htAway}` : '';
+                const htLeft = isHome ? htHome : htAway;
+                const htRight = isHome ? htAway : htHome;
+                const scoreHT = (htLeft || htRight) ? `HT: ${htLeft}-${htRight}` : '';
 
                 const matchItem = document.createElement('div');
                 matchItem.className = 'history-match';
@@ -2066,7 +2068,9 @@
                 const { home: htHome, away: htAway } = parseHTScore(match);
                 const winnerLeft = leftScore > rightScore;
                 const scoreFT = `${leftScore} x ${rightScore}`;
-                const scoreHT = htHome !== undefined && htAway !== undefined ? `HT: ${htHome}-${htAway}` : '';
+                const htLeft = isPlayer1Home ? htHome : htAway;
+                const htRight = isPlayer1Home ? htAway : htHome;
+                const scoreHT = (htLeft || htRight) ? `HT: ${htLeft}-${htRight}` : '';
 
                 const matchItem = document.createElement('div');
                 matchItem.className = 'history-match';
