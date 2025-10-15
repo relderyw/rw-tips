@@ -834,15 +834,15 @@
         /* Metrics Grid */
         .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
         }
 
         .metric-card {
             background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 15px;
+            border-radius: 8px;
+            padding: 10px;
             position: relative;
             overflow: hidden;
             transition: transform 0.2s ease, background 0.2s ease;
@@ -865,17 +865,17 @@
         }
 
         .metric-label {
-            font-size: 0.85rem;
+            font-size: 0.7rem;
             color: var(--text-secondary);
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             display: block;
         }
 
         .metric-value {
-            font-size: 1.8rem;
+            font-size: 1.2rem;
             font-weight: 700;
             display: block;
-            margin-top: 5px;
+            margin-top: 2px;
         }
 
         /* Cores para diferentes faixas de porcentagem */
@@ -913,15 +913,15 @@
         }
 
         .metric-name {
-            font-size: 0.95rem;
+            font-size: 0.8rem;
             color: var(--text-secondary);
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             position: relative;
             z-index: 2;
         }
 
         .metric-value {
-            font-size: 1.3rem;
+            font-size: 1.0rem;
             font-weight: 700;
             position: relative;
             z-index: 2;
@@ -1233,11 +1233,7 @@
             <div id="h2h-content" class="h2h-container" style="display: none;">
                 <div class="h2h-header">
                     <h2 class="h2h-title">Análise Confronto Direto</h2>
-                    <div class="players-comparison">
-                        <div class="player-name player1-name" id="player1-name-summary">Jogador 1</div>
-                        <div class="vs-separator">VS</div>
-                        <div class="player-name player2-name" id="player2-name-summary">Jogador 2</div>
-                    </div>
+                    <div class="players-comparison" id="players-comparison"></div>
                 </div>
 
                 <div class="metric-tabs">
@@ -1921,8 +1917,6 @@
                 currentPlayer1 = player1;
                 currentPlayer2 = player2;
 
-                document.getElementById('player1-name-summary').textContent = player1;
-                document.getElementById('player2-name-summary').textContent = player2;
                 document.getElementById('player1-history-header').textContent = `Últimas partidas do ${player1}`;
                 document.getElementById('player2-history-header').textContent = `Últimas partidas do ${player2}`;
 
@@ -1946,6 +1940,7 @@
             const h2hSummaryElem = document.getElementById('h2h-summary');
             const player1SummaryElem = document.getElementById('player1-summary');
             const player2SummaryElem = document.getElementById('player2-summary');
+            const playersComparison = document.getElementById('players-comparison');
 
             h2hOverview.innerHTML = '';
             h2hMetrics.innerHTML = '';
@@ -1956,6 +1951,7 @@
             h2hSummaryElem.innerHTML = '';
             player1SummaryElem.innerHTML = '';
             player2SummaryElem.innerHTML = '';
+            playersComparison.innerHTML = '';
 
             if (!h2hData || !h2hData[`ultimos_${period}`]) {
                 return;
@@ -1963,6 +1959,14 @@
 
             const data = h2hData[`ultimos_${period}`];
             const h2hStats = h2hData.h2h_stats;
+
+            // Highlight the better player
+            const isPlayer1Better = h2hStats.player1_win_percentage > h2hStats.player2_win_percentage;
+            playersComparison.innerHTML = `
+                <div class="player-name player1-name ${isPlayer1Better ? 'highlighted' : ''}" id="player1-name-summary">${currentPlayer1}</div>
+                <div class="vs-separator">VS</div>
+                <div class="player-name player2-name ${!isPlayer1Better && h2hStats.player2_win_percentage > h2hStats.player1_win_percentage ? 'highlighted' : ''}" id="player2-name-summary">${currentPlayer2}</div>
+            `;
 
             // Update overview stats
             h2hOverview.innerHTML = `
