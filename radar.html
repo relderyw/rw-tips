@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RW TIPS - Análise de Estatísticas</title>
+    <title>RW TIPS - Análise Avançada de Estatísticas eSoccer</title>
     <style>
         :root {
             --primary-color: #6c5ce7;
@@ -18,13 +18,15 @@
             --sidebar-bg: #1a1a23;
             --active-bg: #2ecc71;
             --header-height: 80px;
+            --error-color: #ff4c4c;
+            --success-color: #32cd32;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
@@ -44,11 +46,11 @@
             padding: 15px 30px;
             background: var(--sidebar-bg);
             border-bottom: 1px solid var(--border-color);
-            position: relative;
+            position: fixed;
+            top: 0;
+            width: 100%;
             z-index: 100;
             height: var(--header-height);
-            width: 100%;
-            max-width: 1200px;
         }
 
         .logo-container {
@@ -62,7 +64,6 @@
             height: 50px;
             border-radius: 50%;
             border: 2px solid var(--primary-color);
-            padding: 2px;
             box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
         }
 
@@ -70,11 +71,9 @@
             font-size: 1.5rem;
             background: var(--gradient-primary);
             -webkit-background-clip: text;
-            background-clip: text;
             color: transparent;
             font-weight: 700;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(0, 255, 136, 0.7);
+            letter-spacing: 1px;
             animation: neonPulse 1.5s ease-in-out infinite alternate;
         }
 
@@ -85,26 +84,22 @@
 
         .content {
             flex: 1;
-            padding: 40px 20px;
+            padding: 100px 20px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
-            max-width: 1200px;
+            max-width: 1400px;
         }
 
         .back-button {
-            margin-bottom: 20px;
             padding: 10px 20px;
             background: var(--primary-color);
             color: var(--text-primary);
             border: none;
             border-radius: 8px;
-            font-weight: 500;
-            font-size: 1rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: block;
+            transition: background 0.3s;
         }
 
         .back-button:hover {
@@ -112,16 +107,16 @@
         }
 
         .title {
-            font-size: 2rem;
-            font-weight: 600;
+            font-size: 2.5rem;
+            font-weight: 700;
             margin-bottom: 10px;
             text-align: center;
         }
 
         .subtitle {
-            font-size: 1rem;
+            font-size: 1.2rem;
             color: var(--text-secondary);
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             text-align: center;
         }
 
@@ -135,15 +130,15 @@
         }
 
         .tab {
-            padding: 10px 20px;
+            padding: 12px 24px;
             background: none;
             border: none;
             color: var(--text-secondary);
             font-size: 1.1rem;
             font-weight: 500;
             cursor: pointer;
+            transition: color 0.3s;
             position: relative;
-            transition: color 0.3s ease;
         }
 
         .tab:hover {
@@ -161,27 +156,34 @@
             left: 0;
             width: 100%;
             height: 2px;
-            background: var(--accent-color);
+            background: var(--gradient-primary);
         }
 
         .tab-content {
             width: 100%;
             display: none;
+            animation: fadeIn 0.5s ease;
         }
 
         .tab-content.active {
             display: block;
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
         .filters {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             margin-bottom: 30px;
             flex-wrap: wrap;
             justify-content: center;
+            align-items: center;
         }
 
-        .filters select {
+        .filters select, .filters input {
             padding: 10px 15px;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -191,27 +193,20 @@
             cursor: pointer;
         }
 
-        .filters select:focus {
+        .filters select:focus, .filters input:focus {
+            border-color: var(--accent-color);
             outline: none;
-            border-color: var(--primary-color);
         }
 
         .sort-button {
-            display: flex;
-            align-items: center;
-            gap: 8px;
             padding: 10px 20px;
             background: var(--gradient-primary);
             color: var(--text-primary);
             border: none;
             border-radius: 8px;
-            font-weight: 500;
-            font-size: 1rem;
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.3s ease;
-            margin: 0 auto 20px;
+            transition: transform 0.2s, box-shadow 0.3s;
             box-shadow: 0 2px 8px rgba(0, 255, 136, 0.3);
-            display: block;
         }
 
         .sort-button:hover {
@@ -219,174 +214,100 @@
             box-shadow: 0 4px 12px rgba(0, 255, 136, 0.5);
         }
 
-        .sort-button:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 8px rgba(0, 255, 136, 0.3);
-        }
-
-        .sort-icon {
-            font-size: 1.2rem;
-            transition: transform 0.3s ease;
-        }
-
-        .sort-icon.asc {
-            transform: rotate(180deg);
-        }
-
         .table-container {
             width: 100%;
-            max-width: 100%;
             overflow-x: auto;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 40px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             background: var(--card-bg);
-            border-radius: 8px;
-            overflow: hidden;
         }
 
         th, td {
             padding: 15px;
             text-align: center;
-            font-size: 0.95rem;
             border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
         }
 
         th {
             background: var(--sidebar-bg);
             color: var(--text-primary);
             font-weight: 600;
+            cursor: pointer;
+            position: relative;
         }
 
-        td {
-            color: var(--text-secondary);
+        th:hover {
+            background: rgba(0, 255, 136, 0.1);
         }
 
         td.green {
-            color: #32CD32;
+            color: var(--success-color);
         }
 
         td.red {
-            color: #FF4C4C;
+            color: var(--error-color);
+        }
+
+        .chart-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .loading {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            margin: 20px;
+        }
+
+        .error {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--error-color);
+            margin: 20px;
         }
 
         @media (max-width: 768px) {
-            .content {
-                padding: 20px 10px;
-            }
-
             .header {
                 padding: 15px 10px;
             }
 
-            .logo-img {
-                width: 40px;
-                height: 40px;
-            }
-
-            .logo-text {
-                font-size: 1.2rem;
+            .content {
+                padding: 90px 10px 10px;
             }
 
             .title {
-                font-size: 1.5rem;
-            }
-
-            .subtitle {
-                font-size: 0.9rem;
-            }
-
-            .tabs {
-                gap: 15px;
+                font-size: 2rem;
             }
 
             .tab {
-                font-size: 1rem;
-                padding: 8px 15px;
-            }
-
-            .filters {
-                gap: 10px;
-            }
-
-            .filters select {
-                font-size: 0.9rem;
-                padding: 8px 12px;
-            }
-
-            .sort-button {
-                font-size: 0.9rem;
-                padding: 8px 15px;
+                padding: 10px 15px;
             }
 
             th, td {
                 padding: 10px;
                 font-size: 0.85rem;
             }
-
-            .back-button {
-                font-size: 0.9rem;
-                padding: 8px 15px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header {
-                padding: 10px 10px;
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-
-            .logo-text {
-                font-size: 1rem;
-            }
-
-            .logo-img {
-                width: 35px;
-                height: 35px;
-            }
-
-            .title {
-                font-size: 1.3rem;
-            }
-
-            .subtitle {
-                font-size: 0.85rem;
-            }
-
-            .tab {
-                font-size: 0.9rem;
-                padding: 6px 12px;
-            }
-
-            .filters select {
-                font-size: 0.85rem;
-                padding: 6px 10px;
-            }
-
-            .sort-button {
-                font-size: 0.85rem;
-                padding: 6px 12px;
-            }
-
-            th, td {
-                padding: 8px;
-                font-size: 0.8rem;
-            }
-
-            .back-button {
-                font-size: 0.85rem;
-                padding: 6px 12px;
-            }
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <header class="header">
         <div class="logo-container">
-            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
+            <img src="https://i.ibb.co/G4Y8sHM/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
             <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
         </div>
     </header>
@@ -394,76 +315,130 @@
     <div class="content">
         <button class="back-button" onclick="window.location.href='visualization.html'">Voltar</button>
 
-        <h1 class="title">Análise de Estatísticas</h1>
-        <p class="subtitle">Estatísticas detalhadas de jogadores e confrontos</p>
+        <h1 class="title">Análise Avançada de Estatísticas eSoccer</h1>
+        <p class="subtitle">Estatísticas detalhadas e visuais de jogadores, confrontos e ligas baseadas nos últimos jogos</p>
 
         <div class="tabs">
             <button class="tab active" data-tab="top-players">Top Jogadores</button>
             <button class="tab" data-tab="top-matches">Melhores Confrontos</button>
+            <button class="tab" data-tab="league-radar">Radar de Ligas</button>
         </div>
 
         <!-- Tab: Top Jogadores -->
         <div id="top-players" class="tab-content active">
             <div class="filters">
-                <select id="leagueFilter">
+                <select id="leagueFilterPlayers">
                     <option value="">Todas as Ligas</option>
                 </select>
-                <select id="sortOrder">
-                    <option value="desc">Taxa de Vitória: Maior para Menor</option>
-                    <option value="asc">Taxa de Vitória: Menor para Maior</option>
+                <select id="sortMetricPlayers">
+                    <option value="winRate">Taxa de Vitória</option>
+                    <option value="avgGoals">Média de Gols</option>
+                    <option value="bttsRate">Taxa BTTS</option>
+                </select>
+                <select id="sortOrderPlayers">
+                    <option value="desc">Maior para Menor</option>
+                    <option value="asc">Menor para Maior</option>
                 </select>
             </div>
 
             <div class="table-container">
-                <table>
+                <table id="playersTable">
                     <thead>
                         <tr>
                             <th>Jogador</th>
                             <th>Time</th>
                             <th>Liga</th>
-                            <th>Vitórias</th>
-                            <th>Empates</th>
-                            <th>Derrotas</th>
                             <th>Jogos</th>
-                            <th>Média Gols</th>
-                            <th>Over 2.5</th>
-                            <th>BTTS</th>
+                            <th>Vitórias (%)</th>
+                            <th>Empates (%)</th>
+                            <th>Derrotas (%)</th>
+                            <th>Média Gols Marcados</th>
+                            <th>Média Gols Sofridos</th>
+                            <th>Média Gols Total</th>
+                            <th>Over 2.5 (%)</th>
+                            <th>BTTS (%)</th>
+                            <!-- Placeholder for HT metrics if API supports -->
+                            <!-- <th>Vitórias HT (%)</th> -->
                         </tr>
                     </thead>
-                    <tbody id="playersTable"></tbody>
+                    <tbody></tbody>
                 </table>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="playerRadarChart"></canvas>
             </div>
         </div>
 
         <!-- Tab: Melhores Confrontos -->
         <div id="top-matches" class="tab-content">
-            <button id="sortButton" class="sort-button">
-                Ordenar: Melhor para Pior
-                <span id="sortIcon" class="sort-icon">↓</span>
-            </button>
+            <div class="filters">
+                <select id="leagueFilterMatches">
+                    <option value="">Todas as Ligas</option>
+                </select>
+                <select id="sortMetricMatches">
+                    <option value="avgGoals">Média de Gols</option>
+                    <option value="over2_5">Over 2.5</option>
+                    <option value="btts">BTTS</option>
+                </select>
+                <select id="sortOrderMatches">
+                    <option value="desc">Maior para Menor</option>
+                    <option value="asc">Menor para Maior</option>
+                </select>
+            </div>
 
             <div class="table-container">
-                <table>
+                <table id="matchesTable">
                     <thead>
                         <tr>
-                            <th>Player 1 x Player 2</th>
+                            <th>Confronto</th>
                             <th>Liga</th>
-                            <th>+1.5 Gols</th>
-                            <th>+2.5 Gols</th>
-                            <th>+3.5 Gols</th>
-                            <th>+4.5 Gols</th>
-                            <th>BTTS</th>
+                            <th>Jogos</th>
+                            <th>+1.5 Gols (%)</th>
+                            <th>+2.5 Gols (%)</th>
+                            <th>+3.5 Gols (%)</th>
+                            <th>+4.5 Gols (%)</th>
+                            <th>BTTS (%)</th>
                             <th>Média de Gols</th>
+                            <!-- Placeholder for HT -->
+                            <!-- <th>Média Gols HT</th> -->
                         </tr>
                     </thead>
-                    <tbody id="matchesTable"></tbody>
+                    <tbody></tbody>
                 </table>
             </div>
         </div>
+
+        <!-- Tab: Radar de Ligas -->
+        <div id="league-radar" class="tab-content">
+            <div class="table-container">
+                <table id="leaguesTable">
+                    <thead>
+                        <tr>
+                            <th>Liga</th>
+                            <th>Jogos Analisados</th>
+                            <th>Média Gols/Jogo</th>
+                            <th>% BTTS</th>
+                            <th>% Over 2.5</th>
+                            <th>Top Jogador (Vitórias %)</th>
+                            <th>Top Confronto (Média Gols)</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="leagueBarChart"></canvas>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">Carregando dados...</div>
+        <div class="error" id="error" style="display: none;"></div>
     </div>
 
     <script>
-        // Função de verificação de login
+        // Verificação de login
         function checkUserLogin() {
             if (!sessionStorage.getItem('loggedIn')) {
                 window.location.replace('index.html');
@@ -473,34 +448,45 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            // Verifica se o usuário está logado antes de prosseguir
             if (!checkUserLogin()) return;
 
             const tabs = document.querySelectorAll('.tab');
             const tabContents = document.querySelectorAll('.tab-content');
-            const leagueFilter = document.getElementById('leagueFilter');
-            const sortOrder = document.getElementById('sortOrder');
-            const playersTable = document.getElementById('playersTable');
-            const sortButton = document.getElementById('sortButton');
-            const sortIcon = document.getElementById('sortIcon');
-            const matchesTable = document.getElementById('matchesTable');
+            const leagueFilterPlayers = document.getElementById('leagueFilterPlayers');
+            const sortMetricPlayers = document.getElementById('sortMetricPlayers');
+            const sortOrderPlayers = document.getElementById('sortOrderPlayers');
+            const playersTableBody = document.querySelector('#playersTable tbody');
+            const leagueFilterMatches = document.getElementById('leagueFilterMatches');
+            const sortMetricMatches = document.getElementById('sortMetricMatches');
+            const sortOrderMatches = document.getElementById('sortOrderMatches');
+            const matchesTableBody = document.querySelector('#matchesTable tbody');
+            const leaguesTableBody = document.querySelector('#leaguesTable tbody');
+            const loading = document.getElementById('loading');
+            const errorEl = document.getElementById('error');
+            const playerRadarCtx = document.getElementById('playerRadarChart').getContext('2d');
+            const leagueBarCtx = document.getElementById('leagueBarChart').getContext('2d');
 
             let allGames = [];
             let playerStats = {};
-            let matchups = [];
+            let matchupStats = [];
+            let leagueStats = {};
             let leagues = new Set();
-            let sortOrderMatches = 'desc';
 
-            async function fetchGames() {
-                const pagesToFetch = 5;
+            async function fetchAllGames() {
                 let games = [];
-                for (let page = 1; page <= pagesToFetch; page++) {
+                let page = 1;
+                let hasMore = true;
+                while (hasMore) {
                     try {
                         const response = await fetch(`https://api.green365.com.br/api/events/ended?sport_id=4&competition_id=&page=${page}`);
+                        if (!response.ok) throw new Error('Erro na API');
                         const data = await response.json();
                         games = games.concat(data.data);
+                        hasMore = page < data.pagination.totalPages; // Continua até a última página
+                        page++;
                     } catch (error) {
-                        console.error(`Erro ao buscar página ${page}:`, error);
+                        console.error(`Erro na página ${page}:`, error);
+                        hasMore = false;
                     }
                 }
                 return games;
@@ -511,7 +497,11 @@
                 return match ? match[1] : text;
             }
 
-            function calculatePlayerStats() {
+            function calculateStats() {
+                // Ordenar jogos por timestamp descendente (mais recentes primeiro)
+                allGames.sort((a, b) => b.timestamp - a.timestamp);
+
+                // Stats de Jogadores
                 playerStats = {};
                 allGames.forEach(game => {
                     const homePlayer = extractPlayerName(game.home);
@@ -525,126 +515,107 @@
                     const totalGoals = homeGoals + awayGoals;
                     const isBTTS = homeGoals > 0 && awayGoals > 0;
 
-                    if (!playerStats[homePlayer]) {
-                        playerStats[homePlayer] = { games: [], teams: new Set(), leagues: new Set() };
-                    }
-                    if (!playerStats[awayPlayer]) {
-                        playerStats[awayPlayer] = { games: [], teams: new Set(), leagues: new Set() };
-                    }
-
-                    playerStats[homePlayer].games.push({
-                        opponent: awayPlayer,
-                        goalsScored: homeGoals,
-                        goalsConceded: awayGoals,
-                        totalGoals,
-                        isBTTS,
-                        league,
-                        team: homeTeam,
-                        won: homeGoals > awayGoals,
-                        draw: homeGoals === awayGoals
-                    });
-                    playerStats[awayPlayer].games.push({
-                        opponent: homePlayer,
-                        goalsScored: awayGoals,
-                        goalsConceded: homeGoals,
-                        totalGoals,
-                        isBTTS,
-                        league,
-                        team: awayTeam,
-                        won: awayGoals > homeGoals,
-                        draw: awayGoals === awayGoals
-                    });
-
-                    playerStats[homePlayer].teams.add(homeTeam);
-                    playerStats[homePlayer].leagues.add(league);
-                    playerStats[awayPlayer].teams.add(awayTeam);
-                    playerStats[awayPlayer].leagues.add(league);
                     leagues.add(league);
+
+                    [ { player: homePlayer, team: homeTeam, goalsScored: homeGoals, goalsConceded: awayGoals, won: homeGoals > awayGoals, draw: homeGoals === awayGoals },
+                      { player: awayPlayer, team: awayTeam, goalsScored: awayGoals, goalsConceded: homeGoals, won: awayGoals > homeGoals, draw: homeGoals === awayGoals } 
+                    ].forEach(({ player, team, goalsScored, goalsConceded, won, draw }) => {
+                        if (!playerStats[player]) playerStats[player] = {};
+                        if (!playerStats[player][league]) playerStats[player][league] = { games: [] };
+                        playerStats[player][league].games.push({ totalGoals, isBTTS, goalsScored, goalsConceded, won, draw, timestamp: game.timestamp });
+                        playerStats[player][league].team = team; // Último time
+                    });
                 });
 
                 for (const player in playerStats) {
-                    const gamesByLeague = {};
-                    playerStats[player].games.forEach(game => {
-                        if (!gamesByLeague[game.league]) {
-                            gamesByLeague[game.league] = [];
-                        }
-                        gamesByLeague[game.league].push(game);
-                    });
+                    for (const league in playerStats[player]) {
+                        const stats = playerStats[player][league];
+                        const last5 = stats.games.slice(0, 5); // Últimos 5
+                        if (last5.length < 5) continue;
 
-                    playerStats[player].statsByLeague = {};
-                    for (const league in gamesByLeague) {
-                        const last5Games = gamesByLeague[league].slice(0, 5);
-                        if (last5Games.length < 5) continue;
+                        const wins = last5.filter(g => g.won).length;
+                        const draws = last5.filter(g => g.draw).length;
+                        const losses = 5 - wins - draws;
+                        const avgScored = (last5.reduce((sum, g) => sum + g.goalsScored, 0) / 5).toFixed(2);
+                        const avgConceded = (last5.reduce((sum, g) => sum + g.goalsConceded, 0) / 5).toFixed(2);
+                        const avgGoals = (last5.reduce((sum, g) => sum + g.totalGoals, 0) / 5).toFixed(2);
+                        const over2_5Rate = ((last5.filter(g => g.totalGoals > 2.5).length / 5) * 100).toFixed(0);
+                        const bttsRate = ((last5.filter(g => g.isBTTS).length / 5) * 100).toFixed(0);
+                        const winRate = (wins / 5 * 100).toFixed(0);
 
-                        const wins = last5Games.filter(g => g.won).length;
-                        const draws = last5Games.filter(g => g.draw).length;
-                        const losses = last5Games.length - wins - draws;
-                        const totalGoals = last5Games.reduce((sum, g) => sum + g.totalGoals, 0);
-                        const avgGoals = (totalGoals / last5Games.length).toFixed(2);
-                        const over2_5Games = last5Games.filter(g => g.totalGoals > 2.5).length;
-                        const over2_5Rate = ((over2_5Games / last5Games.length) * 100).toFixed(0);
-                        const bttsGames = last5Games.filter(g => g.isBTTS).length;
-                        const bttsRate = ((bttsGames / last5Games.length) * 100).toFixed(0);
-
-                        playerStats[player].statsByLeague[league] = {
-                            wins,
-                            draws,
-                            losses,
-                            games: last5Games.length,
-                            avgGoals,
-                            over2_5Rate,
-                            bttsRate,
-                            team: last5Games[0].team
-                        };
+                        stats.summary = { wins, draws, losses, avgScored, avgConceded, avgGoals, over2_5Rate, bttsRate, winRate, games: 5 };
                     }
                 }
-            }
 
-            function calculateMatchups() {
-                const matchupGames = {};
+                // Stats de Confrontos
+                const matchupMap = {};
                 allGames.forEach(game => {
-                    const player1 = extractPlayerName(game.home);
-                    const player2 = extractPlayerName(game.away);
+                    const p1 = extractPlayerName(game.home);
+                    const p2 = extractPlayerName(game.away);
+                    const key = [p1, p2].sort().join(' vs ');
                     const league = game.leagueName;
                     const score = game.score.split('-').map(Number);
                     const totalGoals = score[0] + score[1];
                     const isBTTS = score[0] > 0 && score[1] > 0;
 
-                    const matchupKey = [player1, player2].sort().join(' vs ');
-                    if (!matchupGames[matchupKey]) {
-                        matchupGames[matchupKey] = { games: [], league };
-                    }
-
-                    matchupGames[matchupKey].games.push({
-                        totalGoals,
-                        isBTTS
-                    });
+                    if (!matchupMap[key]) matchupMap[key] = { games: [], league };
+                    matchupMap[key].games.push({ totalGoals, isBTTS, timestamp: game.timestamp });
                 });
 
-                matchups = [];
-                for (const matchup in matchupGames) {
-                    const games = matchupGames[matchup].games;
-                    if (games.length < 5) continue;
+                for (const key in matchupMap) {
+                    const stats = matchupMap[key];
+                    const last5 = stats.games.sort((a, b) => b.timestamp - a.timestamp).slice(0, 5);
+                    if (last5.length < 5) continue;
 
-                    const totalGames = games.length;
-                    const over1_5 = games.filter(g => g.totalGoals > 1.5).length;
-                    const over2_5 = games.filter(g => g.totalGoals > 2.5).length;
-                    const over3_5 = games.filter(g => g.totalGoals > 3.5).length;
-                    const over4_5 = games.filter(g => g.totalGoals > 4.5).length;
-                    const bttsGames = games.filter(g => g.isBTTS).length;
-                    const totalGoals = games.reduce((sum, g) => sum + g.totalGoals, 0);
-                    const avgGoals = (totalGoals / totalGames).toFixed(2);
+                    const avgGoals = (last5.reduce((sum, g) => sum + g.totalGoals, 0) / 5).toFixed(2);
+                    const over1_5 = ((last5.filter(g => g.totalGoals > 1.5).length / 5) * 100).toFixed(0);
+                    const over2_5 = ((last5.filter(g => g.totalGoals > 2.5).length / 5) * 100).toFixed(0);
+                    const over3_5 = ((last5.filter(g => g.totalGoals > 3.5).length / 5) * 100).toFixed(0);
+                    const over4_5 = ((last5.filter(g => g.totalGoals > 4.5).length / 5) * 100).toFixed(0);
+                    const btts = ((last5.filter(g => g.isBTTS).length / 5) * 100).toFixed(0);
 
-                    matchups.push({
-                        matchup,
-                        league: matchupGames[matchup].league,
-                        over1_5: ((over1_5 / totalGames) * 100).toFixed(0),
-                        over2_5: ((over2_5 / totalGames) * 100).toFixed(0),
-                        over3_5: ((over3_5 / totalGames) * 100).toFixed(0),
-                        over4_5: ((over4_5 / totalGames) * 100).toFixed(0),
-                        btts: ((bttsGames / totalGames) * 100).toFixed(0),
-                        avgGoals: parseFloat(avgGoals)
+                    matchupStats.push({ key, league: stats.league, avgGoals: parseFloat(avgGoals), over1_5, over2_5, over3_5, over4_5, btts, games: 5 });
+                }
+
+                // Stats de Ligas
+                allGames.forEach(game => {
+                    const league = game.leagueName;
+                    if (!leagueStats[league]) leagueStats[league] = { games: 0, totalGoals: 0, bttsCount: 0, over2_5Count: 0, topPlayer: { name: '', winRate: 0 }, topMatchup: { key: '', avgGoals: 0 } };
+                    const score = game.score.split('-').map(Number);
+                    const totalGoals = score[0] + score[1];
+                    const isBTTS = score[0] > 0 && score[1] > 0;
+                    const isOver2_5 = totalGoals > 2.5;
+
+                    leagueStats[league].games++;
+                    leagueStats[league].totalGoals += totalGoals;
+                    if (isBTTS) leagueStats[league].bttsCount++;
+                    if (isOver2_5) leagueStats[league].over2_5Count++;
+                });
+
+                // Adicionar top player e matchup por liga
+                for (const league in leagueStats) {
+                    let maxWinRate = 0;
+                    let topPlayer = '';
+                    for (const player in playerStats) {
+                        if (playerStats[player][league] && playerStats[player][league].summary) {
+                            const wr = parseFloat(playerStats[player][league].summary.winRate);
+                            if (wr > maxWinRate) {
+                                maxWinRate = wr;
+                                topPlayer = player;
+                            }
+                        }
+                    }
+                    leagueStats[league].topPlayer = { name: topPlayer, winRate: maxWinRate };
+
+                    let maxAvgGoals = 0;
+                    let topMatchup = '';
+                    matchupStats.forEach(m => {
+                        if (m.league === league && m.avgGoals > maxAvgGoals) {
+                            maxAvgGoals = m.avgGoals;
+                            topMatchup = m.key;
+                        }
                     });
+                    leagueStats[league].topMatchup = { key: topMatchup, avgGoals: maxAvgGoals };
                 }
             }
 
@@ -653,102 +624,175 @@
                     const option = document.createElement('option');
                     option.value = league;
                     option.textContent = league;
-                    leagueFilter.appendChild(option);
+                    leagueFilterPlayers.appendChild(option.cloneNode(true));
+                    leagueFilterMatches.appendChild(option);
                 });
             }
 
             function renderPlayersTable() {
-                playersTable.innerHTML = '';
-                const selectedLeague = leagueFilter.value;
-                const order = sortOrder.value;
+                playersTableBody.innerHTML = '';
+                const selectedLeague = leagueFilterPlayers.value;
+                const metric = sortMetricPlayers.value;
+                const order = sortOrderPlayers.value;
 
                 let playersList = [];
                 for (const player in playerStats) {
-                    const statsByLeague = playerStats[player].statsByLeague;
-                    for (const league in statsByLeague) {
+                    for (const league in playerStats[player]) {
                         if (selectedLeague && league !== selectedLeague) continue;
-                        playersList.push({
-                            player,
-                            league,
-                            ...statsByLeague[league],
-                            winRate: (statsByLeague[league].wins / statsByLeague[league].games) * 100
-                        });
+                        const summary = playerStats[player][league].summary;
+                        if (summary) {
+                            playersList.push({
+                                player,
+                                league,
+                                team: playerStats[player][league].team,
+                                ...summary
+                            });
+                        }
                     }
                 }
 
-                playersList.sort((a, b) => {
-                    return order === 'desc' ? b.winRate - a.winRate : a.winRate - b.winRate;
-                });
+                playersList.sort((a, b) => order === 'desc' ? b[metric] - a[metric] : a[metric] - b[metric]);
 
-                playersList.forEach(player => {
+                playersList.forEach(p => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${player.player}</td>
-                        <td>${player.team}</td>
-                        <td>${player.league}</td>
-                        <td class="${player.wins >= 3 ? 'green' : 'red'}">${player.wins * 20}%</td>
-                        <td>${player.draws * 20}%</td>
-                        <td>${player.losses * 20}%</td>
-                        <td>${player.games}</td>
-                        <td>${player.avgGoals}</td>
-                        <td class="${player.over2_5Rate >= 70 ? 'green' : 'red'}">${player.over2_5Rate}%</td>
-                        <td class="${player.bttsRate >= 70 ? 'green' : 'red'}">${player.bttsRate}%</td>
+                        <td>${p.player}</td>
+                        <td>${p.team}</td>
+                        <td>${p.league}</td>
+                        <td>${p.games}</td>
+                        <td class="${p.winRate >= 60 ? 'green' : 'red'}">${p.winRate}%</td>
+                        <td>${(p.draws / p.games * 100).toFixed(0)}%</td>
+                        <td>${(p.losses / p.games * 100).toFixed(0)}%</td>
+                        <td>${p.avgScored}</td>
+                        <td>${p.avgConceded}</td>
+                        <td>${p.avgGoals}</td>
+                        <td class="${p.over2_5Rate >= 70 ? 'green' : 'red'}">${p.over2_5Rate}%</td>
+                        <td class="${p.bttsRate >= 70 ? 'green' : 'red'}">${p.bttsRate}%</td>
                     `;
-                    playersTable.appendChild(row);
+                    playersTableBody.appendChild(row);
                 });
+
+                // Render Radar Chart para top player
+                const topPlayer = playersList[0];
+                if (topPlayer) {
+                    new Chart(playerRadarCtx, {
+                        type: 'radar',
+                        data: {
+                            labels: ['Vitórias %', 'Média Gols Marcados', 'Média Gols Sofridos', 'Over 2.5 %', 'BTTS %'],
+                            datasets: [{
+                                label: topPlayer.player,
+                                data: [topPlayer.winRate, topPlayer.avgScored * 10, topPlayer.avgConceded * 10, topPlayer.over2_5Rate, topPlayer.bttsRate],
+                                fill: true,
+                                backgroundColor: 'rgba(0, 255, 136, 0.2)',
+                                borderColor: 'var(--accent-color)',
+                            }]
+                        },
+                        options: { scale: { ticks: { beginAtZero: true } } }
+                    });
+                }
             }
 
             function renderMatchesTable() {
-                matchesTable.innerHTML = '';
+                matchesTableBody.innerHTML = '';
+                const selectedLeague = leagueFilterMatches.value;
+                const metric = sortMetricMatches.value;
+                const order = sortOrderMatches.value;
 
-                matchups.sort((a, b) => {
-                    return sortOrderMatches === 'desc' ? b.avgGoals - a.avgGoals : a.avgGoals - b.avgGoals;
-                });
+                let filtered = matchupStats.filter(m => !selectedLeague || m.league === selectedLeague);
+                filtered.sort((a, b) => order === 'desc' ? b[metric] - a[metric] : a[metric] - b[metric]);
 
-                matchups.forEach(match => {
+                filtered.forEach(m => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${match.matchup}</td>
-                        <td>${match.league}</td>
-                        <td class="${match.over1_5 >= 70 ? 'green' : 'red'}">${match.over1_5}%</td>
-                        <td class="${match.over2_5 >= 70 ? 'green' : 'red'}">${match.over2_5}%</td>
-                        <td class="${match.over3_5 >= 70 ? 'green' : 'red'}">${match.over3_5}%</td>
-                        <td class="${match.over4_5 >= 70 ? 'green' : 'red'}">${match.over4_5}%</td>
-                        <td class="${match.btts >= 70 ? 'green' : 'red'}">${match.btts}%</td>
-                        <td>${match.avgGoals}</td>
+                        <td>${m.key}</td>
+                        <td>${m.league}</td>
+                        <td>${m.games}</td>
+                        <td class="${m.over1_5 >= 70 ? 'green' : 'red'}">${m.over1_5}%</td>
+                        <td class="${m.over2_5 >= 70 ? 'green' : 'red'}">${m.over2_5}%</td>
+                        <td class="${m.over3_5 >= 70 ? 'green' : 'red'}">${m.over3_5}%</td>
+                        <td class="${m.over4_5 >= 70 ? 'green' : 'red'}">${m.over4_5}%</td>
+                        <td class="${m.btts >= 70 ? 'green' : 'red'}">${m.btts}%</td>
+                        <td>${m.avgGoals}</td>
                     `;
-                    matchesTable.appendChild(row);
+                    matchesTableBody.appendChild(row);
                 });
             }
 
-            allGames = await fetchGames();
-            calculatePlayerStats();
-            calculateMatchups();
-            populateLeagues();
-            renderPlayersTable();
-            renderMatchesTable();
+            function renderLeaguesTable() {
+                leaguesTableBody.innerHTML = '';
+                let leaguesList = [];
+                for (const league in leagueStats) {
+                    const s = leagueStats[league];
+                    const avgGoals = (s.totalGoals / s.games).toFixed(2);
+                    const bttsPct = ((s.bttsCount / s.games) * 100).toFixed(0);
+                    const over2_5Pct = ((s.over2_5Count / s.games) * 100).toFixed(0);
+                    leaguesList.push({ league, games: s.games, avgGoals, bttsPct, over2_5Pct, topPlayer: s.topPlayer, topMatchup: s.topMatchup });
+                }
+
+                leaguesList.sort((a, b) => b.avgGoals - a.avgGoals);
+
+                leaguesList.forEach(l => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${l.league}</td>
+                        <td>${l.games}</td>
+                        <td>${l.avgGoals}</td>
+                        <td>${l.bttsPct}%</td>
+                        <td>${l.over2_5Pct}%</td>
+                        <td>${l.topPlayer.name} (${l.topPlayer.winRate}%)</td>
+                        <td>${l.topMatchup.key} (${l.topMatchup.avgGoals})</td>
+                    `;
+                    leaguesTableBody.appendChild(row);
+                });
+
+                // Render Bar Chart para ligas
+                new Chart(leagueBarCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: leaguesList.map(l => l.league),
+                        datasets: [{
+                            label: 'Média Gols/Jogo',
+                            data: leaguesList.map(l => l.avgGoals),
+                            backgroundColor: 'rgba(0, 255, 136, 0.8)'
+                        }]
+                    },
+                    options: { scales: { y: { beginAtZero: true } } }
+                });
+            }
+
+            try {
+                loading.style.display = 'block';
+                allGames = await fetchAllGames();
+                calculateStats();
+                populateLeagues();
+                renderPlayersTable();
+                renderMatchesTable();
+                renderLeaguesTable();
+                loading.style.display = 'none';
+            } catch (error) {
+                loading.style.display = 'none';
+                errorEl.textContent = 'Erro ao carregar dados: ' + error.message;
+                errorEl.style.display = 'block';
+            }
 
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     tabs.forEach(t => t.classList.remove('active'));
-                    tabContents.forEach(content => content.classList.remove('active'));
-
+                    tabContents.forEach(c => c.classList.remove('active'));
                     tab.classList.add('active');
                     document.getElementById(tab.dataset.tab).classList.add('active');
                 });
             });
 
-            leagueFilter.addEventListener('change', renderPlayersTable);
-            sortOrder.addEventListener('change', renderPlayersTable);
+            leagueFilterPlayers.addEventListener('change', renderPlayersTable);
+            sortMetricPlayers.addEventListener('change', renderPlayersTable);
+            sortOrderPlayers.addEventListener('change', renderPlayersTable);
 
-            sortButton.addEventListener('click', () => {
-                sortOrderMatches = sortOrderMatches === 'desc' ? 'asc' : 'desc';
-                sortButton.firstChild.nodeValue = `Ordenar: ${sortOrderMatches === 'desc' ? 'Melhor para Pior' : 'Pior para Melhor'} `;
-                sortIcon.textContent = sortOrderMatches === 'desc' ? '↓' : '↑';
-                sortIcon.classList.toggle('asc', sortOrderMatches === 'asc');
-                renderMatchesTable();
-            });
+            leagueFilterMatches.addEventListener('change', renderMatchesTable);
+            sortMetricMatches.addEventListener('change', renderMatchesTable);
+            sortOrderMatches.addEventListener('change', renderMatchesTable);
         });
+
     </script>
 </body>
 </html>
