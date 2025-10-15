@@ -1258,6 +1258,7 @@
 
                 <div class="h2h-history-section">
                     <h3 class="match-history-title">Histórico de Confrontos Diretos</h3>
+                    <div class="stats-overview" id="h2h-summary"></div>
                     <div class="h2h-match-history" id="h2h-matches"></div>
                 </div>
 
@@ -1267,11 +1268,13 @@
                         <div class="player-match-history">
                             <h4 class="player-stat-header player1-stat-header" id="player1-history-header">Últimas
                                 Partidas</h4>
+                            <div class="stats-overview" id="player1-summary"></div>
                             <div id="player1-matches"></div>
                         </div>
                         <div class="player-match-history">
                             <h4 class="player-stat-header player2-stat-header" id="player2-history-header">Últimas
                                 Partidas</h4>
+                            <div class="stats-overview" id="player2-summary"></div>
                             <div id="player2-matches"></div>
                         </div>
                     </div>
@@ -1827,6 +1830,39 @@
             };
         }
 
+        function calculateH2HSummary(matches) {
+            let homeWins = 0, awayWins = 0, draws = 0, zeroZero = 0, btts = 0;
+            matches.forEach(match => {
+                const sh = match.score_home || 0;
+                const sa = match.score_away || 0;
+                if (sh > sa) homeWins++;
+                else if (sa > sh) awayWins++;
+                else {
+                    draws++;
+                    if (sh === 0 && sa === 0) zeroZero++;
+                }
+                if (sh > 0 && sa > 0) btts++;
+            });
+            return { homeWins, awayWins, draws, zeroZero, btts, total: matches.length };
+        }
+
+        function calculatePlayerSummary(matches, player) {
+            let wins = 0, losses = 0, draws = 0, zeroZero = 0, btts = 0;
+            matches.forEach(match => {
+                const isHome = match.home_player === player;
+                const myScore = isHome ? match.score_home || 0 : match.score_away || 0;
+                const oppScore = isHome ? match.score_away || 0 : match.score_home || 0;
+                if (myScore > oppScore) wins++;
+                else if (myScore < oppScore) losses++;
+                else {
+                    draws++;
+                    if (myScore === 0 && oppScore === 0) zeroZero++;
+                }
+                if (myScore > 0 && oppScore > 0) btts++;
+            });
+            return { wins, losses, draws, zeroZero, btts, total: matches.length };
+        }
+
         function generateBetSuggestions(metrics) {
             const suggestions = [];
 
@@ -1907,6 +1943,9 @@
             const h2hMatchesElem = document.getElementById('h2h-matches');
             const betSuggestions = document.getElementById('bet-suggestions');
             const betSuggestionsList = document.getElementById('bet-suggestions-list');
+            const h2hSummaryElem = document.getElementById('h2h-summary');
+            const player1SummaryElem = document.getElementById('player1-summary');
+            const player2SummaryElem = document.getElementById('player2-summary');
 
             h2hOverview.innerHTML = '';
             h2hMetrics.innerHTML = '';
@@ -1914,6 +1953,9 @@
             player2Matches.innerHTML = '';
             h2hMatchesElem.innerHTML = '';
             betSuggestionsList.innerHTML = '';
+            h2hSummaryElem.innerHTML = '';
+            player1SummaryElem.innerHTML = '';
+            player2SummaryElem.innerHTML = '';
 
             if (!h2hData || !h2hData[`ultimos_${period}`]) {
                 return;
@@ -2119,6 +2161,81 @@
                 const matchItem = createH2HMatchItem(match);
                 h2hMatchesElem.appendChild(matchItem);
             });
+
+            // H2H Summary
+            const h2hSummary = calculateH2HSummary(h2hMatchesData);
+            h2hSummaryElem.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${h2hSummary.homeWins}</div>
+                    <div class="stat-label">Vitórias Casa</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${h2hSummary.awayWins}</div>
+                    <div class="stat-label">Vitórias Fora</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${h2hSummary.draws}</div>
+                    <div class="stat-label">Empates</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${h2hSummary.zeroZero}</div>
+                    <div class="stat-label">0 x 0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${h2hSummary.btts}</div>
+                    <div class="stat-label">BTTS</div>
+                </div>
+            `;
+
+            // Player 1 Summary
+            const player1Summary = calculatePlayerSummary(player1MatchesData, currentPlayer1);
+            player1SummaryElem.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${player1Summary.wins}</div>
+                    <div class="stat-label">Vitórias</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${player1Summary.losses}</div>
+                    <div class="stat-label">Derrotas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${player1Summary.draws}</div>
+                    <div class="stat-label">Empates</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${player1Summary.zeroZero}</div>
+                    <div class="stat-label">0 x 0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${player1Summary.btts}</div>
+                    <div class="stat-label">BTTS</div>
+                </div>
+            `;
+
+            // Player 2 Summary
+            const player2Summary = calculatePlayerSummary(player2MatchesData, currentPlayer2);
+            player2SummaryElem.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${player2Summary.wins}</div>
+                    <div class="stat-label">Vitórias</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${player2Summary.losses}</div>
+                    <div class="stat-label">Derrotas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${player2Summary.draws}</div>
+                    <div class="stat-label">Empates</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${player2Summary.zeroZero}</div>
+                    <div class="stat-label">0 x 0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${player2Summary.btts}</div>
+                    <div class="stat-label">BTTS</div>
+                </div>
+            `;
 
             // Update active tab
             document.querySelectorAll('.metric-tab').forEach(tab => tab.classList.remove('active'));
