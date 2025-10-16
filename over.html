@@ -990,6 +990,14 @@
             }
 
             calculateQualityScore(game) {
+                // Verifica se o jogo atende aos critérios premium específicos de cada liga
+                const isPremium = this.isPremiumMatch(game);
+                
+                if (isPremium) {
+                    return 100; // Jogos premium recebem 100% de qualidade
+                }
+                
+                // Cálculo normal de qualidade para jogos não-premium
                 const weights = { avgGoals: 0.30, btts: 0.25, over25: 0.35, consistency: 0.10 };
                 const avgGoalsScore = Math.min((game.avgGoals / 4) * 100, 100);
                 const bttsScore = game.bttsPercent;
@@ -1002,6 +1010,64 @@
                     (over25Score * weights.over25) +
                     (consistencyScore * weights.consistency), 100
                 ));
+            }
+
+            isPremiumMatch(game) {
+                const league = game.leagueName;
+                
+                // Esoccer Battle - 8 mins play
+                if (league.includes("Esoccer Battle - 8 mins play")) {
+                    return (
+                        game.homeAvgGoals >= 2.5 &&
+                        game.awayAvgGoals >= 2.5 &&
+                        game.avgGoals >= 4.5 &&
+                        game.bttsPercent === 100 &&
+                        game.over15 === 100 &&
+                        game.over25 === 100 &&
+                        game.over35 >= 95
+                    );
+                }
+                
+                // Esoccer H2H GG League - 8 mins play
+                if (league.includes("Esoccer H2H GG League - 8 mins play")) {
+                    return (
+                        game.homeAvgGoals >= 2.2 &&
+                        game.awayAvgGoals >= 2.2 &&
+                        game.avgGoals >= 3.5 &&
+                        game.bttsPercent >= 90 &&
+                        game.over15 === 100 &&
+                        game.over25 === 100 &&
+                        game.over35 >= 85
+                    );
+                }
+                
+                // Esoccer GT Leagues – 12 mins play
+                if (league.includes("Esoccer GT Leagues") && league.includes("12")) {
+                    return (
+                        game.homeAvgGoals >= 2.7 &&
+                        game.awayAvgGoals >= 2.7 &&
+                        game.avgGoals >= 4.5 &&
+                        game.bttsPercent >= 100 &&
+                        game.over15 === 100 &&
+                        game.over25 === 100 &&
+                        game.over35 >= 100
+                    );
+                }
+                
+                // Esoccer Battle Volta - 6 mins play
+                if (league.includes("Esoccer Battle Volta - 6 mins play")) {
+                    return (
+                        game.homeAvgGoals >= 3.0 &&
+                        game.awayAvgGoals >= 3.0 &&
+                        game.avgGoals >= 5.5 &&
+                        game.bttsPercent >= 100 &&
+                        game.over15 === 100 &&
+                        game.over25 === 100 &&
+                        game.over35 >= 100
+                    );
+                }
+                
+                return false;
             }
 
             getDefaultStats() {
