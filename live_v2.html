@@ -1239,7 +1239,7 @@
                 <div></div> <!-- Espaçador para manter o alinhamento central -->
             </div>
             <div class="logo-container">
-                <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo"
+                <img src="https://i.ibb.co/G4Y8sHM/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo"
                     class="logo">
                 <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
             </div>
@@ -1879,19 +1879,22 @@
         }
 
         function calculateH2HSummary(matches) {
-            let homeWins = 0, awayWins = 0, draws = 0, zeroZero = 0, btts = 0;
+            let player1Wins = 0, player2Wins = 0, draws = 0, zeroZero = 0, btts = 0;
             matches.forEach(match => {
                 const sh = match.score_home || 0;
                 const sa = match.score_away || 0;
-                if (sh > sa) homeWins++;
-                else if (sa > sh) awayWins++;
+                let winnerPlayer;
+                if (sh > sa) winnerPlayer = match.home_player;
+                else if (sa > sh) winnerPlayer = match.away_player;
                 else {
                     draws++;
                     if (sh === 0 && sa === 0) zeroZero++;
                 }
+                if (winnerPlayer === currentPlayer1) player1Wins++;
+                else if (winnerPlayer === currentPlayer2) player2Wins++;
                 if (sh > 0 && sa > 0) btts++;
             });
-            return { homeWins, awayWins, draws, zeroZero, btts, total: matches.length };
+            return { player1Wins, player2Wins, draws, zeroZero, btts, total: matches.length };
         }
 
         function calculatePlayerSummary(matches, player) {
@@ -2091,10 +2094,13 @@
                 const { home: htHome, away: htAway } = parseHTScore(match);
                 const scoreHome = match.score_home || 0;
                 const scoreAway = match.score_away || 0;
-                const winner = isHome ? (scoreHome > scoreAway) : (scoreAway > scoreHome);
+                const myScore = isHome ? scoreHome : scoreAway;
+                const oppScore = isHome ? scoreAway : scoreHome;
+                const winnerMy = myScore > oppScore;
+                const winnerOpp = myScore < oppScore;
                 const teamPlayer = isHome ? `${match.home_player} (${match.home_team})` : `${match.away_player} (${match.away_team})`;
                 const opponent = isHome ? `${match.away_player} (${match.away_team})` : `${match.home_player} (${match.home_team})`;
-                const scoreFT = `${isHome ? scoreHome : scoreAway} x ${isHome ? scoreAway : scoreHome}`;
+                const scoreFT = `${myScore} x ${oppScore}`;
                 const htLeft = isHome ? htHome : htAway;
                 const htRight = isHome ? htAway : htHome;
                 const scoreHT = (htLeft || htRight) ? `HT: ${htLeft}-${htRight}` : '';
@@ -2108,7 +2114,7 @@
                 matchItem.style.borderBottom = '1px solid var(--text-muted)';
 
                 const leftDiv = document.createElement('div');
-                leftDiv.className = `history-team ${winner ? 'winner' : ''}`;
+                leftDiv.className = `history-team ${winnerMy ? 'winner' : ''}`;
                 leftDiv.textContent = teamPlayer;
                 leftDiv.style.textAlign = 'left';
 
@@ -2119,7 +2125,7 @@
                 centerDiv.style.fontWeight = '700';
 
                 const rightDiv = document.createElement('div');
-                rightDiv.className = `history-team ${!winner ? 'winner' : ''}`;
+                rightDiv.className = `history-team ${winnerOpp ? 'winner' : ''}`;
                 rightDiv.textContent = opponent;
                 rightDiv.style.textAlign = 'right';
 
@@ -2165,6 +2171,7 @@
                 const rightScore = isPlayer1Home ? match.score_away : match.score_home;
                 const { home: htHome, away: htAway } = parseHTScore(match);
                 const winnerLeft = leftScore > rightScore;
+                const winnerRight = leftScore < rightScore;
                 const scoreFT = `${leftScore} x ${rightScore}`;
                 const htLeft = isPlayer1Home ? htHome : htAway;
                 const htRight = isPlayer1Home ? htAway : htHome;
@@ -2190,7 +2197,7 @@
                 centerDiv.style.fontWeight = '700';
 
                 const rightDiv = document.createElement('div');
-                rightDiv.className = `history-team ${!winnerLeft ? 'winner' : ''}`;
+                rightDiv.className = `history-team ${winnerRight ? 'winner' : ''}`;
                 rightDiv.textContent = rightPlayer;
                 rightDiv.style.textAlign = 'right';
 
@@ -2222,12 +2229,12 @@
             const h2hSummary = calculateH2HSummary(h2hMatchesData);
             h2hSummaryElem.innerHTML = `
                 <div class="stat-card">
-                    <div class="stat-value">${h2hSummary.homeWins}</div>
-                    <div class="stat-label">Vitórias Casa</div>
+                    <div class="stat-value">${h2hSummary.player1Wins}</div>
+                    <div class="stat-label">Vitórias ${currentPlayer1}</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">${h2hSummary.awayWins}</div>
-                    <div class="stat-label">Vitórias Fora</div>
+                    <div class="stat-value">${h2hSummary.player2Wins}</div>
+                    <div class="stat-label">Vitórias ${currentPlayer2}</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value">${h2hSummary.draws}</div>
