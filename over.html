@@ -8,21 +8,14 @@
     <style>
         :root {
             --primary: #10b981;
-            --primary-dark: #059669;
-            --accent: #3b82f6;
-            --bg-primary: #0a0a0a;
-            --bg-card: #111827;
-            --bg-card-hover: #1f2937;
+            --bg-primary: #000000;
+            --bg-card: #000000;
             --text-primary: #f9fafb;
-            --text-secondary: #d1d5db;
             --text-muted: #9ca3af;
             --border: #374151;
-            --border-light: #4b5563;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --radius: 8px;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --radius: 6px;
+            --font-size-base: 0.9rem;
+            --spacing: 1rem;
         }
 
         * {
@@ -37,173 +30,74 @@
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
+            padding: 0;
         }
 
         .container {
             max-width: 100%;
+            width: 100%;
             margin: 0 auto;
-            padding: 1rem;
+            padding: var(--spacing);
         }
 
-        /* HEADER */
         header {
-            background: linear-gradient(135deg, var(--bg-card) 0%, #1a1f35 100%);
+            background: var(--bg-card);
             border-radius: var(--radius);
-            padding: 1.25rem;
-            margin-bottom: 1.5rem;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-        }
-
-        .header-top {
+            padding: 1rem;
+            margin-bottom: var(--spacing);
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 1rem;
-            margin-bottom: 1rem;
+            border: 1px solid var(--border);
         }
 
         .logo-container {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
         }
 
         .logo-img {
-            width: 45px;
-            height: 45px;
-            border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
         }
 
         .logo-text {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--primary), #34d399);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--primary);
         }
 
-        .header-controls {
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        /* FILTROS RÁPIDOS */
-        .quick-filters {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            padding: 1rem;
-            background: rgba(16, 185, 129, 0.05);
-            border-radius: var(--radius);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-        }
-
-        .filter-chip {
-            padding: 0.5rem 1rem;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .filter-chip:hover {
-            background: var(--bg-card-hover);
-            border-color: var(--primary);
-        }
-
-        .filter-chip.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        /* ESTATÍSTICAS RESUMO */
-        .stats-summary {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .stat-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            transition: all 0.3s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-            border-color: var(--primary);
-        }
-
-        .stat-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        h1 {
             font-size: 1.5rem;
+            font-weight: 600;
         }
 
-        .stat-icon.primary { background: rgba(16, 185, 129, 0.2); color: var(--primary); }
-        .stat-icon.accent { background: rgba(59, 130, 246, 0.2); color: var(--accent); }
-        .stat-icon.warning { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
-        .stat-icon.danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
-
-        .stat-content h3 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--text-primary);
+        .button-group {
+            display: flex;
+            gap: 0.5rem;
         }
 
-        .stat-content p {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        /* BOTÕES */
         .btn {
-            padding: 0.65rem 1.3rem;
+            padding: 0.6rem 1.2rem;
             border: 1px solid var(--border);
             border-radius: var(--radius);
             font-weight: 500;
             font-size: 0.9rem;
             cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
+            transition: background 0.2s;
         }
 
         .btn-primary {
             background: var(--primary);
             color: white;
-            border-color: var(--primary);
         }
 
         .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+            background: #059669;
         }
 
         .btn-secondary {
@@ -212,326 +106,24 @@
         }
 
         .btn-secondary:hover {
-            background: var(--bg-card-hover);
-            border-color: var(--border-light);
+            background: #2d3548;
         }
 
-        /* TABELA */
-        .table-wrapper {
+        .loading-container {
             background: var(--bg-card);
             border-radius: var(--radius);
-            border: 1px solid var(--border);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-        }
-
-        .table-header {
-            padding: 1rem 1.5rem;
-            background: linear-gradient(135deg, #1a1f35 0%, var(--bg-card) 100%);
-            border-bottom: 2px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .table-header h2 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .table-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .table-container {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-            min-width: 1400px;
-        }
-
-        thead {
-            background: var(--bg-card);
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        th {
-            padding: 1rem 0.75rem;
-            text-align: left;
-            font-weight: 600;
-            color: var(--text-muted);
-            border-bottom: 2px solid var(--border);
-            cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
-            user-select: none;
-        }
-
-        th:hover {
-            color: var(--primary);
-            background: rgba(16, 185, 129, 0.05);
-        }
-
-        th.filtered {
-            color: var(--primary);
-            background: rgba(16, 185, 129, 0.1);
-            border-bottom-color: var(--primary);
-        }
-
-        th .filter-icon {
-            margin-left: 0.5rem;
-            font-size: 0.75rem;
-            opacity: 0.5;
-        }
-
-        th:hover .filter-icon,
-        th.filtered .filter-icon {
-            opacity: 1;
-        }
-
-        tbody tr {
-            border-bottom: 1px solid var(--border);
-            transition: all 0.2s;
-        }
-
-        tbody tr:hover {
-            background: var(--bg-card-hover);
-        }
-
-        tbody tr.top-match {
-            background: rgba(16, 185, 129, 0.08);
-            border-left: 3px solid var(--primary);
-        }
-
-        tbody tr.top-match:hover {
-            background: rgba(16, 185, 129, 0.15);
-        }
-
-        td {
-            padding: 1rem 0.75rem;
-            vertical-align: middle;
-        }
-
-        /* LEAGUE BADGES */
-        .league-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 0.4rem 0.9rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: white;
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .league-badge i {
-            font-size: 0.9rem;
-        }
-
-        .league-badge[data-league*="H2H"] { 
-            background: linear-gradient(135deg, #a855f7, #9333ea);
-        }
-        .league-badge[data-league*="Battle"] { 
-            background: linear-gradient(135deg, #f97316, #ea580c);
-        }
-        .league-badge[data-league*="Volta"] { 
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
-        }
-        .league-badge[data-league*="GT"] { 
-            background: linear-gradient(135deg, #34d399, #10b981);
-        }
-        .league-badge[data-league*="Adriatic"] { 
-            background: linear-gradient(135deg, #60a5fa, #3b82f6);
-        }
-
-        /* MATCH INFO */
-        .match-info {
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-        }
-
-        .team-row {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .team-name {
-            font-weight: 500;
-            color: var(--text-primary);
-            max-width: 160px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .team-icon {
-            color: var(--text-muted);
-            font-size: 0.7rem;
-        }
-
-        /* DATE TIME */
-        .datetime-cell {
-            display: flex;
-            flex-direction: column;
-            gap: 0.2rem;
-        }
-
-        .date-badge {
-            font-weight: 500;
-            color: var(--text-primary);
-            font-size: 0.85rem;
-        }
-
-        .time-badge {
-            color: var(--text-muted);
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
-        /* STAT PILLS - NOVO DESIGN */
-        .stat-pill {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            min-width: 55px;
-            position: relative;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Cores mais intuitivas */
-        .excellent { 
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-        }
-        .very-good { 
-            background: linear-gradient(135deg, #34d399, #10b981);
-            color: white;
-        }
-        .good { 
-            background: linear-gradient(135deg, #6ee7b7, #34d399);
-            color: #065f46;
-        }
-        .moderate { 
-            background: linear-gradient(135deg, #fbbf24, #f59e0b);
-            color: white;
-        }
-        .fair { 
-            background: linear-gradient(135deg, #fb923c, #f97316);
-            color: white;
-        }
-        .poor { 
-            background: linear-gradient(135deg, #f87171, #ef4444);
-            color: white;
-        }
-        .very-poor { 
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-        }
-
-        /* QUALITY SCORE ESPECIAL */
-        .quality-score {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            min-width: 70px;
-            position: relative;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-        }
-
-        .quality-score.top {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        .quality-score .star {
-            font-size: 1.1rem;
-            animation: sparkle 1.5s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 3px 6px rgba(16, 185, 129, 0.3); }
-            50% { box-shadow: 0 3px 12px rgba(16, 185, 129, 0.6); }
-        }
-
-        @keyframes sparkle {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.2); }
-        }
-
-        /* TOOLTIP */
-        .tooltip-wrapper {
-            position: relative;
-            display: inline-block;
-        }
-
-        .tooltip-content {
-            visibility: hidden;
-            position: absolute;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--bg-card);
-            color: var(--text-primary);
-            padding: 0.6rem 0.9rem;
-            border-radius: var(--radius);
-            font-size: 0.8rem;
-            white-space: nowrap;
-            z-index: 100;
-            border: 1px solid var(--border);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            opacity: 0;
-            transition: all 0.2s;
-        }
-
-        .tooltip-wrapper:hover .tooltip-content {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        /* LOADING & ERROR */
-        .loading-container,
-        .error-container {
-            background: var(--bg-card);
-            border-radius: var(--radius);
-            padding: 2rem;
+            padding: 1.5rem;
             text-align: center;
             border: 1px solid var(--border);
-            margin-bottom: 1.5rem;
+            margin-bottom: var(--spacing);
         }
 
         .spinner {
-            width: 40px;
-            height: 40px;
+            width: 30px;
+            height: 30px;
             margin: 0 auto 1rem;
-            border: 4px solid rgba(16, 185, 129, 0.2);
-            border-top: 4px solid var(--primary);
+            border: 3px solid rgba(16, 185, 129, 0.2);
+            border-top: 3px solid var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -543,16 +135,166 @@
 
         .error-container {
             background: rgba(239, 68, 68, 0.1);
-            border-color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: var(--spacing);
+            color: #ef4444;
         }
 
         .error-icon {
-            font-size: 2.5rem;
-            color: var(--danger);
+            font-size: 2rem;
             margin-bottom: 0.5rem;
         }
 
-        /* MODAL */
+        .table-container {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            margin-bottom: var(--spacing);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: var(--font-size-base);
+            min-width: 1400px;
+        }
+
+        th {
+            background: #000000;
+            color: var(--text-muted);
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        th:hover {
+            color: var(--text-primary);
+        }
+
+        th.filtered {
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        tbody tr:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .league-name {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #ffffff;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .team-match {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .team-name {
+            font-weight: 500;
+            max-width: 140px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .vs {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .date-time {
+            display: flex;
+            flex-direction: column;
+            gap: 0.1rem;
+        }
+
+        .date-time .date {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .date-time .time {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .stat-pill {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .positive-high { background: #10b981; color: white; }
+        .positive-medium { background: #34d399; color: white; }
+        .positive-low { background: #6ee7b7; color: white; }
+        .neutral { background: #6b7280; color: white; }
+        .negative-low { background: #f87171; color: white; }
+        .negative-medium { background: #ef4444; color: white; }
+        .negative-high { background: #dc2626; color: white; }
+
+        .top-match {
+            border-left: 2px solid var(--primary);
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            text-align: center;
+            border-radius: var(--radius);
+            padding: 0.5rem;
+            position: absolute;
+            z-index: 20;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.2s;
+            border: 1px solid var(--border);
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
         .filter-modal {
             display: none;
             position: fixed;
@@ -563,113 +305,97 @@
             border-radius: var(--radius);
             padding: 1.5rem;
             z-index: 1000;
-            max-width: 450px;
+            max-width: 400px;
             width: 90%;
             border: 1px solid var(--border);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
 
         .filter-modal.active {
             display: block;
-            animation: modalFadeIn 0.2s ease-out;
-        }
-
-        @keyframes modalFadeIn {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -48%);
-            }
-            to {
-                opacity: 1;
-                transform: translate(-50%, -50%);
-            }
         }
 
         .filter-modal h3 {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             margin-bottom: 1rem;
-            color: var(--text-primary);
         }
 
         .filter-options {
-            max-height: 300px;
+            max-height: 250px;
             overflow-y: auto;
             margin-bottom: 1rem;
-            padding-right: 0.5rem;
-        }
-
-        .filter-options::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .filter-options::-webkit-scrollbar-track {
-            background: var(--bg-primary);
-            border-radius: 3px;
-        }
-
-        .filter-options::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 3px;
         }
 
         .filter-options label {
             display: flex;
             align-items: center;
-            gap: 0.6rem;
-            padding: 0.6rem;
-            cursor: pointer;
-            border-radius: 6px;
-            transition: background 0.2s;
+            gap: 0.5rem;
+            padding: 0.5rem;
         }
 
         .filter-options label:hover {
-            background: var(--bg-card-hover);
+            background: #2d3548;
         }
 
-        .filter-options input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
-
-        .modal-buttons {
+        .filter-modal .buttons {
             display: flex;
-            gap: 0.75rem;
+            gap: 0.5rem;
             justify-content: flex-end;
         }
 
-        /* RESPONSIVE */
+        .league-name[data-league="Esoccer H2H GG League - 8 mins play"] { background: #a855f7; }
+        .league-name[data-league="Esoccer Battle - 8 mins play"] { background: #f97316; }
+        .league-name[data-league="Esoccer Battle Volta - 6 mins play"] { background: #fbbf24; }
+        .league-name[data-league="Esoccer GT Leagues – 12 mins play"] { background: #34d399; }
+        .league-name[data-league="Esoccer Adriatic League - 10 mins play"] { background: #60a5fa; }
+
         @media (max-width: 1024px) {
-            .stats-summary {
-                grid-template-columns: repeat(2, 1fr);
+            th, td {
+                padding: 0.6rem;
             }
 
-            table {
-                min-width: 1200px;
+            .league-name {
+                max-width: 140px;
+                font-size: 0.75rem;
+            }
+
+            .team-name {
+                max-width: 110px;
+            }
+
+            .stat-pill {
+                padding: 0.2rem 0.6rem;
+                font-size: 0.75rem;
             }
         }
 
         @media (max-width: 768px) {
-            .header-top {
+            header {
                 flex-direction: column;
                 align-items: flex-start;
             }
 
-            .stats-summary {
-                grid-template-columns: 1fr;
-            }
-
-            .quick-filters {
-                flex-direction: column;
-            }
-
-            table {
-                font-size: 0.8rem;
-                min-width: 1000px;
+            .button-group {
+                width: 100%;
+                justify-content: space-between;
             }
 
             th, td {
-                padding: 0.6rem 0.5rem;
+                padding: 0.5rem;
+                font-size: 0.8rem;
+            }
+
+            .league-name {
+                max-width: 120px;
+                font-size: 0.7rem;
+            }
+
+            .team-name {
+                max-width: 90px;
+            }
+
+            .stat-pill {
+                padding: 0.15rem 0.5rem;
+                font-size: 0.7rem;
             }
         }
     </style>
@@ -677,160 +403,58 @@
 <body>
     <div class="container">
         <header>
-            <div class="header-top">
-                <div class="logo-container">
-                    <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips" class="logo-img">
-                    <span class="logo-text">👑 RW TIPS 🎮</span>
-                </div>
-                <div class="header-controls">
-                    <button id="resetFilters" class="btn btn-secondary">
-                        <i class="fas fa-sync-alt"></i> Limpar Filtros
-                    </button>
-                    <button class="btn btn-primary" onclick="window.location.href='visualization.html'">
-                        <i class="fas fa-arrow-left"></i> Voltar
-                    </button>
-                </div>
+            <div class="logo-container">
+                <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo-img">
+                <span class="logo-text">👑 RW TIPS 🎮</span>
             </div>
-
-            <div class="quick-filters">
-                <div class="filter-chip" data-filter="top-quality">
-                    <i class="fas fa-star"></i> Alta Qualidade (80%+)
-                </div>
-                <div class="filter-chip" data-filter="high-btts">
-                    <i class="fas fa-futbol"></i> BTTS Alto (70%+)
-                </div>
-                <div class="filter-chip" data-filter="high-over25">
-                    <i class="fas fa-chart-line"></i> Over 2.5 Alto (70%+)
-                </div>
-                <div class="filter-chip" data-filter="high-goals">
-                    <i class="fas fa-fire"></i> Muitos Gols (2.5+)
-                </div>
+            <h1>Análise eSoccer</h1>
+            <div class="button-group">
+                <button id="resetFilters" class="btn btn-secondary">
+                    <i class="fas fa-sync-alt"></i> Limpar
+                </button>
+                <button class="btn btn-primary" onclick="window.location.href='visualization.html'">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </button>
             </div>
         </header>
 
-        <div class="stats-summary" id="statsSummary" style="display: none;">
-            <div class="stat-card">
-                <div class="stat-icon primary">
-                    <i class="fas fa-gamepad"></i>
-                </div>
-                <div class="stat-content">
-                    <h3 id="totalGames">0</h3>
-                    <p>Total de Jogos</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon accent">
-                    <i class="fas fa-star"></i>
-                </div>
-                <div class="stat-content">
-                    <h3 id="topMatches">0</h3>
-                    <p>Jogos Premium (80%+)</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon warning">
-                    <i class="fas fa-chart-bar"></i>
-                </div>
-                <div class="stat-content">
-                    <h3 id="avgQuality">0%</h3>
-                    <p>Qualidade Média</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon danger">
-                    <i class="fas fa-futbol"></i>
-                </div>
-                <div class="stat-content">
-                    <h3 id="avgGoals">0</h3>
-                    <p>Média de Gols</p>
-                </div>
-            </div>
-        </div>
-
         <div id="loadingContainer" class="loading-container">
             <div class="spinner"></div>
-            <div id="loadingText" style="color: var(--text-muted); font-size: 0.95rem;">Carregando jogos...</div>
+            <div id="loadingText">Carregando...</div>
         </div>
 
-        <div id="errorContainer" class="error-container" style="display: none;">
+        <div id="tableContainer" class="table-container" style="display: none;">
+            <table id="gamesTable">
+                <thead>
+                    <tr>
+                        <th data-column="leagueName">Liga <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="match">Partida <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="dateTime">Data/Hora <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="avgGoals">Média Gols <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="homeAvgGoals">Casa <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="awayAvgGoals">Fora <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="bttsPercent">BTTS % <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="over15">Over 1.5 % <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="over25">Over 2.5 % <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="over35">Over 3.5 % <i class="fas fa-filter filter-icon"></i></th>
+                        <th data-column="qualityScore">Qualidade % <i class="fas fa-filter filter-icon"></i></th>
+                    </tr>
+                </thead>
+                <tbody id="gamesTableBody"></tbody>
+            </table>
+        </div>
+
+        <div id="errorContainer" class="error-container" style="display: none">
             <i class="fas fa-exclamation-triangle error-icon"></i>
-            <p id="errorMessage" style="font-size: 1rem; margin-top: 0.5rem;">Erro ao carregar dados</p>
-        </div>
-
-        <div class="table-wrapper" id="tableWrapper" style="display: none;">
-            <div class="table-header">
-                <h2><i class="fas fa-table"></i> Análise de Partidas eSoccer</h2>
-                <div class="table-actions">
-                    <span style="color: var(--text-muted); font-size: 0.85rem;">
-                        <span id="displayedGames">0</span> jogos exibidos
-                    </span>
-                </div>
-            </div>
-            <div class="table-container">
-                <table id="gamesTable">
-                    <thead>
-                        <tr>
-                            <th data-column="leagueName">
-                                <i class="fas fa-trophy"></i> Liga
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th data-column="match">
-                                <i class="fas fa-users"></i> Partida
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th data-column="dateTime">
-                                <i class="fas fa-clock"></i> Data/Hora
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th data-column="avgGoals">
-                                <i class="fas fa-bullseye"></i> Média Gols
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th data-column="homeAvgGoals">
-                                <i class="fas fa-home"></i> Casa
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th data-column="awayAvgGoals">
-                                <i class="fas fa-plane"></i> Fora
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th data-column="bttsPercent">
-                                <i class="fas fa-exchange-alt"></i> BTTS
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th data-column="over15">
-                                <i class="fas fa-arrow-up"></i> Over 1.5
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th data-column="over25">
-                                <i class="fas fa-arrow-up"></i> Over 2.5
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th data-column="over35">
-                                <i class="fas fa-arrow-up"></i> Over 3.5
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th data-column="qualityScore">
-                                <i class="fas fa-medal"></i> Qualidade
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody id="gamesTableBody"></tbody>
-                </table>
-            </div>
+            <p id="errorMessage">Erro ao carregar. Tente novamente.</p>
         </div>
 
         <div class="filter-modal" id="filterModal">
-            <h3 id="filterModalTitle">Filtrar Coluna</h3>
+            <h3 id="filterModalTitle"></h3>
             <div class="filter-options" id="filterOptions"></div>
-            <div class="modal-buttons">
-                <button class="btn btn-secondary" onclick="closeFilterModal()">
-                    <i class="fas fa-times"></i> Cancelar
-                </button>
-                <button class="btn btn-primary" onclick="applyColumnFilter()">
-                    <i class="fas fa-check"></i> Aplicar
-                </button>
+            <div class="buttons">
+                <button class="btn btn-secondary" onclick="closeFilterModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="applyColumnFilter()">Aplicar</button>
             </div>
         </div>
     </div>
@@ -842,13 +466,13 @@
                 this.filteredGames = [];
                 this.columnFilters = {};
                 this.activeColumn = null;
-                this.quickFilters = new Set();
                 
                 this.init();
             }
 
             init() {
                 if (!this.checkUserLogin()) return;
+                
                 this.setupEventListeners();
                 this.fetchGames();
             }
@@ -863,33 +487,17 @@
 
             setupEventListeners() {
                 document.getElementById('resetFilters')?.addEventListener('click', () => {
-                    this.resetAllFilters();
+                    this.resetFilters();
                 });
 
-                document.querySelectorAll('.filter-chip').forEach(chip => {
-                    chip.addEventListener('click', (e) => {
-                        const filter = e.currentTarget.dataset.filter;
-                        this.toggleQuickFilter(filter, e.currentTarget);
-                    });
-                });
-
-                document.querySelectorAll('th[data-column]').forEach(th => {
-                    th.addEventListener('click', () => {
+                const thElements = document.querySelectorAll('th');
+                thElements.forEach(th => {
+                    th.addEventListener('click', (e) => {
+                        e.preventDefault();
                         this.activeColumn = th.dataset.column;
                         this.showFilterModal();
                     });
                 });
-            }
-
-            toggleQuickFilter(filter, element) {
-                if (this.quickFilters.has(filter)) {
-                    this.quickFilters.delete(filter);
-                    element.classList.remove('active');
-                } else {
-                    this.quickFilters.add(filter);
-                    element.classList.add('active');
-                }
-                this.applyFilters();
             }
 
             async fetchGames() {
@@ -904,7 +512,7 @@
                     
                     this.gamesData = await Promise.all(
                         data.data.map(async (game, index) => {
-                            this.showLoading(`Processando jogo ${index + 1}/${data.data.length}...`);
+                            this.showLoading(`Jogo ${index + 1}/${data.data.length}...`);
                             const stats = await this.fetchGameStats(game);
                             const processedGame = { ...game, ...stats };
                             processedGame.qualityScore = this.calculateQualityScore(processedGame);
@@ -913,11 +521,11 @@
                     );
 
                     this.hideLoading();
-                    this.updateStatsSummary();
                     this.applyFilters();
+                    this.setupColumnFilters();
                     
                 } catch (error) {
-                    this.showError(`Erro ao carregar: ${error.message}`);
+                    this.showError(`Erro: ${error.message}`);
                 }
             }
 
@@ -949,6 +557,8 @@
 
                 const bttsPercent = this.calculateBTTS(allGames);
                 const overStats = this.calculateOverStats(allGames);
+                const homeRecord = this.calculateTeamRecord(homeGames, game.home);
+                const awayRecord = this.calculateTeamRecord(awayGames, game.away);
 
                 return {
                     avgGoals: Number(avgGoals.toFixed(2)),
@@ -957,7 +567,9 @@
                     bttsPercent: bttsPercent,
                     over15: overStats.over15,
                     over25: overStats.over25,
-                    over35: overStats.over35
+                    over35: overStats.over35,
+                    homeRecord: homeRecord,
+                    awayRecord: awayRecord
                 };
             }
 
@@ -989,13 +601,22 @@
                 };
             }
 
+            calculateTeamRecord(games, teamName) {
+                if (!games.length) return { wins: 0, draws: 0, losses: 0 };
+                const totalGames = games.length;
+                const draws = games.filter(game => !game.winnerName || game.winnerName === "draw").length;
+                const losses = totalGames - draws;
+                return { wins: 0, draws, losses };
+            }
+
             calculateQualityScore(game) {
-                const weights = { avgGoals: 0.30, btts: 0.25, over25: 0.35, consistency: 0.10 };
+                const weights = { avgGoals: 0.25, btts: 0.25, over25: 0.30, consistency: 0.20 };
                 const avgGoalsScore = Math.min((game.avgGoals / 4) * 100, 100);
                 const bttsScore = game.bttsPercent;
                 const over25Score = game.over25;
-                const consistencyScore = (game.over15 + game.over25 + game.over35) / 3;
-                
+                const homeConsistency = this.calculateConsistency(game.homeRecord);
+                const awayConsistency = this.calculateConsistency(game.awayRecord);
+                const consistencyScore = (homeConsistency + awayConsistency) / 2;
                 return Math.round(Math.min(
                     (avgGoalsScore * weights.avgGoals) +
                     (bttsScore * weights.btts) +
@@ -1004,58 +625,41 @@
                 ));
             }
 
+            calculateConsistency(record) {
+                const totalGames = record.draws + record.losses;
+                if (totalGames === 0) return 0;
+                const drawRate = record.draws / totalGames;
+                const balance = 1 - (Math.abs(record.draws - record.losses) / totalGames);
+                return (drawRate * 70 + balance * 30);
+            }
+
             getDefaultStats() {
                 return {
                     avgGoals: 0, homeAvgGoals: 0, awayAvgGoals: 0, bttsPercent: 0,
-                    over15: 0, over25: 0, over35: 0
+                    over15: 0, over25: 0, over35: 0, homeRecord: { wins: 0, draws: 0, losses: 0 },
+                    awayRecord: { wins: 0, draws: 0, losses: 0 }
                 };
             }
 
-            getStatClass(value, type) {
-                const val = parseFloat(value);
-                
-                if (type === 'goals') {
-                    if (val >= 3) return 'excellent';
-                    if (val >= 2.5) return 'very-good';
-                    if (val >= 2) return 'good';
-                    if (val >= 1.5) return 'moderate';
-                    if (val >= 1) return 'fair';
-                    if (val >= 0.5) return 'poor';
-                    return 'very-poor';
-                }
-                
-                if (val >= 80) return 'excellent';
-                if (val >= 70) return 'very-good';
-                if (val >= 60) return 'good';
-                if (val >= 50) return 'moderate';
-                if (val >= 40) return 'fair';
-                if (val >= 30) return 'poor';
-                return 'very-poor';
+            getPercentClass(percent) {
+                const value = parseInt(percent);
+                if (value >= 75) return "positive-high";
+                if (value >= 60) return "positive-medium";
+                if (value >= 50) return "positive-low";
+                if (value >= 40) return "neutral";
+                if (value >= 30) return "negative-low";
+                if (value >= 15) return "negative-medium";
+                return "negative-high";
             }
 
             applyFilters() {
                 this.filteredGames = [...this.gamesData];
-                
-                // Aplicar filtros rápidos
-                if (this.quickFilters.has('top-quality')) {
-                    this.filteredGames = this.filteredGames.filter(g => g.qualityScore >= 80);
-                }
-                if (this.quickFilters.has('high-btts')) {
-                    this.filteredGames = this.filteredGames.filter(g => g.bttsPercent >= 70);
-                }
-                if (this.quickFilters.has('high-over25')) {
-                    this.filteredGames = this.filteredGames.filter(g => g.over25 >= 70);
-                }
-                if (this.quickFilters.has('high-goals')) {
-                    this.filteredGames = this.filteredGames.filter(g => g.avgGoals >= 2.5);
-                }
-                
-                // Aplicar filtros de coluna
                 for (let column in this.columnFilters) {
                     if (this.columnFilters[column].values?.length > 0) {
                         this.filteredGames = this.filteredGames.filter(game => {
                             const value = this.getColumnValue(game, column).toString();
-                            return this.columnFilters[column].values.includes(value);
+                            return this.columnFilters[column].values.includes(value) || 
+                                   (this.columnFilters[column].values.includes(">80") && parseInt(value) > 80);
                         });
                     }
                     if (this.columnFilters[column].sort) {
@@ -1063,12 +667,11 @@
                             const aValue = this.getColumnValue(a, column);
                             const bValue = this.getColumnValue(b, column);
                             return this.columnFilters[column].sort === "asc" ? 
-                                   (aValue - bValue) || String(aValue).localeCompare(String(bValue)) : 
-                                   (bValue - aValue) || String(bValue).localeCompare(String(aValue));
+                                   (aValue - bValue) || aValue.localeCompare(bValue) : 
+                                   (bValue - aValue) || bValue.localeCompare(aValue);
                         });
                     }
                 }
-                
                 this.displayGames();
                 this.updateFilteredColumns();
             }
@@ -1092,173 +695,73 @@
 
             displayGames() {
                 const tableBody = document.getElementById("gamesTableBody");
-                const tableWrapper = document.getElementById("tableWrapper");
-                const displayedGames = document.getElementById("displayedGames");
-                
                 tableBody.innerHTML = "";
-                
                 if (!this.filteredGames || this.filteredGames.length === 0) {
-                    tableWrapper.style.display = 'none';
-                    this.showError("Nenhum jogo encontrado com os filtros aplicados.");
+                    this.showError("Nenhum jogo encontrado.");
                     return;
                 }
-                
-                displayedGames.textContent = this.filteredGames.length;
-                
                 this.filteredGames.forEach(game => {
-                    const qualityScore = game.qualityScore;
+                    const qualityScore = game.qualityScore.toFixed(0);
                     const isTopMatch = qualityScore >= 80;
                     const row = document.createElement("tr");
                     row.className = isTopMatch ? 'top-match' : '';
-                    
                     row.innerHTML = `
-                        <td>
-                            <div class="league-badge" data-league="${game.leagueName}">
-                                <i class="fas fa-trophy"></i>
-                                ${game.leagueName}
-                            </div>
-                        </td>
-                        <td>
-                            <div class="match-info">
-                                <div class="team-row">
-                                    <i class="fas fa-home team-icon"></i>
-                                    <span class="team-name">${game.home}</span>
-                                </div>
-                                <div class="team-row">
-                                    <i class="fas fa-plane team-icon"></i>
-                                    <span class="team-name">${game.away}</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="datetime-cell">
-                                <span class="date-badge">
-                                    <i class="fas fa-calendar-alt" style="margin-right: 0.3rem; color: var(--primary);"></i>
-                                    ${game.day || game.date}
-                                </span>
-                                <span class="time-badge">
-                                    <i class="fas fa-clock"></i>
-                                    ${game.hour || game.time}
-                                </span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="tooltip-wrapper">
-                                <span class="stat-pill ${this.getStatClass(game.avgGoals, 'goals')}">
-                                    ${game.avgGoals}
-                                </span>
-                                <span class="tooltip-content">Média combinada de gols</span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="tooltip-wrapper">
-                                <span class="stat-pill ${this.getStatClass(game.homeAvgGoals, 'goals')}">
-                                    ${game.homeAvgGoals}
-                                </span>
-                                <span class="tooltip-content">Média do time da casa</span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="tooltip-wrapper">
-                                <span class="stat-pill ${this.getStatClass(game.awayAvgGoals, 'goals')}">
-                                    ${game.awayAvgGoals}
-                                </span>
-                                <span class="tooltip-content">Média do time visitante</span>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="stat-pill ${this.getStatClass(game.bttsPercent)}">
-                                ${game.bttsPercent}%
-                            </span>
-                        </td>
-                        <td>
-                            <span class="stat-pill ${this.getStatClass(game.over15)}">
-                                ${game.over15}%
-                            </span>
-                        </td>
-                        <td>
-                            <span class="stat-pill ${this.getStatClass(game.over25)}">
-                                ${game.over25}%
-                            </span>
-                        </td>
-                        <td>
-                            <span class="stat-pill ${this.getStatClass(game.over35)}">
-                                ${game.over35}%
-                            </span>
-                        </td>
-                        <td>
-                            <span class="quality-score ${isTopMatch ? 'top' : this.getStatClass(qualityScore)}">
-                                ${qualityScore}%
-                                ${isTopMatch ? '<i class="fas fa-star star"></i>' : ''}
-                            </span>
-                        </td>
+                        <td><div class="league-name" data-league="${game.leagueName}">${game.leagueName}</div></td>
+                        <td><div class="team-match"><span class="team-name">${game.home}</span><span class="vs">vs</span><span class="team-name">${game.away}</span></div></td>
+                        <td><div class="date-time"><span class="date">${game.day || game.date}</span><span class="time">${game.hour || game.time}</span></div></td>
+                        <td><span class="stat-pill">${game.avgGoals}</span></td>
+                        <td><div class="tooltip"><span class="stat-pill">${game.homeAvgGoals}</span><span class="tooltiptext">Média: ${game.homeAvgGoals}</span></div></td>
+                        <td><div class="tooltip"><span class="stat-pill">${game.awayAvgGoals}</span><span class="tooltiptext">Média: ${game.awayAvgGoals}</span></div></td>
+                        <td><span class="stat-pill ${this.getPercentClass(game.bttsPercent)}">${game.bttsPercent}%</span></td>
+                        <td><span class="stat-pill ${this.getPercentClass(game.over15)}">${game.over15}%</span></td>
+                        <td><span class="stat-pill ${this.getPercentClass(game.over25)}">${game.over25}%</span></td>
+                        <td><span class="stat-pill ${this.getPercentClass(game.over35)}">${game.over35}%</span></td>
+                        <td><span class="stat-pill ${this.getPercentClass(game.qualityScore)}">${qualityScore}%${isTopMatch ? '★' : ''}</span></td>
                     `;
-                    
                     tableBody.appendChild(row);
                 });
-                
-                tableWrapper.style.display = 'block';
+                document.getElementById('tableContainer').style.display = 'block';
+                document.getElementById('loadingContainer').style.display = 'none';
                 document.getElementById('errorContainer').style.display = 'none';
             }
 
-            updateStatsSummary() {
-                const summary = document.getElementById('statsSummary');
-                const totalGames = this.gamesData.length;
-                const topMatches = this.gamesData.filter(g => g.qualityScore >= 80).length;
-                const avgQuality = Math.round(this.gamesData.reduce((sum, g) => sum + g.qualityScore, 0) / totalGames);
-                const avgGoals = (this.gamesData.reduce((sum, g) => sum + g.avgGoals, 0) / totalGames).toFixed(1);
-                
-                document.getElementById('totalGames').textContent = totalGames;
-                document.getElementById('topMatches').textContent = topMatches;
-                document.getElementById('avgQuality').textContent = `${avgQuality}%`;
-                document.getElementById('avgGoals').textContent = avgGoals;
-                
-                summary.style.display = 'grid';
+            setupColumnFilters() {
+                const thElements = document.querySelectorAll('th');
+                thElements.forEach(th => {
+                    th.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.activeColumn = th.dataset.column;
+                        this.showFilterModal();
+                    });
+                });
             }
 
             showFilterModal() {
                 const modal = document.getElementById('filterModal');
                 const title = document.getElementById('filterModalTitle');
                 const options = document.getElementById('filterOptions');
-                
-                title.textContent = `Filtrar: ${this.getColumnLabel(this.activeColumn)}`;
-                
-                const uniqueValues = [...new Set(this.gamesData.map(game => 
-                    this.getColumnValue(game, this.activeColumn).toString()
-                ))].sort((a, b) => {
-                    const numA = parseFloat(a);
-                    const numB = parseFloat(b);
-                    if (!isNaN(numA) && !isNaN(numB)) return numB - numA;
-                    return a.localeCompare(b);
-                });
-                
+                title.textContent = `Filtrar por ${this.getColumnLabel(this.activeColumn)}`;
+                const uniqueValues = [...new Set(this.gamesData.map(game => this.getColumnValue(game, this.activeColumn).toString()))].sort();
                 options.innerHTML = `
-                    <label style="border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
-                        <input type="checkbox" data-action="sort-desc" ${this.columnFilters[this.activeColumn]?.sort === 'desc' ? 'checked' : ''}>
-                        <span><i class="fas fa-sort-amount-down"></i> Ordenar: Maior → Menor</span>
-                    </label>
-                    <label style="border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
-                        <input type="checkbox" data-action="sort-asc" ${this.columnFilters[this.activeColumn]?.sort === 'asc' ? 'checked' : ''}>
-                        <span><i class="fas fa-sort-amount-up"></i> Ordenar: Menor → Maior</span>
-                    </label>
-                    ${uniqueValues.map(value => `
-                        <label>
-                            <input type="checkbox" value="${value}" ${this.columnFilters[this.activeColumn]?.values?.includes(value) ? 'checked' : ''}>
-                            <span>${value}</span>
-                        </label>
-                    `).join('')}
+                    <label><input type="checkbox" data-action="sort-asc" ${this.columnFilters[this.activeColumn]?.sort === 'asc' ? 'checked' : ''}> Asc</label>
+                    <label><input type="checkbox" data-action="sort-desc" ${this.columnFilters[this.activeColumn]?.sort === 'desc' ? 'checked' : ''}> Desc</label>
+                    <hr>
+                    ${uniqueValues.map(value => `<label><input type="checkbox" value="${value}" ${this.columnFilters[this.activeColumn]?.values?.includes(value) ? 'checked' : ''}> ${value}</label>`).join('')}
                 `;
-                
                 modal.classList.add('active');
+                document.addEventListener('click', function closeModal(event) {
+                    if (!modal.contains(event.target) && !event.target.closest('th')) {
+                        modal.classList.remove('active');
+                        document.removeEventListener('click', closeModal);
+                    }
+                });
             }
 
             getColumnLabel(column) {
                 const labels = {
-                    leagueName: 'Liga', match: 'Partida', dateTime: 'Data/Hora', 
-                    avgGoals: 'Média de Gols', homeAvgGoals: 'Gols Casa', 
-                    awayAvgGoals: 'Gols Fora', bttsPercent: 'BTTS', 
-                    over15: 'Over 1.5', over25: 'Over 2.5', over35: 'Over 3.5', 
-                    qualityScore: 'Qualidade'
+                    leagueName: 'Liga', match: 'Partida', dateTime: 'Data/Hora', avgGoals: 'Média Gols',
+                    homeAvgGoals: 'Casa', awayAvgGoals: 'Fora', bttsPercent: 'BTTS', over15: 'Over 1.5',
+                    over25: 'Over 2.5', over35: 'Over 3.5', qualityScore: 'Qualidade'
                 };
                 return labels[column] || column;
             }
@@ -1266,39 +769,28 @@
             applyColumnFilter() {
                 const options = document.getElementById('filterOptions');
                 const checkboxes = options.querySelectorAll('input[type="checkbox"]');
-                
                 this.columnFilters[this.activeColumn] = { values: [], sort: null };
-                
                 checkboxes.forEach(checkbox => {
                     if (checkbox.checked) {
-                        if (checkbox.dataset.action === "sort-asc") {
-                            this.columnFilters[this.activeColumn].sort = "asc";
-                        } else if (checkbox.dataset.action === "sort-desc") {
-                            this.columnFilters[this.activeColumn].sort = "desc";
-                        } else {
-                            this.columnFilters[this.activeColumn].values.push(checkbox.value);
-                        }
+                        if (checkbox.dataset.action === "sort-asc") this.columnFilters[this.activeColumn].sort = "asc";
+                        else if (checkbox.dataset.action === "sort-desc") this.columnFilters[this.activeColumn].sort = "desc";
+                        else this.columnFilters[this.activeColumn].values.push(checkbox.value);
                     }
                 });
-                
                 this.applyFilters();
                 document.getElementById('filterModal').classList.remove('active');
             }
 
-            resetAllFilters() {
+            resetFilters() {
                 this.columnFilters = {};
-                this.quickFilters.clear();
-                document.querySelectorAll('.filter-chip').forEach(chip => {
-                    chip.classList.remove('active');
-                });
                 this.applyFilters();
             }
 
             updateFilteredColumns() {
-                document.querySelectorAll('th[data-column]').forEach(th => {
+                const thElements = document.querySelectorAll('th');
+                thElements.forEach(th => {
                     const column = th.dataset.column;
-                    if (this.columnFilters[column] && 
-                        (this.columnFilters[column].values?.length > 0 || this.columnFilters[column].sort)) {
+                    if (this.columnFilters[column] && (this.columnFilters[column].values?.length > 0 || this.columnFilters[column].sort)) {
                         th.classList.add('filtered');
                     } else {
                         th.classList.remove('filtered');
@@ -1309,9 +801,8 @@
             showLoading(message) {
                 document.getElementById('loadingText').textContent = message;
                 document.getElementById('loadingContainer').style.display = 'block';
-                document.getElementById('tableWrapper').style.display = 'none';
+                document.getElementById('tableContainer').style.display = 'none';
                 document.getElementById('errorContainer').style.display = 'none';
-                document.getElementById('statsSummary').style.display = 'none';
             }
 
             hideLoading() {
@@ -1322,6 +813,7 @@
                 document.getElementById('errorMessage').textContent = message;
                 document.getElementById('errorContainer').style.display = 'block';
                 document.getElementById('loadingContainer').style.display = 'none';
+                document.getElementById('tableContainer').style.display = 'none';
             }
         }
 
