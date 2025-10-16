@@ -321,7 +321,7 @@
         <div id="mainContent" style="display: none;">
             <div class="tips-banner">
                 <h2>🎯 Tips Automáticos - Análise Inteligente</h2>
-                <p>Baseado nos últimos 5 jogos de cada confronto/jogador</p>
+                <p>Baseado nos últimos 5 jogos para jogadores/confrontos e últimos 10 jogos para ligas</p>
             </div>
 
             <div class="tips-grid" id="autoTips"></div>
@@ -503,22 +503,19 @@
                     winner: homeGoalsFT > awayGoalsFT ? homePlayer : (awayGoalsFT > homeGoalsFT ? awayPlayer : 'Draw')
                 });
 
-                // Estatísticas de ligas
+                // Estatísticas de ligas (armazenar todos os jogos para filtrar depois)
                 if (!leagueStats[league]) {
-                    leagueStats[league] = { games: 0, totalGoalsFT: 0, totalGoalsHT: 0, bttsCount: 0, over25Count: 0, goalsArray: [] };
+                    leagueStats[league] = { allGames: [] };
                 }
-                leagueStats[league].games++;
-                leagueStats[league].totalGoalsFT += totalGoalsFT;
-                leagueStats[league].totalGoalsHT += totalGoalsHT;
-                leagueStats[league].goalsArray.push(totalGoalsFT);
-                if (isBTTS) leagueStats[league].bttsCount++;
-                if (isOver25) leagueStats[league].over25Count++;
+                leagueStats[league].allGames.push({
+                    totalGoalsFT, totalGoalsHT, isBTTS, isOver25
+                });
             });
 
             // Processar jogadores (últimos 5 jogos)
             for (let player in playerStats) {
                 for (let league in playerStats[player]) {
-                    const games = playerStats[player][league].games.slice(-5); // Últimos 5 (mais recentes)
+                    const games = playerStats[player][league].games.slice(-5);
                     if (games.length < 5) continue;
 
                     const wins = games.filter(g => g.won).length;
@@ -544,7 +541,7 @@
 
             // Processar confrontos (últimos 5 jogos)
             matchupStats.forEach(m => {
-                const games = m.games.slice(-5); // Últimos 5
+                const games = m.games.slice(-5);
                 if (games.length < 5) {
                     m.avgGoalsFT = 0;
                     m.avgGoalsHT = 0;
@@ -562,14 +559,25 @@
                 }
             });
 
-            // Processar ligas
+            // Processar ligas (últimos 10 jogos)
             for (let league in leagueStats) {
-                const stats = leagueStats[league];
-                stats.avgGoalsFT = (stats.totalGoalsFT / stats.games).toFixed(1);
-                stats.avgGoalsHT = (stats.totalGoalsHT / stats.games).toFixed(1);
-                stats.bttsRate = ((stats.bttsCount / stats.games) * 100).toFixed(0);
-                stats.over25Rate = ((stats.over25Count / stats.games) * 100).toFixed(0);
-                stats.volatility = calculateStdDev(stats.goalsArray).toFixed(2);
+                const allGamesInLeague = leagueStats[league].allGames;
+                const last10Games = allGamesInLeague.slice(-10);
+                
+                if (last10Games.length === 0) continue;
+
+                const totalGoalsFT = last10Games.reduce((sum, g) => sum + g.totalGoalsFT, 0);
+                const totalGoalsHT = last10Games.reduce((sum, g) => sum + g.totalGoalsHT, 0);
+                const bttsCount = last10Games.filter(g => g.isBTTS).length;
+                const over25Count = last10Games.filter(g => g.isOver25).length;
+                const goalsArray = last10Games.map(g => g.totalGoalsFT);
+
+                leagueStats[league].games = last10Games.length;
+                leagueStats[league].avgGoalsFT = (totalGoalsFT / last10Games.length).toFixed(1);
+                leagueStats[league].avgGoalsHT = (totalGoalsHT / last10Games.length).toFixed(1);
+                leagueStats[league].bttsRate = ((bttsCount / last10Games.length) * 100).toFixed(0);
+                leagueStats[league].over25Rate = ((over25Count / last10Games.length) * 100).toFixed(0);
+                leagueStats[league].volatility = calculateStdDev(goalsArray).toFixed(2);
 
                 // Top jogador
                 let topPlayer = { name: '', winRate: 0 };
@@ -581,7 +589,7 @@
                         }
                     }
                 }
-                stats.topPlayer = topPlayer.name;
+                leagueStats[league].topPlayer = topPlayer.name;
 
                 // Top confronto
                 let topMatchup = { key: '', avgGoals: 0 };
@@ -590,7 +598,7 @@
                         topMatchup = { key: m.key, avgGoals: m.avgGoalsFT };
                     }
                 });
-                stats.topMatchup = topMatchup.key;
+                leagueStats[league].topMatchup = topMatchup.key;
             }
         }
 
@@ -708,7 +716,6 @@
                     const p1Wins = recent.filter(g => g.winner === m.player1).length;
                     const p2Wins = recent.filter(g => g.winner === m.player2).length;
                     
-                    // Se houve mudança de dominância
                     if ((m.winsP1 > m.winsP2 + 2 && p2Wins > p1Wins) || 
                         (m.winsP2 > m.winsP1 + 2 && p1Wins > p2Wins)) {
                         upsets.push({ 
@@ -825,13 +832,11 @@
                 }
             }
 
-            // Filtros
             data = data.filter(d => 
                 (!search || d.player.toLowerCase().includes(search)) &&
                 (!league || d.league === league)
             );
 
-            // Ordenação
             data.sort((a, b) => {
                 if (sort === 'winRate') return b.winRate - a.winRate;
                 if (sort === 'avgGoalsFT') return b.avgGoalsFT - a.avgGoalsFT;
@@ -877,13 +882,11 @@
 
             let data = matchupStats.filter(m => m.avgGoalsFT > 0);
 
-            // Filtros
             data = data.filter(d => 
                 (!search || d.key.toLowerCase().includes(search)) &&
                 (!league || d.league === league)
             );
 
-            // Ordenação
             data.sort((a, b) => {
                 if (sort === 'avgGoalsFT') return b.avgGoalsFT - a.avgGoalsFT;
                 if (sort === 'btts') return b.btts - a.btts;
@@ -937,13 +940,11 @@
             details.style.display = details.style.display === 'none' ? 'block' : 'none';
         }
 
-        // Inicialização
         document.addEventListener('DOMContentLoaded', async () => {
             try {
                 allGames = await fetchGames();
                 calculateStats();
 
-                // Popular filtros
                 leagues.forEach(league => {
                     const opt1 = document.createElement('option');
                     opt1.value = league;
@@ -954,7 +955,6 @@
                     document.getElementById('leagueMatchups').appendChild(opt2);
                 });
 
-                // Renderizar tudo
                 const tips = generateAutoTips();
                 renderTips(tips);
 
@@ -968,7 +968,6 @@
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('mainContent').style.display = 'block';
 
-                // Event listeners para filtros
                 ['searchPlayers', 'leaguePlayers', 'sortPlayers'].forEach(id => {
                     document.getElementById(id).addEventListener('input', renderPlayers);
                 });
@@ -977,7 +976,6 @@
                     document.getElementById(id).addEventListener('input', renderMatchups);
                 });
 
-                // Tabs
                 document.querySelectorAll('.tab').forEach(tab => {
                     tab.addEventListener('click', () => {
                         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
