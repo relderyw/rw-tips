@@ -512,10 +512,10 @@
                 });
             });
 
-            // Processar jogadores (últimos 5 jogos)
+            // Processar jogadores (últimos 5 jogos - mais recentes)
             for (let player in playerStats) {
                 for (let league in playerStats[player]) {
-                    const games = playerStats[player][league].games.slice(-5);
+                    const games = playerStats[player][league].games.slice(0, 5);
                     if (games.length < 5) continue;
 
                     const wins = games.filter(g => g.won).length;
@@ -539,9 +539,9 @@
                 }
             }
 
-            // Processar confrontos (últimos 5 jogos)
+            // Processar confrontos (últimos 5 jogos - mais recentes)
             matchupStats.forEach(m => {
-                const games = m.games.slice(-5);
+                const games = m.games.slice(0, 5);
                 if (games.length < 5) {
                     m.avgGoalsFT = 0;
                     m.avgGoalsHT = 0;
@@ -559,10 +559,10 @@
                 }
             });
 
-            // Processar ligas (últimos 10 jogos)
+            // Processar ligas (últimos 10 jogos - mais recentes)
             for (let league in leagueStats) {
                 const allGamesInLeague = leagueStats[league].allGames;
-                const last10Games = allGamesInLeague.slice(-10);
+                const last10Games = allGamesInLeague.slice(0, 10);
                 
                 if (last10Games.length === 0) continue;
 
