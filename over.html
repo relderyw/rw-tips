@@ -679,7 +679,7 @@
         <header>
             <div class="header-top">
                 <div class="logo-container">
-                    <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips" class="logo-img">
+                    <img src="https://i.ibb.co/G4Y8sHM/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips" class="logo-img">
                     <span class="logo-text">👑 RW TIPS 🎮</span>
                 </div>
                 <div class="header-controls">
@@ -851,6 +851,10 @@
                 if (!this.checkUserLogin()) return;
                 this.setupEventListeners();
                 this.fetchGames();
+                // Add automatic refresh every 2 minutes (120000 ms)
+                setInterval(() => {
+                    this.fetchGames();
+                }, 120000);
             }
 
             checkUserLogin() {
