@@ -22,21 +22,132 @@
             --gold-gradient: linear-gradient(135deg, #ffd700, #ffa500);
         }
 
+        /* ========== BODY AJUSTADO PARA SIDEBAR ========== */
         body {
             font-family: 'Poppins', sans-serif;
             background: var(--background-dark);
             color: var(--text-primary);
             min-height: 100vh;
             line-height: 1.6;
-            padding: 20px;
+            padding: 20px 20px 20px 90px; /* ← PADDING-LEFT ADICIONADO */
+            transition: padding-left 0.3s ease; /* ← TRANSIÇÃO ADICIONADA */
         }
 
-        .logo-container {
-            text-align: center;
-            margin: 20px 0;
-            padding: 20px;
-            animation: fadeIn 1s ease-in-out;
+        /* ========== INÍCIO DOS ESTILOS DA SIDEBAR ========== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 70px;
+            background: rgba(26, 26, 35, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid var(--border-color);
+            transition: width 0.3s ease;
+            z-index: 1000;
+            overflow: hidden;
         }
+
+        .sidebar:hover {
+            width: 260px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 20px 15px;
+            gap: 15px;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #00ff88, #00ffaa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar:hover .sidebar-title {
+            opacity: 1;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .sidebar-menu li {
+            margin: 5px 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            gap: 15px;
+            white-space: nowrap;
+        }
+
+        .sidebar-menu a:hover {
+            background: rgba(108, 92, 231, 0.1);
+            color: var(--accent-color);
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu li.active a {
+            background: linear-gradient(90deg, rgba(0, 255, 136, 0.2), transparent);
+            color: var(--accent-color);
+            border-left: 4px solid var(--accent-color);
+            position: relative;
+        }
+
+        .sidebar-menu li.active a::before {
+            content: '';
+            position: absolute;
+            left: -1px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-color);
+        }
+
+        .sidebar-menu .icon {
+            font-size: 1.3rem;
+            width: 30px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-menu .label {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-weight: 500;
+        }
+
+        .sidebar:hover .sidebar-menu .label {
+            opacity: 1;
+        }
+        /* ========== FIM DOS ESTILOS DA SIDEBAR ========== */
+
+        /* ========== LOGO-CONTAINER REMOVIDO (não é mais necessário) ========== */
 
         @keyframes fadeIn {
             from {
@@ -47,32 +158,6 @@
                 opacity: 1;
                 transform: translateY(0);
             }
-        }
-
-        .logo {
-            width: 120px;
-            height: auto;
-            margin-bottom: 15px;
-            filter: drop-shadow(0 0 10px rgba(108, 92, 231, 0.5));
-            transition: all 0.3s ease;
-        }
-
-        .logo:hover {
-            transform: scale(1.05);
-            filter: drop-shadow(0 0 15px rgba(108, 92, 231, 0.7));
-        }
-
-        .logo-text {
-            font-size: 2rem; /* Aumentado para melhor legibilidade */
-            background: linear-gradient(45deg, #00ff88, #00ffaa);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            font-weight: 700;
-            letter-spacing: 2px;
-            margin-top: 10px;
-            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
-            animation: neonPulse 1.5s ease-in-out infinite alternate;
         }
 
         @keyframes neonPulse {
@@ -94,7 +179,7 @@
 
         .action-button {
             padding: 15px 35px;
-            font-size: 1.1rem; /* Aumentado para melhor legibilidade */
+            font-size: 1.1rem;
             font-weight: 600;
             color: var(--text-primary);
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
@@ -118,8 +203,8 @@
         }
 
         #gameFilter {
-            padding: 12px; /* Aumentado para melhor usabilidade */
-            font-size: 1.1rem; /* Aumentado para melhor legibilidade */
+            padding: 12px;
+            font-size: 1.1rem;
             border-radius: 12px;
             border: 1px solid var(--primary-color);
             background-color: var(--card-bg);
@@ -212,7 +297,7 @@
 
         .league-name {
             font-weight: 600;
-            font-size: 1.5rem; /* Aumentado para melhor legibilidade */
+            font-size: 1.5rem;
             margin-bottom: 20px;
             text-align: center;
             background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
@@ -227,7 +312,7 @@
 
         .stat {
             margin: 15px 0;
-            font-size: 1.1rem; /* Aumentado para melhor legibilidade */
+            font-size: 1.1rem;
             color: var(--text-secondary);
             display: flex;
             justify-content: space-between;
@@ -244,9 +329,9 @@
         }
 
         .stat .value-100 {
-            color: var(--accent-color); /* Destaque para 100% */
-            font-weight: 700; /* Negrito para destacar */
-            text-shadow: 0 0 5px rgba(0, 255, 136, 0.7); /* Efeito de glow */
+            color: var(--accent-color);
+            font-weight: 700;
+            text-shadow: 0 0 5px rgba(0, 255, 136, 0.7);
         }
 
         .bar-container {
@@ -254,7 +339,7 @@
             border-radius: 10px;
             overflow: hidden;
             margin: 8px 0;
-            height: 10px; /* Aumentado para melhor visibilidade */
+            height: 10px;
             position: relative;
         }
 
@@ -268,8 +353,8 @@
         }
 
         .bar-100 {
-            background: var(--accent-color); /* Cor sólida para 100% */
-            box-shadow: 0 0 10px var(--accent-color); /* Destaque visual */
+            background: var(--accent-color);
+            box-shadow: 0 0 10px var(--accent-color);
         }
 
         .bar::after {
@@ -295,7 +380,7 @@
 
         h1 {
             text-align: center;
-            font-size: 3rem; /* Aumentado para melhor legibilidade */
+            font-size: 3rem;
             font-weight: 600;
             margin: 30px 0;
             background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
@@ -334,9 +419,18 @@
             border-radius: 3px;
         }
 
+        /* ========== MEDIA QUERIES AJUSTADOS PARA SIDEBAR ========== */
         @media (max-width: 768px) {
             body {
-                padding: 10px;
+                padding: 20px 10px 20px 70px; /* ← PADDING AJUSTADO */
+            }
+
+            .sidebar {
+                width: 60px; /* ← SIDEBAR MENOR EM MOBILE */
+            }
+
+            .sidebar:hover {
+                width: 220px; /* ← EXPANSÃO MENOR EM MOBILE */
             }
 
             .button-container {
@@ -354,7 +448,7 @@
             }
 
             h1 {
-                font-size: 2rem; /* Ajuste para mobile */
+                font-size: 2rem;
                 padding: 0 15px;
                 margin: 20px 0;
             }
@@ -368,10 +462,25 @@
 </head>
 
 <body>
-    <div class="logo-container">
-        <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo">
-        <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
-    </div>
+    <!-- ========== SIDEBAR ADICIONADA AQUI (LOGO APÓS <body>) ========== -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips" class="sidebar-logo">
+            <span class="sidebar-title">RW TIPS</span>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="visualization.html"><span class="icon">⚽</span><span class="label">Próximos Jogos</span></a></li>
+            <li><a href="results.html"><span class="icon">📊</span><span class="label">Últimos Resultados</span></a></li>
+            <li><a href="live.html"><span class="icon">🔴</span><span class="label">AO VIVO</span></a></li>
+            <li class="active"><a href="statistics.html"><span class="icon">📈</span><span class="label">Estatísticas das Ligas</span></a></li>
+            <li><a href="bets.html"><span class="icon">💰</span><span class="label">Registrar Apostas</span></a></li>
+            <li><a href="h2h.html"><span class="icon">🎮</span><span class="label">Análise H2H</span></a></li>
+            <li><a href="dashboard.html"><span class="icon">📋</span><span class="label">Dashboard</span></a></li>
+            <li><a href="nba.html"><span class="icon">🏀</span><span class="label">NBA Stats</span></a></li>
+            <li><a href="radar.html"><span class="icon">🎯</span><span class="label">Radar</span></a></li>
+            <li><a href="over.html"><span class="icon">📍</span><span class="label">Over Analysis</span></a></li>
+        </ul>
+    </nav>
 
     <h1>Estatísticas das Ligas</h1>
     <div class="button-container">
