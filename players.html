@@ -15,6 +15,10 @@
             --text-secondary: #a0a0c0;
             --shadow: 0 4px 15px rgba(0, 255, 102, 0.2);
             --border: 1px solid rgba(0, 255, 102, 0.3);
+            /* ========== VARIÁVEIS ADICIONADAS PARA SIDEBAR ========== */
+            --primary-color: #6c5ce7;
+            --accent-color: #00ff88;
+            --border-color: rgba(255, 255, 255, 0.05);
         }
 
         * {
@@ -24,15 +28,117 @@
             font-family: 'Oxanium', sans-serif;
         }
 
+        /* ========== BODY AJUSTADO PARA SIDEBAR ========== */
         body {
             background: var(--bg-dark);
             color: var(--text-primary);
             min-height: 100vh;
-            padding: 20px;
+            padding: 20px 20px 20px 90px; /* ← PADDING-LEFT ADICIONADO */
             display: flex;
             flex-direction: column;
             align-items: center;
+            transition: padding-left 0.3s ease; /* ← TRANSIÇÃO ADICIONADA */
         }
+
+        /* ========== INÍCIO DOS ESTILOS DA SIDEBAR ========== */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 70px;
+            background: rgba(26, 26, 35, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid var(--border-color);
+            transition: width 0.3s ease;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .sidebar:hover {
+            width: 260px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 20px 15px;
+            gap: 15px;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #00ff88, #00ffaa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar:hover .sidebar-title {
+            opacity: 1;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .sidebar-menu li {
+            margin: 5px 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            gap: 15px;
+            white-space: nowrap;
+        }
+
+        .sidebar-menu a:hover {
+            background: rgba(108, 92, 231, 0.1);
+            color: var(--accent-color);
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu li.active a {
+            background: linear-gradient(90deg, rgba(108, 92, 231, 0.2), transparent);
+            color: var(--accent-color);
+            border-left: 3px solid var(--accent-color);
+        }
+
+        .sidebar-menu .icon {
+            font-size: 1.3rem;
+            width: 30px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-menu .label {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-weight: 500;
+        }
+
+        .sidebar:hover .sidebar-menu .label {
+            opacity: 1;
+        }
+        /* ========== FIM DOS ESTILOS DA SIDEBAR ========== */
 
         .container {
             width: 100%;
@@ -40,28 +146,8 @@
             padding: 20px;
         }
 
-        .logo-container {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .logo {
-            width: 120px;
-            height: auto;
-            filter: drop-shadow(0 0 10px var(--neon-green));
-            transition: transform 0.3s;
-        }
-
-        .logo:hover {
-            transform: scale(1.1);
-        }
-
-        .logo-text {
-            font-size: 2.5rem;
-            color: var(--neon-green);
-            text-shadow: 0 0 10px var(--neon-green);
-            margin-top: 15px;
-        }
+        /* ========== LOGO-CONTAINER REMOVIDO (NÃO É MAIS NECESSÁRIO) ========== */
+        /* .logo-container foi removido pois o logo agora está na sidebar */
 
         h1 {
             text-align: center;
@@ -287,7 +373,20 @@
             display: block;
         }
 
+        /* ========== MEDIA QUERIES AJUSTADOS PARA SIDEBAR ========== */
         @media (max-width: 768px) {
+            body {
+                padding: 20px 10px 20px 70px; /* ← PADDING AJUSTADO */
+            }
+
+            .sidebar {
+                width: 60px; /* ← SIDEBAR MENOR EM MOBILE */
+            }
+
+            .sidebar:hover {
+                width: 220px; /* ← EXPANSÃO MENOR EM MOBILE */
+            }
+
             .filters {
                 grid-template-columns: 1fr;
             }
@@ -303,15 +402,34 @@
                 grid-template-columns: 1fr;
             }
         }
+
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo-container">
-            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo" class="logo">
-            <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
+    <!-- ========== SIDEBAR ADICIONADA AQUI (LOGO APÓS <body>) ========== -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips" class="sidebar-logo">
+            <span class="sidebar-title">RW TIPS</span>
         </div>
+        <ul class="sidebar-menu">
+            <li><a href="visualization.html"><span class="icon">⚽</span><span class="label">Próximos Jogos</span></a></li>
+            <li><a href="results.html"><span class="icon">📊</span><span class="label">Últimos Resultados</span></a></li>
+            <li><a href="live.html"><span class="icon">🔴</span><span class="label">AO VIVO</span></a></li>
+            <li><a href="statistics.html"><span class="icon">📈</span><span class="label">Estatísticas das Ligas</span></a></li>
+            <li><a href="bets.html"><span class="icon">💰</span><span class="label">Registrar Apostas</span></a></li>
+            <li class="active"><a href="h2h.html"><span class="icon">🎮</span><span class="label">Análise H2H</span></a></li>
+            <li><a href="dashboard.html"><span class="icon">📋</span><span class="label">Dashboard</span></a></li>
+            <li><a href="nba.html"><span class="icon">🏀</span><span class="label">NBA Stats</span></a></li>
+            <li><a href="radar.html"><span class="icon">🎯</span><span class="label">Radar</span></a></li>
+            <li><a href="over.html"><span class="icon">📍</span><span class="label">Over Analysis</span></a></li>
+        </ul>
+    </nav>
+    <!-- ========== FIM DA SIDEBAR ========== -->
 
+    <div class="container">
+        <!-- ========== LOGO-CONTAINER REMOVIDO DAQUI ========== -->
+        
         <h1>Análise H2H</h1>
 
         <div class="tab-container">
@@ -693,7 +811,7 @@
             if (playersList.includes(currentPlayer1)) player1Filter.value = currentPlayer1;
             if (playersList.includes(currentPlayer2)) player2Filter.value = currentPlayer2;
 
-            window.adriaticPlayerIds = playerIds;  // Armazena IDs
+            window.adriaticPlayerIds = playerIds;
 
             if (player1Filter.value && player2Filter.value && player1Filter.value !== player2Filter.value) {
                 updateAdriaticAnalysis();
@@ -703,7 +821,7 @@
         function getPercentValue(cell) {
             if (!cell) return 0;
             if (cell.value && cell.value.endsWith('%')) return parseFloat(cell.value);
-            if (cell.isVip) return 50;  // Assumindo VIP como 50% ou ajuste conforme necessidade
+            if (cell.isVip) return 50;
             if (cell.backgroundColor === 'bg-green-1') return 100;
             if (cell.backgroundColor === 'bg-red-1') return 0;
             if (cell.backgroundColor === 'bg-blue-1') return 50;
@@ -722,7 +840,6 @@
                 totalGoalsHT: 0, totalGoalsFT: 0
             };
 
-            // De confrontation-stats
             const confrontationTable = data.sessions.sessionTables.find(t => t.id === 'confrontation-stats');
             if (confrontationTable) {
                 stats.totalGames = parseInt(confrontationTable.rows.find(r => r.columns[0].value === 'Nº Jogos')?.columns[1].value || 0);
@@ -739,14 +856,12 @@
                 stats.totalGoalsFT = Math.round(avgTotalGoals * stats.totalGames);
             }
 
-            // BTTS FT de both-score-stats
             const bttsTable = data.sessions.sessionTables.find(t => t.id === 'both-score-stats');
             if (bttsTable) {
                 const bttsYesPercent = getPercentValue(bttsTable.rows.find(r => r.columns[0].value === 'Ambos Marcam - Sim')?.columns[1]);
                 stats.bttsFT = Math.round((bttsYesPercent / 100) * stats.totalGames);
             }
 
-            // Over/Under FT
             const ftOuTable = data.sessions.sessionTables.find(t => t.id === 'over-under-FT-stats');
             if (ftOuTable && stats.totalGames > 0) {
                 ftOuTable.rows.slice(1).forEach(row => {
@@ -761,7 +876,6 @@
                 });
             }
 
-            // Over/Under HT
             const htOuTable = data.sessions.sessionTables.find(t => t.id === 'over-under-ht-stats');
             if (htOuTable && stats.totalGames > 0) {
                 htOuTable.rows.slice(1).forEach(row => {
@@ -774,7 +888,6 @@
                 });
             }
 
-            // Para BTTS HT e totalGoalsHT, usar headToHeadEvents se necessário
             const h2hEvents = data.sessions.sessionEvents.headToHeadEvents || [];
             h2hEvents.forEach(event => {
                 const htHome = event.scoreHT.home || 0;
@@ -958,6 +1071,23 @@
                 document.getElementById('adriaticH2hGamesList').innerHTML = '';
             }
         }
+
+        // ========== JAVASCRIPT DA SIDEBAR ADICIONADO AQUI ========== 
+        // Destacar página ativa automaticamente
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = window.location.pathname.split('/').pop();
+            const menuItems = document.querySelectorAll('.sidebar-menu li');
+            
+            menuItems.forEach(item => {
+                const link = item.querySelector('a');
+                if (link && link.getAttribute('href') === currentPage) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        });
+        // ========== FIM DO JAVASCRIPT DA SIDEBAR ========== 
 
         // Inicialização e eventos
         document.addEventListener('DOMContentLoaded', () => {
