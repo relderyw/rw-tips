@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,11 +34,13 @@
             background: var(--bg-dark);
             color: var(--text-primary);
             min-height: 100vh;
-            padding: 20px 20px 20px 90px; /* ← PADDING-LEFT ADICIONADO */
+            padding: 20px 20px 20px 90px;
+            /* ← PADDING-LEFT ADICIONADO */
             display: flex;
             flex-direction: column;
             align-items: center;
-            transition: padding-left 0.3s ease; /* ← TRANSIÇÃO ADICIONADA */
+            transition: padding-left 0.3s ease;
+            /* ← TRANSIÇÃO ADICIONADA */
         }
 
         /* ========== INÍCIO DOS ESTILOS DA SIDEBAR ========== */
@@ -131,9 +134,9 @@
             transform: translateY(-50%);
             width: 8px;
             height: 8px;
-            background: var(--neon-green);
+            background: var(--accent-color);
             border-radius: 50%;
-            box-shadow: 0 0 10px var(--neon-green);
+            box-shadow: 0 0 10px var(--accent-color);
         }
 
         .sidebar-menu .icon {
@@ -152,6 +155,7 @@
         .sidebar:hover .sidebar-menu .label {
             opacity: 1;
         }
+
         /* ========== FIM DOS ESTILOS DA SIDEBAR ========== */
 
         .container {
@@ -194,7 +198,8 @@
             transition: all 0.3s;
         }
 
-        select:hover, select:focus {
+        select:hover,
+        select:focus {
             background: #33334d;
             border-color: var(--neon-green);
             outline: none;
@@ -390,49 +395,61 @@
         /* ========== MEDIA QUERIES AJUSTADOS PARA SIDEBAR ========== */
         @media (max-width: 768px) {
             body {
-                padding: 20px 10px 20px 70px; /* ← PADDING AJUSTADO */
+                padding: 20px 10px 20px 70px;
+                /* ← PADDING AJUSTADO */
             }
 
             .sidebar {
-                width: 60px; /* ← SIDEBAR MENOR EM MOBILE */
+                width: 60px;
+                /* ← SIDEBAR MENOR EM MOBILE */
             }
 
             .sidebar:hover {
-                width: 220px; /* ← EXPANSÃO MENOR EM MOBILE */
+                width: 220px;
+                /* ← EXPANSÃO MENOR EM MOBILE */
             }
 
             .filters {
                 grid-template-columns: 1fr;
             }
+
             .confronto-stats {
                 flex-direction: column;
                 align-items: center;
             }
+
             .game-players {
                 flex-direction: column;
                 gap: 10px;
             }
+
             .stats-grid {
                 grid-template-columns: 1fr;
             }
         }
-
     </style>
 </head>
+
 <body>
     <!-- ========== SIDEBAR ADICIONADA AQUI (LOGO APÓS <body>) ========== -->
     <nav class="sidebar">
         <div class="sidebar-header">
-            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips" class="sidebar-logo">
+            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips"
+                class="sidebar-logo">
             <span class="sidebar-title">RW TIPS</span>
         </div>
         <ul class="sidebar-menu">
-            <li><a href="visualization.html"><span class="icon">⚽</span><span class="label">Próximos Jogos</span></a></li>
-            <li><a href="results.html"><span class="icon">📊</span><span class="label">Últimos Resultados</span></a></li>
+            <li><a href="visualization.html"><span class="icon">⚽</span><span class="label">Próximos Jogos</span></a>
+            </li>
+            <li><a href="results.html"><span class="icon">📊</span><span class="label">Últimos Resultados</span></a>
+            </li>
             <li><a href="live_v2.html"><span class="icon">🔴</span><span class="label">AO VIVO</span></a></li>
-            <li><a href="statistics.html"><span class="icon">📈</span><span class="label">Estatísticas das Ligas</span></a></li>
-            <li><a href="formularioApostas.html"><span class="icon">💰</span><span class="label">Registrar Apostas</span></a></li>
-            <li class="active"><a href="players.html"><span class="icon">🎮</span><span class="label">Análise de Jogadores</span></a></li>
+            <li><a href="statistics.html"><span class="icon">📈</span><span class="label">Estatísticas das
+                        Ligas</span></a></li>
+            <li><a href="formularioApostas.html"><span class="icon">💰</span><span class="label">Registrar
+                        Apostas</span></a></li>
+            <li class="active"><a href="players.html"><span class="icon">🎮</span><span class="label">Análise de
+                        Jogadores</span></a></li>
             <li><a href="dashboard.html"><span class="icon">📋</span><span class="label">Dashboard</span></a></li>
             <li><a href="nba.html"><span class="icon">🏀</span><span class="label">NBA Stats</span></a></li>
             <li><a href="radar.html"><span class="icon">🎯</span><span class="label">Radar</span></a></li>
@@ -443,7 +460,7 @@
 
     <div class="container">
         <!-- ========== LOGO-CONTAINER REMOVIDO DAQUI ========== -->
-        
+
         <h1>Análise H2H</h1>
 
         <div class="tab-container">
@@ -719,15 +736,15 @@
             container.innerHTML = `
                 <div class="games-section">
                     ${matches.map(game => {
-                        const homeHTGoals = parseInt(game.halftime_score_home) || 0;
-                        const awayHTGoals = parseInt(game.halftime_score_away) || 0;
-                        const homeFTGoals = parseInt(game.score_home) || 0;
-                        const awayFTGoals = parseInt(game.score_away) || 0;
-                        const isPlayer1Home = game.home_player.toLowerCase() === player1.toLowerCase();
-                        const result = homeFTGoals > awayFTGoals ? (isPlayer1Home ? player1 : player2) :
-                                      awayFTGoals > homeFTGoals ? (isPlayer1Home ? player2 : player1) : 'Empate';
+                const homeHTGoals = parseInt(game.halftime_score_home) || 0;
+                const awayHTGoals = parseInt(game.halftime_score_away) || 0;
+                const homeFTGoals = parseInt(game.score_home) || 0;
+                const awayFTGoals = parseInt(game.score_away) || 0;
+                const isPlayer1Home = game.home_player.toLowerCase() === player1.toLowerCase();
+                const result = homeFTGoals > awayFTGoals ? (isPlayer1Home ? player1 : player2) :
+                    awayFTGoals > homeFTGoals ? (isPlayer1Home ? player2 : player1) : 'Empate';
 
-                        return `
+                return `
                             <div class="game-card">
                                 <div class="game-teams">${game.home_team} vs ${game.away_team}</div>
                                 <div class="game-players">
@@ -743,7 +760,7 @@
                                 <div class="game-result">${result}</div>
                             </div>
                         `;
-                    }).join('')}
+            }).join('')}
                 </div>
             `;
         }
@@ -1026,15 +1043,15 @@
             container.innerHTML = `
                 <div class="games-section">
                     ${h2hEvents.map(game => {
-                        const homeHTGoals = game.scoreHT.home || 0;
-                        const awayHTGoals = game.scoreHT.away || 0;
-                        const homeFTGoals = game.score.home || 0;
-                        const awayFTGoals = game.score.away || 0;
-                        const isPlayer1Home = game.home.name.toLowerCase() === player1.toLowerCase();
-                        const result = homeFTGoals > awayFTGoals ? (isPlayer1Home ? player1 : player2) :
-                                      awayFTGoals > homeFTGoals ? (isPlayer1Home ? player2 : player1) : 'Empate';
+                const homeHTGoals = game.scoreHT.home || 0;
+                const awayHTGoals = game.scoreHT.away || 0;
+                const homeFTGoals = game.score.home || 0;
+                const awayFTGoals = game.score.away || 0;
+                const isPlayer1Home = game.home.name.toLowerCase() === player1.toLowerCase();
+                const result = homeFTGoals > awayFTGoals ? (isPlayer1Home ? player1 : player2) :
+                    awayFTGoals > homeFTGoals ? (isPlayer1Home ? player2 : player1) : 'Empate';
 
-                        return `
+                return `
                             <div class="game-card">
                                 <div class="game-teams">${game.home.teamName || ''} vs ${game.away.teamName || ''}</div>
                                 <div class="game-players">
@@ -1050,7 +1067,7 @@
                                 <div class="game-result">${result}</div>
                             </div>
                         `;
-                    }).join('')}
+            }).join('')}
                 </div>
             `;
         }
@@ -1088,10 +1105,10 @@
 
         // ========== JAVASCRIPT DA SIDEBAR ADICIONADO AQUI ========== 
         // Destacar página ativa automaticamente
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const currentPage = window.location.pathname.split('/').pop();
             const menuItems = document.querySelectorAll('.sidebar-menu li');
-            
+
             menuItems.forEach(item => {
                 const link = item.querySelector('a');
                 if (link && link.getAttribute('href') === currentPage) {
@@ -1146,4 +1163,5 @@
         });
     </script>
 </body>
+
 </html>
