@@ -117,9 +117,23 @@
         }
 
         .sidebar-menu li.active a {
-            background: linear-gradient(90deg, rgba(108, 92, 231, 0.2), transparent);
-            color: var(--accent-color);
-            border-left: 3px solid var(--accent-color);
+            background: linear-gradient(90deg, rgba(0, 255, 136, 0.2), transparent);
+            color: var(--neon-green);
+            border-left: 4px solid var(--neon-green);
+            position: relative;
+        }
+
+        .sidebar-menu li.active a::before {
+            content: '';
+            position: absolute;
+            left: -1px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--neon-green);
         }
 
         .sidebar-menu .icon {
@@ -1075,15 +1089,23 @@
         // ========== JAVASCRIPT DA SIDEBAR ADICIONADO AQUI ========== 
         // Destacar página ativa automaticamente
         document.addEventListener('DOMContentLoaded', function() {
-            const currentPage = window.location.pathname.split('/').pop();
+            // Remove todas as classes active primeiro
             const menuItems = document.querySelectorAll('.sidebar-menu li');
+            menuItems.forEach(item => item.classList.remove('active'));
             
+            // Marca manualmente a página H2H como ativa (ajuste conforme o nome do seu arquivo)
+            const h2hLink = document.querySelector('.sidebar-menu a[href="h2h.html"]');
+            if (h2hLink) {
+                h2hLink.parentElement.classList.add('active');
+            }
+            
+            // Alternativa: detectar automaticamente pela URL atual
+            const currentPage = window.location.pathname.split('/').pop();
             menuItems.forEach(item => {
                 const link = item.querySelector('a');
-                if (link && link.getAttribute('href') === currentPage) {
+                if (link && (link.getAttribute('href') === currentPage || 
+                    (currentPage.includes('h2h') && link.getAttribute('href').includes('h2h')))) {
                     item.classList.add('active');
-                } else {
-                    item.classList.remove('active');
                 }
             });
         });
