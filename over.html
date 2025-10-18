@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Análise eSoccer - RW Tips</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
+            /* Variáveis do código principal */
             --primary: #10b981;
             --primary-dark: #059669;
             --accent: #3b82f6;
@@ -23,6 +25,10 @@
             --danger: #ef4444;
             --radius: 8px;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            /* Variáveis da sidebar */
+            --sidebar-primary-color: #10b981;
+            --sidebar-accent-color: #3b82f6;
+            --sidebar-border-color: rgba(255, 255, 255, 0.05);
         }
 
         * {
@@ -32,13 +38,115 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Space Grotesk', sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
+            padding-left: 70px;
+            transition: padding-left 0.3s ease;
         }
 
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 70px;
+            background: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid var(--sidebar-border-color);
+            transition: width 0.3s ease;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .sidebar:hover {
+            width: 260px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 20px 15px;
+            gap: 15px;
+            border-bottom: 1px solid var(--sidebar-border-color);
+            white-space: nowrap;
+        }
+
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--sidebar-accent-color), #60a5fa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar:hover .sidebar-title {
+            opacity: 1;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .sidebar-menu li {
+            margin: 5px 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            gap: 15px;
+            white-space: nowrap;
+        }
+
+        .sidebar-menu a:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--sidebar-accent-color);
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu li.active a {
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.2), transparent);
+            color: var(--sidebar-accent-color);
+            border-left: 3px solid var(--sidebar-accent-color);
+        }
+
+        .sidebar-menu .icon {
+            font-size: 1.3rem;
+            width: 30px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-menu .label {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-weight: 500;
+        }
+
+        .sidebar:hover .sidebar-menu .label {
+            opacity: 1;
+        }
+
+        /* Container */
         .container {
             max-width: 100%;
             margin: 0 auto;
@@ -406,7 +514,7 @@
             gap: 0.3rem;
         }
 
-        /* STAT PILLS - NOVO DESIGN */
+        /* STAT PILLS */
         .stat-pill {
             display: inline-flex;
             align-items: center;
@@ -420,7 +528,6 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        /* Cores mais intuitivas */
         .excellent { 
             background: linear-gradient(135deg, #10b981, #059669);
             color: white;
@@ -450,7 +557,7 @@
             color: white;
         }
 
-        /* QUALITY SCORE ESPECIAL */
+        /* QUALITY SCORE */
         .quality-score {
             display: inline-flex;
             align-items: center;
@@ -650,6 +757,18 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                padding-left: 60px;
+            }
+
+            .sidebar {
+                width: 60px;
+            }
+
+            .sidebar:hover {
+                width: 220px;
+            }
+
             .header-top {
                 flex-direction: column;
                 align-items: flex-start;
@@ -675,6 +794,26 @@
     </style>
 </head>
 <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://i.ibb.co/G4Y8sHM/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips" class="sidebar-logo">
+            <span class="sidebar-title">RW TIPS</span>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="visualization.html"><span class="icon">⚽</span><span class="label">Próximos Jogos</span></a></li>
+            <li><a href="results.html"><span class="icon">📊</span><span class="label">Últimos Resultados</span></a></li>
+            <li><a href="live.html"><span class="icon">🔴</span><span class="label">AO VIVO</span></a></li>
+            <li><a href="statistics.html"><span class="icon">📈</span><span class="label">Estatísticas das Ligas</span></a></li>
+            <li><a href="bets.html"><span class="icon">💰</span><span class="label">Registrar Apostas</span></a></li>
+            <li><a href="players.html"><span class="icon">🎮</span><span class="label">Análise de Jogadores</span></a></li>
+            <li><a href="dashboard.html"><span class="icon">📋</span><span class="label">Dashboard</span></a></li>
+            <li><a href="nba.html"><span class="icon">🏀</span><span class="label">NBA Stats</span></a></li>
+            <li><a href="radar.html"><span class="icon">🎯</span><span class="label">Radar</span></a></li>
+            <li><a href="over.html"><span class="icon">📍</span><span class="label">Over Analysis</span></a></li>
+        </ul>
+    </nav>
+
     <div class="container">
         <header>
             <div class="header-top">
@@ -851,7 +990,6 @@
                 if (!this.checkUserLogin()) return;
                 this.setupEventListeners();
                 this.fetchGames();
-                // Add automatic refresh every 2 minutes (120000 ms)
                 setInterval(() => {
                     this.fetchGames();
                 }, 120000);
@@ -866,6 +1004,15 @@
             }
 
             setupEventListeners() {
+                // Sidebar active item logic
+                const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+                const menuItems = document.querySelectorAll('.sidebar-menu a');
+                menuItems.forEach(item => {
+                    if (item.getAttribute('href') === currentPath) {
+                        item.parentElement.classList.add('active');
+                    }
+                });
+
                 document.getElementById('resetFilters')?.addEventListener('click', () => {
                     this.resetAllFilters();
                 });
@@ -994,14 +1141,12 @@
             }
 
             calculateQualityScore(game) {
-                // Verifica se o jogo atende aos critérios premium específicos de cada liga
                 const isPremium = this.isPremiumMatch(game);
                 
                 if (isPremium) {
-                    return 100; // Jogos premium recebem 100% de qualidade
+                    return 100;
                 }
                 
-                // Cálculo normal de qualidade para jogos não-premium
                 const weights = { avgGoals: 0.30, btts: 0.25, over25: 0.35, consistency: 0.10 };
                 const avgGoalsScore = Math.min((game.avgGoals / 4) * 100, 100);
                 const bttsScore = game.bttsPercent;
@@ -1019,7 +1164,6 @@
             isPremiumMatch(game) {
                 const league = game.leagueName;
                 
-                // Esoccer Battle - 8 mins play
                 if (league.includes("Esoccer Battle - 8 mins play")) {
                     return (
                         game.homeAvgGoals >= 2.5 &&
@@ -1032,7 +1176,6 @@
                     );
                 }
                 
-                // Esoccer H2H GG League - 8 mins play
                 if (league.includes("Esoccer H2H GG League - 8 mins play")) {
                     return (
                         game.homeAvgGoals >= 2.2 &&
@@ -1045,7 +1188,6 @@
                     );
                 }
                 
-                // Esoccer GT Leagues – 12 mins play
                 if (league.includes("Esoccer GT Leagues") && league.includes("12")) {
                     return (
                         game.homeAvgGoals >= 2.7 &&
@@ -1058,7 +1200,6 @@
                     );
                 }
                 
-                // Esoccer Battle Volta - 6 mins play
                 if (league.includes("Esoccer Battle Volta - 6 mins play")) {
                     return (
                         game.homeAvgGoals >= 3.0 &&
@@ -1106,7 +1247,6 @@
             applyFilters() {
                 this.filteredGames = [...this.gamesData];
                 
-                // Aplicar filtros rápidos
                 if (this.quickFilters.has('top-quality')) {
                     this.filteredGames = this.filteredGames.filter(g => g.qualityScore >= 80);
                 }
@@ -1120,7 +1260,6 @@
                     this.filteredGames = this.filteredGames.filter(g => g.avgGoals >= 2.5);
                 }
                 
-                // Aplicar filtros de coluna
                 for (let column in this.columnFilters) {
                     if (this.columnFilters[column].values?.length > 0) {
                         this.filteredGames = this.filteredGames.filter(game => {
