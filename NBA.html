@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NBA Stats - RW Tips</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,15 +14,31 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --color-primary: #6B21A8;
+            --color-accent: #9333EA;
+            --color-bg-dark: #0A0A0A;
+            --color-bg-medium: #141414;
+            --color-text-primary: #E5E7EB;
+            --color-text-secondary: #A1A1AA;
+            --sidebar-border-color: rgba(255, 255, 255, 0.05);
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.25);
+            --radius-sm: 8px;
+            --transition: all 0.3s ease;
+        }
+
         body {
-            background: #0A0A0A;
-            color: #E5E7EB;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Oxanium', sans-serif;
+            background: var(--color-bg-dark);
+            color: var(--color-text-primary);
+            font-family: 'Oxanium', sans-serif;
             margin: 0;
-            padding: 24px;
+            padding: 24px 24px 24px 70px; /* Ajustado para acomodar a sidebar */
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
+            transition: padding-left 0.3s ease;
         }
 
         .particles {
@@ -51,10 +69,111 @@
             100% { transform: translateY(-100vh) translateX(30px); opacity: 0; }
         }
 
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 70px;
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid var(--sidebar-border-color);
+            transition: width 0.3s ease;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .sidebar:hover {
+            width: 260px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 20px 15px;
+            gap: 15px;
+            border-bottom: 1px solid var(--sidebar-border-color);
+            white-space: nowrap;
+        }
+
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .sidebar-title {
+            font-family: 'Oxanium', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--color-accent), #A855F7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar:hover .sidebar-title {
+            opacity: 1;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .sidebar-menu li {
+            margin: 5px 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            gap: 15px;
+            white-space: nowrap;
+        }
+
+        .sidebar-menu a:hover {
+            background: rgba(107, 33, 168, 0.1);
+            color: var(--color-accent);
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu li.active a {
+            background: linear-gradient(90deg, rgba(107, 33, 168, 0.2), transparent);
+            color: var(--color-accent);
+            border-left: 3px solid var(--color-accent);
+        }
+
+        .sidebar-menu .icon {
+            font-size: 1.3rem;
+            width: 30px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-menu .label {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-weight: 600;
+        }
+
+        .sidebar:hover .sidebar-menu .label {
+            opacity: 1;
+        }
+
+        /* Container */
         .container {
             max-width: 1280px;
             margin: 0 auto;
-            background: #141414;
+            background: var(--color-bg-medium);
             border-radius: 16px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
             padding: 24px;
@@ -72,7 +191,7 @@
         }
 
         .header h1 {
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Oxanium', sans-serif;
             font-size: 28px;
             color: #FFFFFF;
             letter-spacing: 1.5px;
@@ -80,7 +199,7 @@
         }
 
         .logo {
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Oxanium', sans-serif;
             font-size: 20px;
             color: #FBBF24;
             display: flex;
@@ -103,10 +222,10 @@
             padding: 10px 24px;
             border-radius: 8px;
             cursor: pointer;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Oxanium', sans-serif;
             font-size: 14px;
             font-weight: 600;
-            color: #A1A1AA;
+            color: var(--color-text-secondary);
             text-transform: uppercase;
             transition: all 0.3s ease;
             border: 1px solid transparent;
@@ -115,14 +234,14 @@
         .tab:hover {
             background: linear-gradient(45deg, #2A2A2A, #3A3A3A);
             color: #FFFFFF;
-            border-color: #6B21A8;
+            border-color: var(--color-primary);
             box-shadow: 0 0 8px rgba(107, 33, 168, 0.3);
         }
 
         .tab.active {
-            background: linear-gradient(45deg, #6B21A8, #9333EA);
+            background: linear-gradient(45deg, var(--color-primary), var(--color-accent));
             color: #FFFFFF;
-            border-color: #6B21A8;
+            border-color: var(--color-primary);
             box-shadow: 0 0 12px rgba(107, 33, 168, 0.5);
         }
 
@@ -136,7 +255,7 @@
         .day-header {
             background: #222222;
             padding: 12px;
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Oxanium', sans-serif;
             font-size: 16px;
             text-transform: uppercase;
             color: #FFFFFF;
@@ -191,7 +310,7 @@
             font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Oxanium', sans-serif;
             animation: pulse 1.5s infinite;
             display: flex;
             align-items: center;
@@ -221,7 +340,7 @@
         }
 
         .match-header {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Oxanium', sans-serif;
             font-size: 14px;
             color: #06B6D4;
             margin-bottom: 12px;
@@ -275,12 +394,12 @@
 
         .team-nickname {
             font-size: 12px;
-            color: #A1A1AA;
+            color: var(--color-text-secondary);
         }
 
         .team-record {
             font-size: 12px;
-            color: #A1A1AA;
+            color: var(--color-text-secondary);
         }
 
         .wins {
@@ -305,7 +424,7 @@
         }
 
         .score {
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Oxanium', sans-serif;
             font-size: 32px;
             color: #FFFFFF;
         }
@@ -315,7 +434,7 @@
         }
 
         .status {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Oxanium', sans-serif;
             font-size: 12px;
             padding: 4px 10px;
             border-radius: 12px;
@@ -330,11 +449,11 @@
 
         .status.final {
             background: #525252;
-            color: #A1A1AA;
+            color: var(--color-text-secondary);
         }
 
         .time {
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Oxanium', sans-serif;
             font-size: 24px;
             color: #06B6D4;
         }
@@ -344,12 +463,12 @@
         }
 
         .details button {
-            background: linear-gradient(45deg, #6B21A8, #9333EA);
+            background: linear-gradient(45deg, var(--color-primary), var(--color-accent));
             border: none;
             padding: 10px 20px;
             border-radius: 8px;
             color: #FFFFFF;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Oxanium', sans-serif;
             font-size: 14px;
             font-weight: 600;
             text-transform: uppercase;
@@ -359,7 +478,7 @@
         }
 
         .details button:hover {
-            background: linear-gradient(45deg, #9333EA, #6B21A8);
+            background: linear-gradient(45deg, var(--color-accent), var(--color-primary));
             box-shadow: 0 4px 12px rgba(107, 33, 168, 0.5);
             transform: translateY(-2px);
         }
@@ -368,7 +487,7 @@
             color: #EF4444;
             padding: 16px;
             text-align: center;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Oxanium', sans-serif;
             font-size: 14px;
         }
 
@@ -392,7 +511,7 @@
         }
 
         .modal-content {
-            background: #141414;
+            background: var(--color-bg-medium);
             border-radius: 16px;
             padding: 24px;
             max-width: 900px;
@@ -419,7 +538,7 @@
         }
 
         .modal-header h2 {
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Oxanium', sans-serif;
             font-size: 24px;
             color: #FFFFFF;
             margin: 0;
@@ -446,7 +565,7 @@
         }
 
         .stats-header span {
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Oxanium', sans-serif;
             font-size: 18px;
             color: #FFFFFF;
             width: 33%;
@@ -464,14 +583,14 @@
         }
 
         .stat-value {
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Oxanium', sans-serif;
             font-size: 16px;
             text-align: center;
             color: #FFFFFF;
         }
 
         .stat-label {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Oxanium', sans-serif;
             font-size: 12px;
             color: #06B6D4;
             text-align: center;
@@ -514,7 +633,7 @@
         }
 
         .section-title {
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Oxanium', sans-serif;
             font-size: 20px;
             text-align: center;
             margin-bottom: 20px;
@@ -532,7 +651,7 @@
             transform: translateX(-50%);
             width: 60px;
             height: 2px;
-            background: linear-gradient(90deg, transparent, #6B21A8, transparent);
+            background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
         }
 
         .category-tabs {
@@ -548,10 +667,10 @@
             padding: 8px 16px;
             border-radius: 8px;
             cursor: pointer;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Oxanium', sans-serif;
             font-size: 13px;
             font-weight: 600;
-            color: #A1A1AA;
+            color: var(--color-text-secondary);
             text-transform: uppercase;
             transition: all 0.3s ease;
             border: 1px solid transparent;
@@ -560,14 +679,14 @@
         .category-tab:hover {
             background: linear-gradient(45deg, #2A2A2A, #3A3A3A);
             color: #FFFFFF;
-            border-color: #6B21A8;
+            border-color: var(--color-primary);
             box-shadow: 0 0 8px rgba(107, 33, 168, 0.3);
         }
 
         .category-tab.active {
-            background: linear-gradient(45deg, #6B21A8, #9333EA);
+            background: linear-gradient(45deg, var(--color-primary), var(--color-accent));
             color: #FFFFFF;
-            border-color: #6B21A8;
+            border-color: var(--color-primary);
             box-shadow: 0 0 12px rgba(107, 33, 168, 0.5);
         }
 
@@ -598,7 +717,7 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            border: 2px solid #6B21A8;
+            border: 2px solid var(--color-primary);
             box-shadow: 0 0 6px rgba(107, 33, 168, 0.3);
             object-fit: cover;
         }
@@ -611,7 +730,7 @@
             display: inline-block;
             font-size: 12px;
             padding: 3px 8px;
-            background: #6B21A8;
+            background: var(--color-primary);
             border-radius: 4px;
             margin-bottom: 4px;
             color: #FFFFFF;
@@ -626,7 +745,7 @@
         }
 
         .stat {
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Oxanium', sans-serif;
             font-size: 18px;
             color: #06B6D4;
         }
@@ -684,13 +803,13 @@
 
         .injury-info .date, .bet-info .value {
             font-size: 12px;
-            color: #A1A1AA;
+            color: var(--color-text-secondary);
         }
 
         .error-details {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Oxanium', sans-serif;
             font-size: 14px;
-            color: #A1A1AA;
+            color: var(--color-text-secondary);
             text-align: center;
             margin-top: 12px;
         }
@@ -701,7 +820,7 @@
             padding: 10px 20px;
             border-radius: 8px;
             color: #FFFFFF;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Oxanium', sans-serif;
             font-size: 14px;
             font-weight: 600;
             text-transform: uppercase;
@@ -724,12 +843,12 @@
         }
 
         .nav-button {
-            background: linear-gradient(45deg, #6B21A8, #9333EA);
+            background: linear-gradient(45deg, var(--color-primary), var(--color-accent));
             border: none;
             padding: 10px 20px;
             border-radius: 8px;
             color: #FFFFFF;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Oxanium', sans-serif;
             font-size: 14px;
             font-weight: 600;
             text-transform: uppercase;
@@ -739,14 +858,75 @@
         }
 
         .nav-button:hover {
-            background: linear-gradient(45deg, #9333EA, #6B21A8);
+            background: linear-gradient(45deg, var(--color-accent), var(--color-primary));
             box-shadow: 0 4px 12px rgba(107, 33, 168, 0.5);
             transform: translateY(-2px);
+        }
+
+        /* Responsiveness */
+        @media (max-width: 768px) {
+            body {
+                padding-left: 60px; /* Ajuste para mobile */
+            }
+
+            .sidebar {
+                width: 60px;
+            }
+
+            .sidebar:hover {
+                width: 220px;
+            }
+
+            .container {
+                padding: 16px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .tabs {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .tab {
+                width: 100%;
+                text-align: center;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .nav-button {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
     <div class="particles" id="particles"></div>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips" class="sidebar-logo">
+            <span class="sidebar-title">RW Tips</span>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="visualization.html"><span class="icon">⚽</span><span class="label">Próximos Jogos</span></a></li>
+            <li><a href="results.html"><span class="icon">📊</span><span class="label">Últimos Resultados</span></a></li>
+            <li><a href="live_v2.html"><span class="icon">🔴</span><span class="label">AO VIVO</span></a></li>
+            <li><a href="statistics.html"><span class="icon">📈</span><span class="label">Estatísticas das Ligas</span></a></li>
+            <li><a href="formularioApostas.html"><span class="icon">💰</span><span class="label">Registrar Apostas</span></a></li>
+            <li><a href="players.html"><span class="icon">🎮</span><span class="label">Análise de Jogadores</span></a></li>
+            <li><a href="dashboard.html"><span class="icon">📋</span><span class="label">Dashboard</span></a></li>
+            <li class="active"><a href="nba.html"><span class="icon">🏀</span><span class="label">NBA Stats</span></a></li>
+            <li><a href="radar.html"><span class="icon">🎯</span><span class="label">Radar</span></a></li>
+            <li><a href="over.html"><span class="icon">📍</span><span class="label">Over Analysis</span></a></li>
+        </ul>
+    </nav>
 
     <div class="container">
         <div class="header">
