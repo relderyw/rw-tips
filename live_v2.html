@@ -5,10 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RW TIPS - eSoccer</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
+            /* Variáveis do código principal */
             --primary-bg: #0f0f1a;
             --secondary-bg: #1a1a2e;
             --card-bg: #1e1e2e;
@@ -31,21 +33,31 @@
             --league-gt-leagues-12m: #32CD32;
             --league-h2h-gg-8m: #8A2BE2;
             --league-adriatic-10m: #1E90FF;
+            --league-valhalla-cup: #f1c40f;
+            --league-valkyrie-cup: #00cec9;
+
+            /* Variáveis da sidebar */
+            --sidebar-primary-color: #6c5ce7;
+            --sidebar-accent-color: #00ff88;
+            --sidebar-border-color: rgba(255, 255, 255, 0.05);
 
             --border-radius: 12px;
             --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
             --transition: all 0.3s ease;
         }
 
+        /* Estilos do código principal */
         @keyframes bestMatchPulse {
             0% {
                 box-shadow: 0 0 15px var(--accent-yellow);
                 border-color: var(--accent-yellow);
             }
+
             50% {
                 box-shadow: 0 0 25px var(--accent-yellow);
                 border-color: var(--accent-yellow);
             }
+
             100% {
                 box-shadow: 0 0 15px var(--accent-yellow);
                 border-color: var(--accent-yellow);
@@ -67,6 +79,7 @@
             from {
                 text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px var(--accent-yellow);
             }
+
             to {
                 text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px var(--accent-yellow);
             }
@@ -76,7 +89,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Space Grotesk', sans-serif;
         }
 
         body {
@@ -84,6 +97,8 @@
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
+            padding-left: 90px;
+            transition: padding-left 0.3s ease;
         }
 
         .container {
@@ -92,7 +107,106 @@
             padding: 20px;
         }
 
-        /* Header Styles */
+        /* Estilos da sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 70px;
+            background: rgba(26, 26, 35, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid var(--sidebar-border-color);
+            transition: width 0.3s ease;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .sidebar:hover {
+            width: 260px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 20px 15px;
+            gap: 15px;
+            border-bottom: 1px solid var(--sidebar-border-color);
+            white-space: nowrap;
+        }
+
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--sidebar-accent-color), #00ffaa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar:hover .sidebar-title {
+            opacity: 1;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .sidebar-menu li {
+            margin: 5px 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            gap: 15px;
+            white-space: nowrap;
+        }
+
+        .sidebar-menu a:hover {
+            background: rgba(108, 92, 231, 0.1);
+            color: var(--sidebar-accent-color);
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu li.active a {
+            background: linear-gradient(90deg, rgba(108, 92, 231, 0.2), transparent);
+            color: var(--sidebar-accent-color);
+            border-left: 3px solid var(--sidebar-accent-color);
+        }
+
+        .sidebar-menu .icon {
+            font-size: 1.3rem;
+            width: 30px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-menu .label {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-weight: 500;
+        }
+
+        .sidebar:hover .sidebar-menu .label {
+            opacity: 1;
+        }
+
+        /* Estilos do código principal (mantidos, com ajustes) */
         .header {
             text-align: center;
             margin-bottom: 30px;
@@ -248,11 +362,11 @@
         }
 
         .league-valhalla-cup {
-            border-left-color: var(--accent-yellow);
+            border-left-color: var(--league-valhalla-cup);
         }
 
         .league-valkyrie-cup {
-            border-left-color: var(--accent-cyan);
+            border-left-color: var(--league-valkyrie-cup);
         }
 
         /* League Section */
@@ -311,7 +425,6 @@
             overflow: hidden;
         }
 
-        /* Garantir que as cores das ligas sejam aplicadas corretamente */
         .match-card.league-battle-8m {
             border-left-color: var(--league-battle-8m);
         }
@@ -333,11 +446,11 @@
         }
 
         .match-card.league-valhalla-cup {
-            border-left-color: var(--accent-yellow);
+            border-left-color: var(--league-valhalla-cup);
         }
 
         .match-card.league-valkyrie-cup {
-            border-left-color: var(--accent-cyan);
+            border-left-color: var(--league-valkyrie-cup);
         }
 
         .match-card:hover {
@@ -379,7 +492,6 @@
             }
         }
 
-        /* Animações específicas para cada liga */
         .match-card.league-battle-8m.goal-scored {
             animation: goalPulseBattle8m 1.5s ease-out;
         }
@@ -629,7 +741,6 @@
             border-left: 4px solid var(--accent-blue);
         }
 
-        /* Cores das ligas para jogos finalizados */
         .finished-match.league-battle-8m {
             border-left-color: var(--league-battle-8m);
         }
@@ -651,11 +762,11 @@
         }
 
         .finished-match.league-valhalla-cup {
-            border-left-color: var(--accent-yellow);
+            border-left-color: var(--league-valhalla-cup);
         }
 
         .finished-match.league-valkyrie-cup {
-            border-left-color: var(--accent-cyan);
+            border-left-color: var(--league-valkyrie-cup);
         }
 
         .finished-match:hover {
@@ -832,51 +943,58 @@
         }
 
         /* Compact sizing for recent games analysis cards */
-        .player-match-history .stats-overview {
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .player-match-history .stat-card {
-            padding: 10px;
-        }
-        .player-match-history .stat-card .stat-value {
-            font-size: 1.4rem;
-        }
-        .player-match-history .stat-card .stat-label {
-            font-size: 0.8rem;
-        }
-
+        .player-match-history .stats-overview,
         .h2h-history-section .stats-overview {
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 10px;
             margin-bottom: 20px;
         }
+
+        .player-match-history .stat-card,
         .h2h-history-section .stat-card {
             padding: 10px;
         }
+
+        .player-match-history .stat-card .stat-value,
         .h2h-history-section .stat-card .stat-value {
             font-size: 1.4rem;
         }
+
+        .player-match-history .stat-card .stat-label,
         .h2h-history-section .stat-card .stat-label {
             font-size: 0.8rem;
         }
 
         /* Extra compact on small screens */
         @media (max-width: 768px) {
+            body {
+                padding-left: 70px;
+            }
+
+            .sidebar {
+                width: 60px;
+            }
+
+            .sidebar:hover {
+                width: 220px;
+            }
+
             .player-match-history .stats-overview,
             .h2h-history-section .stats-overview {
                 grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
                 gap: 8px;
             }
+
             .player-match-history .stat-card,
             .h2h-history-section .stat-card {
                 padding: 8px;
             }
+
             .player-match-history .stat-card .stat-value,
             .h2h-history-section .stat-card .stat-value {
                 font-size: 1.2rem;
             }
+
             .player-match-history .stat-card .stat-label,
             .h2h-history-section .stat-card .stat-label {
                 font-size: 0.75rem;
@@ -930,7 +1048,6 @@
             margin-top: 2px;
         }
 
-        /* Cores para diferentes faixas de porcentagem */
         .metric-value[data-value="high"] {
             color: var(--accent-green);
             text-shadow: 0 0 15px rgba(0, 204, 153, 0.3);
@@ -980,7 +1097,8 @@
         }
 
         /* Match History */
-        .match-history-section, .h2h-history-section {
+        .match-history-section,
+        .h2h-history-section {
             margin-top: 30px;
         }
 
@@ -1168,7 +1286,6 @@
         }
 
         @media (max-width: 992px) {
-
             .match-history-grid {
                 grid-template-columns: 1fr;
             }
@@ -1229,6 +1346,32 @@
 </head>
 
 <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://i.ibb.co/G4Y8sHM/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips"
+                class="sidebar-logo">
+            <span class="sidebar-title">RW TIPS</span>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="visualization.html"><span class="icon">⚽</span><span class="label">Próximos Jogos</span></a>
+            </li>
+            <li><a href="results.html"><span class="icon">📊</span><span class="label">Últimos Resultados</span></a>
+            </li>
+            <li class="active"><a href="live_v2.html"><span class="icon">🔴</span><span class="label">AO VIVO</span></a></li>
+            <li><a href="statistics.html"><span class="icon">📈</span><span class="label">Estatísticas das
+                        Ligas</span></a></li>
+            <li><a href="formularioApostas.html"><span class="icon">💰</span><span class="label">Registrar Apostas</span></a></li>
+            <li><a href="players.html"><span class="icon">🎮</span><span class="label">Análise de Jogadores</span></a>
+            </li>
+            <li><a href="dashboard.html"><span class="icon">📋</span><span class="label">Dashboard</span></a></li>
+            <li><a href="nba.html"><span class="icon">🏀</span><span class="label">NBA Stats</span></a></li>
+            <li><a href="radar.html"><span class="icon">🎯</span><span class="label">Radar</span></a></li>
+            <li><a href="over.html"><span class="icon">📍</span><span class="label">Over Analysis</span></a></li>
+        </ul>
+    </nav>
+
+    <!-- Conteúdo principal -->
     <div class="container" id="app">
         <div class="header">
             <div class="header-top">
@@ -1239,7 +1382,7 @@
                 <div></div> <!-- Espaçador para manter o alinhamento central -->
             </div>
             <div class="logo-container">
-                <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo"
+                <img src="https://i.ibb.co/G4Y8sHM/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo"
                     class="logo">
                 <h2 class="logo-text">👑 𝗥𝗪 𝗧𝗜𝗣𝗦 🎮</h2>
             </div>
@@ -1457,9 +1600,9 @@
         }
 
         let bestMatchups = {
-            battle8m: [], 
-            battle6m: [], 
-            gt12m: []    
+            battle8m: [],
+            battle6m: [],
+            gt12m: []
         };
 
         async function updateBestMatchups() {
@@ -1467,11 +1610,11 @@
                 const response = await fetch('https://caveira-proxy.onrender.com/api/dashboard/data');
                 const data = await response.json();
                 console.log('Dados recebidos da API:', data);
-                
+
                 bestMatchups.battle8m = [];
                 bestMatchups.battle6m = [];
                 bestMatchups.gt12m = [];
-                
+
                 if (data.strategyResults && data.strategyResults.overBattle) {
                     bestMatchups.battle8m = data.strategyResults.overBattle
                         .filter(match => match.combinedPercentage >= 100)
@@ -1480,7 +1623,7 @@
                             player2: match.awayPlayer
                         }));
                 }
-                
+
                 if (data.strategyResults && data.strategyResults.voltaOver) {
                     bestMatchups.battle6m = data.strategyResults.voltaOver
                         .filter(match => match.combinedPercentage >= 100)
@@ -1489,7 +1632,7 @@
                             player2: match.awayPlayer
                         }));
                 }
-                
+
                 if (data.strategyResults && data.strategyResults.gtOverHt) {
                     bestMatchups.gt12m = data.strategyResults.gtOverHt
                         .filter(match => match.combinedPercentage >= 100)
@@ -1498,7 +1641,7 @@
                             player2: match.awayPlayer
                         }));
                 }
-                
+
                 console.log('Melhores confrontos atualizados:', bestMatchups);
             } catch (error) {
                 console.error('Erro ao atualizar melhores confrontos:', error);
@@ -1620,7 +1763,7 @@
                     const matchCard = document.createElement('div');
                     const isBestMatch = isBestMatchup(homePlayer, awayPlayer, leagueName);
                     matchCard.className = `match-card league-${leagueClass} ${scoreChanged ? 'goal-scored' : ''} ${isBestMatch ? 'best-matchup' : ''}`;
-                    
+
                     if (isBestMatch) {
                         matchCard.style.boxShadow = '0 0 15px var(--accent-yellow)';
                         matchCard.style.border = '2px solid var(--accent-yellow)';
