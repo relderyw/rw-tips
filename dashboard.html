@@ -6,8 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RW Tips - Dashboard ESoccer</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -16,14 +18,17 @@
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Poppins', 'Space Grotesk', sans-serif;
             background: #000000;
             color: #fff;
             min-height: 100vh;
             overflow-x: hidden;
+            padding-left: 70px;
+            transition: padding-left 0.3s ease;
         }
 
         :root {
+            /* Variáveis do código principal */
             --primary-color: #2980b9;
             --secondary-color: #00ff73;
             --accent-color: #1abc9c;
@@ -32,6 +37,109 @@
             --dark-bg: #121212;
             --progress-bg: rgba(255, 255, 255, 0.1);
             --progress-fill: linear-gradient(90deg, #2980b9, #00ff73);
+            /* Variáveis da sidebar */
+            --sidebar-primary-color: #2980b9;
+            --sidebar-accent-color: #00ff73;
+            --sidebar-border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 70px;
+            background: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid var(--sidebar-border-color);
+            transition: width 0.3s ease;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .sidebar:hover {
+            width: 260px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 20px 15px;
+            gap: 15px;
+            border-bottom: 1px solid var(--sidebar-border-color);
+            white-space: nowrap;
+        }
+
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--sidebar-accent-color), #60a5fa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar:hover .sidebar-title {
+            opacity: 1;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .sidebar-menu li {
+            margin: 5px 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            gap: 15px;
+            white-space: nowrap;
+        }
+
+        .sidebar-menu a:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--sidebar-accent-color);
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu li.active a {
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.2), transparent);
+            color: var(--sidebar-accent-color);
+            border-left: 3px solid var(--sidebar-accent-color);
+        }
+
+        .sidebar-menu .icon {
+            font-size: 1.3rem;
+            width: 30px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-menu .label {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-weight: 500;
+        }
+
+        .sidebar:hover .sidebar-menu .label {
+            opacity: 1;
         }
 
         .header {
@@ -432,6 +540,18 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                padding-left: 60px;
+            }
+
+            .sidebar {
+                width: 60px;
+            }
+
+            .sidebar:hover {
+                width: 220px;
+            }
+
             .dashboard {
                 padding: 20px 15px;
             }
@@ -467,6 +587,32 @@
 </head>
 
 <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://i.ibb.co/G4Y8sHM/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips"
+                class="sidebar-logo">
+            <span class="sidebar-title">RW TIPS</span>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="visualization.html"><span class="icon">⚽</span><span class="label">Próximos Jogos</span></a>
+            </li>
+            <li><a href="results.html"><span class="icon">📊</span><span class="label">Últimos Resultados</span></a>
+            </li>
+            <li><a href="live.html"><span class="icon">🔴</span><span class="label">AO VIVO</span></a></li>
+            <li><a href="statistics.html"><span class="icon">📈</span><span class="label">Estatísticas das
+                        Ligas</span></a></li>
+            <li><a href="bets.html"><span class="icon">💰</span><span class="label">Registrar Apostas</span></a></li>
+            <li><a href="players.html"><span class="icon">🎮</span><span class="label">Análise de Jogadores</span></a>
+            </li>
+            <li class="active"><a href="dashboard.html"><span class="icon">📋</span><span
+                        class="label">Dashboard</span></a></li>
+            <li><a href="nba.html"><span class="icon">🏀</span><span class="label">NBA Stats</span></a></li>
+            <li><a href="radar.html"><span class="icon">🎯</span><span class="label">Radar</span></a></li>
+            <li><a href="over.html"><span class="icon">📍</span><span class="label">Over Analysis</span></a></li>
+        </ul>
+    </nav>
+
     <div class="header">
         <div class="logo-container">
             <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips Logo"
@@ -627,83 +773,92 @@
     </style>
 
     <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                // Verificar login
-                if (!sessionStorage.getItem('loggedIn')) {
-                    window.location.href = 'index.html';
-                    return;
-                }
-            });
-
-                let allMatches = [];
-                let filteredMatches = [];
-                let leagueStats = {};
-                let playerStats = {};
-                let leagueMatches = {};
-
-            const corsProxies = [
-                (url) => url,
-                (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-                (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-                (url) => `https://proxy.cors.sh/${url}`
-            ];
-
-            let currentProxyIndex = 0;
-
-            function tryWithProxy(proxyIndex) {
-                currentProxyIndex = proxyIndex;
-                document.getElementById('cors-options').style.display = 'none';
-                loadData();
+        document.addEventListener('DOMContentLoaded', () => {
+            // Verificar login
+            if (!sessionStorage.getItem('loggedIn')) {
+                window.location.href = 'index.html';
+                return;
             }
 
-            async function fetchMatches() {
-                console.log('Iniciando busca de resultados...');
-                try {
-                    const originalUrl = `https://api-v2.green365.com.br/api/v2/sport-events?page=1&limit=150&sport=esoccer&status=ended`;
-                    const proxyUrl = corsProxies[currentProxyIndex](originalUrl);
-                    console.log(`Usando proxy ${currentProxyIndex}: ${proxyUrl}`);
+            // Marcar item ativo na sidebar
+            const currentPath = window.location.pathname.split('/').pop() || 'dashboard.html';
+            const menuItems = document.querySelectorAll('.sidebar-menu a');
+            menuItems.forEach(item => {
+                if (item.getAttribute('href') === currentPath) {
+                    item.parentElement.classList.add('active');
+                }
+            });
+        });
 
-                    const response = await fetch(proxyUrl, {
-                        headers: {},
-                        mode: 'cors',
-                        credentials: 'omit',
-                        signal: AbortSignal.timeout(10000)
-                    });
+        let allMatches = [];
+        let filteredMatches = [];
+        let leagueStats = {};
+        let playerStats = {};
+        let leagueMatches = {};
 
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status} ${response.statusText}`);
-                    }
+        const corsProxies = [
+            (url) => url,
+            (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+            (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+            (url) => `https://proxy.cors.sh/${url}`
+        ];
 
-                    const data = await response.json();
-                    console.log('Dados recebidos:', data);
+        let currentProxyIndex = 0;
 
-                    if (!data.items || !Array.isArray(data.items)) {
-                        throw new Error('Estrutura de dados inválida: "items" não encontrado ou não é um array');
-                    }
+        function tryWithProxy(proxyIndex) {
+            currentProxyIndex = proxyIndex;
+            document.getElementById('cors-options').style.display = 'none';
+            loadData();
+        }
 
-                    const validMatches = data.items.filter(match => {
-                        return (
-                            match.competition?.name &&
-                            match.score?.home !== undefined &&
-                            match.score?.away !== undefined &&
-                            match.scoreHT?.home !== undefined &&
-                            match.scoreHT?.away !== undefined &&
-                            match.home?.name &&
-                            match.away?.name
-                        );
-                    });
+        async function fetchMatches() {
+            console.log('Iniciando busca de resultados...');
+            try {
+                const originalUrl = `https://api-v2.green365.com.br/api/v2/sport-events?page=1&limit=150&sport=esoccer&status=ended`;
+                const proxyUrl = corsProxies[currentProxyIndex](originalUrl);
+                console.log(`Usando proxy ${currentProxyIndex}: ${proxyUrl}`);
 
-                    if (validMatches.length === 0) {
-                        throw new Error('Nenhum dado válido retornado pela API');
-                    }
+                const response = await fetch(proxyUrl, {
+                    headers: {},
+                    mode: 'cors',
+                    credentials: 'omit',
+                    signal: AbortSignal.timeout(10000)
+                });
 
-                    console.log(`Partidas válidas encontradas: ${validMatches.length}`);
-                    return validMatches;
-                } catch (error) {
-                    console.error('Erro ao buscar dados:', error);
-                    document.getElementById('cors-options').style.display = 'block';
-                    document.getElementById('error').style.display = 'block';
-                    document.getElementById('error').innerHTML = `
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log('Dados recebidos:', data);
+
+                if (!data.items || !Array.isArray(data.items)) {
+                    throw new Error('Estrutura de dados inválida: "items" não encontrado ou não é um array');
+                }
+
+                const validMatches = data.items.filter(match => {
+                    return (
+                        match.competition?.name &&
+                        match.score?.home !== undefined &&
+                        match.score?.away !== undefined &&
+                        match.scoreHT?.home !== undefined &&
+                        match.scoreHT?.away !== undefined &&
+                        match.home?.name &&
+                        match.away?.name
+                    );
+                });
+
+                if (validMatches.length === 0) {
+                    throw new Error('Nenhum dado válido retornado pela API');
+                }
+
+                console.log(`Partidas válidas encontradas: ${validMatches.length}`);
+                return validMatches;
+            } catch (error) {
+                console.error('Erro ao buscar dados:', error);
+                document.getElementById('cors-options').style.display = 'block';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').innerHTML = `
                     <p>Erro ao carregar dados da API: ${error.message}</p>
                     <p>Possíveis soluções:</p>
                     <ol>
@@ -719,215 +874,215 @@
                     </ol>
                     <p>Detalhes técnicos: O erro 403 Forbidden ocorre porque o servidor da API está bloqueando requisições de origens diferentes (CORS).</p>
                 `;
-                    return [];
+                return [];
+            }
+        }
+
+        async function loadData() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+
+            allMatches = await fetchMatches();
+
+            if (allMatches.length === 0) {
+                console.error('Nenhum dado retornado pela API. Verifique o endpoint ou autenticação.');
+                document.getElementById('error').style.display = 'block';
+                return;
+            }
+
+            organizeMatchesByLeague();
+            applyFilter();
+
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+        }
+
+        function organizeMatchesByLeague() {
+            leagueMatches = {};
+
+            allMatches.forEach(match => {
+                const league = match.competition?.name || 'Desconhecida';
+
+                if (!leagueMatches[league]) {
+                    leagueMatches[league] = [];
                 }
-            }
 
-            async function loadData() {
-                document.getElementById('loading').style.display = 'block';
-                document.getElementById('dashboard').style.display = 'none';
-                document.getElementById('error').style.display = 'none';
+                leagueMatches[league].push(match);
+            });
 
-                allMatches = await fetchMatches();
+            Object.keys(leagueMatches).forEach(league => { });
+        }
 
-                if (allMatches.length === 0) {
-                    console.error('Nenhum dado retornado pela API. Verifique o endpoint ou autenticação.');
-                    document.getElementById('error').style.display = 'block';
-                    return;
+        function applyFilter() {
+            const filterValue = document.getElementById('gameFilter').value;
+            filteredMatches = [];
+
+            Object.keys(leagueMatches).forEach(league => {
+                const leagueMatchList = leagueMatches[league];
+                let matchesToInclude;
+
+                if (filterValue === 'all') {
+                    matchesToInclude = leagueMatchList;
+                } else {
+                    const count = parseInt(filterValue);
+                    matchesToInclude = leagueMatchList.slice(0, count);
                 }
 
-                organizeMatchesByLeague();
-                applyFilter();
+                filteredMatches = filteredMatches.concat(matchesToInclude);
+            });
 
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
-            }
+            document.getElementById('totalMatchesCount').textContent = filteredMatches.length;
 
-            function organizeMatchesByLeague() {
-                leagueMatches = {};
+            analyzeData();
+            updateDashboard();
+            evaluateMethods();
+        }
 
-                allMatches.forEach(match => {
-                    const league = match.competition?.name || 'Desconhecida';
+        function analyzeData() {
+            leagueStats = {};
+            playerStats = {};
+            filteredMatches.forEach(match => {
+                const league = match.competition?.name || 'Desconhecida';
+                const totalGoals = (match.score?.home || 0) + (match.score?.away || 0);
+                const htGoals = (match.scoreHT?.home || 0) + (match.scoreHT?.away || 0);
+                const bothScored = (match.score?.home || 0) > 0 && (match.score?.away || 0) > 0;
+                const isZeroZero = (match.score?.home || 0) === 0 && (match.score?.away || 0) === 0;
+                const bttsHT = (match.scoreHT?.home || 0) > 0 && (match.scoreHT?.away || 0) > 0;
+                const zeroHT = htGoals === 0;
+                const zeroFT = totalGoals === 0;
 
-                    if (!leagueMatches[league]) {
-                        leagueMatches[league] = [];
-                    }
+                if (!leagueStats[league]) {
+                    leagueStats[league] = {
+                        games: 0,
+                        totalGoals: 0,
+                        totalHtGoals: 0,
+                        bothScore: 0,
+                        zeroZero: 0,
+                        over15: 0,
+                        over25: 0,
+                        over35: 0,
+                        over15HT: 0,
+                        over25HT: 0,
+                        over30HT: 0,
+                        bttsHT: 0,
+                        zeroHT: 0,
+                        zeroFT: 0,
+                        over50FT: 0,
+                        over55FT: 0,
+                        over60FT: 0
+                    };
+                }
 
-                    leagueMatches[league].push(match);
-                });
+                leagueStats[league].games++;
+                leagueStats[league].totalGoals += totalGoals;
+                leagueStats[league].totalHtGoals += htGoals;
+                if (bothScored) leagueStats[league].bothScore++;
+                if (isZeroZero) leagueStats[league].zeroZero++;
+                if (totalGoals > 1.5) leagueStats[league].over15++;
+                if (totalGoals > 2.5) leagueStats[league].over25++;
+                if (totalGoals > 3.5) leagueStats[league].over35++;
+                if (htGoals > 1.5) leagueStats[league].over15HT++;
+                if (htGoals > 2.5) leagueStats[league].over25HT++;
+                if (htGoals > 3) leagueStats[league].over30HT++;
+                if (bttsHT) leagueStats[league].bttsHT++;
+                if (zeroHT) leagueStats[league].zeroHT++;
+                if (zeroFT) leagueStats[league].zeroFT++;
+                if (totalGoals > 5) leagueStats[league].over50FT++;
+                if (totalGoals > 5.5) leagueStats[league].over55FT++;
+                if (totalGoals > 6) leagueStats[league].over60FT++;
 
-                Object.keys(leagueMatches).forEach(league => { });
-            }
-
-            function applyFilter() {
-                const filterValue = document.getElementById('gameFilter').value;
-                filteredMatches = [];
-
-                Object.keys(leagueMatches).forEach(league => {
-                    const leagueMatchList = leagueMatches[league];
-                    let matchesToInclude;
-
-                    if (filterValue === 'all') {
-                        matchesToInclude = leagueMatchList;
-                    } else {
-                        const count = parseInt(filterValue);
-                        matchesToInclude = leagueMatchList.slice(0, count);
-                    }
-
-                    filteredMatches = filteredMatches.concat(matchesToInclude);
-                });
-
-                document.getElementById('totalMatchesCount').textContent = filteredMatches.length;
-
-                analyzeData();
-                updateDashboard();
-                evaluateMethods();
-            }
-
-            function analyzeData() {
-                leagueStats = {};
-                playerStats = {};
-                filteredMatches.forEach(match => {
-                    const league = match.competition?.name || 'Desconhecida';
-                    const totalGoals = (match.score?.home || 0) + (match.score?.away || 0);
-                    const htGoals = (match.scoreHT?.home || 0) + (match.scoreHT?.away || 0);
-                    const bothScored = (match.score?.home || 0) > 0 && (match.score?.away || 0) > 0;
-                    const isZeroZero = (match.score?.home || 0) === 0 && (match.score?.away || 0) === 0;
-                    const bttsHT = (match.scoreHT?.home || 0) > 0 && (match.scoreHT?.away || 0) > 0;
-                    const zeroHT = htGoals === 0;
-                    const zeroFT = totalGoals === 0;
-
-                    if (!leagueStats[league]) {
-                        leagueStats[league] = {
+                [match.home?.name || 'Jogador Desconhecido', match.away?.name || 'Jogador Desconhecido'].forEach((player, index) => {
+                    if (!playerStats[player]) {
+                        playerStats[player] = {
                             games: 0,
-                            totalGoals: 0,
-                            totalHtGoals: 0,
-                            bothScore: 0,
-                            zeroZero: 0,
-                            over15: 0,
-                            over25: 0,
-                            over35: 0,
-                            over15HT: 0,
-                            over25HT: 0,
-                            over30HT: 0,
-                            bttsHT: 0,
-                            zeroHT: 0,
-                            zeroFT: 0,
-                            over50FT: 0,
-                            over55FT: 0,
-                            over60FT: 0
+                            goalsFor: 0,
+                            goalsAgainst: 0,
+                            goalsForHT: 0,
+                            goalsAgainstHT: 0,
+                            wins: 0,
+                            draws: 0,
+                            losses: 0,
+                            league: match.competition?.name || 'Liga Desconhecida'
                         };
                     }
 
-                    leagueStats[league].games++;
-                    leagueStats[league].totalGoals += totalGoals;
-                    leagueStats[league].totalHtGoals += htGoals;
-                    if (bothScored) leagueStats[league].bothScore++;
-                    if (isZeroZero) leagueStats[league].zeroZero++;
-                    if (totalGoals > 1.5) leagueStats[league].over15++;
-                    if (totalGoals > 2.5) leagueStats[league].over25++;
-                    if (totalGoals > 3.5) leagueStats[league].over35++;
-                    if (htGoals > 1.5) leagueStats[league].over15HT++;
-                    if (htGoals > 2.5) leagueStats[league].over25HT++;
-                    if (htGoals > 3) leagueStats[league].over30HT++;
-                    if (bttsHT) leagueStats[league].bttsHT++;
-                    if (zeroHT) leagueStats[league].zeroHT++;
-                    if (zeroFT) leagueStats[league].zeroFT++;
-                    if (totalGoals > 5) leagueStats[league].over50FT++;
-                    if (totalGoals > 5.5) leagueStats[league].over55FT++;
-                    if (totalGoals > 6) leagueStats[league].over60FT++;
-
-                    [match.home?.name || 'Jogador Desconhecido', match.away?.name || 'Jogador Desconhecido'].forEach((player, index) => {
-                        if (!playerStats[player]) {
-                            playerStats[player] = {
-                                games: 0,
-                                goalsFor: 0,
-                                goalsAgainst: 0,
-                                goalsForHT: 0,
-                                goalsAgainstHT: 0,
-                                wins: 0,
-                                draws: 0,
-                                losses: 0,
-                                league: match.competition?.name || 'Liga Desconhecida'
-                            };
-                        }
-
-                        playerStats[player].games++;
-                        if (index === 0) {
-                            playerStats[player].goalsFor += match.score?.home || 0;
-                            playerStats[player].goalsAgainst += match.score?.away || 0;
-                            playerStats[player].goalsForHT += match.scoreHT?.home || 0;
-                            playerStats[player].goalsAgainstHT += match.scoreHT?.away || 0;
-                            if ((match.score?.home || 0) > (match.score?.away || 0)) playerStats[player].wins++;
-                            else if ((match.score?.home || 0) === (match.score?.away || 0)) playerStats[player].draws++;
-                            else playerStats[player].losses++;
-                        } else {
-                            playerStats[player].goalsFor += match.score?.away || 0;
-                            playerStats[player].goalsAgainst += match.score?.home || 0;
-                            playerStats[player].goalsForHT += match.scoreHT?.away || 0;
-                            playerStats[player].goalsAgainstHT += match.scoreHT?.home || 0;
-                            if ((match.score?.away || 0) > (match.score?.home || 0)) playerStats[player].wins++;
-                            else if ((match.score?.home || 0) === (match.score?.away || 0)) playerStats[player].draws++;
-                            else playerStats[player].losses++;
-                        }
-                    });
-                });
-            }
-
-            const leagueMapping = {
-                "Esoccer Battle - 8 mins play": { name: "Battle 8m", color: "#FF4C4C" },
-                "Esoccer Battle Volta - 6 mins play": { name: "Battle Volta 6m", color: "#FFD700" },
-                "Esoccer GT Leagues – 12 mins play": { name: "GT Leagues 12m", color: "#32CD32" },
-                "Esoccer H2H GG League - 8 mins play": { name: "H2H GG 8m", color: "#8A2BE2" },
-                "Esoccer Adriatic League - 10 mins play": { name: "Adriatic 10m", color: "#1E90FF" }
-            };
-
-            function updateDashboard() {
-                const totalGames = filteredMatches.length;
-                const totalGoals = filteredMatches.reduce((sum, match) => sum + (match.score?.home || 0) + (match.score?.away || 0), 0);
-                const totalHtGoals = filteredMatches.reduce((sum, match) => sum + (match.scoreHT?.home || 0) + (match.scoreHT?.away || 0), 0);
-                const bothScoreCount = filteredMatches.filter(match => (match.score?.home || 0) > 0 && (match.score?.away || 0) > 0).length;
-
-                document.getElementById('totalGames').textContent = totalGames;
-                document.getElementById('avgGoals').textContent = (totalGoals / totalGames).toFixed(1);
-                document.getElementById('avgHT').textContent = (totalHtGoals / totalGames).toFixed(1);
-                document.getElementById('bothScore').textContent = Math.round((bothScoreCount / totalGames) * 100) + '%';
-
-                const leaguesGrid = document.getElementById('leaguesGrid');
-                leaguesGrid.innerHTML = '';
-
-                let bestLeague = '';
-                let highestAvgGoals = 0;
-
-                Object.entries(leagueStats).forEach(([league, stats]) => {
-                    const avgGoals = stats.totalGoals / stats.games;
-                    if (avgGoals > highestAvgGoals && stats.games >= 3) {
-                        highestAvgGoals = avgGoals;
-                        bestLeague = league;
+                    playerStats[player].games++;
+                    if (index === 0) {
+                        playerStats[player].goalsFor += match.score?.home || 0;
+                        playerStats[player].goalsAgainst += match.score?.away || 0;
+                        playerStats[player].goalsForHT += match.scoreHT?.home || 0;
+                        playerStats[player].goalsAgainstHT += match.scoreHT?.away || 0;
+                        if ((match.score?.home || 0) > (match.score?.away || 0)) playerStats[player].wins++;
+                        else if ((match.score?.home || 0) === (match.score?.away || 0)) playerStats[player].draws++;
+                        else playerStats[player].losses++;
+                    } else {
+                        playerStats[player].goalsFor += match.score?.away || 0;
+                        playerStats[player].goalsAgainst += match.score?.home || 0;
+                        playerStats[player].goalsForHT += match.scoreHT?.away || 0;
+                        playerStats[player].goalsAgainstHT += match.scoreHT?.home || 0;
+                        if ((match.score?.away || 0) > (match.score?.home || 0)) playerStats[player].wins++;
+                        else if ((match.score?.home || 0) === (match.score?.away || 0)) playerStats[player].draws++;
+                        else playerStats[player].losses++;
                     }
                 });
+            });
+        }
 
-                Object.entries(leagueStats).forEach(([league, stats]) => {
-                    const avgGoals = (stats.totalGoals / stats.games).toFixed(1);
-                    const avgHt = (stats.totalHtGoals / stats.games).toFixed(1);
-                    const bothScorePerc = Math.round((stats.bothScore / stats.games) * 100);
-                    const over25Perc = Math.round((stats.over25 / stats.games) * 100);
-                    const bttsHTPerc = Math.round((stats.bttsHT / stats.games) * 100);
-                    const over25HTPerc = Math.round((stats.over25HT / stats.games) * 100);
-                    const over35Perc = Math.round((stats.over35 / stats.games) * 100);
-                    const zeroHTPerc = Math.round((stats.zeroHT / stats.games) * 100);
-                    const zeroFTPerc = Math.round((stats.zeroZero / stats.games) * 100);
+        const leagueMapping = {
+            "Esoccer Battle - 8 mins play": { name: "Battle 8m", color: "#FF4C4C" },
+            "Esoccer Battle Volta - 6 mins play": { name: "Battle Volta 6m", color: "#FFD700" },
+            "Esoccer GT Leagues – 12 mins play": { name: "GT Leagues 12m", color: "#32CD32" },
+            "Esoccer H2H GG League - 8 mins play": { name: "H2H GG 8m", color: "#8A2BE2" },
+            "Esoccer Adriatic League - 10 mins play": { name: "Adriatic 10m", color: "#1E90FF" }
+        };
 
-                    const leagueInfo = leagueMapping[league] || { name: league, color: "#FFFFFF" };
-                    const leagueCard = document.createElement('div');
-                    leagueCard.className = 'league-card';
-                    leagueCard.style.background = `linear-gradient(145deg, ${leagueInfo.color}22, ${leagueInfo.color}44)`;
-                    leagueCard.style.borderColor = leagueInfo.color;
-                    if (league === bestLeague) {
-                        leagueCard.classList.add('best-league');
-                    }
+        function updateDashboard() {
+            const totalGames = filteredMatches.length;
+            const totalGoals = filteredMatches.reduce((sum, match) => sum + (match.score?.home || 0) + (match.score?.away || 0), 0);
+            const totalHtGoals = filteredMatches.reduce((sum, match) => sum + (match.scoreHT?.home || 0) + (match.scoreHT?.away || 0), 0);
+            const bothScoreCount = filteredMatches.filter(match => (match.score?.home || 0) > 0 && (match.score?.away || 0) > 0).length;
 
-                    leagueCard.innerHTML = `
+            document.getElementById('totalGames').textContent = totalGames;
+            document.getElementById('avgGoals').textContent = (totalGoals / totalGames).toFixed(1);
+            document.getElementById('avgHT').textContent = (totalHtGoals / totalGames).toFixed(1);
+            document.getElementById('bothScore').textContent = Math.round((bothScoreCount / totalGames) * 100) + '%';
+
+            const leaguesGrid = document.getElementById('leaguesGrid');
+            leaguesGrid.innerHTML = '';
+
+            let bestLeague = '';
+            let highestAvgGoals = 0;
+
+            Object.entries(leagueStats).forEach(([league, stats]) => {
+                const avgGoals = stats.totalGoals / stats.games;
+                if (avgGoals > highestAvgGoals && stats.games >= 3) {
+                    highestAvgGoals = avgGoals;
+                    bestLeague = league;
+                }
+            });
+
+            Object.entries(leagueStats).forEach(([league, stats]) => {
+                const avgGoals = (stats.totalGoals / stats.games).toFixed(1);
+                const avgHt = (stats.totalHtGoals / stats.games).toFixed(1);
+                const bothScorePerc = Math.round((stats.bothScore / stats.games) * 100);
+                const over25Perc = Math.round((stats.over25 / stats.games) * 100);
+                const bttsHTPerc = Math.round((stats.bttsHT / stats.games) * 100);
+                const over25HTPerc = Math.round((stats.over25HT / stats.games) * 100);
+                const over35Perc = Math.round((stats.over35 / stats.games) * 100);
+                const zeroHTPerc = Math.round((stats.zeroHT / stats.games) * 100);
+                const zeroFTPerc = Math.round((stats.zeroZero / stats.games) * 100);
+
+                const leagueInfo = leagueMapping[league] || { name: league, color: "#FFFFFF" };
+                const leagueCard = document.createElement('div');
+                leagueCard.className = 'league-card';
+                leagueCard.style.background = `linear-gradient(145deg, ${leagueInfo.color}22, ${leagueInfo.color}44)`;
+                leagueCard.style.borderColor = leagueInfo.color;
+                if (league === bestLeague) {
+                    leagueCard.classList.add('best-league');
+                }
+
+                leagueCard.innerHTML = `
                     <div class="league-name">${leagueInfo.name}</div>
                     <div class="stats-row">
                         <span class="stat-label">Partidas:</span>
@@ -993,56 +1148,56 @@
                         </div>
                     </div>
                 `;
-                    leaguesGrid.appendChild(leagueCard);
-                });
+                leaguesGrid.appendChild(leagueCard);
+            });
 
-                const playersByLeague = {};
-                Object.entries(playerStats).forEach(([player, stats]) => {
-                    if (stats.games >= 3) {
-                        if (!playersByLeague[stats.league]) {
-                            playersByLeague[stats.league] = [];
-                        }
-                        playersByLeague[stats.league].push([player, stats]);
+            const playersByLeague = {};
+            Object.entries(playerStats).forEach(([player, stats]) => {
+                if (stats.games >= 3) {
+                    if (!playersByLeague[stats.league]) {
+                        playersByLeague[stats.league] = [];
                     }
-                });
+                    playersByLeague[stats.league].push([player, stats]);
+                }
+            });
 
-                const bestPlayersByLeague = {};
-                Object.entries(playersByLeague).forEach(([league, players]) => {
-                    if (players.length > 0) {
-                        players.sort((a, b) => b[1].goalsFor - a[1].goalsFor);
-                        bestPlayersByLeague[league] = players[0][0];
-                    }
-                });
+            const bestPlayersByLeague = {};
+            Object.entries(playersByLeague).forEach(([league, players]) => {
+                if (players.length > 0) {
+                    players.sort((a, b) => b[1].goalsFor - a[1].goalsFor);
+                    bestPlayersByLeague[league] = players[0][0];
+                }
+            });
 
-                const sortedPlayers = Object.entries(playerStats)
-                    .filter(([_, stats]) => stats.games >= 3)
-                    .sort((a, b) => b[1].goalsFor - a[1].goalsFor);
+            const sortedPlayers = Object.entries(playerStats)
+                .filter(([_, stats]) => stats.games >= 3)
+                .sort((a, b) => b[1].goalsFor - a[1].goalsFor);
 
-                const topScorers = document.getElementById('topScorers');
-                topScorers.innerHTML = '';
+            const topScorers = document.getElementById('topScorers');
+            topScorers.innerHTML = '';
 
-                const bestPlayer = sortedPlayers.length > 0 ? sortedPlayers[0][0] : null;
+            const bestPlayer = sortedPlayers.length > 0 ? sortedPlayers[0][0] : null;
 
-                const bestPlayersSectionTitle = document.createElement('div');
-                bestPlayersSectionTitle.className = 'section-subtitle';
-                bestPlayersSectionTitle.innerHTML = 'Melhores Jogadores por Liga:';
-                topScorers.appendChild(bestPlayersSectionTitle);
+            const bestPlayersSectionTitle = document.createElement('div');
+            bestPlayersSectionTitle.className = 'section-subtitle';
+            bestPlayersSectionTitle.innerHTML = 'Melhores Jogadores por Liga:';
+            topScorers.appendChild(bestPlayersSectionTitle);
 
-                const bestPlayersContainer = document.createElement('div');
-                bestPlayersContainer.className = 'best-players-by-league';
+            const bestPlayersContainer = document.createElement('div');
+            bestPlayersContainer.className = 'best-players-by-league';
 
-                Object.entries(bestPlayersByLeague).forEach(([league, player]) => {
-                    const stats = playerStats[player];
-                    const leagueInfo = leagueMapping[league] || { name: league, color: '#FFFFFF' };
-                    const avgGoalsFT = (stats.goalsFor / stats.games).toFixed(1);
-                    const avgGoalsHT = (stats.goalsForHT / stats.games).toFixed(1);
+            Object.entries(bestPlayersByLeague).forEach(([league, player]) => {
+                const stats = playerStats[player];
+                const leagueInfo = leagueMapping[league] || { name: league, color: '#FFFFFF' };
+                const avgGoalsFT = (stats.goalsFor / stats.games).toFixed(1);
+                const avgGoalsHT = (stats.goalsForHT / stats.games).toFixed(1);
 
-                    const playerBadge = document.createElement('div');
-                    playerBadge.className = 'player-badge';
-                    playerBadge.style.background = `linear-gradient(145deg, ${leagueInfo.color}22, ${leagueInfo.color}44)`;
-                    playerBadge.style.border = `2px solid ${leagueInfo.color}`;
+                const playerBadge = document.createElement('div');
+                playerBadge.className = 'player-badge';
+                playerBadge.style.background = `linear-gradient(145deg, ${leagueInfo.color}22, ${leagueInfo.color}44)`;
+                playerBadge.style.border = `2px solid ${leagueInfo.color}`;
 
-                    playerBadge.innerHTML = `
+                playerBadge.innerHTML = `
                     <div style="font-weight: 700; color: ${leagueInfo.color}">${leagueInfo.name}</div>
                     <div style="font-weight: 700;">${player}</div>
                     <div style="font-size: 0.9rem;">${stats.goalsFor} gols em ${stats.games} jogos</div>
@@ -1050,65 +1205,65 @@
                     <div style="font-size: 1.1rem;">HT: ${avgGoalsHT}</div>
                 `;
 
-                    if (player === bestPlayer) {
-                        playerBadge.classList.add('best-player');
+                if (player === bestPlayer) {
+                    playerBadge.classList.add('best-player');
+                }
+
+                bestPlayersContainer.appendChild(playerBadge);
+            });
+
+            topScorers.appendChild(bestPlayersContainer);
+
+            const defendersByLeague = {};
+            Object.entries(playerStats).forEach(([player, stats]) => {
+                if (stats.games >= 3) {
+                    if (!defendersByLeague[stats.league]) {
+                        defendersByLeague[stats.league] = [];
                     }
+                    defendersByLeague[stats.league].push([player, stats]);
+                }
+            });
 
-                    bestPlayersContainer.appendChild(playerBadge);
-                });
+            const bestDefendersByLeague = {};
+            Object.entries(defendersByLeague).forEach(([league, players]) => {
+                if (players.length > 0) {
+                    players.sort((a, b) => (a[1].goalsAgainst / a[1].games) - (b[1].goalsAgainst / b[1].games));
+                    bestDefendersByLeague[league] = players[0][0];
+                }
+            });
 
-                topScorers.appendChild(bestPlayersContainer);
+            const bestDefense = Object.entries(playerStats)
+                .filter(([_, stats]) => stats.games >= 3)
+                .sort((a, b) => (a[1].goalsAgainst / a[1].games) - (b[1].goalsAgainst / b[1].games));
 
-                const defendersByLeague = {};
-                Object.entries(playerStats).forEach(([player, stats]) => {
-                    if (stats.games >= 3) {
-                        if (!defendersByLeague[stats.league]) {
-                            defendersByLeague[stats.league] = [];
-                        }
-                        defendersByLeague[stats.league].push([player, stats]);
-                    }
-                });
+            const bestDefenders = document.getElementById('bestDefenders');
+            bestDefenders.innerHTML = '';
 
-                const bestDefendersByLeague = {};
-                Object.entries(defendersByLeague).forEach(([league, players]) => {
-                    if (players.length > 0) {
-                        players.sort((a, b) => (a[1].goalsAgainst / a[1].games) - (b[1].goalsAgainst / b[1].games));
-                        bestDefendersByLeague[league] = players[0][0];
-                    }
-                });
+            const bestDefender = bestDefense.length > 0 ? bestDefense[0][0] : null;
 
-                const bestDefense = Object.entries(playerStats)
-                    .filter(([_, stats]) => stats.games >= 3)
-                    .sort((a, b) => (a[1].goalsAgainst / a[1].games) - (b[1].goalsAgainst / b[1].games));
+            const bestDefendersSectionTitle = document.createElement('div');
+            bestDefendersSectionTitle.className = 'section-subtitle';
+            bestDefendersSectionTitle.innerHTML = 'Melhores Defensores por Liga:';
+            bestDefenders.appendChild(bestDefendersSectionTitle);
 
-                const bestDefenders = document.getElementById('bestDefenders');
-                bestDefenders.innerHTML = '';
+            const bestDefendersContainer = document.createElement('div');
+            bestDefendersContainer.className = 'best-defenders-by-league';
 
-                const bestDefender = bestDefense.length > 0 ? bestDefense[0][0] : null;
+            Object.entries(bestDefendersByLeague).forEach(([league, player]) => {
+                const stats = playerStats[player];
+                const avgConceded = (stats.goalsAgainst / stats.games).toFixed(1);
+                const leagueInfo = leagueMapping[league] || { name: league, color: '#FFFFFF' };
+                const avgGoalsFT = (stats.goalsFor / stats.games).toFixed(1);
+                const avgGoalsAgainstFT = (stats.goalsAgainst / stats.games).toFixed(1);
+                const avgGoalsHT = (stats.goalsForHT / stats.games).toFixed(1);
+                const avgGoalsAgainstHT = (stats.goalsAgainstHT / stats.games).toFixed(1);
 
-                const bestDefendersSectionTitle = document.createElement('div');
-                bestDefendersSectionTitle.className = 'section-subtitle';
-                bestDefendersSectionTitle.innerHTML = 'Melhores Defensores por Liga:';
-                bestDefenders.appendChild(bestDefendersSectionTitle);
+                const playerBadge = document.createElement('div');
+                playerBadge.className = 'player-badge';
+                playerBadge.style.background = `linear-gradient(145deg, ${leagueInfo.color}22, ${leagueInfo.color}44)`;
+                playerBadge.style.border = `2px solid ${leagueInfo.color}`;
 
-                const bestDefendersContainer = document.createElement('div');
-                bestDefendersContainer.className = 'best-defenders-by-league';
-
-                Object.entries(bestDefendersByLeague).forEach(([league, player]) => {
-                    const stats = playerStats[player];
-                    const avgConceded = (stats.goalsAgainst / stats.games).toFixed(1);
-                    const leagueInfo = leagueMapping[league] || { name: league, color: '#FFFFFF' };
-                    const avgGoalsFT = (stats.goalsFor / stats.games).toFixed(1);
-                    const avgGoalsAgainstFT = (stats.goalsAgainst / stats.games).toFixed(1);
-                    const avgGoalsHT = (stats.goalsForHT / stats.games).toFixed(1);
-                    const avgGoalsAgainstHT = (stats.goalsAgainstHT / stats.games).toFixed(1);
-
-                    const playerBadge = document.createElement('div');
-                    playerBadge.className = 'player-badge';
-                    playerBadge.style.background = `linear-gradient(145deg, ${leagueInfo.color}22, ${leagueInfo.color}44)`;
-                    playerBadge.style.border = `2px solid ${leagueInfo.color}`;
-
-                    playerBadge.innerHTML = `
+                playerBadge.innerHTML = `
                     <div style="font-weight: 700; color: ${leagueInfo.color}">${leagueInfo.name}</div>
                     <div style="font-weight: 700;">${player}</div>
                     <div style="font-size: 0.9rem;">${avgConceded} gols/jogo em ${stats.games} jogos</div>
@@ -1116,103 +1271,103 @@
                     <div style="font-size: 1.1rem;">HT: ${avgGoalsAgainstHT}</div>
                 `;
 
-                    if (player === bestDefender) {
-                        playerBadge.classList.add('best-player');
-                    }
+                if (player === bestDefender) {
+                    playerBadge.classList.add('best-player');
+                }
 
-                    bestDefendersContainer.appendChild(playerBadge);
-                });
+                bestDefendersContainer.appendChild(playerBadge);
+            });
 
-                bestDefenders.appendChild(bestDefendersContainer);
-            }
+            bestDefenders.appendChild(bestDefendersContainer);
+        }
 
-            function evaluateMethods() {
-                const methodsGrid = document.getElementById('methodsGrid');
-                methodsGrid.innerHTML = '';
+        function evaluateMethods() {
+            const methodsGrid = document.getElementById('methodsGrid');
+            methodsGrid.innerHTML = '';
 
-                const methods = [
-                    {
-                        name: "Over_Battle_Volta",
-                        league: "Esoccer Battle Volta - 6 mins play",
-                        conditions: [
-                            { name: "Over 2.5 HT = 100%", check: (stats) => (stats.over25HT / stats.games) * 100 === 100, getPct: (stats) => Math.round((stats.over25HT / stats.games) * 100) },
-                            { name: "Over 6.0 FT = 100%", check: (stats) => (stats.over60FT / stats.games) * 100 === 100, getPct: (stats) => Math.round((stats.over60FT / stats.games) * 100) },
-                            { name: "BTTS HT = 100%", check: (stats) => (stats.bttsHT / stats.games) * 100 === 100, getPct: (stats) => Math.round((stats.bttsHT / stats.games) * 100) },
-                            { name: "0 X 0 HT E FT = 0%", check: (stats) => (stats.zeroHT / stats.games) * 100 === 0 && (stats.zeroFT / stats.games) * 100 === 0, getPct: (stats) => `${Math.round((stats.zeroHT / stats.games) * 100)}% HT / ${Math.round((stats.zeroFT / stats.games) * 100)}% FT` }
-                        ]
-                    },
-                    {
-                        name: "TOP_CONFRONTO",
-                        league: "Esoccer Battle - 8 mins play",
-                        conditions: [
-                            { name: "Over 2.5 HT = 100%", check: (stats) => (stats.over25HT / stats.games) * 100 === 100, getPct: (stats) => Math.round((stats.over25HT / stats.games) * 100) },
-                            { name: "Over 5.0 FT >= 80%", check: (stats) => (stats.over50FT / stats.games) * 100 >= 80, getPct: (stats) => Math.round((stats.over50FT / stats.games) * 100) },
-                            { name: "BTTS HT >= 89%", check: (stats) => (stats.bttsHT / stats.games) * 100 >= 89, getPct: (stats) => Math.round((stats.bttsHT / stats.games) * 100) },
-                            { name: "0 X 0 HT = 0%", check: (stats) => (stats.zeroHT / stats.games) * 100 === 0, getPct: (stats) => Math.round((stats.zeroHT / stats.games) * 100) }
-                        ]
-                    },
-                    {
-                        name: "Over_HT_GT",
-                        league: "Esoccer GT Leagues – 12 mins play",
-                        conditions: [
-                            { name: "Over 3.0 HT = 100%", check: (stats) => (stats.over30HT / stats.games) * 100 === 100, getPct: (stats) => Math.round((stats.over30HT / stats.games) * 100) },
-                            { name: "BTTS HT = 100%", check: (stats) => (stats.bttsHT / stats.games) * 100 === 100, getPct: (stats) => Math.round((stats.bttsHT / stats.games) * 100) },
-                            { name: "0 X 0 HT = 0%", check: (stats) => (stats.zeroHT / stats.games) * 100 === 0, getPct: (stats) => Math.round((stats.zeroHT / stats.games) * 100) }
-                        ]
-                    },
-                    {
-                        name: "H2H_OVER",
-                        league: "Esoccer H2H GG League - 8 mins play",
-                        conditions: [
-                            { name: "Over 1.5 HT = 100%", check: (stats) => (stats.over15HT / stats.games) * 100 === 100, getPct: (stats) => Math.round((stats.over15HT / stats.games) * 100) },
-                            { name: "Over 2.5 FT >= 90%", check: (stats) => (stats.over25 / stats.games) * 100 >= 90, getPct: (stats) => Math.round((stats.over25 / stats.games) * 100) },
-                            { name: "BTTS HT >= 80%", check: (stats) => (stats.bttsHT / stats.games) * 100 >= 80, getPct: (stats) => Math.round((stats.bttsHT / stats.games) * 100) },
-                            { name: "0 X 0 HT = 0%", check: (stats) => (stats.zeroHT / stats.games) * 100 === 0, getPct: (stats) => Math.round((stats.zeroHT / stats.games) * 100) }
-                        ]
-                    },
-                    {
-                        name: "Adriactic_100%",
-                        league: "Esoccer Adriatic League - 10 mins play",
-                        conditions: [
-                            { name: "Over 3.0 HT = 100%", check: (stats) => (stats.over30HT / stats.games) * 100 === 100, getPct: (stats) => Math.round((stats.over30HT / stats.games) * 100) },
-                            { name: "Over 5.5 FT = 100%", check: (stats) => (stats.over55FT / stats.games) * 100 === 100, getPct: (stats) => Math.round((stats.over55FT / stats.games) * 100) },
-                            { name: "BTTS HT = 100%", check: (stats) => (stats.bttsHT / stats.games) * 100 === 100, getPct: (stats) => Math.round((stats.bttsHT / stats.games) * 100) },
-                            { name: "0 X 0 HT = 0%", check: (stats) => (stats.zeroHT / stats.games) * 100 === 0, getPct: (stats) => Math.round((stats.zeroHT / stats.games) * 100) }
-                        ]
-                    }
-                ];
+            const methods = [
+                {
+                    name: "Over_Battle_Volta",
+                    league: "Esoccer Battle Volta - 6 mins play",
+                    conditions: [
+                        { name: "Over 2.5 HT = 100%", check: (stats) => (stats.over25HT / stats.games) * 100 === 100, getPct: (stats) => Math.round((stats.over25HT / stats.games) * 100) },
+                        { name: "Over 6.0 FT = 100%", check: (stats) => (stats.over60FT / stats.games) * 100 === 100, getPct: (stats) => Math.round((stats.over60FT / stats.games) * 100) },
+                        { name: "BTTS HT = 100%", check: (stats) => (stats.bttsHT / stats.games) * 100 === 100, getPct: (stats) => Math.round((stats.bttsHT / stats.games) * 100) },
+                        { name: "0 X 0 HT E FT = 0%", check: (stats) => (stats.zeroHT / stats.games) * 100 === 0 && (stats.zeroFT / stats.games) * 100 === 0, getPct: (stats) => `${Math.round((stats.zeroHT / stats.games) * 100)}% HT / ${Math.round((stats.zeroFT / stats.games) * 100)}% FT` }
+                    ]
+                },
+                {
+                    name: "TOP_CONFRONTO",
+                    league: "Esoccer Battle - 8 mins play",
+                    conditions: [
+                        { name: "Over 2.5 HT = 100%", check: (stats) => (stats.over25HT / stats.games) * 100 === 100, getPct: (stats) => Math.round((stats.over25HT / stats.games) * 100) },
+                        { name: "Over 5.0 FT >= 80%", check: (stats) => (stats.over50FT / stats.games) * 100 >= 80, getPct: (stats) => Math.round((stats.over50FT / stats.games) * 100) },
+                        { name: "BTTS HT >= 89%", check: (stats) => (stats.bttsHT / stats.games) * 100 >= 89, getPct: (stats) => Math.round((stats.bttsHT / stats.games) * 100) },
+                        { name: "0 X 0 HT = 0%", check: (stats) => (stats.zeroHT / stats.games) * 100 === 0, getPct: (stats) => Math.round((stats.zeroHT / stats.games) * 100) }
+                    ]
+                },
+                {
+                    name: "Over_HT_GT",
+                    league: "Esoccer GT Leagues – 12 mins play",
+                    conditions: [
+                        { name: "Over 3.0 HT = 100%", check: (stats) => (stats.over30HT / stats.games) * 100 === 100, getPct: (stats) => Math.round((stats.over30HT / stats.games) * 100) },
+                        { name: "BTTS HT = 100%", check: (stats) => (stats.bttsHT / stats.games) * 100 === 100, getPct: (stats) => Math.round((stats.bttsHT / stats.games) * 100) },
+                        { name: "0 X 0 HT = 0%", check: (stats) => (stats.zeroHT / stats.games) * 100 === 0, getPct: (stats) => Math.round((stats.zeroHT / stats.games) * 100) }
+                    ]
+                },
+                {
+                    name: "H2H_OVER",
+                    league: "Esoccer H2H GG League - 8 mins play",
+                    conditions: [
+                        { name: "Over 1.5 HT = 100%", check: (stats) => (stats.over15HT / stats.games) * 100 === 100, getPct: (stats) => Math.round((stats.over15HT / stats.games) * 100) },
+                        { name: "Over 2.5 FT >= 90%", check: (stats) => (stats.over25 / stats.games) * 100 >= 90, getPct: (stats) => Math.round((stats.over25 / stats.games) * 100) },
+                        { name: "BTTS HT >= 80%", check: (stats) => (stats.bttsHT / stats.games) * 100 >= 80, getPct: (stats) => Math.round((stats.bttsHT / stats.games) * 100) },
+                        { name: "0 X 0 HT = 0%", check: (stats) => (stats.zeroHT / stats.games) * 100 === 0, getPct: (stats) => Math.round((stats.zeroHT / stats.games) * 100) }
+                    ]
+                },
+                {
+                    name: "Adriactic_100%",
+                    league: "Esoccer Adriatic League - 10 mins play",
+                    conditions: [
+                        { name: "Over 3.0 HT = 100%", check: (stats) => (stats.over30HT / stats.games) * 100 === 100, getPct: (stats) => Math.round((stats.over30HT / stats.games) * 100) },
+                        { name: "Over 5.5 FT = 100%", check: (stats) => (stats.over55FT / stats.games) * 100 === 100, getPct: (stats) => Math.round((stats.over55FT / stats.games) * 100) },
+                        { name: "BTTS HT = 100%", check: (stats) => (stats.bttsHT / stats.games) * 100 === 100, getPct: (stats) => Math.round((stats.bttsHT / stats.games) * 100) },
+                        { name: "0 X 0 HT = 0%", check: (stats) => (stats.zeroHT / stats.games) * 100 === 0, getPct: (stats) => Math.round((stats.zeroHT / stats.games) * 100) }
+                    ]
+                }
+            ];
 
-                methods.forEach(method => {
-                    const stats = leagueStats[method.league];
-                    const methodCard = document.createElement('div');
-                    methodCard.className = 'method-card';
-                    let html = `<div class="method-name">${method.name}</div>`;
+            methods.forEach(method => {
+                const stats = leagueStats[method.league];
+                const methodCard = document.createElement('div');
+                methodCard.className = 'method-card';
+                let html = `<div class="method-name">${method.name}</div>`;
 
-                    if (!stats || stats.games === 0) {
-                        html += `<p style="color: #ff4d4d; text-align: center;">Nenhum dado disponível para esta liga.</p>`;
-                    } else {
-                        let allConditionsMet = true;
-                        html += '<div>';
-                        method.conditions.forEach(cond => {
-                            const met = cond.check(stats);
-                            allConditionsMet = allConditionsMet && met;
-                            const pct = cond.getPct(stats);
-                            html += `<div class="stats-row">
+                if (!stats || stats.games === 0) {
+                    html += `<p style="color: #ff4d4d; text-align: center;">Nenhum dado disponível para esta liga.</p>`;
+                } else {
+                    let allConditionsMet = true;
+                    html += '<div>';
+                    method.conditions.forEach(cond => {
+                        const met = cond.check(stats);
+                        allConditionsMet = allConditionsMet && met;
+                        const pct = cond.getPct(stats);
+                        html += `<div class="stats-row">
                             <span class="stat-label">${cond.name}</span>
                             <span class="stat-value ${met ? 'highlight' : ''}">${met ? 'Sim' : 'Não'} (${pct}%)</span>
                         </div>`;
-                        });
-                        html += '</div>';
-                        html += `<p style="text-align: center; margin-top: 15px; font-weight: 700; color: ${allConditionsMet ? '#39FF14' : '#ff4d4d'};">Status: ${allConditionsMet ? 'Over' : 'Not Over'}</p>`;
-                    }
+                    });
+                    html += '</div>';
+                    html += `<p style="text-align: center; margin-top: 15px; font-weight: 700; color: ${allConditionsMet ? '#39FF14' : '#ff4d4d'};">Status: ${allConditionsMet ? 'Over' : 'Not Over'}</p>`;
+                }
 
-                    methodCard.innerHTML = html;
-                    methodsGrid.appendChild(methodCard);
-                });
-            }
+                methodCard.innerHTML = html;
+                methodsGrid.appendChild(methodCard);
+            });
+        }
 
-            loadData();
-            setInterval(loadData, 300000);
+        loadData();
+        setInterval(loadData, 300000);
     </script>
 </body>
 
