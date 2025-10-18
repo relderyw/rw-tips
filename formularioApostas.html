@@ -1703,7 +1703,7 @@
       // Calcular e atualizar unidades
       const unidadesGanhas = valorUnidade > 0 ? (ganhoTotal / valorUnidade).toFixed(2) : "0.00";
       const unidadesPerdidas = valorUnidade > 0 ? (perdaTotal / valorUnidade).toFixed(2) : "0.00";
-      const unidadesSaldo = valorUnidade > 0 ? ((ganhoTotal - perdaTotal) / valorUnidade).toFixed(3) : "0.00";
+      const unidadesSaldo = valorUnidade > 0 ? ((ganhoTotal - perdaTotal) / valorUnidade).toFixed(2) : "0.00";
       document.getElementById("unidades-ganhas").textContent = unidadesGanhas;
       document.getElementById("unidades-perdidas").textContent = unidadesPerdidas;
       document.getElementById("unidades-saldo").textContent = unidadesSaldo;
