@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RW TIPS - Análise Avançada de eSoccer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
+            /* Variáveis do código principal */
             --primary: #6c5ce7;
             --accent: #00ff88;
             --bg-dark: #0f0f13;
@@ -17,13 +22,17 @@
             --warning: #ffa500;
             --error: #ff4c4c;
             --gradient: linear-gradient(45deg, #6c5ce7, #00ff88);
+            /* Variáveis da sidebar */
+            --sidebar-primary-color: #6c5ce7;
+            --sidebar-accent-color: #00ff88;
+            --sidebar-border-color: rgba(255, 255, 255, 0.05);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Space Grotesk', sans-serif;
         }
 
         body {
@@ -31,8 +40,110 @@
             color: var(--text);
             min-height: 100vh;
             padding-bottom: 50px;
+            padding-left: 90px;
+            transition: padding-left 0.3s ease;
         }
 
+        /* Estilos da sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 70px;
+            background: rgba(26, 26, 35, 0.95);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid var(--sidebar-border-color);
+            transition: width 0.3s ease;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .sidebar:hover {
+            width: 260px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            padding: 20px 15px;
+            gap: 15px;
+            border-bottom: 1px solid var(--sidebar-border-color);
+            white-space: nowrap;
+        }
+
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--sidebar-accent-color), #00ffaa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar:hover .sidebar-title {
+            opacity: 1;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .sidebar-menu li {
+            margin: 5px 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: var(--text-sec);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            gap: 15px;
+            white-space: nowrap;
+        }
+
+        .sidebar-menu a:hover {
+            background: rgba(108, 92, 231, 0.1);
+            color: var(--sidebar-accent-color);
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu li.active a {
+            background: linear-gradient(90deg, rgba(108, 92, 231, 0.2), transparent);
+            color: var(--sidebar-accent-color);
+            border-left: 3px solid var(--sidebar-accent-color);
+        }
+
+        .sidebar-menu .icon {
+            font-size: 1.3rem;
+            width: 30px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-menu .label {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-weight: 500;
+        }
+
+        .sidebar:hover .sidebar-menu .label {
+            opacity: 1;
+        }
+
+        /* Estilos do código principal */
         .header {
             width: 100%;
             padding: 15px;
@@ -43,7 +154,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
         }
 
         .logo-img {
@@ -128,8 +239,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .tips-banner {
@@ -192,7 +310,8 @@
             border-radius: 8px;
         }
 
-        .filters input, .filters select {
+        .filters input,
+        .filters select {
             padding: 10px 15px;
             background: var(--bg-dark);
             border: 1px solid var(--border);
@@ -203,7 +322,8 @@
             min-width: 150px;
         }
 
-        .filters input:focus, .filters select:focus {
+        .filters input:focus,
+        .filters select:focus {
             border-color: var(--accent);
             outline: none;
         }
@@ -213,7 +333,7 @@
             background: var(--card-bg);
             border-radius: 12px;
             margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
         table {
@@ -221,7 +341,8 @@
             border-collapse: collapse;
         }
 
-        th, td {
+        th,
+        td {
             padding: 15px;
             text-align: center;
             border-bottom: 1px solid var(--border);
@@ -244,9 +365,20 @@
             background: rgba(108, 92, 231, 0.1);
         }
 
-        .green { color: var(--success); font-weight: bold; }
-        .yellow { color: var(--warning); font-weight: bold; }
-        .red { color: var(--error); font-weight: bold; }
+        .green {
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .yellow {
+            color: var(--warning);
+            font-weight: bold;
+        }
+
+        .red {
+            color: var(--error);
+            font-weight: bold;
+        }
 
         .badge {
             display: inline-block;
@@ -300,15 +432,65 @@
         }
 
         @media (max-width: 768px) {
-            .content { padding: 80px 10px 10px; }
-            .tips-grid { grid-template-columns: 1fr; }
-            th, td { padding: 10px; font-size: 0.9rem; }
+            body {
+                padding-left: 70px;
+            }
+
+            .sidebar {
+                width: 60px;
+            }
+
+            .sidebar:hover {
+                width: 220px;
+            }
+
+            .content {
+                padding: 80px 10px 10px;
+            }
+
+            .tips-grid {
+                grid-template-columns: 1fr;
+            }
+
+            th,
+            td {
+                padding: 10px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
+
 <body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://i.ibb.co/G4Y8sHM/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips"
+                class="sidebar-logo">
+            <span class="sidebar-title">RW TIPS</span>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="visualization.html"><span class="icon">⚽</span><span class="label">Próximos Jogos</span></a>
+            </li>
+            <li><a href="results.html"><span class="icon">📊</span><span class="label">Últimos Resultados</span></a>
+            </li>
+            <li><a href="live.html"><span class="icon">🔴</span><span class="label">AO VIVO</span></a></li>
+            <li><a href="statistics.html"><span class="icon">📈</span><span class="label">Estatísticas das
+                        Ligas</span></a></li>
+            <li><a href="bets.html"><span class="icon">💰</span><span class="label">Registrar Apostas</span></a></li>
+            <li><a href="players.html"><span class="icon">🎮</span><span class="label">Análise de Jogadores</span></a>
+            </li>
+            <li><a href="dashboard.html"><span class="icon">📋</span><span class="label">Dashboard</span></a></li>
+            <li><a href="nba.html"><span class="icon">🏀</span><span class="label">NBA Stats</span></a></li>
+            <li><a href="radar.html"><span class="icon">🎯</span><span class="label">Radar</span></a></li>
+            <li><a href="over.html"><span class="icon">📍</span><span class="label">Over Analysis</span></a></li>
+        </ul>
+    </nav>
+
+    <!-- Conteúdo principal -->
     <header class="header">
-        <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="Logo" class="logo-img">
+        <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="Logo"
+            class="logo-img">
         <h2 class="logo-text">👑 RW TIPS 🎮</h2>
         <button class="back-button" onclick="window.location.href='visualization.html'">Voltar</button>
     </header>
@@ -467,7 +649,7 @@
                 const awayGoalsFT = game.score.away;
                 const homeGoalsHT = game.scoreHT ? game.scoreHT.home : 0;
                 const awayGoalsHT = game.scoreHT ? game.scoreHT.away : 0;
-                
+
                 const totalGoalsFT = homeGoalsFT + awayGoalsFT;
                 const totalGoalsHT = homeGoalsHT + awayGoalsHT;
                 const isBTTS = homeGoalsFT > 0 && awayGoalsFT > 0;
@@ -476,14 +658,14 @@
                 leagues.add(league);
 
                 // Estatísticas de jogadores
-                [ {player: homePlayer, goalsFT: homeGoalsFT, goalsHT: homeGoalsHT, goalsConceded: awayGoalsFT}, 
-                  {player: awayPlayer, goalsFT: awayGoalsFT, goalsHT: awayGoalsHT, goalsConceded: homeGoalsFT} ].forEach(({player, goalsFT, goalsHT, goalsConceded}) => {
+                [{ player: homePlayer, goalsFT: homeGoalsFT, goalsHT: homeGoalsHT, goalsConceded: awayGoalsFT },
+                { player: awayPlayer, goalsFT: awayGoalsFT, goalsHT: awayGoalsHT, goalsConceded: homeGoalsFT }].forEach(({ player, goalsFT, goalsHT, goalsConceded }) => {
                     const won = goalsFT > goalsConceded;
                     const draw = goalsFT === goalsConceded;
 
                     if (!playerStats[player]) playerStats[player] = {};
                     if (!playerStats[player][league]) playerStats[player][league] = { games: [] };
-                    
+
                     playerStats[player][league].games.push({
                         goalsFT, goalsHT, goalsConceded, totalGoalsFT, totalGoalsHT,
                         isBTTS, isOver25, won, draw
@@ -563,7 +745,7 @@
             for (let league in leagueStats) {
                 const allGamesInLeague = leagueStats[league].allGames;
                 const last10Games = allGamesInLeague.slice(0, 10);
-                
+
                 if (last10Games.length === 0) continue;
 
                 const totalGoalsFT = last10Games.reduce((sum, g) => sum + g.totalGoalsFT, 0);
@@ -687,7 +869,7 @@
                 consistent.sort((a, b) => a.consistency - b.consistency);
                 trends.push({
                     title: '🎯 Jogadores Mais Consistentes',
-                    content: consistent.slice(0, 5).map(p => 
+                    content: consistent.slice(0, 5).map(p =>
                         `💠<strong>${p.player}</strong> (${p.league}): ${p.consistency} desvio - ${p.winRate}% vitórias<br><br>`
                     ).join('<br>')
                 });
@@ -702,7 +884,7 @@
             if (volatile.length > 0) {
                 trends.push({
                     title: '💥 Confrontos Mais Voláteis',
-                    content: volatile.map(m => 
+                    content: volatile.map(m =>
                         `<strong>💠 ${m.key}</strong>: ${m.volatility.toFixed(2)} volatilidade - Últimos: ${m.lastScores || 'N/A'}<br><br>`
                     ).join('')
                 });
@@ -715,12 +897,12 @@
                     const recent = m.games.slice(0, 3);
                     const p1Wins = recent.filter(g => g.winner === m.player1).length;
                     const p2Wins = recent.filter(g => g.winner === m.player2).length;
-                    
-                    if ((m.winsP1 > m.winsP2 + 2 && p2Wins > p1Wins) || 
+
+                    if ((m.winsP1 > m.winsP2 + 2 && p2Wins > p1Wins) ||
                         (m.winsP2 > m.winsP1 + 2 && p1Wins > p2Wins)) {
-                        upsets.push({ 
-                            key: m.key, 
-                            trend: `Histórico: ${m.winsP1}-${m.winsP2} | Últimos 3: ${p1Wins}-${p2Wins}` 
+                        upsets.push({
+                            key: m.key,
+                            trend: `Histórico: ${m.winsP1}-${m.winsP2} | Últimos 3: ${p1Wins}-${p2Wins}`
                         });
                     }
                 }
@@ -729,7 +911,7 @@
             if (upsets.length > 0) {
                 trends.push({
                     title: '🦓 Zebras em Ascensão',
-                    content: upsets.slice(0, 5).map(u => 
+                    content: upsets.slice(0, 5).map(u =>
                         `<strong>${u.key}</strong>: ${u.trend}<br><br>`
                     ).join('')
                 });
@@ -747,7 +929,7 @@
             if (offensiveLeagues.length > 0) {
                 trends.push({
                     title: '⚔️ Ligas Ultra-Ofensivas',
-                    content: offensiveLeagues.slice(0, 3).map(([name, stats]) => 
+                    content: offensiveLeagues.slice(0, 3).map(([name, stats]) =>
                         `💠<strong>${name}</strong>: ${stats.avgGoalsFT} gols/jogo - Over 2.5: ${stats.over25Rate}%<br><br>`
                     ).join('')
                 });
@@ -756,7 +938,7 @@
             if (defensiveLeagues.length > 0) {
                 trends.push({
                     title: '🛡️ Ligas Defensivas',
-                    content: defensiveLeagues.slice(0, 3).map(([name, stats]) => 
+                    content: defensiveLeagues.slice(0, 3).map(([name, stats]) =>
                         `💠<strong>${name}</strong>: ${stats.avgGoalsFT} gols/jogo - BTTS: ${stats.bttsRate}%<br><br>`
                     ).join('')
                 });
@@ -770,9 +952,9 @@
                     if (games.length >= 3) {
                         const recent3 = games.slice(0, 3);
                         if (recent3.every(g => g.won)) {
-                            hotStreaks.push({ 
-                                player, 
-                                league, 
+                            hotStreaks.push({
+                                player,
+                                league,
                                 streak: recent3.length,
                                 avgGoals: (recent3.reduce((sum, g) => sum + g.goalsFT, 0) / 3).toFixed(1)
                             });
@@ -784,7 +966,7 @@
             if (hotStreaks.length > 0) {
                 trends.push({
                     title: '🔥 Jogadores em Sequência',
-                    content: hotStreaks.map(h => 
+                    content: hotStreaks.map(h =>
                         `💠<strong>${h.player}</strong> (${h.league}): ${h.streak} vitórias seguidas - ${h.avgGoals} gols/jogo<br><br>`
                     ).join('')
                 });
@@ -832,7 +1014,7 @@
                 }
             }
 
-            data = data.filter(d => 
+            data = data.filter(d =>
                 (!search || d.player.toLowerCase().includes(search)) &&
                 (!league || d.league === league)
             );
@@ -847,8 +1029,8 @@
 
             tbody.innerHTML = data.map(d => {
                 const formBadge = d.form === 'hot' ? '<span class="badge hot">🔥 Quente</span>' :
-                                 d.form === 'cold' ? '<span class="badge cold">❄️ Frio</span>' :
-                                 '<span class="badge neutral">😐 Neutro</span>';
+                    d.form === 'cold' ? '<span class="badge cold">❄️ Frio</span>' :
+                        '<span class="badge neutral">😐 Neutro</span>';
 
                 return `
                     <tr>
@@ -882,7 +1064,7 @@
 
             let data = matchupStats.filter(m => m.avgGoalsFT > 0);
 
-            data = data.filter(d => 
+            data = data.filter(d =>
                 (!search || d.key.toLowerCase().includes(search)) &&
                 (!league || d.league === league)
             );
@@ -992,4 +1174,5 @@
         });
     </script>
 </body>
+
 </html>
