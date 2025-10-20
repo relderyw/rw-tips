@@ -1093,6 +1093,8 @@
 
                     // Ordenar pela sequência de horário (mais cedo primeiro)
                     this.gamesData.sort((a, b) => a.startMS - b.startMS);
+                    // Manter apenas os próximos 20 jogos
+                    this.gamesData = this.gamesData.slice(0, 20);
 
                     this.hideLoading();
                     this.updateStatsSummary();
