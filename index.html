@@ -559,7 +559,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 1200px;
+            min-width: 1400px;
         }
 
         thead {
@@ -1544,34 +1544,42 @@
                 const avgGoalsRow = confrontationStats?.rows?.find(row => 
                     row.columns[0].value === 'Média Total Gols'
                 );
-                const avgGoals = avgGoalsRow ? parseFloat(avgGoalsRow.columns[1].value) : 0;
+                const avgGoals = avgGoalsRow ? parseFloat(avgGoalsRow.columns[1]?.value || 0) : 0;
 
                 // Média de gols casa
                 const homeAvgGoalsRow = homeParticipantStats?.rows?.find(row => 
                     row.columns[0].value === 'Média de gols'
                 );
-                const homeAvgGoals = homeAvgGoalsRow ? parseFloat(homeAvgGoalsRow.columns[1].value) : 0;
+                const homeAvgGoals = homeAvgGoalsRow ? parseFloat(homeAvgGoalsRow.columns[1]?.value || 0) : 0;
 
                 // Média de gols fora
                 const awayAvgGoalsRow = awayParticipantStats?.rows?.find(row => 
                     row.columns[0].value === 'Média de gols'
                 );
-                const awayAvgGoals = awayAvgGoalsRow ? parseFloat(awayAvgGoalsRow.columns[1].value) : 0;
+                const awayAvgGoals = awayAvgGoalsRow ? parseFloat(awayAvgGoalsRow.columns[1]?.value || 0) : 0;
 
                 // BTTS
                 const bttsYesRow = bttsStats?.rows?.find(row => 
                     row.columns[0].value === 'Ambos Marcam - Sim'
                 );
-                const bttsPercent = bttsYesRow ? parseInt(bttsYesRow.columns[1].value) : 0;
+                const bttsPercent = bttsYesRow ? parseInt(bttsYesRow.columns[1]?.value || 0) : 0;
 
                 // Over stats
                 const over15Row = overFTStats?.rows?.find(row => row.columns[0].value === '1.5');
                 const over25Row = overFTStats?.rows?.find(row => row.columns[0].value === '2.5');
                 const over35Row = overFTStats?.rows?.find(row => row.columns[0].value === '3.5');
 
-                const over15 = over15Row && !over15Row.columns[1].isVip ? parseInt(over15Row.columns[1].value) : 0;
-                const over25 = over25Row && !over25Row.columns[1].isVip ? parseInt(over25Row.columns[1].value) : 0;
-                const over35 = over35Row && !over35Row.columns[1].isVip ? parseInt(over35Row.columns[1].value) : 0;
+                const over15 = over15Row && over15Row.columns[1]?.isVip !== true 
+                    ? parseInt(over15Row.columns[1]?.value || 0) 
+                    : 0;
+                const over25 = over25Row && over25Row.columns[1]?.isVip !== true 
+                    ? parseInt(over25Row.columns[1]?.value || 0) 
+                    : 0;
+                const over35 = over35Row && over35Row.columns[1]?.isVip !== true 
+                    ? parseInt(over35Row.columns[1]?.value || 0) 
+                    : 0;
+
+                console.log('Over Stats:', { over15, over25, over35 }); // Debug log
 
                 return {
                     avgGoals: Number(avgGoals.toFixed(2)),
