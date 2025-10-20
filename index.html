@@ -1486,8 +1486,10 @@
                         const stats = await fetchGameStats(normalizedGame);
                         const processedGame = { ...normalizedGame, ...stats };
                         processedGame.qualityScore = calculateQualityScore(processedGame);
-                        processedGame.premiumFT = isPremiumMatch(processedGame);
-                        processedGame.premiumHT = isHTPremiumMatch(processedGame);
+                        
+                        // CORREÇÃO: Aplicar a lógica correta para determinar premium
+                        processedGame.premiumFT = isPremiumMatchFT(processedGame);
+                        processedGame.premiumHT = isPremiumMatchHT(processedGame);
 
                         const startDate = new Date(String(item.scheduled_time_brt).replace(' ', 'T'));
                         processedGame.day = startDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
@@ -1609,16 +1611,22 @@
             return Math.min(baseScore, 100);
         }
 
-        function isPremiumMatch(game) {
-            // Verifica se alguma métrica FT atende aos critérios de "Premium"
-            const isGoalsPremium = game.avgGoals >= 2.5 || game.homeAvgGoals >= 2.5 || game.awayAvgGoals >= 2.5;
-            const isPercentPremium = game.over15 >= 85 || game.over25 >= 85 || game.over35 >= 85 || game.bttsPercent >= 85;
-            return isGoalsPremium || isPercentPremium;
+        // CORREÇÃO: Nova lógica para determinar partidas premium FT
+        function isPremiumMatchFT(game) {
+            // Apenas métricas FT com % >= 85% E média de gols >= 2.5
+            const hasHighPercentage = game.over15 >= 85 || game.over25 >= 85 || game.over35 >= 85 || game.bttsPercent >= 85;
+            const hasHighGoalAverage = game.avgGoals >= 2.5;
+            
+            return hasHighPercentage && hasHighGoalAverage;
         }
 
-        function isHTPremiumMatch(game) {
-            // Verifica se alguma métrica HT atende aos critérios de "Premium"
-            return game.htOver05 >= 85 || game.htOver15 >= 85 || game.htOver25 >= 85 || game.htBttsPercent >= 85;
+        // CORREÇÃO: Nova lógica para determinar partidas premium HT
+        function isPremiumMatchHT(game) {
+            // Apenas métricas HT com % >= 85% E média de gols >= 2.5
+            const hasHighPercentage = game.htOver05 >= 85 || game.htOver15 >= 85 || game.htOver25 >= 85 || game.htBttsPercent >= 85;
+            const hasHighGoalAverage = game.avgGoals >= 2.5;
+            
+            return hasHighPercentage && hasHighGoalAverage;
         }
 
         function displayGames(games) {
@@ -1627,9 +1635,9 @@
 
             games.forEach(game => {
                 const row = document.createElement('tr');
-                // Estrelas só aparecem se a condição de "Premium" for atendida para cada categoria
-                const starsHT = isHTPremiumMatch(game) ? '<i class="fas fa-star star" style="color:#1E90FF"></i>' : '';
-                const starsFT = isPremiumMatch(game) ? '<i class="fas fa-star star" style="color:#10b981"></i>' : '';
+                // CORREÇÃO: Estrelas só aparecem se ambas as condições forem atendidas
+                const starsHT = isPremiumMatchHT(game) ? '<i class="fas fa-star star" style="color:#1E90FF"></i>' : '';
+                const starsFT = isPremiumMatchFT(game) ? '<i class="fas fa-star star" style="color:#10b981"></i>' : '';
 
                 row.innerHTML = `
                 <td>
