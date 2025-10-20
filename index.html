@@ -82,6 +82,24 @@
             box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
         }
 
+        /* Admin Button */
+        .admin-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            color: rgba(16, 185, 129, 0.5);
+            border: none;
+            font-size: 14px;
+            padding: 5px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        .admin-button:hover {
+            color: rgba(16, 185, 129, 0.8);
+        }
+
         /* Login Form */
         .login-container {
             max-width: 450px;
@@ -123,7 +141,8 @@
             margin-bottom: 8px;
         }
 
-        .input-group input {
+        .input-group input,
+        .input-group select {
             width: 100%;
             padding: 12px 16px;
             background: rgba(17, 24, 39, 0.5);
@@ -134,7 +153,8 @@
             transition: all 0.3s;
         }
 
-        .input-group input:focus {
+        .input-group input:focus,
+        .input-group select:focus {
             outline: none;
             border-color: #10b981;
             box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
@@ -161,6 +181,20 @@
         .btn-login:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+        }
+
+        .btn-back {
+            background: transparent;
+            color: rgba(16, 185, 129, 0.8);
+            border: none;
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .btn-back:hover {
+            color: rgba(16, 185, 129, 1);
         }
 
         .divider {
@@ -204,6 +238,193 @@
         .btn-social:hover {
             transform: translateY(-2px);
             filter: brightness(1.1);
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            display: none;
+            max-width: 800px;
+            margin: 40px auto;
+            background: rgba(31, 41, 55, 0.5);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 40px;
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .admin-panel h2 {
+            text-align: center;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #10b981, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .admin-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(75, 85, 99, 0.5);
+        }
+
+        .admin-tab {
+            padding: 10px 20px;
+            background: transparent;
+            color: #d1d5db;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            opacity: 0.7;
+            transition: all 0.3s;
+        }
+
+        .admin-tab:hover {
+            opacity: 1;
+        }
+
+        .admin-tab.active {
+            opacity: 1;
+            border-bottom: 2px solid #10b981;
+            color: #10b981;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .input-row .input-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .success-message {
+            color: #10b981;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .user-list {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .user-item {
+            padding: 10px;
+            border-bottom: 1px solid rgba(75, 85, 99, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-email {
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .user-created,
+        .user-expires {
+            color: #9ca3af;
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
+        .user-expires.expired {
+            color: #ef4444;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .user-actions button {
+            padding: 8px 16px;
+            font-size: 12px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .user-actions button:hover {
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: rgba(31, 41, 55, 0.5);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            width: 90%;
+            max-width: 450px;
+            padding: 40px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: #d1d5db;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .close-modal:hover {
+            color: #10b981;
         }
 
         /* Main Content */
@@ -557,11 +778,26 @@
                 width: 100%;
                 justify-content: center;
             }
+
+            .admin-button {
+                font-size: 12px;
+            }
+
+            .admin-panel {
+                padding: 20px;
+            }
+
+            .input-row {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Admin Button -->
+        <button class="admin-button" id="show-admin-login">Admin</button>
+
         <!-- Header -->
         <div class="header">
             <div class="logo-section">
@@ -586,7 +822,13 @@
                 <input type="password" id="loginPassword" placeholder="••••••••">
             </div>
 
-            <button class="btn-login" id="loginBtn">Entrar</button>
+            <button class="btn-login" id="loginBtn">
+                <span id="loginText">Entrar</span>
+                <div class="spinner hidden" id="loginLoader"></div>
+            </button>
+
+            <div class="error-message" id="loginError"></div>
+            <div class="success-message" id="loginSuccess"></div>
 
             <div class="divider">
                 <p class="social-text">Ainda não tem acesso?</p>
@@ -594,6 +836,118 @@
                     <a href="https://wa.me/5592994951771?text=Olá,+gostaria+de+conhecer+a+👑RW+TIPS🎮" target="_blank" class="btn-social btn-whatsapp">📱 WhatsApp</a>
                     <a href="https://t.me/assuncaoIII" target="_blank" class="btn-social btn-telegram">📩 Telegram</a>
                 </div>
+            </div>
+        </div>
+
+        <!-- Admin Login Form -->
+        <div class="login-container hidden" id="adminLoginForm">
+            <h2 class="login-title">🔐 Admin</h2>
+            <p class="login-subtitle">Acesse o painel administrativo</p>
+
+            <div class="input-group">
+                <label>Nome de usuário</label>
+                <input type="text" id="adminUsername" placeholder="Nome de usuário">
+            </div>
+
+            <div class="input-group">
+                <label>Senha</label>
+                <input type="password" id="adminPassword" placeholder="••••••••">
+            </div>
+
+            <button class="btn-login" id="adminLoginBtn">
+                <span id="adminLoginText">Entrar</span>
+                <div class="spinner hidden" id="adminLoginLoader"></div>
+            </button>
+
+            <div class="error-message" id="adminLoginError"></div>
+
+            <button class="btn-back" id="backToLogin">Voltar</button>
+        </div>
+
+        <!-- Admin Panel -->
+        <div class="admin-panel" id="adminPanel">
+            <h2>Painel Administrativo</h2>
+
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-tab="create-user">Criar Usuário</button>
+                <button class="admin-tab" data-tab="manage-users">Gerenciar Usuários</button>
+            </div>
+
+            <div class="tab-content active" id="create-user-tab">
+                <div class="input-group">
+                    <label>Nome completo</label>
+                    <input type="text" id="newUserName" placeholder="Nome completo">
+                </div>
+
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="email" id="newUserEmail" placeholder="Email">
+                </div>
+
+                <div class="input-group">
+                    <label>Senha</label>
+                    <input type="password" id="newUserPassword" placeholder="••••••••">
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Dias de validade</label>
+                        <input type="number" id="passwordValidity" placeholder="Dias" value="30" min="1" max="365">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Função</label>
+                        <select id="userRole">
+                            <option value="user">Usuário</option>
+                            <option value="admin">Administrador</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn-login" id="createUserBtn">
+                    <span id="createUserText">Criar Usuário</span>
+                    <div class="spinner hidden" id="createUserLoader"></div>
+                </button>
+
+                <div class="error-message" id="createUserError"></div>
+                <div class="success-message" id="createUserSuccess"></div>
+            </div>
+
+            <div class="tab-content" id="manage-users-tab">
+                <button class="btn-login" id="refreshUsersBtn">
+                    <span id="refreshUsersText">Atualizar Lista</span>
+                    <div class="spinner hidden" id="refreshUsersLoader"></div>
+                </button>
+
+                <div class="user-list" id="userList">
+                    <p style="text-align: center; padding: 20px; color: #9ca3af;">Carregando usuários...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Renew Password Modal -->
+        <div class="modal" id="renewPasswordModal">
+            <div class="modal-content">
+                <span class="close-modal" id="closeRenewModal">×</span>
+                <h2>Renovar Senha</h2>
+
+                <div class="input-group">
+                    <label>Email</label>
+                    <input type="text" id="renewUserEmail" readonly>
+                </div>
+
+                <div class="input-group">
+                    <label>Dias de validade</label>
+                    <input type="number" id="renewValidity" placeholder="Dias" value="30" min="1" max="365">
+                </div>
+
+                <button class="btn-login" id="renewPasswordBtn">
+                    <span id="renewPasswordText">Renovar Senha</span>
+                    <div class="spinner hidden" id="renewPasswordLoader"></div>
+                </button>
+
+                <div class="error-message" id="renewPasswordError"></div>
+                <div class="success-message" id="renewPasswordSuccess"></div>
             </div>
         </div>
 
@@ -704,6 +1058,51 @@
         const loginBtn = document.getElementById('loginBtn');
         const loginEmail = document.getElementById('loginEmail');
         const loginPassword = document.getElementById('loginPassword');
+        const loginText = document.getElementById('loginText');
+        const loginLoader = document.getElementById('loginLoader');
+        const loginError = document.getElementById('loginError');
+        const loginSuccess = document.getElementById('loginSuccess');
+
+        const showAdminLoginBtn = document.getElementById('show-admin-login');
+        const adminLoginForm = document.getElementById('adminLoginForm');
+        const adminPanel = document.getElementById('adminPanel');
+        const backToLoginBtn = document.getElementById('backToLogin');
+        const adminLoginBtn = document.getElementById('adminLoginBtn');
+        const adminLoginText = document.getElementById('adminLoginText');
+        const adminLoginLoader = document.getElementById('adminLoginLoader');
+        const adminLoginError = document.getElementById('adminLoginError');
+
+        const adminTabs = document.querySelectorAll('.admin-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        const createUserBtn = document.getElementById('createUserBtn');
+        const createUserText = document.getElementById('createUserText');
+        const createUserLoader = document.getElementById('createUserLoader');
+        const createUserError = document.getElementById('createUserError');
+        const createUserSuccess = document.getElementById('createUserSuccess');
+
+        const refreshUsersBtn = document.getElementById('refreshUsersBtn');
+        const refreshUsersText = document.getElementById('refreshUsersText');
+        const refreshUsersLoader = document.getElementById('refreshUsersLoader');
+        const userList = document.getElementById('userList');
+
+        const renewPasswordModal = document.getElementById('renewPasswordModal');
+        const closeRenewModal = document.getElementById('closeRenewModal');
+        const renewUserEmail = document.getElementById('renewUserEmail');
+        const renewPasswordBtn = document.getElementById('renewPasswordBtn');
+        const renewPasswordText = document.getElementById('renewPasswordText');
+        const renewPasswordLoader = document.getElementById('renewPasswordLoader');
+        const renewPasswordError = document.getElementById('renewPasswordError');
+        const renewPasswordSuccess = document.getElementById('renewPasswordSuccess');
+
+        // Admin credentials
+        const ADMIN_USERNAME = "assuncao";
+        const ADMIN_PASSWORD = "131609@sH";
+
+        // Check if already logged in
+        if (sessionStorage.getItem('loggedIn') === 'true') {
+            window.location.href = 'visualization.html';
+        }
 
         // Toggle Login/Main
         let showingLogin = false;
@@ -712,13 +1111,266 @@
             if (showingLogin) {
                 loginContainer.classList.remove('hidden');
                 mainContent.classList.add('hidden');
+                adminLoginForm.classList.add('hidden');
+                adminPanel.classList.add('hidden');
                 toggleBtn.textContent = 'Voltar';
             } else {
                 loginContainer.classList.add('hidden');
                 mainContent.classList.remove('hidden');
+                adminLoginForm.classList.add('hidden');
+                adminPanel.classList.add('hidden');
                 toggleBtn.textContent = 'Fazer Login';
             }
         });
+
+        // Show Admin Login
+        showAdminLoginBtn.addEventListener('click', () => {
+            loginContainer.classList.add('hidden');
+            mainContent.classList.add('hidden');
+            adminLoginForm.classList.remove('hidden');
+            adminPanel.classList.add('hidden');
+            toggleBtn.textContent = 'Fazer Login';
+            showingLogin = false;
+        });
+
+        // Back to Login
+        backToLoginBtn.addEventListener('click', () => {
+            adminLoginForm.classList.add('hidden');
+            loginContainer.classList.remove('hidden');
+            mainContent.classList.add('hidden');
+            toggleBtn.textContent = 'Voltar';
+            showingLogin = true;
+        });
+
+        // Admin Login
+        adminLoginBtn.addEventListener('click', () => {
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+
+            adminLoginText.style.display = 'none';
+            adminLoginLoader.classList.remove('hidden');
+            adminLoginBtn.disabled = true;
+
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                adminLoginForm.classList.add('hidden');
+                adminPanel.style.display = 'block';
+                adminLoginText.style.display = 'block';
+                adminLoginLoader.classList.add('hidden');
+                adminLoginBtn.disabled = false;
+            } else {
+                showError(adminLoginError, 'Credenciais inválidas.');
+                adminLoginText.style.display = 'block';
+                adminLoginLoader.classList.add('hidden');
+                adminLoginBtn.disabled = false;
+            }
+        });
+
+        // Admin Tabs
+        adminTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+
+                adminTabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+
+                tab.classList.add('active');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+
+        // Create User
+        createUserBtn.addEventListener('click', () => {
+            const name = document.getElementById('newUserName').value;
+            const email = document.getElementById('newUserEmail').value;
+            const password = document.getElementById('newUserPassword').value;
+            const validityDays = parseInt(document.getElementById('passwordValidity').value);
+            const role = document.getElementById('userRole').value;
+
+            if (!name || !email || !password || !validityDays) {
+                showError(createUserError, 'Por favor, preencha todos os campos.');
+                return;
+            }
+
+            createUserText.style.display = 'none';
+            createUserLoader.classList.remove('hidden');
+            createUserBtn.disabled = true;
+
+            const expirationDate = new Date();
+            expirationDate.setDate(expirationDate.getDate() + validityDays);
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+
+                    db.collection('users').doc(user.uid).set({
+                        name: name,
+                        email: email,
+                        role: role,
+                        expirationDate: expirationDate,
+                        createdAt: new Date()
+                    })
+                        .then(() => {
+                            showSuccess(createUserSuccess, 'Usuário criado com sucesso!');
+                            createUserText.style.display = 'block';
+                            createUserLoader.classList.add('hidden');
+                            createUserBtn.disabled = false;
+                        })
+                        .catch((error) => {
+                            showError(createUserError, 'Erro ao salvar usuário: ' + error.message);
+                            createUserText.style.display = 'block';
+                            createUserLoader.classList.add('hidden');
+                            createUserBtn.disabled = false;
+                        });
+                })
+                .catch((error) => {
+                    showError(createUserError, 'Erro ao criar usuário: ' + error.message);
+                    createUserText.style.display = 'block';
+                    createUserLoader.classList.add('hidden');
+                    createUserBtn.disabled = false;
+                });
+        });
+
+        // Refresh Users
+        refreshUsersBtn.addEventListener('click', () => {
+            refreshUsersBtn.disabled = true;
+            refreshUsersText.style.display = 'none';
+            refreshUsersLoader.classList.remove('hidden');
+
+            db.collection('users').get()
+                .then((querySnapshot) => {
+                    userList.innerHTML = '';
+                    querySnapshot.forEach((doc) => {
+                        const userData = doc.data();
+                        const userItem = document.createElement('div');
+                        userItem.classList.add('user-item');
+
+                        const userInfo = document.createElement('div');
+                        userInfo.classList.add('user-info');
+
+                        const userEmail = document.createElement('div');
+                        userEmail.classList.add('user-email');
+                        userEmail.textContent = userData.email;
+
+                        const userCreated = document.createElement('div');
+                        userCreated.classList.add('user-created');
+                        userCreated.textContent = `Criado em: ${userData.createdAt.toDate().toLocaleDateString()}`;
+
+                        const userExpires = document.createElement('div');
+                        userExpires.classList.add('user-expires');
+                        userExpires.textContent = `Expira em: ${userData.expirationDate.toDate().toLocaleDateString()}`;
+
+                        if (new Date() > userData.expirationDate.toDate()) {
+                            userExpires.classList.add('expired');
+                        }
+
+                        userInfo.appendChild(userEmail);
+                        userInfo.appendChild(userCreated);
+                        userInfo.appendChild(userExpires);
+
+                        const userActions = document.createElement('div');
+                        userActions.classList.add('user-actions');
+
+                        const renewButton = document.createElement('button');
+                        renewButton.textContent = 'Renovar';
+                        renewButton.addEventListener('click', () => {
+                            renewUserEmail.value = userData.email;
+                            renewPasswordModal.style.display = 'flex';
+                        });
+
+                        userActions.appendChild(renewButton);
+
+                        userItem.appendChild(userInfo);
+                        userItem.appendChild(userActions);
+
+                        userList.appendChild(userItem);
+                    });
+
+                    refreshUsersBtn.disabled = false;
+                    refreshUsersText.style.display = 'block';
+                    refreshUsersLoader.classList.add('hidden');
+                })
+                .catch((error) => {
+                    showError(userList, 'Erro ao carregar usuários: ' + error.message);
+                    refreshUsersBtn.disabled = false;
+                    refreshUsersText.style.display = 'block';
+                    refreshUsersLoader.classList.add('hidden');
+                });
+        });
+
+        // Close Renew Modal
+        closeRenewModal.addEventListener('click', () => {
+            renewPasswordModal.style.display = 'none';
+        });
+
+        // Renew Password
+        renewPasswordBtn.addEventListener('click', () => {
+            const email = renewUserEmail.value;
+            const validityDays = parseInt(document.getElementById('renewValidity').value);
+
+            if (!validityDays) {
+                showError(renewPasswordError, 'Por favor, insira um número válido de dias.');
+                return;
+            }
+
+            renewPasswordText.style.display = 'none';
+            renewPasswordLoader.classList.remove('hidden');
+            renewPasswordBtn.disabled = true;
+
+            db.collection('users').where('email', '==', email).get()
+                .then((querySnapshot) => {
+                    if (!querySnapshot.empty) {
+                        const userDoc = querySnapshot.docs[0];
+                        const newExpirationDate = new Date();
+                        newExpirationDate.setDate(newExpirationDate.getDate() + validityDays);
+
+                        userDoc.ref.update({
+                            expirationDate: newExpirationDate
+                        })
+                            .then(() => {
+                                showSuccess(renewPasswordSuccess, 'Senha renovada com sucesso!');
+                                renewPasswordText.style.display = 'block';
+                                renewPasswordLoader.classList.add('hidden');
+                                renewPasswordBtn.disabled = false;
+                                renewPasswordModal.style.display = 'none';
+                                refreshUsersBtn.click();
+                            })
+                            .catch((error) => {
+                                showError(renewPasswordError, 'Erro ao renovar senha: ' + error.message);
+                                renewPasswordText.style.display = 'block';
+                                renewPasswordLoader.classList.add('hidden');
+                                renewPasswordBtn.disabled = false;
+                            });
+                    } else {
+                        showError(renewPasswordError, 'Usuário não encontrado.');
+                        renewPasswordText.style.display = 'block';
+                        renewPasswordLoader.classList.add('hidden');
+                        renewPasswordBtn.disabled = false;
+                    }
+                })
+                .catch((error) => {
+                    showError(renewPasswordError, 'Erro ao buscar usuário: ' + error.message);
+                    renewPasswordText.style.display = 'block';
+                    renewPasswordLoader.classList.add('hidden');
+                    renewPasswordBtn.disabled = false;
+                });
+        });
+
+        // Error and Success Messages
+        function showError(element, message) {
+            element.textContent = message;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+
+        function showSuccess(element, message) {
+            element.textContent = message;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
 
         // Login
         loginBtn.addEventListener('click', () => {
@@ -726,12 +1378,13 @@
             const password = loginPassword.value;
 
             if (!email || !password) {
-                alert('Preencha todos os campos');
+                showError(loginError, 'Preencha todos os campos');
                 return;
             }
 
+            loginText.style.display = 'none';
+            loginLoader.classList.remove('hidden');
             loginBtn.disabled = true;
-            loginBtn.textContent = 'Entrando...';
 
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
@@ -746,9 +1399,10 @@
 
                                 if (currentDate > expirationDate) {
                                     auth.signOut().then(() => {
-                                        alert('Sua senha expirou. Entre em contato com o administrador.');
+                                        showError(loginError, 'Sua senha expirou. Entre em contato com o administrador.');
+                                        loginText.style.display = 'block';
+                                        loginLoader.classList.add('hidden');
                                         loginBtn.disabled = false;
-                                        loginBtn.textContent = 'Entrar';
                                     });
                                 } else {
                                     localStorage.setItem('currentUser', userData.email);
@@ -758,22 +1412,25 @@
                                 }
                             } else {
                                 auth.signOut().then(() => {
-                                    alert('Usuário não encontrado.');
+                                    showError(loginError, 'Usuário não encontrado.');
+                                    loginText.style.display = 'block';
+                                    loginLoader.classList.add('hidden');
                                     loginBtn.disabled = false;
-                                    loginBtn.textContent = 'Entrar';
                                 });
                             }
                         })
                         .catch((error) => {
-                            alert('Erro: ' + error.message);
+                            showError(loginError, 'Erro: ' + error.message);
+                            loginText.style.display = 'block';
+                            loginLoader.classList.add('hidden');
                             loginBtn.disabled = false;
-                            loginBtn.textContent = 'Entrar';
                         });
                 })
                 .catch((error) => {
-                    alert('Erro ao fazer login: ' + error.message);
+                    showError(loginError, 'Erro ao fazer login: ' + error.message);
+                    loginText.style.display = 'block';
+                    loginLoader.classList.add('hidden');
                     loginBtn.disabled = false;
-                    loginBtn.textContent = 'Entrar';
                 });
         });
 
@@ -781,11 +1438,6 @@
         loginPassword.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') loginBtn.click();
         });
-
-        // Check if already logged in
-        if (sessionStorage.getItem('loggedIn') === 'true') {
-            window.location.href = 'visualization.html';
-        }
 
         // Load Games
         async function loadGames() {
@@ -987,7 +1639,7 @@
             }
             
             if (value >= 80) return 'excellent';
-            if (value >= 70) return 'good';
+            if (value >= 70) return 'gooderva';
             if (value >= 60) return 'moderate';
             if (value >= 50) return 'fair';
             return 'poor';
