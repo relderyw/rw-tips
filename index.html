@@ -1629,6 +1629,18 @@
             return hasHighPercentage && hasHighGoalAverage;
         }
 
+        // CORREÇÃO: Nova função para verificar se uma célula específica deve ser bloqueada
+        function shouldLockCell(statValue, statType, game) {
+            const isLoggedIn = sessionStorage.getItem('loggedIn') === 'true';
+            if (isLoggedIn) return false;
+            
+            // Verifica se o valor atende aos critérios de premium
+            const isHighPercentage = statValue >= 85;
+            const hasHighGoalAverage = game.avgGoals >= 2.5;
+            
+            return isHighPercentage && hasHighGoalAverage;
+        }
+
         function displayGames(games) {
             const tbody = document.getElementById('gamesTableBody');
             tbody.innerHTML = '';
@@ -1655,16 +1667,16 @@
                         <span class="time">${game.hour}</span>
                     </div>
                 </td>
-                <td class="stat-cell">${renderStatCell(game.homeAvgGoals, 'goals', true)}</td>
-                <td class="stat-cell">${renderStatCell(game.awayAvgGoals, 'goals', true)}</td>
-                <td class="stat-cell">${renderStatCell(game.avgGoals, 'goals', true)}</td>
-                <td class="stat-cell">${renderStatCell(game.htOver05, 'percentage', true)}</td>
-                <td class="stat-cell">${renderStatCell(game.htOver15, 'percentage', true)}</td>
-                <td class="stat-cell">${renderStatCell(game.htOver25, 'percentage', true)}</td>
-                <td class="stat-cell">${renderStatCell(game.htBttsPercent, 'percentage', true)}</td>
-                <td class="stat-cell">${renderStatCell(game.over15, 'percentage', true)}</td>
-                <td class="stat-cell">${renderStatCell(game.over25, 'percentage', true)}</td>
-                <td class="stat-cell">${renderStatCell(game.over35, 'percentage', true)}</td>
+                <td class="stat-cell">${renderStatCell(game.homeAvgGoals, 'goals', game, 'homeAvgGoals')}</td>
+                <td class="stat-cell">${renderStatCell(game.awayAvgGoals, 'goals', game, 'awayAvgGoals')}</td>
+                <td class="stat-cell">${renderStatCell(game.avgGoals, 'goals', game, 'avgGoals')}</td>
+                <td class="stat-cell">${renderStatCell(game.htOver05, 'percentage', game, 'htOver05')}</td>
+                <td class="stat-cell">${renderStatCell(game.htOver15, 'percentage', game, 'htOver15')}</td>
+                <td class="stat-cell">${renderStatCell(game.htOver25, 'percentage', game, 'htOver25')}</td>
+                <td class="stat-cell">${renderStatCell(game.htBttsPercent, 'percentage', game, 'htBttsPercent')}</td>
+                <td class="stat-cell">${renderStatCell(game.over15, 'percentage', game, 'over15')}</td>
+                <td class="stat-cell">${renderStatCell(game.over25, 'percentage', game, 'over25')}</td>
+                <td class="stat-cell">${renderStatCell(game.over35, 'percentage', game, 'over35')}</td>
                 <td class="stat-cell">
                     <span class="quality-score">${game.qualityScore}% ${starsHT}${starsFT}</span>
                 </td>
@@ -1673,25 +1685,24 @@
             });
         }
 
-        function renderStatCell(value, type, isLocked) {
+        // CORREÇÃO: Função renderStatCell atualizada
+        function renderStatCell(value, type, game, statKey) {
             const numValue = parseFloat(value);
-            const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
-            const shouldLock = isLocked && !loggedIn && (
-                (type === 'percentage' && numValue >= 85) ||
-                (type === 'goals' && numValue >= 2.5)
-            );
-            
-            if (shouldLock) {
-                return `<span class="stat-locked"><i class="fas fa-lock"></i> Premium</span>`;
-            }
             
             if (isNaN(numValue)) {
                 return `<span class="stat-value">-</span>`;
             }
-            
+
+            // Verifica se esta célula específica deve ser bloqueada
+            const shouldLock = shouldLockCell(numValue, type, game);
+
+            if (shouldLock) {
+                return `<span class="stat-locked"><i class="fas fa-lock"></i> Premium</span>`;
+            }
+
             let colorClass = '';
             let displayValue = '';
-            
+
             if (type === 'percentage') {
                 displayValue = `${numValue.toFixed(1)}%`;
                 if (numValue >= 80) colorClass = 'excellent';
@@ -1710,7 +1721,7 @@
                 displayValue = numValue.toString();
                 colorClass = 'moderate';
             }
-            
+
             return `<span class="stat-value ${colorClass}">${displayValue}</span>`;
         }
 
