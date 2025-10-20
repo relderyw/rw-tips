@@ -1075,9 +1075,10 @@
                             };
                             const stats = await this.fetchGameStats(normalizedGame);
                             const processedGame = { ...normalizedGame, ...stats };
+                            processedGame.qualityScore = this.calculateQualityScore(processedGame);
+                            // Set premium flags independently of 100% score
                             processedGame.premiumFT = this.isPremiumMatch(processedGame);
                             processedGame.premiumHT = this.isHTPremiumMatch(processedGame);
-                            processedGame.qualityScore = this.calculateQualityScore(processedGame);
                             const startDate = new Date(String(item.scheduled_time_brt).replace(' ', 'T'));
                             processedGame.day = startDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
                             processedGame.hour = startDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
@@ -1186,9 +1187,9 @@
             }
 
             calculateQualityScore(game) {
-                // Adjusted weights to better reflect high-quality games
+                // Adjusted weights to reflect high-quality games
                 const weights = { avgGoals: 0.35, btts: 0.25, over25: 0.30, consistency: 0.10 };
-                const avgGoalsScore = Math.min((game.avgGoals / 3.5) * 100, 100); // Adjusted max goal threshold
+                const avgGoalsScore = Math.min((game.avgGoals / 3.5) * 100, 100);
                 const bttsScore = game.bttsPercent || 0;
                 const over25Score = game.over25 || 0;
                 const consistencyScore = ((game.over15 || 0) + (game.over25 || 0) + (game.over35 || 0)) / 3;
@@ -1200,17 +1201,17 @@
                     (consistencyScore * weights.consistency)
                 );
 
-                // Cap at 100 and ensure premium status is checked afterward
+                // Cap at 100 but don’t tie to premium status
                 return Math.min(baseScore, 100);
             }
 
             isPremiumMatch(game) {
-                // Assign premiumFT if qualityScore >= 89%
+                // Check if qualityScore is >= 89% for premiumFT
                 return game.qualityScore >= 89;
             }
 
             isHTPremiumMatch(game) {
-                // Assign premiumHT if all HT metrics >= 92%
+                // Check if all HT metrics are >= 92% for premiumHT
                 return (game.htOver05 >= 92) && (game.htOver15 >= 92) && (game.htOver25 >= 92) && (game.htBttsPercent >= 92);
             }
 
@@ -1431,7 +1432,10 @@
                             </span>
                         </td>
                         <td>
-                            ${(() => { const stars = `${game.premiumHT ? '<i class=\'fas fa-star star\' style=\'color:#1E90FF\'></i>' : ''}${game.premiumFT ? '<i class=\'fas fa-star star\' style=\'color:#10b981\'></i>' : ''}`; return `<span class=\"quality-score ${game.premiumFT || game.premiumHT ? 'top' : this.getStatClass(qualityScore)}\">${qualityScore}% ${stars}</span>`; })()}
+                            ${(() => { 
+                                const stars = `${game.premiumHT ? '<i class=\'fas fa-star star\' style=\'color:#1E90FF\'></i>' : ''}${game.premiumFT ? '<i class=\'fas fa-star star\' style=\'color:#10b981\'></i>' : ''}`;
+                                return `<span class=\"quality-score ${game.premiumFT || game.premiumHT ? 'top' : this.getStatClass(qualityScore)}\">${qualityScore}% ${stars}</span>`; 
+                            })()}
                         </td>
                     `;
                     
