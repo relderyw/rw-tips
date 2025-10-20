@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RW Tips - A Melhor Plataforma de Análise de eSoccer</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-app-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.22.2/firebase-auth-compat.min.js"></script>
@@ -532,7 +535,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .table-wrapper {
@@ -642,11 +647,25 @@
             font-weight: 600;
         }
 
-        .stat-value.excellent { color: #10b981; }
-        .stat-value.good { color: #34d399; }
-        .stat-value.moderate { color: #fbbf24; }
-        .stat-value.fair { color: #fb923c; }
-        .stat-value.poor { color: #9ca3af; }
+        .stat-value.excellent {
+            color: #10b981;
+        }
+
+        .stat-value.good {
+            color: #34d399;
+        }
+
+        .stat-value.moderate {
+            color: #fbbf24;
+        }
+
+        .stat-value.fair {
+            color: #fb923c;
+        }
+
+        .stat-value.poor {
+            color: #9ca3af;
+        }
 
         .stat-locked {
             display: inline-flex;
@@ -762,7 +781,8 @@
                 font-size: 12px;
             }
 
-            th, td {
+            th,
+            td {
                 padding: 8px;
             }
 
@@ -793,13 +813,15 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <button class="admin-button" id="show-admin-login">Admin</button>
 
         <div class="header">
             <div class="logo-section">
-                <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips" class="logo-img">
+                <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips"
+                    class="logo-img">
                 <div class="logo-text">👑 RW TIPS 🎮</div>
             </div>
             <button class="btn-toggle" id="toggleBtn">Fazer Login</button>
@@ -830,7 +852,8 @@
             <div class="divider">
                 <p class="social-text">Ainda não tem acesso?</p>
                 <div class="social-buttons">
-                    <a href="https://wa.me/5592994951771?text=Olá,+gostaria+de+conhecer+a+👑RW+TIPS🎮" target="_blank" class="btn-social btn-whatsapp">📱 WhatsApp</a>
+                    <a href="https://wa.me/5592994951771?text=Olá,+gostaria+de+conhecer+a+👑RW+TIPS🎮" target="_blank"
+                        class="btn-social btn-whatsapp">📱 WhatsApp</a>
                     <a href="https://t.me/assuncaoIII" target="_blank" class="btn-social btn-telegram">📩 Telegram</a>
                 </div>
             </div>
@@ -1011,7 +1034,8 @@
                 <h3>Pronto para elevar seu jogo?</h3>
                 <p>Junte-se a centenas de usuários que já estão lucrando com nossas análises premium</p>
                 <div class="cta-buttons">
-                    <a href="https://wa.me/5592994951771?text=Olá,+gostaria+de+conhecer+a+👑RW+TIPS🎮" target="_blank" class="btn-cta whatsapp">
+                    <a href="https://wa.me/5592994951771?text=Olá,+gostaria+de+conhecer+a+👑RW+TIPS🎮" target="_blank"
+                        class="btn-cta whatsapp">
                         📱 Falar no WhatsApp →
                     </a>
                     <a href="https://t.me/assuncaoIII" target="_blank" class="btn-cta telegram">
@@ -1380,7 +1404,7 @@
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
                     const user = userCredential.user;
-                    
+
                     db.collection('users').doc(user.uid).get()
                         .then((doc) => {
                             if (doc.exists) {
@@ -1458,17 +1482,17 @@
                             away: { name: item.away_player_name, teamName: item.away_team_name },
                             startTime: item.scheduled_time_brt
                         };
-                        
+
                         const stats = await fetchGameStats(normalizedGame);
                         const processedGame = { ...normalizedGame, ...stats };
                         processedGame.qualityScore = calculateQualityScore(processedGame);
                         processedGame.premiumFT = isPremiumMatch(processedGame);
                         processedGame.premiumHT = isHTPremiumMatch(processedGame);
-                        
+
                         const startDate = new Date(String(item.scheduled_time_brt).replace(' ', 'T'));
                         processedGame.day = startDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
                         processedGame.hour = startDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                        
+
                         return processedGame;
                     })
                 );
@@ -1586,12 +1610,18 @@
         }
 
         function isPremiumMatch(game) {
-            return game.qualityScore >= 89;
+            return (game.avgGoals >= 2.5) ||
+                (game.over15 >= 85) ||
+                (game.over25 >= 85) ||
+                (game.over35 >= 85) ||
+                (game.bttsPercent >= 85);
         }
 
         function isHTPremiumMatch(game) {
-            return (game.htOver05 >= 92) && (game.htOver15 >= 92) && 
-                   (game.htOver25 >= 92) && (game.htBttsPercent >= 92);
+            return (game.htOver05 >= 85) ||
+                (game.htOver15 >= 85) ||
+                (game.htOver25 >= 85) ||
+                (game.htBttsPercent >= 85);
         }
 
         function displayGames(games) {
@@ -1600,39 +1630,39 @@
 
             games.forEach(game => {
                 const row = document.createElement('tr');
-                const starsHT = game.premiumHT ? '<i class="fas fa-star star" style="color:#1E90FF"></i>' : '';
-                const starsFT = game.premiumFT ? '<i class="fas fa-star star" style="color:#10b981"></i>' : '';
-                
+                const starsHT = isHTPremiumMatch(game) ? '<i class="fas fa-star star" style="color:#1E90FF"></i>' : '';
+                const starsFT = isPremiumMatch(game) ? '<i class="fas fa-star star" style="color:#10b981"></i>' : '';
+
                 row.innerHTML = `
-                    <td>
-                        <span class="league-badge">${game.competition.name}</span>
-                    </td>
-                    <td>
-                        <div class="match-teams">
-                            <span class="team home">${game.home.teamName} (${game.home.name})</span>
-                            <span class="team away">${game.away.teamName} (${game.away.name})</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="datetime">
-                            <span class="date">${game.day}</span>
-                            <span class="time">${game.hour}</span>
-                        </div>
-                    </td>
-                    <td class="stat-cell">${renderStatCell(game.homeAvgGoals, 'goals', true)}</td>
-                    <td class="stat-cell">${renderStatCell(game.awayAvgGoals, 'goals', true)}</td>
-                    <td class="stat-cell">${renderStatCell(game.avgGoals, 'goals', true)}</td>
-                    <td class="stat-cell">${renderStatCell(game.htOver05, 'percentage', true)}</td>
-                    <td class="stat-cell">${renderStatCell(game.htOver15, 'percentage', true)}</td>
-                    <td class="stat-cell">${renderStatCell(game.htOver25, 'percentage', true)}</td>
-                    <td class="stat-cell">${renderStatCell(game.htBttsPercent, 'percentage', true)}</td>
-                    <td class="stat-cell">${renderStatCell(game.over15, 'percentage', true)}</td>
-                    <td class="stat-cell">${renderStatCell(game.over25, 'percentage', true)}</td>
-                    <td class="stat-cell">${renderStatCell(game.over35, 'percentage', true)}</td>
-                    <td class="stat-cell">
-                        <span class="quality-score">${game.qualityScore}% ${starsHT}${starsFT}</span>
-                    </td>
-                `;
+                <td>
+                    <span class="league-badge">${game.competition.name}</span>
+                </td>
+                <td>
+                    <div class="match-teams">
+                        <span class="team home">${game.home.teamName} (${game.home.name})</span>
+                        <span class="team away">${game.away.teamName} (${game.away.name})</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="datetime">
+                        <span class="date">${game.day}</span>
+                        <span class="time">${game.hour}</span>
+                    </div>
+                </td>
+                <td class="stat-cell">${renderStatCell(game.homeAvgGoals, 'goals', true)}</td>
+                <td class="stat-cell">${renderStatCell(game.awayAvgGoals, 'goals', true)}</td>
+                <td class="stat-cell">${renderStatCell(game.avgGoals, 'goals', true)}</td>
+                <td class="stat-cell">${renderStatCell(game.htOver05, 'percentage', true)}</td>
+                <td class="stat-cell">${renderStatCell(game.htOver15, 'percentage', true)}</td>
+                <td class="stat-cell">${renderStatCell(game.htOver25, 'percentage', true)}</td>
+                <td class="stat-cell">${renderStatCell(game.htBttsPercent, 'percentage', true)}</td>
+                <td class="stat-cell">${renderStatCell(game.over15, 'percentage', true)}</td>
+                <td class="stat-cell">${renderStatCell(game.over25, 'percentage', true)}</td>
+                <td class="stat-cell">${renderStatCell(game.over35, 'percentage', true)}</td>
+                <td class="stat-cell">
+                    <span class="quality-score">${game.qualityScore}% ${starsHT}${starsFT}</span>
+                </td>
+            `;
                 tbody.appendChild(row);
             });
         }
@@ -1640,18 +1670,18 @@
         function renderStatCell(value, type, isLocked) {
             const numValue = parseFloat(value);
             const shouldLock = isLocked && (sessionStorage.getItem('loggedIn') !== 'true');
-            
+
             if (shouldLock) {
                 return `<span class="stat-locked"><i class="fas fa-lock"></i> Premium</span>`;
             }
-            
+
             if (isNaN(numValue)) {
                 return `<span class="stat-value">-</span>`;
             }
-            
+
             let colorClass = '';
             let displayValue = '';
-            
+
             if (type === 'percentage') {
                 displayValue = `${numValue.toFixed(1)}%`;
                 if (numValue >= 80) colorClass = 'excellent';
@@ -1670,7 +1700,7 @@
                 displayValue = numValue.toString();
                 colorClass = 'moderate';
             }
-            
+
             return `<span class="stat-value ${colorClass}">${displayValue}</span>`;
         }
 
@@ -1680,4 +1710,5 @@
         });
     </script>
 </body>
+
 </html>
