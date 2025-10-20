@@ -161,7 +161,7 @@
 
         .btn-login {
             width: 100%;
-            padding: 10px 24px;
+            padding: 10px 16px;
             background: linear-gradient(135deg, #10b981, #059669);
             border: none;
             border-radius: 8px;
@@ -171,6 +171,10 @@
             cursor: pointer;
             transition: all 0.3s;
             margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .btn-login:hover {
@@ -532,6 +536,15 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto 16px;
+        }
+        /* Global utility to hide elements */
+        .hidden { display: none !important; }
+        /* Make the spinner smaller when used inside the login button */
+        .btn-login .spinner {
+            width: 18px;
+            height: 18px;
+            border-width: 2px;
+            margin: 0;
         }
 
         @keyframes spin {
