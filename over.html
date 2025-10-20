@@ -1037,7 +1037,6 @@
             }
 
             setupEventListeners() {
-                // Sidebar active item logic
                 const currentPath = window.location.pathname.split('/').pop() || 'index.html';
                 const menuItems = document.querySelectorAll('.sidebar-menu a');
                 menuItems.forEach(item => {
@@ -1114,9 +1113,7 @@
                         })
                     );
 
-                    // Ordenar pela sequência de horário (mais cedo primeiro)
                     this.gamesData.sort((a, b) => a.startMS - b.startMS);
-                    // Manter apenas os próximos 20 jogos
                     this.gamesData = this.gamesData.slice(0, 20);
 
                     this.hideLoading();
@@ -1215,34 +1212,6 @@
                 }
             }
 
-            calculateAverageGoals(games, position) {
-                if (!games.length) return 0;
-                const totalGoals = games.reduce((sum, game) => sum + (parseInt(game.score.split('-')[position]) || 0), 0);
-                return totalGoals / games.length;
-            }
-
-            calculateBTTS(games) {
-                if (!games.length) return 0;
-                const bttsGames = games.filter(game => {
-                    const [homeScore, awayScore] = game.score.split('-').map(Number);
-                    return homeScore > 0 && awayScore > 0;
-                }).length;
-                return Math.round((bttsGames / games.length) * 100);
-            }
-
-            calculateOverStats(games) {
-                if (!games.length) return { over15: 0, over25: 0, over35: 0 };
-                const totalGoals = games.map(game => {
-                    const [homeScore, awayScore] = game.score.split('-').map(Number);
-                    return (homeScore || 0) + (awayScore || 0);
-                });
-                return {
-                    over15: Math.round((totalGoals.filter(g => g > 1.5).length / totalGoals.length) * 100),
-                    over25: Math.round((totalGoals.filter(g => g > 2.5).length / totalGoals.length) * 100),
-                    over35: Math.round((totalGoals.filter(g => g > 3.5).length / totalGoals.length) * 100)
-                };
-            }
-
             calculateQualityScore(game) {
                 const isPremium = this.isPremiumMatch(game);
                 
@@ -1271,56 +1240,56 @@
                 // Esoccer Battle - 8 mins play
                 if (league.includes('esoccer battle - 8 mins')) {
                     return (
-                        game.htOver05 === 100 &&
-                        game.htOver15 === 100 &&
-                        game.htOver25 >= 90 &&
-                        game.htBttsPercent >= 90 &&
-                        game.over15 === 100 &&
-                        game.over25 >= 75 &&
-                        game.over35 >= 60 &&
-                        game.bttsPercent >= 75
+                        game.htOver05 >= 95 &&  // Relaxed from 100%
+                        game.htOver15 >= 95 &&  // Relaxed from 100%
+                        game.htOver25 >= 85 &&  // Relaxed from 90%
+                        game.htBttsPercent >= 85 &&  // Relaxed from 90%
+                        game.over15 >= 95 &&  // Relaxed from 100%
+                        game.over25 >= 70 &&  // Relaxed from 75%
+                        game.over35 >= 55 &&  // Relaxed from 60%
+                        game.bttsPercent >= 70  // Relaxed from 75%
                     );
                 }
                 
                 // Esoccer Battle Volta - 6 mins play
                 if (league.includes('esoccer battle volta - 6 mins')) {
                     return (
-                        game.htOver05 === 100 &&
-                        game.htOver15 === 100 &&
-                        game.htOver25 >= 100 &&
-                        game.htBttsPercent >= 90 &&
-                        game.over15 === 100 &&
-                        game.over25 >= 89 &&
-                        game.over35 >= 78 &&
-                        game.bttsPercent >= 88
+                        game.htOver05 >= 95 &&  // Relaxed from 100%
+                        game.htOver15 >= 95 &&  // Relaxed from 100%
+                        game.htOver25 >= 95 &&  // Relaxed from 100%
+                        game.htBttsPercent >= 85 &&  // Relaxed from 90%
+                        game.over15 >= 95 &&  // Relaxed from 100%
+                        game.over25 >= 85 &&  // Relaxed from 89%
+                        game.over35 >= 75 &&  // Relaxed from 78%
+                        game.bttsPercent >= 85  // Relaxed from 88%
                     );
                 }
                 
                 // Esoccer GT Leagues - 12 mins play
                 if (league.includes('esoccer gt leagues - 12 mins') || (league.includes('esoccer gt leagues') && league.includes('12'))) {
                     return (
-                        game.htOver05 === 100 &&
-                        game.htOver15 === 100 &&
-                        game.htOver25 >= 90 &&
-                        game.htBttsPercent >= 90 &&
-                        game.over15 === 100 &&
-                        game.over25 >= 80 &&
-                        game.over35 >= 75 &&
-                        game.bttsPercent >= 80
+                        game.htOver05 >= 95 &&  // Relaxed from 100%
+                        game.htOver15 >= 95 &&  // Relaxed from 100%
+                        game.htOver25 >= 85 &&  // Relaxed from 90%
+                        game.htBttsPercent >= 85 &&  // Relaxed from 90%
+                        game.over15 >= 95 &&  // Relaxed from 100%
+                        game.over25 >= 75 &&  // Relaxed from 80%
+                        game.over35 >= 70 &&  // Relaxed from 75%
+                        game.bttsPercent >= 75  // Relaxed from 80%
                     );
                 }
                 
                 // Esoccer H2H GG League - 8 mins play
                 if (league.includes('esoccer h2h gg league - 8 mins')) {
                     return (
-                        game.htOver05 === 100 &&
-                        game.htOver15 === 100 &&
-                        game.htOver25 >= 85 &&
-                        game.htBttsPercent >= 78 &&
-                        game.over15 >= 78 &&
-                        game.over25 >= 70 &&
-                        game.over35 >= 65 &&
-                        game.bttsPercent >= 69
+                        game.htOver05 >= 95 &&  // Relaxed from 100%
+                        game.htOver15 >= 95 &&  // Relaxed from 100%
+                        game.htOver25 >= 80 &&  // Relaxed from 85%
+                        game.htBttsPercent >= 75 &&  // Relaxed from 78%
+                        game.over15 >= 75 &&  // Relaxed from 78%
+                        game.over25 >= 65 &&  // Relaxed from 70%
+                        game.over35 >= 60 &&  // Relaxed from 65%
+                        game.bttsPercent >= 65  // Relaxed from 69%
                     );
                 }
                 
@@ -1334,40 +1303,40 @@
                 // Esoccer Battle - 8 mins play
                 if (league.includes('esoccer battle - 8 mins')) {
                     return (
-                        game.htOver05 === 100 &&
-                        game.htOver15 === 100 &&
-                        game.htOver25 >= 85 &&
-                        game.htBttsPercent >= 89
+                        game.htOver05 >= 95 &&  // Relaxed from 100%
+                        game.htOver15 >= 95 &&  // Relaxed from 100%
+                        game.htOver25 >= 80 &&  // Relaxed from 85%
+                        game.htBttsPercent >= 85  // Relaxed from 89%
                     );
                 }
                 
                 // Esoccer Battle Volta - 6 mins play
                 if (league.includes('esoccer battle volta - 6 mins')) {
                     return (
-                        game.htOver05 === 100 &&
-                        game.htOver15 === 100 &&
-                        game.htOver25 >= 100 &&
-                        game.htBttsPercent >= 100
+                        game.htOver05 >= 95 &&  // Relaxed from 100%
+                        game.htOver15 >= 95 &&  // Relaxed from 100%
+                        game.htOver25 >= 95 &&  // Relaxed from 100%
+                        game.htBttsPercent >= 95  // Relaxed from 100%
                     );
                 }
                 
                 // Esoccer GT Leagues - 12 mins play
                 if (league.includes('esoccer gt leagues - 12 mins') || (league.includes('esoccer gt leagues') && league.includes('12'))) {
                     return (
-                        game.htOver05 === 100 &&
-                        game.htOver15 === 100 &&
-                        game.htOver25 >= 98 &&
-                        game.htBttsPercent >= 90
+                        game.htOver05 >= 95 &&  // Relaxed from 100%
+                        game.htOver15 >= 95 &&  // Relaxed from 100%
+                        game.htOver25 >= 95 &&  // Relaxed from 98%
+                        game.htBttsPercent >= 85  // Relaxed from 90%
                     );
                 }
                 
                 // Esoccer H2H GG League - 8 mins play
                 if (league.includes('esoccer h2h gg league - 8 mins')) {
                     return (
-                        game.htOver05 === 100 &&
-                        game.htOver15 === 100 &&
-                        game.htOver25 >= 85 &&
-                        game.htBttsPercent >= 78
+                        game.htOver05 >= 95 &&  // Relaxed from 100%
+                        game.htOver15 >= 95 &&  // Relaxed from 100%
+                        game.htOver25 >= 80 &&  // Relaxed from 85%
+                        game.htBttsPercent >= 75  // Relaxed from 78%
                     );
                 }
                 
@@ -1408,10 +1377,10 @@
                 this.filteredGames = [...this.gamesData];
                 
                 if (this.quickFilters.has('premium-ft')) {
-                    this.filteredGames = this.filteredGames.filter(g => g.premiumFT);
+                    this.filteredGames = this.filteredGames.filter(g => g.premiumFT === true);
                 }
                 if (this.quickFilters.has('premium-ht')) {
-                    this.filteredGames = this.filteredGames.filter(g => g.premiumHT);
+                    this.filteredGames = this.filteredGames.filter(g => g.premiumHT === true);
                 }
                 if (this.quickFilters.has('top-quality')) {
                     this.filteredGames = this.filteredGames.filter(g => g.qualityScore >= 80);
