@@ -1657,3 +1657,8 @@
             
             return `<span class="stat-value ${colorClass}">${displayValue}</span>`;
         }
+
+        // Inicialização: carregar jogos ao abrir a página
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGames();
+        });
