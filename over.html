@@ -1068,10 +1068,15 @@
                     const data = await response.json();
                     this.showLoading('Processando dados...');
                     
-                    const matches = Array.isArray(data.scraped_matches) ? data.scraped_matches : [];
+                    const rawMatches = Array.isArray(data.scraped_matches) ? data.scraped_matches : [];
+                    const sortedLimited = rawMatches
+                        .filter(m => !!m.scheduled_time_brt)
+                        .sort((a, b) => new Date(String(a.scheduled_time_brt).replace(' ', 'T')).getTime() - new Date(String(b.scheduled_time_brt).replace(' ', 'T')).getTime())
+                        .slice(0, 20);
+
                     this.gamesData = await Promise.all(
-                        matches.map(async (item, index) => {
-                            this.showLoading(`Processando jogo ${index + 1}/${matches.length}...`);
+                        sortedLimited.map(async (item, index) => {
+                            this.showLoading(`Processando jogo ${index + 1}/${sortedLimited.length}...`);
                             const normalizedGame = {
                                 competition: { name: item.league_name },
                                 home: { name: item.home_player_name, teamName: item.home_team_name },
