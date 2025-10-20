@@ -1610,18 +1610,15 @@
         }
 
         function isPremiumMatch(game) {
-            return (game.avgGoals >= 2.5) ||
-                (game.over15 >= 85) ||
-                (game.over25 >= 85) ||
-                (game.over35 >= 85) ||
-                (game.bttsPercent >= 85);
+            // Verifica se alguma métrica FT atende aos critérios de "Premium"
+            const isGoalsPremium = game.avgGoals >= 2.5 || game.homeAvgGoals >= 2.5 || game.awayAvgGoals >= 2.5;
+            const isPercentPremium = game.over15 >= 85 || game.over25 >= 85 || game.over35 >= 85 || game.bttsPercent >= 85;
+            return isGoalsPremium || isPercentPremium;
         }
 
         function isHTPremiumMatch(game) {
-            return (game.htOver05 >= 85) ||
-                (game.htOver15 >= 85) ||
-                (game.htOver25 >= 85) ||
-                (game.htBttsPercent >= 85);
+            // Verifica se alguma métrica HT atende aos critérios de "Premium"
+            return game.htOver05 >= 85 || game.htOver15 >= 85 || game.htOver25 >= 85 || game.htBttsPercent >= 85;
         }
 
         function displayGames(games) {
@@ -1630,6 +1627,7 @@
 
             games.forEach(game => {
                 const row = document.createElement('tr');
+                // Estrelas só aparecem se a condição de "Premium" for atendida para cada categoria
                 const starsHT = isHTPremiumMatch(game) ? '<i class="fas fa-star star" style="color:#1E90FF"></i>' : '';
                 const starsFT = isPremiumMatch(game) ? '<i class="fas fa-star star" style="color:#10b981"></i>' : '';
 
