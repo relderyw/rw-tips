@@ -1038,9 +1038,15 @@
             measurementId: "G-64HF8TWQV4",
         };
 
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+        let auth = null;
+        let db = null;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            auth = firebase.auth();
+            db = firebase.firestore();
+        } catch (e) {
+            console.warn('Firebase não carregado, prosseguindo sem login.', e);
+        }
 
         const toggleBtn = document.getElementById('toggleBtn');
         const loginContainer = document.getElementById('loginContainer');
@@ -1362,6 +1368,14 @@
             loginText.style.display = 'none';
             loginLoader.classList.remove('hidden');
             loginBtn.disabled = true;
+
+            if (!auth) {
+                showError(loginError, 'Serviço de login indisponível no momento. Tente novamente mais tarde.');
+                loginText.style.display = 'block';
+                loginLoader.classList.add('hidden');
+                loginBtn.disabled = false;
+                return;
+            }
 
             auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
