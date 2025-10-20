@@ -862,11 +862,29 @@
             </div>
             <div class="stat-card">
                 <div class="stat-icon accent">
-                    <i class="fas fa-star"></i>
+                    <i class="fas fa-award"></i>
                 </div>
                 <div class="stat-content">
-                    <h3 id="topMatches">0</h3>
-                    <p>Jogos Premium (80%+)</p>
+                    <h3 id="topQualityCount">0</h3>
+                    <p>Alta Qualidade (80%+)</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon accent">
+                    <i class="fas fa-star" style="color:#1E90FF"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 id="premiumHTCount">0</h3>
+                    <p>Premium HT</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon accent">
+                    <i class="fas fa-star" style="color:#10b981"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 id="premiumFTCount">0</h3>
+                    <p>Premium FT</p>
                 </div>
             </div>
             <div class="stat-card">
@@ -1586,12 +1604,19 @@
             updateStatsSummary() {
                 const summary = document.getElementById('statsSummary');
                 const totalGames = this.gamesData.length;
-                const topMatches = this.gamesData.filter(g => g.qualityScore >= 80).length;
-                const avgQuality = Math.round(this.gamesData.reduce((sum, g) => sum + g.qualityScore, 0) / totalGames);
-                const avgGoals = (this.gamesData.reduce((sum, g) => sum + g.avgGoals, 0) / totalGames).toFixed(1);
+                const topQualityCount = this.gamesData.filter(g => g.qualityScore >= 80).length;
+                const premiumHTCount = this.gamesData.filter(g => g.premiumHT).length;
+                const premiumFTCount = this.gamesData.filter(g => g.premiumFT).length;
+                const avgQuality = Math.round(this.gamesData.reduce((sum, g) => sum + g.qualityScore, 0) / (totalGames || 1));
+                const avgGoals = (this.gamesData.reduce((sum, g) => sum + g.avgGoals, 0) / (totalGames || 1)).toFixed(1);
                 
                 document.getElementById('totalGames').textContent = totalGames;
-                document.getElementById('topMatches').textContent = topMatches;
+                const tqEl = document.getElementById('topQualityCount');
+                if (tqEl) tqEl.textContent = topQualityCount;
+                const htEl = document.getElementById('premiumHTCount');
+                if (htEl) htEl.textContent = premiumHTCount;
+                const ftEl = document.getElementById('premiumFTCount');
+                if (ftEl) ftEl.textContent = premiumFTCount;
                 document.getElementById('avgQuality').textContent = `${avgQuality}%`;
                 document.getElementById('avgGoals').textContent = avgGoals;
                 
