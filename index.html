@@ -1675,19 +1675,23 @@
 
         function renderStatCell(value, type, isLocked) {
             const numValue = parseFloat(value);
-            const shouldLock = isLocked && (sessionStorage.getItem('loggedIn') !== 'true');
-
+            const loggedIn = sessionStorage.getItem('loggedIn') === 'true';
+            const shouldLock = isLocked && !loggedIn && (
+                (type === 'percentage' && numValue >= 85) ||
+                (type === 'goals' && numValue >= 2.5)
+            );
+            
             if (shouldLock) {
                 return `<span class="stat-locked"><i class="fas fa-lock"></i> Premium</span>`;
             }
-
+            
             if (isNaN(numValue)) {
                 return `<span class="stat-value">-</span>`;
             }
-
+            
             let colorClass = '';
             let displayValue = '';
-
+            
             if (type === 'percentage') {
                 displayValue = `${numValue.toFixed(1)}%`;
                 if (numValue >= 80) colorClass = 'excellent';
@@ -1706,7 +1710,7 @@
                 displayValue = numValue.toString();
                 colorClass = 'moderate';
             }
-
+            
             return `<span class="stat-value ${colorClass}">${displayValue}</span>`;
         }
 
