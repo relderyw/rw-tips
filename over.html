@@ -9,7 +9,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            /* Variáveis do código principal */
             --primary: #10b981;
             --primary-dark: #059669;
             --accent: #00ff88;
@@ -26,7 +25,6 @@
             --danger: #ef4444;
             --radius: 8px;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-            /* Variáveis da sidebar */
             --sidebar-accent-color: #00ff88;
             --sidebar-border-color: rgba(255, 255, 255, 0.05);
         }
@@ -47,7 +45,6 @@
             transition: padding-left 0.3s ease;
         }
 
-        /* Sidebar */
         .sidebar {
             position: fixed;
             left: 0;
@@ -146,14 +143,12 @@
             opacity: 1;
         }
 
-        /* Container */
         .container {
             max-width: 100%;
             margin: 0 auto;
             padding: 1rem;
         }
 
-        /* HEADER */
         header {
             background: linear-gradient(135deg, var(--bg-card) 0%, #1a1f35 100%);
             border-radius: var(--radius);
@@ -201,7 +196,6 @@
             flex-wrap: wrap;
         }
 
-        /* FILTROS RÁPIDOS */
         .quick-filters {
             display: flex;
             gap: 0.5rem;
@@ -237,7 +231,6 @@
             border-color: var(--primary);
         }
 
-        /* ESTATÍSTICAS RESUMO */
         .stats-summary {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -288,7 +281,6 @@
             color: var(--text-muted);
         }
 
-        /* BOTÕES */
         .btn {
             padding: 0.65rem 1.3rem;
             border: 1px solid var(--border);
@@ -324,7 +316,6 @@
             border-color: var(--border-light);
         }
 
-        /* TABELA */
         .table-wrapper {
             background: var(--bg-card);
             border-radius: var(--radius);
@@ -428,7 +419,6 @@
             vertical-align: middle;
         }
 
-        /* LEAGUE BADGES */
         .league-badge {
             display: inline-flex;
             align-items: center;
@@ -465,7 +455,6 @@
             background: linear-gradient(135deg, #60a5fa, #3b82f6);
         }
 
-        /* MATCH INFO */
         .match-info {
             display: flex;
             flex-direction: column;
@@ -493,7 +482,6 @@
             font-size: 0.7rem;
         }
 
-        /* DATE TIME */
         .datetime-cell {
             display: flex;
             flex-direction: column;
@@ -514,7 +502,6 @@
             gap: 0.3rem;
         }
 
-        /* STAT PILLS */
         .stat-pill {
             display: inline-flex;
             align-items: center;
@@ -557,7 +544,6 @@
             color: white;
         }
 
-        /* QUALITY SCORE */
         .quality-score {
             display: inline-flex;
             align-items: center;
@@ -592,7 +578,6 @@
             50% { opacity: 0.7; transform: scale(1.2); }
         }
 
-        /* TOOLTIP */
         .tooltip-wrapper {
             position: relative;
             display: inline-block;
@@ -622,7 +607,6 @@
             opacity: 1;
         }
 
-        /* LOADING & ERROR */
         .loading-container,
         .error-container {
             background: var(--bg-card);
@@ -659,7 +643,6 @@
             margin-bottom: 0.5rem;
         }
 
-        /* MODAL */
         .filter-modal {
             display: none;
             position: fixed;
@@ -745,12 +728,10 @@
             justify-content: flex-end;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 1024px) {
             .stats-summary {
                 grid-template-columns: repeat(2, 1fr);
             }
-
             table {
                 min-width: 1200px;
             }
@@ -760,33 +741,26 @@
             body {
                 padding-left: 60px;
             }
-
             .sidebar {
                 width: 60px;
             }
-
             .sidebar:hover {
                 width: 220px;
             }
-
             .header-top {
                 flex-direction: column;
                 align-items: flex-start;
             }
-
             .stats-summary {
                 grid-template-columns: 1fr;
             }
-
             .quick-filters {
                 flex-direction: column;
             }
-
             table {
                 font-size: 0.8rem;
                 min-width: 1000px;
             }
-
             th, td {
                 padding: 0.6rem 0.5rem;
             }
@@ -794,7 +768,6 @@
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
     <nav class="sidebar">
         <div class="sidebar-header">
             <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips" class="sidebar-logo">
@@ -1213,32 +1186,32 @@
             }
 
             calculateQualityScore(game) {
-                const isPremium = this.isPremiumMatch(game);
-                
-                if (isPremium) {
-                    return 100;
-                }
-                
-                const weights = { avgGoals: 0.30, btts: 0.25, over25: 0.35, consistency: 0.10 };
-                const avgGoalsScore = Math.min((game.avgGoals / 4) * 100, 100);
-                const bttsScore = game.bttsPercent;
-                const over25Score = game.over25;
-                const consistencyScore = (game.over15 + game.over25 + game.over35) / 3;
-                
-                return Math.round(Math.min(
+                // Adjusted weights to better reflect high-quality games
+                const weights = { avgGoals: 0.35, btts: 0.25, over25: 0.30, consistency: 0.10 };
+                const avgGoalsScore = Math.min((game.avgGoals / 3.5) * 100, 100); // Adjusted max goal threshold
+                const bttsScore = game.bttsPercent || 0;
+                const over25Score = game.over25 || 0;
+                const consistencyScore = ((game.over15 || 0) + (game.over25 || 0) + (game.over35 || 0)) / 3;
+
+                const baseScore = Math.round(
                     (avgGoalsScore * weights.avgGoals) +
                     (bttsScore * weights.btts) +
                     (over25Score * weights.over25) +
-                    (consistencyScore * weights.consistency), 100
-                ));
+                    (consistencyScore * weights.consistency)
+                );
+
+                // Cap at 100 and ensure premium status is checked afterward
+                return Math.min(baseScore, 100);
             }
 
             isPremiumMatch(game) {
+                // Assign premiumFT if qualityScore >= 89%
                 return game.qualityScore >= 89;
             }
 
             isHTPremiumMatch(game) {
-                return game.htOver05 >= 92 && game.htOver15 >= 92 && game.htOver25 >= 92 && game.htBttsPercent >= 92;
+                // Assign premiumHT if all HT metrics >= 92%
+                return (game.htOver05 >= 92) && (game.htOver15 >= 92) && (game.htOver25 >= 92) && (game.htBttsPercent >= 92);
             }
 
             getDefaultStats() {
@@ -1351,7 +1324,20 @@
                 
                 displayedGames.textContent = this.filteredGames.length;
                 
-                this.filteredGames.forEach(game => {
+                this.filteredGames.forEach((game, index) => {
+                    // Debug log for the first three games
+                    if (index < 3) {
+                        console.log(`Game ${index + 1} Data:`, {
+                            qualityScore: game.qualityScore,
+                            htOver05: game.htOver05,
+                            htOver15: game.htOver15,
+                            htOver25: game.htOver25,
+                            htBttsPercent: game.htBttsPercent,
+                            premiumFT: game.premiumFT,
+                            premiumHT: game.premiumHT
+                        });
+                    }
+                    
                     const qualityScore = game.qualityScore;
                     const isTopMatch = qualityScore >= 80;
                     const row = document.createElement("tr");
