@@ -829,8 +829,14 @@
             </div>
 
             <div class="quick-filters">
+                <div class="filter-chip" data-filter="premium-ft">
+                    <i class="fas fa-star" style="color:#10b981"></i> Premium FT
+                </div>
+                <div class="filter-chip" data-filter="premium-ht">
+                    <i class="fas fa-star" style="color:#1E90FF"></i> Premium HT
+                </div>
                 <div class="filter-chip" data-filter="top-quality">
-                    <i class="fas fa-star"></i> Alta Qualidade (80%+)
+                    <i class="fas fa-award"></i> Alta Qualidade (80%+)
                 </div>
                 <div class="filter-chip" data-filter="high-btts">
                     <i class="fas fa-futbol"></i> BTTS Alto (70%+)
@@ -918,10 +924,6 @@
                                 <i class="fas fa-clock"></i> Data/Hora
                                 <i class="fas fa-filter filter-icon"></i>
                             </th>
-                            <th data-column="avgGoals">
-                                <i class="fas fa-bullseye"></i> Média Gols
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
                             <th data-column="homeAvgGoals">
                                 <i class="fas fa-home"></i> Casa
                                 <i class="fas fa-filter filter-icon"></i>
@@ -930,24 +932,8 @@
                                 <i class="fas fa-plane"></i> Fora
                                 <i class="fas fa-filter filter-icon"></i>
                             </th>
-                            <th data-column="bttsPercent">
-                                <i class="fas fa-exchange-alt"></i> BTTS
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th data-column="over15">
-                                <i class="fas fa-arrow-up"></i> Over 1.5
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th data-column="over25">
-                                <i class="fas fa-arrow-up"></i> Over 2.5
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th data-column="over35">
-                                <i class="fas fa-arrow-up"></i> Over 3.5
-                                <i class="fas fa-filter filter-icon"></i>
-                            </th>
-                            <th data-column="htBttsPercent">
-                                <i class="fas fa-exchange-alt"></i> BTTS HT
+                            <th data-column="avgGoals">
+                                <i class="fas fa-bullseye"></i> Média Gols
                                 <i class="fas fa-filter filter-icon"></i>
                             </th>
                             <th data-column="htOver05">
@@ -962,8 +948,24 @@
                                 <i class="fas fa-arrow-up"></i> Over 2.5 HT
                                 <i class="fas fa-filter filter-icon"></i>
                             </th>
+                            <th data-column="htBttsPercent">
+                                <i class="fas fa-exchange-alt"></i> BTTS HT
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th data-column="over15">
+                                <i class="fas fa-arrow-up"></i> Over 1.5 FT
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th data-column="over25">
+                                <i class="fas fa-arrow-up"></i> Over 2.5 FT
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th data-column="over35">
+                                <i class="fas fa-arrow-up"></i> Over 3.5 FT
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
                             <th data-column="qualityScore">
-                                <i class="fas fa-medal"></i> Qualidade
+                                <i class="fas fa-medal"></i> STATUS
                                 <i class="fas fa-filter filter-icon"></i>
                             </th>
                         </tr>
@@ -1071,6 +1073,8 @@
                             this.showLoading(`Processando jogo ${index + 1}/${data.items.length}...`);
                             const stats = await this.fetchGameStats(game);
                             const processedGame = { ...game, ...stats };
+                            processedGame.premiumFT = this.isPremiumMatch(processedGame);
+                            processedGame.premiumHT = this.isHTPremiumMatch(processedGame);
                             processedGame.qualityScore = this.calculateQualityScore(processedGame);
                             processedGame.day = new Date(game.startTime).toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'});
                             processedGame.hour = new Date(game.startTime).toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
@@ -1290,6 +1294,49 @@
                 return false;
             }
 
+            isHTPremiumMatch(game) {
+                const league = game.competition.name;
+                
+                if (league.includes("Esoccer Battle - 8 mins play")) {
+                    return (
+                        game.htOver15 === 100 &&
+                        game.htOver25 === 100 &&
+                        game.htBttsPercent >= 90
+                    );
+                }
+                
+                if (league.includes("Esoccer H2H GG League - 8 mins play")) {
+                    return (
+                        game.htOver15 === 100 &&
+                        game.htOver25 >= 90 &&
+                        game.htBttsPercent >= 80
+                    );
+                }
+                
+                if (league.includes("Esoccer GT Leagues") && league.includes("12")) {
+                    return (
+                        game.htOver25 === 100 &&
+                        game.htBttsPercent === 100
+                    );
+                }
+                
+                if (league.includes("Esoccer Battle Volta - 6 mins play")) {
+                    return (
+                        game.htOver25 === 100 &&
+                        game.htBttsPercent >= 90
+                    );
+                }
+                
+                if (league.includes("Esoccer Adriatic League - 10 mins play")) {
+                    return (
+                        game.htOver15 === 100 &&
+                        game.htBttsPercent >= 85
+                    );
+                }
+                
+                return false;
+            }
+
             getDefaultStats() {
                 return {
                     avgGoals: 0, homeAvgGoals: 0, awayAvgGoals: 0, bttsPercent: 0,
@@ -1323,6 +1370,12 @@
             applyFilters() {
                 this.filteredGames = [...this.gamesData];
                 
+                if (this.quickFilters.has('premium-ft')) {
+                    this.filteredGames = this.filteredGames.filter(g => g.premiumFT);
+                }
+                if (this.quickFilters.has('premium-ht')) {
+                    this.filteredGames = this.filteredGames.filter(g => g.premiumHT);
+                }
                 if (this.quickFilters.has('top-quality')) {
                     this.filteredGames = this.filteredGames.filter(g => g.qualityScore >= 80);
                 }
@@ -1402,10 +1455,7 @@
                     
                     row.innerHTML = `
                         <td>
-                            <div class="league-badge" data-league="${game.competition.name}">
-                                <i class="fas fa-trophy"></i>
-                                ${game.competition.name}
-                            </div>
+                            ${(() => { const info = this.getLeagueInfo(game.competition.name); return `<div class=\"league-badge\" data-league=\"${game.competition.name}\" style=\"background:${info.color}\">\n                                <i class=\"fas fa-trophy\"></i> ${info.name}\n                            </div>`; })()}
                         </td>
                         <td>
                             <div class="match-info">
@@ -1433,14 +1483,6 @@
                         </td>
                         <td>
                             <div class="tooltip-wrapper">
-                                <span class="stat-pill ${this.getStatClass(game.avgGoals, 'goals')}">
-                                    ${game.avgGoals}
-                                </span>
-                                <span class="tooltip-content">Média combinada de gols</span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="tooltip-wrapper">
                                 <span class="stat-pill ${this.getStatClass(game.homeAvgGoals, 'goals')}">
                                     ${game.homeAvgGoals}
                                 </span>
@@ -1456,8 +1498,31 @@
                             </div>
                         </td>
                         <td>
-                            <span class="stat-pill ${this.getStatClass(game.bttsPercent)}">
-                                ${game.bttsPercent}%
+                            <div class="tooltip-wrapper">
+                                <span class="stat-pill ${this.getStatClass(game.avgGoals, 'goals')}">
+                                    ${game.avgGoals}
+                                </span>
+                                <span class="tooltip-content">Média combinada de gols</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="stat-pill ${this.getStatClass(game.htOver05)}">
+                                ${game.htOver05}%
+                            </span>
+                        </td>
+                        <td>
+                            <span class="stat-pill ${this.getStatClass(game.htOver15)}">
+                                ${game.htOver15}%
+                            </span>
+                        </td>
+                        <td>
+                            <span class="stat-pill ${this.getStatClass(game.htOver25)}">
+                                ${game.htOver25}%
+                            </span>
+                        </td>
+                        <td>
+                            <span class="stat-pill ${this.getStatClass(game.htBttsPercent)}">
+                                ${game.htBttsPercent}%
                             </span>
                         </td>
                         <td>
@@ -1476,30 +1541,7 @@
                             </span>
                         </td>
                         <td>
-                            <span class="stat-pill ${this.getStatClass(game.htBttsPercent)}">
-                                ${game.htBttsPercent}%
-                            </span>
-                        </td>
-                        <td>
-                            <span class="stat-pill ${this.getStatClass(game.htOver05)}">
-                                ${game.htOver05}%
-                            </span>
-                        </td>
-                        <td>
-                            <span class="stat-pill ${this.getStatClass(game.htOver15)}">
-                                ${game.htOver15}%
-                            </span>
-                        </td>
-                        <td>
-                            <span class="stat-pill ${this.getStatClass(game.htOver25)}">
-                                ${game.htOver25}%
-                            </span>
-                        </td>
-                        <td>
-                            <span class="quality-score ${isTopMatch ? 'top' : this.getStatClass(qualityScore)}">
-                                ${qualityScore}%
-                                ${isTopMatch ? '<i class="fas fa-star star"></i>' : ''}
-                            </span>
+                            ${(() => { const stars = `${game.premiumHT ? '<i class=\'fas fa-star star\' style=\'color:#1E90FF\'></i>' : ''}${game.premiumFT ? '<i class=\'fas fa-star star\' style=\'color:#10b981\'></i>' : ''}`; return `<span class=\"quality-score ${game.premiumFT || game.premiumHT ? 'top' : this.getStatClass(qualityScore)}\">${qualityScore}% ${stars}</span>`; })()}
                         </td>
                     `;
                     
@@ -1508,6 +1550,18 @@
                 
                 tableWrapper.style.display = 'block';
                 document.getElementById('errorContainer').style.display = 'none';
+            }
+
+            getLeagueInfo(leagueName) {
+                const mapping = {
+                    "Esoccer Battle - 8 mins play": { name: "Battle 8m", color: "#FF4C4C" },
+                    "Esoccer Battle Volta - 6 mins play": { name: "Battle Volta 6m", color: "#FFD700" },
+                    "Esoccer GT Leagues - 12 mins play": { name: "GT Leagues 12m", color: "#32CD32" },
+                    "Esoccer GT Leagues – 12 mins play": { name: "GT Leagues 12m", color: "#32CD32" },
+                    "Esoccer H2H GG League - 8 mins play": { name: "H2H GG 8m", color: "#8A2BE2" },
+                    "Esoccer Adriatic League - 10 mins play": { name: "Adriatic 10m", color: "#1E90FF" }
+                };
+                return mapping[leagueName] || { name: leagueName, color: "#334155" };
             }
 
             updateStatsSummary() {
@@ -1564,12 +1618,10 @@
             getColumnLabel(column) {
                 const labels = {
                     leagueName: 'Liga', match: 'Partida', dateTime: 'Data/Hora', 
-                    avgGoals: 'Média de Gols', homeAvgGoals: 'Gols Casa', 
-                    awayAvgGoals: 'Gols Fora', bttsPercent: 'BTTS', 
-                    over15: 'Over 1.5', over25: 'Over 2.5', over35: 'Over 3.5', 
-                    htBttsPercent: 'BTTS HT', htOver05: 'Over 0.5 HT', 
-                    htOver15: 'Over 1.5 HT', htOver25: 'Over 2.5 HT', 
-                    qualityScore: 'Qualidade'
+                    homeAvgGoals: 'Gols Casa', awayAvgGoals: 'Gols Fora', avgGoals: 'Média de Gols',
+                    htOver05: 'Over 0.5 HT', htOver15: 'Over 1.5 HT', htOver25: 'Over 2.5 HT', htBttsPercent: 'BTTS HT',
+                    over15: 'Over 1.5 FT', over25: 'Over 2.5 FT', over35: 'Over 3.5 FT',
+                    qualityScore: 'STATUS'
                 };
                 return labels[column] || column;
             }
