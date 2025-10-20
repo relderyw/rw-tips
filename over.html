@@ -988,674 +988,663 @@
     </div>
 
     <script>
-    class EsoccerAnalyzer {
-        constructor() {
-            this.gamesData = [];
-            this.filteredGames = [];
-            this.columnFilters = {};
-            this.activeColumn = null;
-            this.quickFilters = new Set();
-            this.leagueAbbreviations = {
-                "Esoccer Battle - 8 mins play": { name: "Battle 8m", color: "#FF4C4C" },
-                "Esoccer Battle Volta - 6 mins play": { name: "Battle Volta 6m", color: "#FFD700" },
-                "Esoccer GT Leagues - 12 mins play": { name: "GT Leagues 12m", color: "#32CD32" },
-                "Esoccer H2H GG League - 8 mins play": { name: "H2H GG 8m", color: "#8A2BE2" },
-                "Esoccer Adriatic League - 10 mins play": { name: "Adriatic 10m", color: "#1E90FF" }
-            };
-            this.init();
-        }
-
-        init() {
-            if (!this.checkUserLogin()) return;
-            this.setupEventListeners();
-            this.loadCacheOrFetch();
-        }
-
-        checkUserLogin() {
-            if (!sessionStorage.getItem('loggedIn')) {
-                window.location.replace('index.html');
-                return false;
+        class EsoccerAnalyzer {
+            constructor() {
+                this.gamesData = [];
+                this.filteredGames = [];
+                this.columnFilters = {};
+                this.activeColumn = null;
+                this.quickFilters = new Set();
+                
+                this.init();
             }
-            return true;
-        }
 
-        setupEventListeners() {
-            const currentPath = window.location.pathname.split('/').pop() || 'index.html';
-            const menuItems = document.querySelectorAll('.sidebar-menu a');
-            menuItems.forEach(item => {
-                if (item.getAttribute('href') === currentPath) {
-                    item.parentElement.classList.add('active');
+            init() {
+                if (!this.checkUserLogin()) return;
+                this.setupEventListeners();
+                this.fetchGames();
+                setInterval(() => {
+                    this.fetchGames();
+                }, 120000);
+            }
+
+            checkUserLogin() {
+                if (!sessionStorage.getItem('loggedIn')) {
+                    window.location.replace('index.html');
+                    return false;
                 }
-            });
+                return true;
+            }
 
-            document.getElementById('resetFilters')?.addEventListener('click', () => {
-                this.resetAllFilters();
-            });
-
-            document.querySelectorAll('.filter-chip').forEach(chip => {
-                chip.addEventListener('click', (e) => {
-                    const filter = e.currentTarget.dataset.filter;
-                    this.toggleQuickFilter(filter, e.currentTarget);
-                });
-            });
-
-            document.querySelectorAll('th[data-column]').forEach(th => {
-                th.addEventListener('click', () => {
-                    this.activeColumn = th.dataset.column;
-                    this.showFilterModal();
-                });
-            });
-
-            document.getElementById('errorContainer')?.querySelector('button')?.addEventListener('click', () => {
-                this.retryFetch();
-            });
-        }
-
-        async fetchWithRetry(url, options = {}, maxRetries = 3) {
-            for (let attempt = 1; attempt <= maxRetries; attempt++) {
-                try {
-                    const response = await fetch(url, {
-                        ...options,
-                        signal: AbortSignal.timeout(10000),
-                    });
-                    if (!response.ok) {
-                        if (response.status === 502 && attempt < maxRetries) {
-                            await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
-                            continue;
-                        }
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            setupEventListeners() {
+                // Sidebar active item logic
+                const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+                const menuItems = document.querySelectorAll('.sidebar-menu a');
+                menuItems.forEach(item => {
+                    if (item.getAttribute('href') === currentPath) {
+                        item.parentElement.classList.add('active');
                     }
-                    return response;
-                } catch (error) {
-                    if (attempt === maxRetries) throw error;
-                    console.warn(`Tentativa ${attempt} falhou para ${url}: ${error.message}. Retry em ${Math.pow(2, attempt)}s...`);
-                    await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
-                }
-            }
-        }
+                });
 
-        async loadCacheOrFetch() {
-            const cache = localStorage.getItem('esoccerGamesCache');
-            if (cache) {
-                const { data: cachedData, timestamp } = JSON.parse(cache);
-                if (Date.now() - timestamp < 5 * 60 * 1000) {
-                    this.gamesData = cachedData;
+                document.getElementById('resetFilters')?.addEventListener('click', () => {
+                    this.resetAllFilters();
+                });
+
+                document.querySelectorAll('.filter-chip').forEach(chip => {
+                    chip.addEventListener('click', (e) => {
+                        const filter = e.currentTarget.dataset.filter;
+                        this.toggleQuickFilter(filter, e.currentTarget);
+                    });
+                });
+
+                document.querySelectorAll('th[data-column]').forEach(th => {
+                    th.addEventListener('click', () => {
+                        this.activeColumn = th.dataset.column;
+                        this.showFilterModal();
+                    });
+                });
+            }
+
+            toggleQuickFilter(filter, element) {
+                if (this.quickFilters.has(filter)) {
+                    this.quickFilters.delete(filter);
+                    element.classList.remove('active');
+                } else {
+                    this.quickFilters.add(filter);
+                    element.classList.add('active');
+                }
+                this.applyFilters();
+            }
+
+            async fetchGames() {
+                try {
+                    this.showLoading('Buscando jogos...');
+                    
+                    const response = await fetch("https://api-v2.green365.com.br/api/v2/sport-events?page=1&limit=24&sport=esoccer&status=upcoming");
+                    if (!response.ok) throw new Error(`Erro na requisição: ${response.status}`);
+                    
+                    const data = await response.json();
+                    this.showLoading('Processando dados...');
+                    
+                    this.gamesData = await Promise.all(
+                        data.items.map(async (game, index) => {
+                            this.showLoading(`Processando jogo ${index + 1}/${data.items.length}...`);
+                            const stats = await this.fetchGameStats(game);
+                            const processedGame = { ...game, ...stats };
+                            processedGame.qualityScore = this.calculateQualityScore(processedGame);
+                            processedGame.day = new Date(game.startTime).toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'});
+                            processedGame.hour = new Date(game.startTime).toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+                            return processedGame;
+                        })
+                    );
+
+                    this.hideLoading();
                     this.updateStatsSummary();
                     this.applyFilters();
-                    return;
+                    
+                } catch (error) {
+                    this.showError(`Erro ao carregar: ${error.message}`);
                 }
             }
-            await this.fetchGames();
-        }
 
-        async fetchGames() {
-            try {
-                this.showLoading('Buscando jogos...');
-                const url = "https://api-v2.green365.com.br/api/v2/sport-events?page=1&limit=24&sport=esoccer&status=upcoming";
-                const response = await this.fetchWithRetry(url);
-                if (!response.ok) throw new Error(`Erro na requisição: ${response.status}`);
-                
-                const data = await response.json();
-                this.showLoading('Processando dados...');
-                
-                this.gamesData = await Promise.all(
-                    data.items.map(async (game, index) => {
-                        this.showLoading(`Processando jogo ${index + 1}/${data.items.length}...`);
-                        await new Promise(resolve => setTimeout(resolve, 2000));
-                        const stats = await this.fetchGameStats(game);
-                        const processedGame = { ...game, ...stats };
-                        processedGame.qualityScore = this.calculateQualityScore(processedGame);
-                        processedGame.day = new Date(game.startTime).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
-                        processedGame.hour = new Date(game.startTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                        return processedGame;
-                    })
-                );
-
-                localStorage.setItem('esoccerGamesCache', JSON.stringify({
-                    data: this.gamesData,
-                    timestamp: Date.now()
-                }));
-
-                this.hideLoading();
-                this.updateStatsSummary();
-                this.applyFilters();
-                
-            } catch (error) {
-                console.warn('V2 falhou, tentando API antiga...');
-                await this.fetchGamesLegacy();
-            }
-        }
-
-        async fetchGamesLegacy() {
-            try {
-                this.showLoading('Tentando API antiga...');
-                const url = "https://api.green365.com.br/api/e-soccer/events?page=1&limit=24&status=upcoming";
-                const response = await this.fetchWithRetry(url);
-                if (!response.ok) throw new Error(`Erro na API antiga: ${response.status}`);
-                
-                const data = await response.json();
-                this.showLoading('Processando dados da API antiga...');
-                
-                this.gamesData = await Promise.all(
-                    data.data.map(async (game, index) => {
-                        this.showLoading(`Processando jogo ${index + 1}/${data.data.length}...`);
-                        await new Promise(resolve => setTimeout(resolve, 2000));
-                        const stats = await this.fetchGameStatsLegacy(game);
-                        const processedGame = { ...game, ...stats };
-                        processedGame.qualityScore = this.calculateQualityScore(processedGame);
-                        processedGame.day = new Date(game.startTime).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
-                        processedGame.hour = new Date(game.startTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                        return processedGame;
-                    })
-                );
-
-                localStorage.setItem('esoccerGamesCache', JSON.stringify({
-                    data: this.gamesData,
-                    timestamp: Date.now()
-                }));
-
-                this.hideLoading();
-                this.updateStatsSummary();
-                this.applyFilters();
-                
-            } catch (error) {
-                this.showError(`Erro ao carregar dados: ${error.message}. Tente novamente.`);
-            }
-        }
-
-        async fetchGameStats(game) {
-            try {
-                const url = `https://api-v2.green365.com.br/api/v2/analysis/sport?type=h2h&sport=esoccer&status=upcoming&competitionID=${game.competition.id}&home=${encodeURIComponent(game.home.name)}&away=${encodeURIComponent(game.away.name)}&homeID=${game.home.id}&awayID=${game.away.id}&eventID=${game.eventID}`;
-                const response = await this.fetchWithRetry(url);
-                if (!response.ok) throw new Error(`Erro nas estatísticas: ${response.status}`);
-                const data = await response.json();
-                return this.processGameStats(data, game);
-            } catch (error) {
-                console.error(`Erro em ${game.home.name} vs ${game.away.name}:`, error);
-                return this.getDefaultStats();
-            }
-        }
-
-        async fetchGameStatsLegacy(game) {
-            try {
-                const url = `https://api.green365.com.br/api/e-soccer/event/stats?eventID=${game.eventID}`;
-                const response = await this.fetchWithRetry(url);
-                if (!response.ok) throw new Error(`Erro nas estatísticas da API antiga: ${response.status}`);
-                const data = await response.json();
-                return this.processGameStatsLegacy(data, game);
-            } catch (error) {
-                console.error(`Erro em ${game.home.name} vs ${game.away.name}:`, error);
-                return this.getDefaultStats();
-            }
-        }
-
-        processGameStats(data, game) {
-            let homeAvgGoals = 0;
-            let awayAvgGoals = 0;
-            let bttsPercent = 0;
-            let over15 = 0, over25 = 0, over35 = 0;
-            let htOver05 = 0, htOver15 = 0, htOver25 = 0, htBttsPercent = 0;
-
-            try {
-                const homeTable = data.sessions.sessionTables.find(t => t.id === "home-participant-stats");
-                if (homeTable) {
-                    const homeGoalsRow = homeTable.rows.find(r => r.columns[0].value === "Média de gols");
-                    homeAvgGoals = homeGoalsRow ? parseFloat(homeGoalsRow.columns[1].value) : 0;
+            async fetchGameStats(game) {
+                try {
+                    const url = `https://api-v2.green365.com.br/api/v2/analysis/sport?type=h2h&sport=esoccer&status=upcoming&competitionID=${game.competition.id}&home=${encodeURIComponent(game.home.name)}&away=${encodeURIComponent(game.away.name)}&homeID=${game.home.id}&awayID=${game.away.id}&eventID=${game.eventID}`;
+                    const response = await fetch(url);
+                    
+                    if (!response.ok) throw new Error(`Erro nas estatísticas: ${response.status}`);
+                    
+                    const data = await response.json();
+                    return this.processGameStats(data, game);
+                    
+                } catch (error) {
+                    console.error(`Erro em ${game.home.name} vs ${game.away.name}:`, error);
+                    return this.getDefaultStats();
                 }
-
-                const awayTable = data.sessions.sessionTables.find(t => t.id === "away-participant-stats");
-                if (awayTable) {
-                    const awayGoalsRow = awayTable.rows.find(r => r.columns[0].value === "Média de gols");
-                    awayAvgGoals = awayGoalsRow ? parseFloat(awayGoalsRow.columns[1].value) : 0;
-                }
-
-                const bttsTable = data.sessions.sessionTables.find(t => t.id === "both-score-stats");
-                if (bttsTable) {
-                    const bttsYesRow = bttsTable.rows.find(r => r.columns[0].value === "Ambos Marcam - Sim");
-                    bttsPercent = bttsYesRow ? parseFloat(bttsYesRow.columns[1].value.replace('%', '')) : 0;
-                }
-
-                const ftOverTable = data.sessions.sessionTables.find(t => t.id === "over-under-FT-stats");
-                if (ftOverTable) {
-                    over15 = ftOverTable.rows.find(r => r.columns[0].value === "1.5")?.columns[1].value.replace('%', '') || 0;
-                    over25 = ftOverTable.rows.find(r => r.columns[0].value === "2.5")?.columns[1].value.replace('%', '') || 0;
-                    over35 = ftOverTable.rows.find(r => r.columns[0].value === "3.5")?.columns[1].value.replace('%', '') || 0;
-                }
-
-                const htOverTable = data.sessions.sessionTables.find(t => t.id === "over-under-ht-stats");
-                if (htOverTable) {
-                    htOver05 = htOverTable.rows.find(r => r.columns[0].value === "0.5")?.columns[1].value.replace('%', '') || 0;
-                    htOver15 = htOverTable.rows.find(r => r.columns[0].value === "1.5")?.columns[1].value.replace('%', '') || 0;
-                    htOver25 = htOverTable.rows.find(r => r.columns[0].value === "2.5")?.columns[1].value.replace('%', '') || 0;
-                }
-
-                const htBttsTable = data.sessions.sessionTables.find(t => t.id === "both-score-ht-stats");
-                if (htBttsTable) {
-                    const htBttsYesRow = htBttsTable.rows.find(r => r.columns[0].value === "Ambos Marcam - Sim");
-                    htBttsPercent = htBttsYesRow ? parseFloat(htBttsYesRow.columns[1].value.replace('%', '')) : 0;
-                }
-
-                const h2hEvents = data.sessionEvents?.headToHeadEvents || [];
-                if (h2hEvents.length > 0 && !htBttsPercent) {
-                    const htBttsCount = h2hEvents.filter(event => {
-                        const htHome = parseInt(event.scoreHT.home) || 0;
-                        const htAway = parseInt(event.scoreHT.away) || 0;
-                        return htHome > 0 && htAway > 0;
-                    }).length;
-                    htBttsPercent = Math.round((htBttsCount / h2hEvents.length) * 100) || 0;
-                }
-            } catch (e) {
-                console.error('Error processing stats:', e);
             }
 
-            const avgGoals = (homeAvgGoals + awayAvgGoals) / 2;
-            return {
-                avgGoals: Number(avgGoals.toFixed(2)),
-                homeAvgGoals: Number(homeAvgGoals.toFixed(1)),
-                awayAvgGoals: Number(awayAvgGoals.toFixed(1)),
-                bttsPercent,
-                over15: parseInt(over15),
-                over25: parseInt(over25),
-                over35: parseInt(over35),
-                htOver05: parseInt(htOver05),
-                htOver15: parseInt(htOver15),
-                htOver25: parseInt(htOver25),
-                htBttsPercent: parseInt(htBttsPercent)
-            };
-        }
+            processGameStats(data, game) {
+                let homeAvgGoals = 0;
+                let awayAvgGoals = 0;
+                let bttsPercent = 0;
+                let over15 = 0;
+                let over25 = 0;
+                let over35 = 0;
+                let htOver05 = 0;
+                let htOver15 = 0;
+                let htOver25 = 0;
+                let htBttsPercent = 0;
 
-        processGameStatsLegacy(data, game) {
-            let homeAvgGoals = data.homeStats?.avgGoals || 0;
-            let awayAvgGoals = data.awayStats?.avgGoals || 0;
-            let bttsPercent = data.btts?.yesPercentage || 0;
-            let over15 = data.overUnder?.['1.5'] || 0;
-            let over25 = data.overUnder?.['2.5'] || 0;
-            let over35 = data.overUnder?.['3.5'] || 0;
-            let htOver05 = data.htOverUnder?.['0.5'] || 0;
-            let htOver15 = data.htOverUnder?.['1.5'] || 0;
-            let htOver25 = data.htOverUnder?.['2.5'] || 0;
-            let htBttsPercent = data.htBtts?.percentage || 0;
+                try {
+                    const homeTable = data.sessions.sessionTables.find(t => t.id === "home-participant-stats");
+                    if (homeTable) {
+                        const homeGoalsRow = homeTable.rows.find(r => r.columns[0].value === "Média de gols");
+                        homeAvgGoals = homeGoalsRow ? parseFloat(homeGoalsRow.columns[1].value) : 0;
+                    }
 
-            const avgGoals = (homeAvgGoals + awayAvgGoals) / 2;
-            return {
-                avgGoals: Number(avgGoals.toFixed(2)),
-                homeAvgGoals: Number(homeAvgGoals.toFixed(1)),
-                awayAvgGoals: Number(awayAvgGoals.toFixed(1)),
-                bttsPercent: parseInt(bttsPercent),
-                over15: parseInt(over15),
-                over25: parseInt(over25),
-                over35: parseInt(over35),
-                htOver05: parseInt(htOver05),
-                htOver15: parseInt(htOver15),
-                htOver25: parseInt(htOver25),
-                htBttsPercent: parseInt(htBttsPercent)
-            };
-        }
+                    const awayTable = data.sessions.sessionTables.find(t => t.id === "away-participant-stats");
+                    if (awayTable) {
+                        const awayGoalsRow = awayTable.rows.find(r => r.columns[0].value === "Média de gols");
+                        awayAvgGoals = awayGoalsRow ? parseFloat(awayGoalsRow.columns[1].value) : 0;
+                    }
 
-        calculateQualityScore(game) {
-            const isPremiumHT = this.isPremiumHTMatch(game);
-            if (isPremiumHT) return 100;
+                    const bttsTable = data.sessions.sessionTables.find(t => t.id === "both-score-stats");
+                    if (bttsTable) {
+                        const bttsYesRow = bttsTable.rows.find(r => r.columns[0].value === "Ambos Marcam - Sim");
+                        bttsPercent = bttsYesRow ? parseFloat(bttsYesRow.columns[1].value.replace('%', '')) : 0;
+                    }
 
-            const weights = { avgGoals: 0.25, btts: 0.20, over25: 0.30, htConsistency: 0.25 };
-            const avgGoalsScore = Math.min((game.avgGoals / 4) * 100, 100);
-            const bttsScore = game.bttsPercent;
-            const over25Score = game.over25;
-            const htConsistencyScore = (game.htOver05 + game.htOver15 + game.htOver25) / 3;
+                    const ftOverTable = data.sessions.sessionTables.find(t => t.id === "over-under-FT-stats");
+                    if (ftOverTable) {
+                        const getOver = (line) => {
+                            const row = ftOverTable.rows.find(r => r.columns[0].value === line);
+                            return row ? parseFloat(row.columns[1].value.replace('%', '')) : 0;
+                        };
+                        over15 = getOver("1.5");
+                        over25 = getOver("2.5");
+                        over35 = getOver("3.5");
+                    }
 
-            let baseScore = Math.round(
-                (avgGoalsScore * weights.avgGoals) +
-                (bttsScore * weights.btts) +
-                (over25Score * weights.over25) +
-                (htConsistencyScore * weights.htConsistency)
-            );
+                    const htOverTable = data.sessions.sessionTables.find(t => t.id === "over-under-ht-stats");
+                    if (htOverTable) {
+                        const getHtOver = (line) => {
+                            const row = htOverTable.rows.find(r => r.columns[0].value === line);
+                            return row ? parseFloat(row.columns[1].value.replace('%', '')) : 0;
+                        };
+                        htOver05 = getHtOver("0.5");
+                        htOver15 = getHtOver("1.5");
+                        htOver25 = getHtOver("2.5");
+                    }
 
-            const isPremiumFT = this.isPremiumFTMatch(game);
-            return isPremiumFT ? 100 : Math.min(baseScore, 99);
-        }
+                    const h2hEvents = data.sessionEvents?.headToHeadEvents || [];
+                    if (h2hEvents.length > 0) {
+                        const htBttsCount = h2hEvents.filter(event => {
+                            const htHome = parseInt(event.scoreHT.home) || 0;
+                            const htAway = parseInt(event.scoreHT.away) || 0;
+                            return htHome > 0 && htAway > 0;
+                        }).length;
+                        htBttsPercent = Math.round((htBttsCount / h2hEvents.length) * 100);
+                    }
 
-        isPremiumHTMatch(game) {
-            const league = game.competition.name;
-            const htThresholds = {
-                "Esoccer Battle - 8 mins play": { htOver05: 95, htOver15: 85, htOver25: 70, htBtts: 80 },
-                "Esoccer Battle Volta - 6 mins play": { htOver05: 98, htOver15: 90, htOver25: 75, htBtts: 85 },
-                "Esoccer GT Leagues - 12 mins play": { htOver05: 97, htOver15: 88, htOver25: 72, htBtts: 82 },
-                "Esoccer H2H GG League - 8 mins play": { htOver05: 96, htOver15: 87, htOver25: 71, htBtts: 81 },
-                "Esoccer Adriatic League - 10 mins play": { htOver05: 95, htOver15: 85, htOver25: 70, htBtts: 80 }
-            };
+                } catch (e) {
+                    console.error('Error processing stats:', e);
+                }
 
-            const thresholds = htThresholds[league] || htThresholds["Esoccer Adriatic League - 10 mins play"];
-            return (
-                game.htOver05 >= thresholds.htOver05 &&
-                game.htOver15 >= thresholds.htOver15 &&
-                game.htOver25 >= thresholds.htOver25 &&
-                game.htBttsPercent >= thresholds.htBtts
-            );
-        }
+                const avgGoals = (homeAvgGoals + awayAvgGoals) / 2;
 
-        isPremiumFTMatch(game) {
-            const league = game.competition.name;
-            const ftThresholds = {
-                "Esoccer Battle - 8 mins play": { over15: 98, over25: 90, over35: 75, btts: 85, avgGoals: 4.5 },
-                "Esoccer Battle Volta - 6 mins play": { over15: 99, over25: 92, over35: 80, btts: 90, avgGoals: 5.5 },
-                "Esoccer GT Leagues - 12 mins play": { over15: 98, over25: 91, over35: 78, btts: 88, avgGoals: 4.8 },
-                "Esoccer H2H GG League - 8 mins play": { over15: 97, over25: 89, over35: 73, btts: 86, avgGoals: 4.2 },
-                "Esoccer Adriatic League - 10 mins play": { over15: 96, over25: 88, over35: 70, btts: 84, avgGoals: 4.0 }
-            };
+                return {
+                    avgGoals: Number(avgGoals.toFixed(2)),
+                    homeAvgGoals: Number(homeAvgGoals.toFixed(1)),
+                    awayAvgGoals: Number(awayAvgGoals.toFixed(1)),
+                    bttsPercent,
+                    over15,
+                    over25,
+                    over35,
+                    htBttsPercent,
+                    htOver05,
+                    htOver15,
+                    htOver25
+                };
+            }
 
-            const thresholds = ftThresholds[league] || ftThresholds["Esoccer Adriatic League - 10 mins play"];
-            return (
-                game.over15 >= thresholds.over15 &&
-                game.over25 >= thresholds.over25 &&
-                game.over35 >= thresholds.over35 &&
-                game.bttsPercent >= thresholds.btts &&
-                game.avgGoals >= thresholds.avgGoals
-            );
-        }
+            calculateAverageGoals(games, position) {
+                if (!games.length) return 0;
+                const totalGoals = games.reduce((sum, game) => sum + (parseInt(game.score.split('-')[position]) || 0), 0);
+                return totalGoals / games.length;
+            }
 
-        getDefaultStats() {
-            return {
-                avgGoals: 0, homeAvgGoals: 0, awayAvgGoals: 0, bttsPercent: 0,
-                over15: 0, over25: 0, over35: 0,
-                htOver05: 0, htOver15: 0, htOver25: 0, htBttsPercent: 0
-            };
-        }
+            calculateBTTS(games) {
+                if (!games.length) return 0;
+                const bttsGames = games.filter(game => {
+                    const [homeScore, awayScore] = game.score.split('-').map(Number);
+                    return homeScore > 0 && awayScore > 0;
+                }).length;
+                return Math.round((bttsGames / games.length) * 100);
+            }
 
-        getStatClass(value, type) {
-            const val = parseFloat(value);
-            if (type === 'goals') {
-                if (val >= 3) return 'excellent';
-                if (val >= 2.5) return 'very-good';
-                if (val >= 2) return 'good';
-                if (val >= 1.5) return 'moderate';
-                if (val >= 1) return 'fair';
-                if (val >= 0.5) return 'poor';
+            calculateOverStats(games) {
+                if (!games.length) return { over15: 0, over25: 0, over35: 0 };
+                const totalGoals = games.map(game => {
+                    const [homeScore, awayScore] = game.score.split('-').map(Number);
+                    return (homeScore || 0) + (awayScore || 0);
+                });
+                return {
+                    over15: Math.round((totalGoals.filter(g => g > 1.5).length / totalGoals.length) * 100),
+                    over25: Math.round((totalGoals.filter(g => g > 2.5).length / totalGoals.length) * 100),
+                    over35: Math.round((totalGoals.filter(g => g > 3.5).length / totalGoals.length) * 100)
+                };
+            }
+
+            calculateQualityScore(game) {
+                const isPremium = this.isPremiumMatch(game);
+                
+                if (isPremium) {
+                    return 100;
+                }
+                
+                const weights = { avgGoals: 0.30, btts: 0.25, over25: 0.35, consistency: 0.10 };
+                const avgGoalsScore = Math.min((game.avgGoals / 4) * 100, 100);
+                const bttsScore = game.bttsPercent;
+                const over25Score = game.over25;
+                const consistencyScore = (game.over15 + game.over25 + game.over35) / 3;
+                
+                return Math.round(Math.min(
+                    (avgGoalsScore * weights.avgGoals) +
+                    (bttsScore * weights.btts) +
+                    (over25Score * weights.over25) +
+                    (consistencyScore * weights.consistency), 100
+                ));
+            }
+
+            isPremiumMatch(game) {
+                const league = game.competition.name;
+                
+                if (league.includes("Esoccer Battle - 8 mins play")) {
+                    return (
+                        game.homeAvgGoals >= 2.5 &&
+                        game.awayAvgGoals >= 2.5 &&
+                        game.avgGoals >= 4.5 &&
+                        game.bttsPercent === 100 &&
+                        game.over15 === 100 &&
+                        game.over25 === 100 &&
+                        game.over35 >= 95
+                    );
+                }
+                
+                if (league.includes("Esoccer H2H GG League - 8 mins play")) {
+                    return (
+                        game.homeAvgGoals >= 2.2 &&
+                        game.awayAvgGoals >= 2.2 &&
+                        game.avgGoals >= 3.5 &&
+                        game.bttsPercent >= 90 &&
+                        game.over15 === 100 &&
+                        game.over25 === 100 &&
+                        game.over35 >= 85
+                    );
+                }
+                
+                if (league.includes("Esoccer GT Leagues") && league.includes("12")) {
+                    return (
+                        game.homeAvgGoals >= 2.7 &&
+                        game.awayAvgGoals >= 2.7 &&
+                        game.avgGoals >= 4.5 &&
+                        game.bttsPercent >= 100 &&
+                        game.over15 === 100 &&
+                        game.over25 === 100 &&
+                        game.over35 >= 100
+                    );
+                }
+                
+                if (league.includes("Esoccer Battle Volta - 6 mins play")) {
+                    return (
+                        game.homeAvgGoals >= 3.0 &&
+                        game.awayAvgGoals >= 3.0 &&
+                        game.avgGoals >= 5.5 &&
+                        game.bttsPercent >= 100 &&
+                        game.over15 === 100 &&
+                        game.over25 === 100 &&
+                        game.over35 >= 100
+                    );
+                }
+                
+                return false;
+            }
+
+            getDefaultStats() {
+                return {
+                    avgGoals: 0, homeAvgGoals: 0, awayAvgGoals: 0, bttsPercent: 0,
+                    over15: 0, over25: 0, over35: 0,
+                    htBttsPercent: 0, htOver05: 0, htOver15: 0, htOver25: 0
+                };
+            }
+
+            getStatClass(value, type) {
+                const val = parseFloat(value);
+                
+                if (type === 'goals') {
+                    if (val >= 3) return 'excellent';
+                    if (val >= 2.5) return 'very-good';
+                    if (val >= 2) return 'good';
+                    if (val >= 1.5) return 'moderate';
+                    if (val >= 1) return 'fair';
+                    if (val >= 0.5) return 'poor';
+                    return 'very-poor';
+                }
+                
+                if (val >= 80) return 'excellent';
+                if (val >= 70) return 'very-good';
+                if (val >= 60) return 'good';
+                if (val >= 50) return 'moderate';
+                if (val >= 40) return 'fair';
+                if (val >= 30) return 'poor';
                 return 'very-poor';
             }
-            if (val >= 80) return 'excellent';
-            if (val >= 70) return 'very-good';
-            if (val >= 60) return 'good';
-            if (val >= 50) return 'moderate';
-            if (val >= 40) return 'fair';
-            if (val >= 30) return 'poor';
-            return 'very-poor';
-        }
 
-        applyFilters() {
-            this.filteredGames = [...this.gamesData];
-            if (this.quickFilters.has('premium-ft')) {
-                this.filteredGames = this.filteredGames.filter(g => this.isPremiumFTMatch(g));
-            }
-            if (this.quickFilters.has('premium-ht')) {
-                this.filteredGames = this.filteredGames.filter(g => this.isPremiumHTMatch(g));
-            }
-            if (this.quickFilters.has('high-goals')) {
-                this.filteredGames = this.filteredGames.filter(g => g.avgGoals >= 2.5);
-            }
-            if (this.quickFilters.has('high-btts')) {
-                this.filteredGames = this.filteredGames.filter(g => g.bttsPercent >= 70);
-            }
-            
-            for (let column in this.columnFilters) {
-                if (this.columnFilters[column].values?.length > 0) {
-                    this.filteredGames = this.filteredGames.filter(game => {
-                        const value = this.getColumnValue(game, column).toString();
-                        return this.columnFilters[column].values.includes(value);
-                    });
-                }
-                if (this.columnFilters[column].sort) {
-                    this.filteredGames.sort((a, b) => {
-                        const aValue = this.getColumnValue(a, column);
-                        const bValue = this.getColumnValue(b, column);
-                        return this.columnFilters[column].sort === "asc" ? 
-                               (aValue - bValue) || String(aValue).localeCompare(String(bValue)) : 
-                               (bValue - aValue) || String(bValue).localeCompare(String(aValue));
-                    });
-                }
-            }
-            
-            this.displayGames();
-            this.updateFilteredColumns();
-        }
-
-        getColumnValue(game, column) {
-            switch (column) {
-                case "leagueName": return this.leagueAbbreviations[game.competition.name]?.name || game.competition.name;
-                case "match": return `${game.home.teamName} vs ${game.away.teamName}`;
-                case "dateTime": return `${game.day} ${game.hour}`;
-                case "homeAvgGoals": return parseFloat(game.homeAvgGoals);
-                case "awayAvgGoals": return parseFloat(game.awayAvgGoals);
-                case "avgGoals": return parseFloat(game.avgGoals);
-                case "htOver05": return parseInt(game.htOver05);
-                case "htOver15": return parseInt(game.htOver15);
-                case "htOver25": return parseInt(game.htOver25);
-                case "htBttsPercent": return parseInt(game.htBttsPercent);
-                case "over15": return parseInt(game.over15);
-                case "over25": return parseInt(game.over25);
-                case "over35": return parseInt(game.over35);
-                case "qualityScore": return parseInt(game.qualityScore);
-                default: return "";
-            }
-        }
-
-        displayGames() {
-            const tableBody = document.getElementById("gamesTableBody");
-            const tableWrapper = document.getElementById("tableWrapper");
-            const displayedGames = document.getElementById("displayedGames");
-            
-            tableBody.innerHTML = "";
-            
-            if (!this.filteredGames || this.filteredGames.length === 0) {
-                tableWrapper.style.display = 'none';
-                this.showError("Nenhum jogo encontrado com os filtros aplicados.");
-                return;
-            }
-            
-            displayedGames.textContent = this.filteredGames.length;
-            
-            this.filteredGames.forEach(game => {
-                const qualityScore = game.qualityScore;
-                const isPremiumHT = this.isPremiumHTMatch(game);
-                const isPremiumFT = this.isPremiumFTMatch(game);
-                const row = document.createElement("tr");
+            applyFilters() {
+                this.filteredGames = [...this.gamesData];
                 
-                row.innerHTML = `
-                    <td>${this.leagueAbbreviations[game.competition.name]?.name || game.competition.name}</td>
-                    <td>${game.home.teamName} vs ${game.away.teamName}</td>
-                    <td>${game.day} ${game.hour}</td>
-                    <td>${game.homeAvgGoals}</td>
-                    <td>${game.awayAvgGoals}</td>
-                    <td>${game.avgGoals}</td>
-                    <td>${game.htOver05}%</td>
-                    <td>${game.htOver15}%</td>
-                    <td>${game.htOver25}%</td>
-                    <td>${game.htBttsPercent}%</td>
-                    <td>${game.over15}%</td>
-                    <td>${game.over25}%</td>
-                    <td>${game.over35}%</td>
-                    <td>
-                        ${qualityScore}%
-                        ${isPremiumHT ? '<i class="fas fa-star" style="color: #0000FF;"></i>' : ''}
-                        ${isPremiumFT ? '<i class="fas fa-star" style="color: #28a745;"></i>' : ''}
-                    </td>
-                `;
+                if (this.quickFilters.has('top-quality')) {
+                    this.filteredGames = this.filteredGames.filter(g => g.qualityScore >= 80);
+                }
+                if (this.quickFilters.has('high-btts')) {
+                    this.filteredGames = this.filteredGames.filter(g => g.bttsPercent >= 70);
+                }
+                if (this.quickFilters.has('high-over25')) {
+                    this.filteredGames = this.filteredGames.filter(g => g.over25 >= 70);
+                }
+                if (this.quickFilters.has('high-goals')) {
+                    this.filteredGames = this.filteredGames.filter(g => g.avgGoals >= 2.5);
+                }
                 
-                tableBody.appendChild(row);
-            });
-            
-            tableWrapper.style.display = 'block';
-            document.getElementById('errorContainer').style.display = 'none';
-        }
-
-        updateStatsSummary() {
-            const summary = document.getElementById('statsSummary');
-            const totalGames = this.gamesData.length;
-            const premiumFT = this.gamesData.filter(g => this.isPremiumFTMatch(g)).length;
-            const premiumHT = this.gamesData.filter(g => this.isPremiumHTMatch(g)).length;
-            const avgQuality = Math.round(this.gamesData.reduce((sum, g) => sum + g.qualityScore, 0) / totalGames);
-            const avgGoals = (this.gamesData.reduce((sum, g) => sum + g.avgGoals, 0) / totalGames).toFixed(1);
-            
-            document.getElementById('totalGames').textContent = totalGames;
-            document.getElementById('topMatches').textContent = premiumFT;
-            document.getElementById('avgQuality').textContent = `${avgQuality}%`;
-            document.getElementById('avgGoals').textContent = avgGoals;
-            
-            summary.style.display = 'grid';
-        }
-
-        showFilterModal() {
-            const modal = document.getElementById('filterModal');
-            const title = document.getElementById('filterModalTitle');
-            const options = document.getElementById('filterOptions');
-            
-            title.textContent = `Filtrar: ${this.getColumnLabel(this.activeColumn)}`;
-            
-            const uniqueValues = [...new Set(this.gamesData.map(game => 
-                this.getColumnValue(game, this.activeColumn).toString()
-            ))].sort((a, b) => {
-                const numA = parseFloat(a);
-                const numB = parseFloat(b);
-                if (!isNaN(numA) && !isNaN(numB)) return numB - numA;
-                return a.localeCompare(b);
-            });
-            
-            options.innerHTML = `
-                <label style="border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
-                    <input type="checkbox" data-action="sort-desc" ${this.columnFilters[this.activeColumn]?.sort === 'desc' ? 'checked' : ''}>
-                    <span><i class="fas fa-sort-amount-down"></i> Ordenar: Maior → Menor</span>
-                </label>
-                <label style="border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
-                    <input type="checkbox" data-action="sort-asc" ${this.columnFilters[this.activeColumn]?.sort === 'asc' ? 'checked' : ''}>
-                    <span><i class="fas fa-sort-amount-up"></i> Ordenar: Menor → Maior</span>
-                </label>
-                ${uniqueValues.map(value => `
-                    <label>
-                        <input type="checkbox" value="${value}" ${this.columnFilters[this.activeColumn]?.values?.includes(value) ? 'checked' : ''}>
-                        <span>${value}</span>
-                    </label>
-                `).join('')}
-            `;
-            
-            modal.classList.add('active');
-        }
-
-        getColumnLabel(column) {
-            const labels = {
-                leagueName: 'Liga', match: 'Partida', dateTime: 'Data/Hora',
-                homeAvgGoals: 'Casa', awayAvgGoals: 'Fora',
-                avgGoals: 'Média de Gols', htOver05: '+0.5 HT', htOver15: '+1.5 HT',
-                htOver25: '+2.5 HT', htBttsPercent: 'BTTS HT',
-                over15: '+1.5 FT', over25: '+2.5 FT', over35: '+3.5 FT',
-                qualityScore: 'Status'
-            };
-            return labels[column] || column;
-        }
-
-        applyColumnFilter() {
-            const options = document.getElementById('filterOptions');
-            const checkboxes = options.querySelectorAll('input[type="checkbox"]');
-            
-            this.columnFilters[this.activeColumn] = { values: [], sort: null };
-            
-            checkboxes.forEach(checkbox => {
-                if (checkbox.checked) {
-                    if (checkbox.dataset.action === "sort-asc") {
-                        this.columnFilters[this.activeColumn].sort = "asc";
-                    } else if (checkbox.dataset.action === "sort-desc") {
-                        this.columnFilters[this.activeColumn].sort = "desc";
-                    } else {
-                        this.columnFilters[this.activeColumn].values.push(checkbox.value);
+                for (let column in this.columnFilters) {
+                    if (this.columnFilters[column].values?.length > 0) {
+                        this.filteredGames = this.filteredGames.filter(game => {
+                            const value = this.getColumnValue(game, column).toString();
+                            return this.columnFilters[column].values.includes(value);
+                        });
+                    }
+                    if (this.columnFilters[column].sort) {
+                        this.filteredGames.sort((a, b) => {
+                            const aValue = this.getColumnValue(a, column);
+                            const bValue = this.getColumnValue(b, column);
+                            return this.columnFilters[column].sort === "asc" ? 
+                                   (aValue - bValue) || String(aValue).localeCompare(String(bValue)) : 
+                                   (bValue - aValue) || String(bValue).localeCompare(String(aValue));
+                        });
                     }
                 }
-            });
-            
-            this.applyFilters();
+                
+                this.displayGames();
+                this.updateFilteredColumns();
+            }
+
+            getColumnValue(game, column) {
+                switch (column) {
+                    case "leagueName": return game.competition.name;
+                    case "match": return `${game.home.teamName} (${game.home.name}) vs ${game.away.teamName} (${game.away.name})`;
+                    case "dateTime": return `${game.day} ${game.hour}`;
+                    case "avgGoals": return parseFloat(game.avgGoals);
+                    case "homeAvgGoals": return parseFloat(game.homeAvgGoals);
+                    case "awayAvgGoals": return parseFloat(game.awayAvgGoals);
+                    case "bttsPercent": return parseInt(game.bttsPercent);
+                    case "over15": return parseInt(game.over15);
+                    case "over25": return parseInt(game.over25);
+                    case "over35": return parseInt(game.over35);
+                    case "htBttsPercent": return parseInt(game.htBttsPercent);
+                    case "htOver05": return parseInt(game.htOver05);
+                    case "htOver15": return parseInt(game.htOver15);
+                    case "htOver25": return parseInt(game.htOver25);
+                    case "qualityScore": return parseInt(game.qualityScore);
+                    default: return "";
+                }
+            }
+
+            displayGames() {
+                const tableBody = document.getElementById("gamesTableBody");
+                const tableWrapper = document.getElementById("tableWrapper");
+                const displayedGames = document.getElementById("displayedGames");
+                
+                tableBody.innerHTML = "";
+                
+                if (!this.filteredGames || this.filteredGames.length === 0) {
+                    tableWrapper.style.display = 'none';
+                    this.showError("Nenhum jogo encontrado com os filtros aplicados.");
+                    return;
+                }
+                
+                displayedGames.textContent = this.filteredGames.length;
+                
+                this.filteredGames.forEach(game => {
+                    const qualityScore = game.qualityScore;
+                    const isTopMatch = qualityScore >= 80;
+                    const row = document.createElement("tr");
+                    row.className = isTopMatch ? 'top-match' : '';
+                    
+                    row.innerHTML = `
+                        <td>
+                            <div class="league-badge" data-league="${game.competition.name}">
+                                <i class="fas fa-trophy"></i>
+                                ${game.competition.name}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="match-info">
+                                <div class="team-row">
+                                    <i class="fas fa-home team-icon"></i>
+                                    <span class="team-name">${game.home.teamName} (${game.home.name})</span>
+                                </div>
+                                <div class="team-row">
+                                    <i class="fas fa-plane team-icon"></i>
+                                    <span class="team-name">${game.away.teamName} (${game.away.name})</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="datetime-cell">
+                                <span class="date-badge">
+                                    <i class="fas fa-calendar-alt" style="margin-right: 0.3rem; color: var(--primary);"></i>
+                                    ${game.day}
+                                </span>
+                                <span class="time-badge">
+                                    <i class="fas fa-clock"></i>
+                                    ${game.hour}
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="tooltip-wrapper">
+                                <span class="stat-pill ${this.getStatClass(game.avgGoals, 'goals')}">
+                                    ${game.avgGoals}
+                                </span>
+                                <span class="tooltip-content">Média combinada de gols</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="tooltip-wrapper">
+                                <span class="stat-pill ${this.getStatClass(game.homeAvgGoals, 'goals')}">
+                                    ${game.homeAvgGoals}
+                                </span>
+                                <span class="tooltip-content">Média do time da casa</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="tooltip-wrapper">
+                                <span class="stat-pill ${this.getStatClass(game.awayAvgGoals, 'goals')}">
+                                    ${game.awayAvgGoals}
+                                </span>
+                                <span class="tooltip-content">Média do time visitante</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="stat-pill ${this.getStatClass(game.bttsPercent)}">
+                                ${game.bttsPercent}%
+                            </span>
+                        </td>
+                        <td>
+                            <span class="stat-pill ${this.getStatClass(game.over15)}">
+                                ${game.over15}%
+                            </span>
+                        </td>
+                        <td>
+                            <span class="stat-pill ${this.getStatClass(game.over25)}">
+                                ${game.over25}%
+                            </span>
+                        </td>
+                        <td>
+                            <span class="stat-pill ${this.getStatClass(game.over35)}">
+                                ${game.over35}%
+                            </span>
+                        </td>
+                        <td>
+                            <span class="stat-pill ${this.getStatClass(game.htBttsPercent)}">
+                                ${game.htBttsPercent}%
+                            </span>
+                        </td>
+                        <td>
+                            <span class="stat-pill ${this.getStatClass(game.htOver05)}">
+                                ${game.htOver05}%
+                            </span>
+                        </td>
+                        <td>
+                            <span class="stat-pill ${this.getStatClass(game.htOver15)}">
+                                ${game.htOver15}%
+                            </span>
+                        </td>
+                        <td>
+                            <span class="stat-pill ${this.getStatClass(game.htOver25)}">
+                                ${game.htOver25}%
+                            </span>
+                        </td>
+                        <td>
+                            <span class="quality-score ${isTopMatch ? 'top' : this.getStatClass(qualityScore)}">
+                                ${qualityScore}%
+                                ${isTopMatch ? '<i class="fas fa-star star"></i>' : ''}
+                            </span>
+                        </td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                });
+                
+                tableWrapper.style.display = 'block';
+                document.getElementById('errorContainer').style.display = 'none';
+            }
+
+            updateStatsSummary() {
+                const summary = document.getElementById('statsSummary');
+                const totalGames = this.gamesData.length;
+                const topMatches = this.gamesData.filter(g => g.qualityScore >= 80).length;
+                const avgQuality = Math.round(this.gamesData.reduce((sum, g) => sum + g.qualityScore, 0) / totalGames);
+                const avgGoals = (this.gamesData.reduce((sum, g) => sum + g.avgGoals, 0) / totalGames).toFixed(1);
+                
+                document.getElementById('totalGames').textContent = totalGames;
+                document.getElementById('topMatches').textContent = topMatches;
+                document.getElementById('avgQuality').textContent = `${avgQuality}%`;
+                document.getElementById('avgGoals').textContent = avgGoals;
+                
+                summary.style.display = 'grid';
+            }
+
+            showFilterModal() {
+                const modal = document.getElementById('filterModal');
+                const title = document.getElementById('filterModalTitle');
+                const options = document.getElementById('filterOptions');
+                
+                title.textContent = `Filtrar: ${this.getColumnLabel(this.activeColumn)}`;
+                
+                const uniqueValues = [...new Set(this.gamesData.map(game => 
+                    this.getColumnValue(game, this.activeColumn).toString()
+                ))].sort((a, b) => {
+                    const numA = parseFloat(a);
+                    const numB = parseFloat(b);
+                    if (!isNaN(numA) && !isNaN(numB)) return numB - numA;
+                    return a.localeCompare(b);
+                });
+                
+                options.innerHTML = `
+                    <label style="border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
+                        <input type="checkbox" data-action="sort-desc" ${this.columnFilters[this.activeColumn]?.sort === 'desc' ? 'checked' : ''}>
+                        <span><i class="fas fa-sort-amount-down"></i> Ordenar: Maior → Menor</span>
+                    </label>
+                    <label style="border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
+                        <input type="checkbox" data-action="sort-asc" ${this.columnFilters[this.activeColumn]?.sort === 'asc' ? 'checked' : ''}>
+                        <span><i class="fas fa-sort-amount-up"></i> Ordenar: Menor → Maior</span>
+                    </label>
+                    ${uniqueValues.map(value => `
+                        <label>
+                            <input type="checkbox" value="${value}" ${this.columnFilters[this.activeColumn]?.values?.includes(value) ? 'checked' : ''}>
+                            <span>${value}</span>
+                        </label>
+                    `).join('')}
+                `;
+                
+                modal.classList.add('active');
+            }
+
+            getColumnLabel(column) {
+                const labels = {
+                    leagueName: 'Liga', match: 'Partida', dateTime: 'Data/Hora', 
+                    avgGoals: 'Média de Gols', homeAvgGoals: 'Gols Casa', 
+                    awayAvgGoals: 'Gols Fora', bttsPercent: 'BTTS', 
+                    over15: 'Over 1.5', over25: 'Over 2.5', over35: 'Over 3.5', 
+                    htBttsPercent: 'BTTS HT', htOver05: 'Over 0.5 HT', 
+                    htOver15: 'Over 1.5 HT', htOver25: 'Over 2.5 HT', 
+                    qualityScore: 'Qualidade'
+                };
+                return labels[column] || column;
+            }
+
+            applyColumnFilter() {
+                const options = document.getElementById('filterOptions');
+                const checkboxes = options.querySelectorAll('input[type="checkbox"]');
+                
+                this.columnFilters[this.activeColumn] = { values: [], sort: null };
+                
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        if (checkbox.dataset.action === "sort-asc") {
+                            this.columnFilters[this.activeColumn].sort = "asc";
+                        } else if (checkbox.dataset.action === "sort-desc") {
+                            this.columnFilters[this.activeColumn].sort = "desc";
+                        } else {
+                            this.columnFilters[this.activeColumn].values.push(checkbox.value);
+                        }
+                    }
+                });
+                
+                this.applyFilters();
+                document.getElementById('filterModal').classList.remove('active');
+            }
+
+            resetAllFilters() {
+                this.columnFilters = {};
+                this.quickFilters.clear();
+                document.querySelectorAll('.filter-chip').forEach(chip => {
+                    chip.classList.remove('active');
+                });
+                this.applyFilters();
+            }
+
+            updateFilteredColumns() {
+                document.querySelectorAll('th[data-column]').forEach(th => {
+                    const column = th.dataset.column;
+                    if (this.columnFilters[column] && 
+                        (this.columnFilters[column].values?.length > 0 || this.columnFilters[column].sort)) {
+                        th.classList.add('filtered');
+                    } else {
+                        th.classList.remove('filtered');
+                    }
+                });
+            }
+
+            showLoading(message) {
+                document.getElementById('loadingText').textContent = message;
+                document.getElementById('loadingContainer').style.display = 'block';
+                document.getElementById('tableWrapper').style.display = 'none';
+                document.getElementById('errorContainer').style.display = 'none';
+                document.getElementById('statsSummary').style.display = 'none';
+            }
+
+            hideLoading() {
+                document.getElementById('loadingContainer').style.display = 'none';
+            }
+
+            showError(message) {
+                document.getElementById('errorMessage').textContent = message;
+                document.getElementById('errorContainer').style.display = 'block';
+                document.getElementById('loadingContainer').style.display = 'none';
+            }
+        }
+
+        function closeFilterModal() {
             document.getElementById('filterModal').classList.remove('active');
         }
 
-        resetAllFilters() {
-            this.columnFilters = {};
-            this.quickFilters.clear();
-            document.querySelectorAll('.filter-chip').forEach(chip => {
-                chip.classList.remove('active');
-            });
-            this.applyFilters();
+        function applyColumnFilter() {
+            analyzer.applyColumnFilter();
         }
 
-        updateFilteredColumns() {
-            document.querySelectorAll('th[data-column]').forEach(th => {
-                const column = th.dataset.column;
-                if (this.columnFilters[column] && 
-                    (this.columnFilters[column].values?.length > 0 || this.columnFilters[column].sort)) {
-                    th.classList.add('filtered');
-                } else {
-                    th.classList.remove('filtered');
-                }
-            });
-        }
-
-        toggleQuickFilter(filter, element) {
-            if (this.quickFilters.has(filter)) {
-                this.quickFilters.delete(filter);
-                element.classList.remove('active');
-            } else {
-                this.quickFilters.add(filter);
-                element.classList.add('active');
-            }
-            this.applyFilters();
-        }
-
-        showLoading(message) {
-            document.getElementById('loadingText').textContent = message;
-            document.getElementById('loadingContainer').style.display = 'block';
-            document.getElementById('tableWrapper').style.display = 'none';
-            document.getElementById('errorContainer').style.display = 'none';
-            document.getElementById('statsSummary').style.display = 'none';
-        }
-
-        hideLoading() {
-            document.getElementById('loadingContainer').style.display = 'none';
-        }
-
-        showError(message) {
-            document.getElementById('errorMessage').textContent = message;
-            document.getElementById('errorContainer').innerHTML = `
-                <i class="fas fa-exclamation-triangle error-icon"></i>
-                <p id="errorMessage" style="font-size: 1rem; margin-top: 0.5rem;">${message}</p>
-                <button class="btn btn-primary" onclick="analyzer.retryFetch()">Tentar Novamente</button>
-            `;
-            document.getElementById('errorContainer').style.display = 'block';
-            document.getElementById('loadingContainer').style.display = 'none';
-        }
-
-        retryFetch() {
-            this.loadCacheOrFetch();
-        }
-    }
-
-    function closeFilterModal() {
-        document.getElementById('filterModal').classList.remove('active');
-    }
-
-    function applyColumnFilter() {
-        analyzer.applyColumnFilter();
-    }
-
-    document.querySelector('.quick-filters').innerHTML = `
-        <div class="filter-chip" data-filter="premium-ft">
-            <i class="fas fa-star"></i> Premium FT
-        </div>
-        <div class="filter-chip" data-filter="premium-ht">
-            <i class="fas fa-star"></i> Premium HT
-        </div>
-        <div class="filter-chip" data-filter="high-goals">
-            <i class="fas fa-fire"></i> Muitos Gols (2.5+)
-        </div>
-        <div class="filter-chip" data-filter="high-btts">
-            <i class="fas fa-exchange-alt"></i> BTTS Alto (70%+)
-        </div>
-    `;
-
-    const analyzer = new EsoccerAnalyzer();
-</script>
+        const analyzer = new EsoccerAnalyzer();
+    </script>
 </body>
 </html>
