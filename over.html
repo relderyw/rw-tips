@@ -946,6 +946,22 @@
                                 <i class="fas fa-arrow-up"></i> Over 3.5
                                 <i class="fas fa-filter filter-icon"></i>
                             </th>
+                            <th data-column="htBttsPercent">
+                                <i class="fas fa-exchange-alt"></i> BTTS HT
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th data-column="htOver05">
+                                <i class="fas fa-arrow-up"></i> Over 0.5 HT
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th data-column="htOver15">
+                                <i class="fas fa-arrow-up"></i> Over 1.5 HT
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
+                            <th data-column="htOver25">
+                                <i class="fas fa-arrow-up"></i> Over 2.5 HT
+                                <i class="fas fa-filter filter-icon"></i>
+                            </th>
                             <th data-column="qualityScore">
                                 <i class="fas fa-medal"></i> Qualidade
                                 <i class="fas fa-filter filter-icon"></i>
@@ -1044,18 +1060,20 @@
                 try {
                     this.showLoading('Buscando jogos...');
                     
-                    const response = await fetch("https://api.green365.com.br/api/league/upcoming?sport=fifa&leagueId=&page=1");
+                    const response = await fetch("https://api-v2.green365.com.br/api/v2/sport-events?page=1&limit=24&sport=esoccer&status=upcoming");
                     if (!response.ok) throw new Error(`Erro na requisição: ${response.status}`);
                     
                     const data = await response.json();
                     this.showLoading('Processando dados...');
                     
                     this.gamesData = await Promise.all(
-                        data.data.map(async (game, index) => {
-                            this.showLoading(`Processando jogo ${index + 1}/${data.data.length}...`);
+                        data.items.map(async (game, index) => {
+                            this.showLoading(`Processando jogo ${index + 1}/${data.items.length}...`);
                             const stats = await this.fetchGameStats(game);
                             const processedGame = { ...game, ...stats };
                             processedGame.qualityScore = this.calculateQualityScore(processedGame);
+                            processedGame.day = new Date(game.startTime).toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'});
+                            processedGame.hour = new Date(game.startTime).toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
                             return processedGame;
                         })
                     );
@@ -1071,9 +1089,8 @@
 
             async fetchGameStats(game) {
                 try {
-                    const response = await fetch(
-                        `https://api.green365.com.br/api/e-soccer/event/stats?homeID=${game.homeID}&awayID=${game.awayID}&home=${encodeURIComponent(game.home)}&away=${encodeURIComponent(game.away)}&league=${game.leagueID}&eventID=0&period=last_5`
-                    );
+                    const url = `https://api-v2.green365.com.br/api/v2/analysis/sport?type=h2h&sport=esoccer&status=upcoming&competitionID=${game.competition.id}&home=${encodeURIComponent(game.home.name)}&away=${encodeURIComponent(game.away.name)}&homeID=${game.home.id}&awayID=${game.away.id}&eventID=${game.eventID}`;
+                    const response = await fetch(url);
                     
                     if (!response.ok) throw new Error(`Erro nas estatísticas: ${response.status}`);
                     
@@ -1081,31 +1098,92 @@
                     return this.processGameStats(data, game);
                     
                 } catch (error) {
-                    console.error(`Erro em ${game.home} vs ${game.away}:`, error);
+                    console.error(`Erro em ${game.home.name} vs ${game.away.name}:`, error);
                     return this.getDefaultStats();
                 }
             }
 
             processGameStats(data, game) {
-                const homeGames = data.players?.playerA?.stats?.games || [];
-                const awayGames = data.players?.playerB?.stats?.games || [];
-                const allGames = [...homeGames, ...awayGames];
+                let homeAvgGoals = 0;
+                let awayAvgGoals = 0;
+                let bttsPercent = 0;
+                let over15 = 0;
+                let over25 = 0;
+                let over35 = 0;
+                let htOver05 = 0;
+                let htOver15 = 0;
+                let htOver25 = 0;
+                let htBttsPercent = 0;
 
-                const homeGoals = this.calculateAverageGoals(homeGames, 0);
-                const awayGoals = this.calculateAverageGoals(awayGames, 1);
-                const avgGoals = (homeGoals + awayGoals) / 2;
+                try {
+                    const homeTable = data.sessions.sessionTables.find(t => t.id === "home-participant-stats");
+                    if (homeTable) {
+                        const homeGoalsRow = homeTable.rows.find(r => r.columns[0].value === "Média de gols");
+                        homeAvgGoals = homeGoalsRow ? parseFloat(homeGoalsRow.columns[1].value) : 0;
+                    }
 
-                const bttsPercent = this.calculateBTTS(allGames);
-                const overStats = this.calculateOverStats(allGames);
+                    const awayTable = data.sessions.sessionTables.find(t => t.id === "away-participant-stats");
+                    if (awayTable) {
+                        const awayGoalsRow = awayTable.rows.find(r => r.columns[0].value === "Média de gols");
+                        awayAvgGoals = awayGoalsRow ? parseFloat(awayGoalsRow.columns[1].value) : 0;
+                    }
+
+                    const bttsTable = data.sessions.sessionTables.find(t => t.id === "both-score-stats");
+                    if (bttsTable) {
+                        const bttsYesRow = bttsTable.rows.find(r => r.columns[0].value === "Ambos Marcam - Sim");
+                        bttsPercent = bttsYesRow ? parseFloat(bttsYesRow.columns[1].value.replace('%', '')) : 0;
+                    }
+
+                    const ftOverTable = data.sessions.sessionTables.find(t => t.id === "over-under-FT-stats");
+                    if (ftOverTable) {
+                        const getOver = (line) => {
+                            const row = ftOverTable.rows.find(r => r.columns[0].value === line);
+                            return row ? parseFloat(row.columns[1].value.replace('%', '')) : 0;
+                        };
+                        over15 = getOver("1.5");
+                        over25 = getOver("2.5");
+                        over35 = getOver("3.5");
+                    }
+
+                    const htOverTable = data.sessions.sessionTables.find(t => t.id === "over-under-ht-stats");
+                    if (htOverTable) {
+                        const getHtOver = (line) => {
+                            const row = htOverTable.rows.find(r => r.columns[0].value === line);
+                            return row ? parseFloat(row.columns[1].value.replace('%', '')) : 0;
+                        };
+                        htOver05 = getHtOver("0.5");
+                        htOver15 = getHtOver("1.5");
+                        htOver25 = getHtOver("2.5");
+                    }
+
+                    const h2hEvents = data.sessionEvents?.headToHeadEvents || [];
+                    if (h2hEvents.length > 0) {
+                        const htBttsCount = h2hEvents.filter(event => {
+                            const htHome = parseInt(event.scoreHT.home) || 0;
+                            const htAway = parseInt(event.scoreHT.away) || 0;
+                            return htHome > 0 && htAway > 0;
+                        }).length;
+                        htBttsPercent = Math.round((htBttsCount / h2hEvents.length) * 100);
+                    }
+
+                } catch (e) {
+                    console.error('Error processing stats:', e);
+                }
+
+                const avgGoals = (homeAvgGoals + awayAvgGoals) / 2;
 
                 return {
                     avgGoals: Number(avgGoals.toFixed(2)),
-                    homeAvgGoals: Number(homeGoals.toFixed(1)),
-                    awayAvgGoals: Number(awayGoals.toFixed(1)),
-                    bttsPercent: bttsPercent,
-                    over15: overStats.over15,
-                    over25: overStats.over25,
-                    over35: overStats.over35
+                    homeAvgGoals: Number(homeAvgGoals.toFixed(1)),
+                    awayAvgGoals: Number(awayAvgGoals.toFixed(1)),
+                    bttsPercent,
+                    over15,
+                    over25,
+                    over35,
+                    htBttsPercent,
+                    htOver05,
+                    htOver15,
+                    htOver25
                 };
             }
 
@@ -1159,7 +1237,7 @@
             }
 
             isPremiumMatch(game) {
-                const league = game.leagueName;
+                const league = game.competition.name;
                 
                 if (league.includes("Esoccer Battle - 8 mins play")) {
                     return (
@@ -1215,7 +1293,8 @@
             getDefaultStats() {
                 return {
                     avgGoals: 0, homeAvgGoals: 0, awayAvgGoals: 0, bttsPercent: 0,
-                    over15: 0, over25: 0, over35: 0
+                    over15: 0, over25: 0, over35: 0,
+                    htBttsPercent: 0, htOver05: 0, htOver15: 0, htOver25: 0
                 };
             }
 
@@ -1281,9 +1360,9 @@
 
             getColumnValue(game, column) {
                 switch (column) {
-                    case "leagueName": return game.leagueName;
-                    case "match": return `${game.home} vs ${game.away}`;
-                    case "dateTime": return `${game.day || game.date} ${game.hour || game.time}`;
+                    case "leagueName": return game.competition.name;
+                    case "match": return `${game.home.teamName} (${game.home.name}) vs ${game.away.teamName} (${game.away.name})`;
+                    case "dateTime": return `${game.day} ${game.hour}`;
                     case "avgGoals": return parseFloat(game.avgGoals);
                     case "homeAvgGoals": return parseFloat(game.homeAvgGoals);
                     case "awayAvgGoals": return parseFloat(game.awayAvgGoals);
@@ -1291,6 +1370,10 @@
                     case "over15": return parseInt(game.over15);
                     case "over25": return parseInt(game.over25);
                     case "over35": return parseInt(game.over35);
+                    case "htBttsPercent": return parseInt(game.htBttsPercent);
+                    case "htOver05": return parseInt(game.htOver05);
+                    case "htOver15": return parseInt(game.htOver15);
+                    case "htOver25": return parseInt(game.htOver25);
                     case "qualityScore": return parseInt(game.qualityScore);
                     default: return "";
                 }
@@ -1319,20 +1402,20 @@
                     
                     row.innerHTML = `
                         <td>
-                            <div class="league-badge" data-league="${game.leagueName}">
+                            <div class="league-badge" data-league="${game.competition.name}">
                                 <i class="fas fa-trophy"></i>
-                                ${game.leagueName}
+                                ${game.competition.name}
                             </div>
                         </td>
                         <td>
                             <div class="match-info">
                                 <div class="team-row">
                                     <i class="fas fa-home team-icon"></i>
-                                    <span class="team-name">${game.home}</span>
+                                    <span class="team-name">${game.home.teamName} (${game.home.name})</span>
                                 </div>
                                 <div class="team-row">
                                     <i class="fas fa-plane team-icon"></i>
-                                    <span class="team-name">${game.away}</span>
+                                    <span class="team-name">${game.away.teamName} (${game.away.name})</span>
                                 </div>
                             </div>
                         </td>
@@ -1340,11 +1423,11 @@
                             <div class="datetime-cell">
                                 <span class="date-badge">
                                     <i class="fas fa-calendar-alt" style="margin-right: 0.3rem; color: var(--primary);"></i>
-                                    ${game.day || game.date}
+                                    ${game.day}
                                 </span>
                                 <span class="time-badge">
                                     <i class="fas fa-clock"></i>
-                                    ${game.hour || game.time}
+                                    ${game.hour}
                                 </span>
                             </div>
                         </td>
@@ -1390,6 +1473,26 @@
                         <td>
                             <span class="stat-pill ${this.getStatClass(game.over35)}">
                                 ${game.over35}%
+                            </span>
+                        </td>
+                        <td>
+                            <span class="stat-pill ${this.getStatClass(game.htBttsPercent)}">
+                                ${game.htBttsPercent}%
+                            </span>
+                        </td>
+                        <td>
+                            <span class="stat-pill ${this.getStatClass(game.htOver05)}">
+                                ${game.htOver05}%
+                            </span>
+                        </td>
+                        <td>
+                            <span class="stat-pill ${this.getStatClass(game.htOver15)}">
+                                ${game.htOver15}%
+                            </span>
+                        </td>
+                        <td>
+                            <span class="stat-pill ${this.getStatClass(game.htOver25)}">
+                                ${game.htOver25}%
                             </span>
                         </td>
                         <td>
@@ -1464,6 +1567,8 @@
                     avgGoals: 'Média de Gols', homeAvgGoals: 'Gols Casa', 
                     awayAvgGoals: 'Gols Fora', bttsPercent: 'BTTS', 
                     over15: 'Over 1.5', over25: 'Over 2.5', over35: 'Over 3.5', 
+                    htBttsPercent: 'BTTS HT', htOver05: 'Over 0.5 HT', 
+                    htOver15: 'Over 1.5 HT', htOver25: 'Over 2.5 HT', 
                     qualityScore: 'Qualidade'
                 };
                 return labels[column] || column;
