@@ -1299,7 +1299,11 @@
                     );
                 }
                 
-                return false;
+                // Fallback genérico para Premium FT quando a liga não casa
+                return (
+                    (g.avgGoals >= 3.8 && g.over25 >= 85 && g.bttsPercent >= 80) ||
+                    (g.over35 >= 70 && g.bttsPercent >= 85)
+                );
             }
 
             isHTPremiumMatch(game) {
@@ -1343,7 +1347,11 @@
                     );
                 }
                 
-                return false;
+                // Fallback genérico para Premium HT quando a liga não casa
+                return (
+                    (game.htOver15 >= 90 && game.htBttsPercent >= 80) ||
+                    (game.htOver25 >= 85 && game.htBttsPercent >= 75)
+                );
             }
 
             getDefaultStats() {
