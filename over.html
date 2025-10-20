@@ -1247,53 +1247,55 @@
             }
 
             isPremiumMatch(game) {
-                const league = game.competition.name;
+                const leagueRaw = game.competition.name || '';
+                const league = leagueRaw.toLowerCase().replace(/–/g, '-');
+                const g = game;
                 
-                if (league.includes("Esoccer Battle - 8 mins play")) {
+                if (league.includes("esoccer battle - 8 mins")) {
                     return (
-                        game.homeAvgGoals >= 2.5 &&
-                        game.awayAvgGoals >= 2.5 &&
-                        game.avgGoals >= 4.5 &&
-                        game.bttsPercent === 100 &&
-                        game.over15 === 100 &&
-                        game.over25 === 100 &&
-                        game.over35 >= 95
+                        g.homeAvgGoals >= 2.2 &&
+                        g.awayAvgGoals >= 2.2 &&
+                        g.avgGoals >= 4.0 &&
+                        g.bttsPercent >= 85 &&
+                        g.over15 >= 95 &&
+                        g.over25 >= 85 &&
+                        g.over35 >= 60
                     );
                 }
                 
-                if (league.includes("Esoccer H2H GG League - 8 mins play")) {
+                if (league.includes("esoccer h2h gg league - 8 mins")) {
                     return (
-                        game.homeAvgGoals >= 2.2 &&
-                        game.awayAvgGoals >= 2.2 &&
-                        game.avgGoals >= 3.5 &&
-                        game.bttsPercent >= 90 &&
-                        game.over15 === 100 &&
-                        game.over25 === 100 &&
-                        game.over35 >= 85
+                        g.homeAvgGoals >= 2.0 &&
+                        g.awayAvgGoals >= 2.0 &&
+                        g.avgGoals >= 3.8 &&
+                        g.bttsPercent >= 80 &&
+                        g.over15 >= 95 &&
+                        g.over25 >= 85 &&
+                        g.over35 >= 55
                     );
                 }
                 
-                if (league.includes("Esoccer GT Leagues") && league.includes("12")) {
+                if (league.includes("esoccer gt leagues") && league.includes("12")) {
                     return (
-                        game.homeAvgGoals >= 2.7 &&
-                        game.awayAvgGoals >= 2.7 &&
-                        game.avgGoals >= 4.5 &&
-                        game.bttsPercent >= 100 &&
-                        game.over15 === 100 &&
-                        game.over25 === 100 &&
-                        game.over35 >= 100
+                        g.homeAvgGoals >= 2.4 &&
+                        g.awayAvgGoals >= 2.4 &&
+                        g.avgGoals >= 4.2 &&
+                        g.bttsPercent >= 85 &&
+                        g.over15 >= 95 &&
+                        g.over25 >= 90 &&
+                        g.over35 >= 70
                     );
                 }
                 
-                if (league.includes("Esoccer Battle Volta - 6 mins play")) {
+                if (league.includes("esoccer battle volta - 6 mins")) {
                     return (
-                        game.homeAvgGoals >= 3.0 &&
-                        game.awayAvgGoals >= 3.0 &&
-                        game.avgGoals >= 5.5 &&
-                        game.bttsPercent >= 100 &&
-                        game.over15 === 100 &&
-                        game.over25 === 100 &&
-                        game.over35 >= 100
+                        g.homeAvgGoals >= 2.6 &&
+                        g.awayAvgGoals >= 2.6 &&
+                        g.avgGoals >= 4.5 &&
+                        g.bttsPercent >= 90 &&
+                        g.over15 >= 95 &&
+                        g.over25 >= 90 &&
+                        g.over35 >= 70
                     );
                 }
                 
@@ -1301,41 +1303,42 @@
             }
 
             isHTPremiumMatch(game) {
-                const league = game.competition.name;
+                const leagueRaw = game.competition.name || '';
+                const league = leagueRaw.toLowerCase().replace(/–/g, '-');
                 
-                if (league.includes("Esoccer Battle - 8 mins play")) {
+                if (league.includes("esoccer battle - 8 mins")) {
                     return (
-                        game.htOver15 === 100 &&
-                        game.htOver25 === 100 &&
-                        game.htBttsPercent >= 90
+                        game.htOver15 >= 90 &&
+                        game.htOver25 >= 80 &&
+                        game.htBttsPercent >= 85
                     );
                 }
                 
-                if (league.includes("Esoccer H2H GG League - 8 mins play")) {
+                if (league.includes("esoccer h2h gg league - 8 mins")) {
                     return (
-                        game.htOver15 === 100 &&
-                        game.htOver25 >= 90 &&
+                        game.htOver15 >= 95 &&
+                        game.htOver25 >= 85 &&
                         game.htBttsPercent >= 80
                     );
                 }
                 
-                if (league.includes("Esoccer GT Leagues") && league.includes("12")) {
+                if (league.includes("esoccer gt leagues") && league.includes("12")) {
                     return (
-                        game.htOver25 === 100 &&
-                        game.htBttsPercent === 100
-                    );
-                }
-                
-                if (league.includes("Esoccer Battle Volta - 6 mins play")) {
-                    return (
-                        game.htOver25 === 100 &&
+                        game.htOver25 >= 95 &&
                         game.htBttsPercent >= 90
                     );
                 }
                 
-                if (league.includes("Esoccer Adriatic League - 10 mins play")) {
+                if (league.includes("esoccer battle volta - 6 mins")) {
                     return (
-                        game.htOver15 === 100 &&
+                        game.htOver25 >= 90 &&
+                        game.htBttsPercent >= 85
+                    );
+                }
+                
+                if (league.includes("esoccer adriatic league - 10 mins")) {
+                    return (
+                        game.htOver15 >= 95 &&
                         game.htBttsPercent >= 85
                     );
                 }
