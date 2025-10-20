@@ -670,6 +670,18 @@
             font-weight: 600;
         }
 
+        .quality-score {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .quality-score .star {
+            font-size: 14px;
+        }
+
         /* CTA */
         .cta {
             background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.1));
@@ -1005,6 +1017,7 @@
                                     <th class="text-center">Over 1.5</th>
                                     <th class="text-center">Over 2.5</th>
                                     <th class="text-center">Over 3.5</th>
+                                    <th class="text-center">Status</th>
                                 </tr>
                             </thead>
                             <tbody id="gamesTableBody"></tbody>
@@ -1448,7 +1461,7 @@
                 const games = await Promise.all(
                     data.items.slice(0, 20).map(async (game) => {
                         const stats = await fetchGameStats(game);
-                        return { 
+                        const processedGame = { 
                             ...game,
                             leagueName: game.competition.name,
                             home: game.home.name,
@@ -1459,6 +1472,9 @@
                             hour: formatTime(game.startTime),
                             ...stats 
                         };
+                        processedGame.qualityScore = calculateQualityScore(processedGame);
+                        processedGame.premiumFT = isPremiumMatch(processedGame);
+                        return processedGame;
                     })
                 );
 
@@ -1579,12 +1595,32 @@
             };
         }
 
+        function calculateQualityScore(game) {
+            const weights = { avgGoals: 0.35, btts: 0.25, over25: 0.40 };
+            const avgGoalsScore = Math.min((game.avgGoals / 3.5) * 100, 100);
+            const bttsScore = game.bttsPercent || 0;
+            const over25Score = game.over25 || 0;
+
+            const baseScore = Math.round(
+                (avgGoalsScore * weights.avgGoals) +
+                (bttsScore * weights.btts) +
+                (over25Score * weights.over25)
+            );
+
+            return Math.min(baseScore, 100);
+        }
+
+        function isPremiumMatch(game) {
+            return game.qualityScore >= 89;
+        }
+
         function displayGames(games) {
             const tbody = document.getElementById('gamesTableBody');
             tbody.innerHTML = '';
 
             games.forEach(game => {
                 const row = document.createElement('tr');
+                const stars = game.premiumFT ? '<i class="fas fa-star star" style="color:#10b981"></i>' : '';
                 row.innerHTML = `
                     <td>
                         <span class="league-badge">${game.leagueName}</span>
@@ -1608,6 +1644,9 @@
                     <td class="stat-cell">${renderStatCell(game.over15, 'percentage', true)}</td>
                     <td class="stat-cell">${renderStatCell(game.over25, 'percentage', true)}</td>
                     <td class="stat-cell">${renderStatCell(game.over35, 'percentage', true)}</td>
+                    <td class="stat-cell">
+                        <span class="quality-score">${game.qualityScore}% ${stars}</span>
+                    </td>
                 `;
                 tbody.appendChild(row);
             });
@@ -1639,7 +1678,7 @@
             }
             
             if (value >= 80) return 'excellent';
-            if (value >= 70) return 'gooderva';
+            if (value >= 70) return 'good';
             if (value >= 60) return 'moderate';
             if (value >= 50) return 'fair';
             return 'poor';
