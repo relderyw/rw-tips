@@ -1,128 +1,4 @@
-.comparison-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .comparison-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .comparison-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        .comparison-value {
-            font-size: 3rem;
-            font-weight: 700;
-            margin: 10px 0;
-        }
-
-        .comparison-label {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        /* OPPORTUNITIES GRID */
-        .opportunities-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 15px;
-        }
-
-        .opportunity-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .opportunity-card:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: var(--accent-color);
-        }
-
-        .opportunity-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .opportunity-icon {
-            font-size: 1.5rem;
-        }
-
-        .opportunity-title {
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        .opportunity-stats {
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .opp-stat {
-            text-align: center;
-        }
-
-        .opp-stat.avg {
-            border-left: 1px solid var(--border-color);
-            border-right: 1px solid var(--border-color);
-            padding: 0 10px;
-        }
-
-        .opp-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin-bottom: 5px;
-        }
-
-        .opp-value {
-            font-size: 0.85rem;
-            color: var(--text-primary);
-            margin-bottom: 5px;
-            font-weight: 600;
-        }
-
-        .opp-value-large {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--accent-color);
-        }
-
-        .opp-percentage {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin: 5px 0;
-        }
-
-        .opp-games {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        /* CORRELATION MATRIX */
-        .correlation-info {
-            margin-bottom: 15px;
-        }
-
-        #correlationMatrix {
-            background: rgba(255, <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -577,6 +453,106 @@
             margin-top: 25px;
         }
 
+        /* OPPORTUNITIES GRID */
+        .opportunities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .opportunity-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            min-height: 200px; /* Garantir altura mínima */
+        }
+
+        .opportunity-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent-color);
+        }
+
+        .opportunity-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .opportunity-icon {
+            font-size: 1.5rem;
+        }
+
+        .opportunity-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .opportunity-stats {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .opp-stat {
+            text-align: center;
+        }
+
+        .opp-stat.avg {
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            padding: 0 10px;
+        }
+
+        .opp-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .opp-value {
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .opp-value-large {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .opp-percentage {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 5px 0;
+        }
+
+        .opp-games {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* CORRELATION MATRIX */
+        .correlation-info {
+            margin-bottom: 15px;
+        }
+
+        #correlationMatrix {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+        }
+
         /* RESPONSIVE */
         @media (max-width: 768px) {
             body {
@@ -623,6 +599,23 @@
 
             .chart-container {
                 height: 300px;
+            }
+
+            .opportunities-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .opportunity-stats {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .opp-stat.avg {
+                border-left: none;
+                border-right: none;
+                padding: 0;
             }
         }
     </style>
@@ -1059,7 +1052,6 @@
                 const consistencyCtx = document.getElementById('consistencyChart');
                 if (consistencyCtx) {
                     const consistencyScores = leagueStats.map(league => {
-                        // Calcular desvio padrão dos principais mercados
                         const values = [
                             league.stats['Over 0.5 HT'],
                             league.stats['Over 1.5 HT'],
@@ -1070,7 +1062,6 @@
                         const variance = values.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / values.length;
                         const stdDev = Math.sqrt(variance);
                         
-                        // Score de consistência (100 - desvio padrão)
                         return {
                             name: league.name,
                             score: Math.max(0, 100 - stdDev),
