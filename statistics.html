@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <title>RW TIPS - Análise de Ligas</title>
     <style>
         :root {
@@ -140,8 +141,32 @@
             margin-bottom: 30px;
         }
 
-        .header h1 {
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .logo-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .logo-text {
             font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .header h1 {
+            font-size: 2rem;
             background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
             -webkit-background-clip: text;
             background-clip: text;
@@ -157,26 +182,6 @@
             flex-wrap: wrap;
         }
 
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Oxanium', sans-serif;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
-        }
-
         .filter-select {
             padding: 12px 20px;
             border-radius: 8px;
@@ -186,6 +191,7 @@
             font-family: 'Oxanium', sans-serif;
             cursor: pointer;
             transition: all 0.3s ease;
+            font-size: 1rem;
         }
 
         .filter-select:hover {
@@ -411,38 +417,40 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        /* COMPARISON VIEW */
-        .comparison-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
+        /* DETAILED VIEW */
+        .detailed-container {
             max-width: 1400px;
             margin: 0 auto;
         }
 
-        .comparison-card {
+        .chart-section {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            transition: all 0.3s ease;
+            padding: 25px;
+            margin-bottom: 25px;
         }
 
-        .comparison-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        .comparison-value {
-            font-size: 3rem;
+        .chart-title {
+            font-size: 1.5rem;
             font-weight: 700;
-            margin: 10px 0;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
 
-        .comparison-label {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
+        .chart-container {
+            position: relative;
+            height: 400px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
         }
 
         /* RESPONSIVE */
@@ -459,8 +467,17 @@
                 width: 220px;
             }
 
+            .logo-text {
+                font-size: 1.5rem;
+            }
+
+            .logo-img {
+                width: 40px;
+                height: 40px;
+            }
+
             .header h1 {
-                font-size: 1.8rem;
+                font-size: 1.5rem;
             }
 
             .header-controls {
@@ -468,7 +485,7 @@
                 width: 100%;
             }
 
-            .btn, .filter-select {
+            .filter-select {
                 width: 100%;
             }
 
@@ -480,8 +497,8 @@
                 grid-template-columns: 1fr;
             }
 
-            .comparison-grid {
-                grid-template-columns: 1fr;
+            .chart-container {
+                height: 300px;
             }
         }
     </style>
@@ -507,22 +524,17 @@
     </nav>
 
     <div class="header">
+        <div class="logo-container">
+            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips" class="logo-img">
+            <span class="logo-text">👑 RW TIPS 🎮</span>
+        </div>
         <h1>🎯 Análise Estratégica de Ligas</h1>
         <div class="header-controls">
-            <button class="btn btn-primary" onclick="window.location.href='results.html'">
-                <i class="fas fa-chart-bar"></i> Resultados
-            </button>
-            <button class="btn btn-primary" onclick="window.location.href='visualization.html'">
-                <i class="fas fa-arrow-left"></i> Voltar
-            </button>
             <select class="filter-select" id="gameFilter" onchange="applyFilter()">
                 <option value="10">Últimos 10 jogos</option>
                 <option value="5">Últimos 5 jogos</option>
                 <option value="all">Todos os jogos</option>
             </select>
-            <button class="btn btn-primary" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i> Sair
-            </button>
         </div>
     </div>
 
@@ -530,11 +542,8 @@
         <div class="tab active" data-view="overview" onclick="switchView('overview')">
             <i class="fas fa-th-large"></i> Visão Geral
         </div>
-        <div class="tab" data-view="comparison" onclick="switchView('comparison')">
-            <i class="fas fa-balance-scale"></i> Comparação
-        </div>
         <div class="tab" data-view="detailed" onclick="switchView('detailed')">
-            <i class="fas fa-chart-line"></i> Detalhado
+            <i class="fas fa-chart-line"></i> Análise Detalhada
         </div>
     </div>
 
@@ -543,6 +552,7 @@
     <script>
         let leagues = {};
         let currentView = 'overview';
+        let charts = {};
 
         const leagueMapping = {
             "Esoccer Battle - 8 mins play": { name: "Battle 8m", color: "#FF4C4C" },
@@ -558,13 +568,6 @@
                 return false;
             }
             return true;
-        }
-
-        function logout() {
-            sessionStorage.removeItem('loggedIn');
-            localStorage.removeItem('currentUser');
-            localStorage.removeItem('currentUserKey');
-            window.location.replace('index.html');
         }
 
         function switchView(view) {
@@ -600,11 +603,17 @@
             if (stats['BTTS FT'] >= 75) {
                 recommendations.push({ market: 'BTTS FT', confidence: stats['BTTS FT'] });
             }
+            if (stats['BTTS HT'] >= 70) {
+                recommendations.push({ market: 'BTTS HT', confidence: stats['BTTS HT'] });
+            }
             if (stats['Over 1.5 HT'] >= 70) {
                 recommendations.push({ market: 'Over 1.5 HT', confidence: stats['Over 1.5 HT'] });
             }
             if (stats['Over 3.5 FT'] >= 65) {
                 recommendations.push({ market: 'Over 3.5 FT', confidence: stats['Over 3.5 FT'] });
+            }
+            if (stats['Over 0.5 HT'] >= 90) {
+                recommendations.push({ market: 'Over 0.5 HT', confidence: stats['Over 0.5 HT'] });
             }
             
             return recommendations.sort((a, b) => b.confidence - a.confidence);
@@ -639,20 +648,20 @@
                             <div class="insight-value ${getValueClass(stats['BTTS FT'])}">${stats['BTTS FT']}%</div>
                         </div>
                         <div class="insight-box">
-                            <div class="insight-label">Over 1.5 HT</div>
-                            <div class="insight-value ${getValueClass(stats['Over 1.5 HT'])}">${stats['Over 1.5 HT']}%</div>
+                            <div class="insight-label">BTTS HT</div>
+                            <div class="insight-value ${getValueClass(stats['BTTS HT'])}">${stats['BTTS HT']}%</div>
                         </div>
                         <div class="insight-box">
-                            <div class="insight-label">Jogos</div>
-                            <div class="insight-value" style="color: var(--text-primary)">${stats['Partidas']}</div>
+                            <div class="insight-label">Over 0.5 HT</div>
+                            <div class="insight-value ${getValueClass(stats['Over 0.5 HT'])}">${stats['Over 0.5 HT']}%</div>
                         </div>
                     </div>
                     
                     ${recommendations.length > 0 ? `
                         <div class="recommendations">
-                            <h4><i class="fas fa-lightbulb"></i> Mercados Recomendados</h4>
+                            <h4><i class="fas fa-lightbulb"></i> Mercados Recomendados (${stats['Partidas']} jogos)</h4>
                             <div class="recommendation-list">
-                                ${recommendations.map(rec => `
+                                ${recommendations.slice(0, 5).map(rec => `
                                     <div class="recommendation-item">
                                         <span>${rec.market}</span>
                                         <strong>${rec.confidence}%</strong>
@@ -660,13 +669,22 @@
                                 `).join('')}
                             </div>
                         </div>
-                    ` : ''}
+                    ` : `
+                        <div style="text-align: center; padding: 15px; color: var(--text-secondary);">
+                            <p>📊 Total de jogos: ${stats['Partidas']}</p>
+                            <p style="margin-top: 5px; font-size: 0.9rem;">Nenhum mercado com confiança alta</p>
+                        </div>
+                    `}
                     
                     <div class="stats-toggle" onclick="toggleStats(this)">
                         <span>Ver todas as estatísticas</span>
                         <i class="fas fa-chevron-down"></i>
                     </div>
                     <div class="stats-details">
+                        <div class="stat-row">
+                            <span>Over 0.5 HT</span>
+                            <strong>${stats['Over 0.5 HT']}%</strong>
+                        </div>
                         <div class="stat-row">
                             <span>Over 1.5 HT</span>
                             <strong>${stats['Over 1.5 HT']}%</strong>
@@ -688,12 +706,20 @@
                             <strong>${stats['Over 1.5 FT']}%</strong>
                         </div>
                         <div class="stat-row">
+                            <span>Over 2.5 FT</span>
+                            <strong>${stats['Over 2.5 FT']}%</strong>
+                        </div>
+                        <div class="stat-row">
                             <span>Over 3.5 FT</span>
                             <strong>${stats['Over 3.5 FT']}%</strong>
                         </div>
                         <div class="stat-row">
                             <span>Over 4.5 FT</span>
                             <strong>${stats['Over 4.5 FT']}%</strong>
+                        </div>
+                        <div class="stat-row">
+                            <span>BTTS FT</span>
+                            <strong>${stats['BTTS FT']}%</strong>
                         </div>
                         <div class="stat-row">
                             <span>0 X 0 FT</span>
@@ -705,34 +731,291 @@
             }
         }
 
-        function renderComparisonView(leaguesData) {
-            const container = document.getElementById('contentContainer');
-            container.innerHTML = '<div class="comparison-grid"></div>';
-            const grid = container.querySelector('.comparison-grid');
-            
-            const markets = ['Over 2.5 FT', 'BTTS FT', 'Over 1.5 HT', 'Over 3.5 FT'];
-            
-            markets.forEach(market => {
-                const bestLeague = Object.entries(leaguesData)
-                    .map(([name, games]) => ({
-                        name: leagueMapping[name]?.name || name,
-                        value: calculateStats(games)[market]
-                    }))
-                    .sort((a, b) => b.value - a.value)[0];
-                
-                const card = document.createElement('div');
-                card.className = 'comparison-card';
-                card.innerHTML = `
-                    <div class="comparison-label">${market}</div>
-                    <div class="comparison-value ${getValueClass(bestLeague.value)}">${bestLeague.value}%</div>
-                    <div class="comparison-label" style="margin-top: 10px;">${bestLeague.name}</div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
         function renderDetailedView(leaguesData) {
-            renderOverviewView(leaguesData);
+            // Destroy existing charts
+            Object.values(charts).forEach(chart => chart.destroy());
+            charts = {};
+
+            const container = document.getElementById('contentContainer');
+            container.innerHTML = '<div class="detailed-container"></div>';
+            const detailedContainer = container.querySelector('.detailed-container');
+
+            // Preparar dados para os gráficos
+            const leagueNames = [];
+            const over25Data = [];
+            const over35Data = [];
+            const bttsHTData = [];
+            const bttsFTData = [];
+            const over05HTData = [];
+            const over15HTData = [];
+            const colors = [];
+
+            for (const [leagueName, games] of Object.entries(leaguesData)) {
+                const stats = calculateStats(games);
+                const leagueInfo = leagueMapping[leagueName] || { name: leagueName, color: "#FFFFFF" };
+                
+                leagueNames.push(leagueInfo.name);
+                over25Data.push(stats['Over 2.5 FT']);
+                over35Data.push(stats['Over 3.5 FT']);
+                bttsHTData.push(stats['BTTS HT']);
+                bttsFTData.push(stats['BTTS FT']);
+                over05HTData.push(stats['Over 0.5 HT']);
+                over15HTData.push(stats['Over 1.5 HT']);
+                colors.push(leagueInfo.color);
+            }
+
+            // Gráfico 1: Over/Under Comparison
+            detailedContainer.innerHTML += `
+                <div class="chart-section">
+                    <div class="chart-title">📊 Comparação Over 2.5 vs Over 3.5 FT</div>
+                    <div class="chart-container">
+                        <canvas id="overChart"></canvas>
+                    </div>
+                </div>
+            `;
+
+            // Gráfico 2: BTTS Comparison
+            detailedContainer.innerHTML += `
+                <div class="chart-section">
+                    <div class="chart-title">⚽ Comparação BTTS HT vs BTTS FT</div>
+                    <div class="chart-container">
+                        <canvas id="bttsChart"></canvas>
+                    </div>
+                </div>
+            `;
+
+            // Gráfico 3: HT Analysis
+            detailedContainer.innerHTML += `
+                <div class="chart-section">
+                    <div class="chart-title">🕐 Análise Primeiro Tempo (HT)</div>
+                    <div class="chart-container">
+                        <canvas id="htChart"></canvas>
+                    </div>
+                </div>
+            `;
+
+            // Gráfico 4: Ranking Geral
+            detailedContainer.innerHTML += `
+                <div class="chart-section">
+                    <div class="chart-title">🏆 Ranking de Ligas - Tendência Over/Under</div>
+                    <div class="chart-container">
+                        <canvas id="rankingChart"></canvas>
+                    </div>
+                </div>
+            `;
+
+            // Create charts after DOM is updated
+            setTimeout(() => {
+                // Over/Under Chart
+                const overCtx = document.getElementById('overChart');
+                if (overCtx) {
+                    charts.overChart = new Chart(overCtx, {
+                        type: 'line',
+                        data: {
+                            labels: leagueNames,
+                            datasets: [{
+                                label: 'Over 2.5 FT',
+                                data: over25Data,
+                                borderColor: '#00ff88',
+                                backgroundColor: 'rgba(0, 255, 136, 0.1)',
+                                borderWidth: 3,
+                                tension: 0.4,
+                                fill: true
+                            }, {
+                                label: 'Over 3.5 FT',
+                                data: over35Data,
+                                borderColor: '#ffa500',
+                                backgroundColor: 'rgba(255, 165, 0, 0.1)',
+                                borderWidth: 3,
+                                tension: 0.4,
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    labels: { color: '#ffffff', font: { size: 14 } }
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    titleColor: '#00ff88',
+                                    bodyColor: '#ffffff'
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100,
+                                    ticks: { color: '#a0a0a0', callback: (value) => value + '%' },
+                                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                                },
+                                x: {
+                                    ticks: { color: '#a0a0a0' },
+                                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // BTTS Chart
+                const bttsCtx = document.getElementById('bttsChart');
+                if (bttsCtx) {
+                    charts.bttsChart = new Chart(bttsCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: leagueNames,
+                            datasets: [{
+                                label: 'BTTS HT',
+                                data: bttsHTData,
+                                backgroundColor: '#6c5ce7',
+                                borderColor: '#a29bfe',
+                                borderWidth: 2
+                            }, {
+                                label: 'BTTS FT',
+                                data: bttsFTData,
+                                backgroundColor: '#00ff88',
+                                borderColor: '#00ffaa',
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    labels: { color: '#ffffff', font: { size: 14 } }
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    titleColor: '#00ff88',
+                                    bodyColor: '#ffffff'
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100,
+                                    ticks: { color: '#a0a0a0', callback: (value) => value + '%' },
+                                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                                },
+                                x: {
+                                    ticks: { color: '#a0a0a0' },
+                                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // HT Chart
+                const htCtx = document.getElementById('htChart');
+                if (htCtx) {
+                    charts.htChart = new Chart(htCtx, {
+                        type: 'radar',
+                        data: {
+                            labels: leagueNames,
+                            datasets: [{
+                                label: 'Over 0.5 HT',
+                                data: over05HTData,
+                                borderColor: '#00ff88',
+                                backgroundColor: 'rgba(0, 255, 136, 0.2)',
+                                borderWidth: 2
+                            }, {
+                                label: 'Over 1.5 HT',
+                                data: over15HTData,
+                                borderColor: '#ffa500',
+                                backgroundColor: 'rgba(255, 165, 0, 0.2)',
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    labels: { color: '#ffffff', font: { size: 14 } }
+                                }
+                            },
+                            scales: {
+                                r: {
+                                    beginAtZero: true,
+                                    max: 100,
+                                    ticks: { 
+                                        color: '#a0a0a0',
+                                        backdropColor: 'transparent',
+                                        callback: (value) => value + '%'
+                                    },
+                                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                                    pointLabels: { color: '#ffffff' }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Ranking Chart
+                const rankingCtx = document.getElementById('rankingChart');
+                if (rankingCtx) {
+                    // Calcular score geral (média de Over 2.5 FT e BTTS FT)
+                    const overallScores = over25Data.map((over25, index) => {
+                        return (over25 + bttsFTData[index]) / 2;
+                    });
+
+                    // Ordenar por score
+                    const sortedData = leagueNames.map((name, index) => ({
+                        name,
+                        score: overallScores[index],
+                        color: colors[index]
+                    })).sort((a, b) => b.score - a.score);
+
+                    charts.rankingChart = new Chart(rankingCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: sortedData.map(d => d.name),
+                            datasets: [{
+                                label: 'Score Geral (Over + BTTS)',
+                                data: sortedData.map(d => d.score),
+                                backgroundColor: sortedData.map(d => d.color),
+                                borderColor: sortedData.map(d => d.color),
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            indexAxis: 'y',
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    labels: { color: '#ffffff', font: { size: 14 } }
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    titleColor: '#00ff88',
+                                    bodyColor: '#ffffff',
+                                    callbacks: {
+                                        label: (context) => `Score: ${context.parsed.x.toFixed(1)}%`
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    beginAtZero: true,
+                                    max: 100,
+                                    ticks: { color: '#a0a0a0', callback: (value) => value + '%' },
+                                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                                },
+                                y: {
+                                    ticks: { color: '#a0a0a0' },
+                                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                                }
+                            }
+                        }
+                    });
+                }
+            }, 100);
         }
 
         function getValueClass(value) {
@@ -752,6 +1035,7 @@
             const totalGames = games.length;
             const stats = {
                 'Partidas': totalGames,
+                'Over 0.5 HT': 0,
                 'Over 1.5 HT': 0,
                 'Over 2.5 HT': 0,
                 'BTTS HT': 0,
@@ -771,6 +1055,7 @@
                 const htGoals = game.scoreHT.home + game.scoreHT.away;
                 const ftGoals = game.score.home + game.score.away;
 
+                if (htGoals > 0.5) stats['Over 0.5 HT']++;
                 if (htGoals > 1.5) stats['Over 1.5 HT']++;
                 if (htGoals > 2.5) stats['Over 2.5 HT']++;
                 if (game.scoreHT.home > 0 && game.scoreHT.away > 0) stats['BTTS HT']++;
@@ -812,9 +1097,6 @@
             switch(currentView) {
                 case 'overview':
                     renderOverviewView(filteredLeagues);
-                    break;
-                case 'comparison':
-                    renderComparisonView(filteredLeagues);
                     break;
                 case 'detailed':
                     renderDetailedView(filteredLeagues);
@@ -879,7 +1161,7 @@
                             <h2 style="margin-top: 20px;">Erro ao carregar dados</h2>
                             <p style="color: var(--text-secondary);">${error.message}</p>
                             <p style="color: var(--text-secondary); margin-top: 10px;">Verifique o console para mais detalhes.</p>
-                            <button class="btn btn-primary" onclick="location.reload()" style="margin-top: 20px;">
+                            <button class="btn btn-primary" onclick="location.reload()" style="margin-top: 20px; padding: 12px 24px; border: none; border-radius: 8px; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; cursor: pointer; font-family: 'Oxanium', sans-serif;">
                                 <i class="fas fa-redo"></i> Tentar Novamente
                             </button>
                         </div>
