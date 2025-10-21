@@ -810,10 +810,33 @@
         document.addEventListener('DOMContentLoaded', () => {
             if (!checkUserLogin()) return;
 
+            // Mostrar loading
+            document.getElementById('contentContainer').innerHTML = `
+                <div style="text-align: center; padding: 50px;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: var(--accent-color);"></i>
+                    <h2 style="margin-top: 20px;">Carregando estatísticas...</h2>
+                </div>
+            `;
+
+            console.log('Iniciando busca de dados...');
+
             fetch('https://api-v2.green365.com.br/api/v2/sport-events?page=1&limit=150&sport=esoccer&status=ended')
-                .then(response => response.json())
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
+                    console.log('Dados recebidos:', data);
+                    
+                    if (!data.items || data.items.length === 0) {
+                        throw new Error('Nenhum jogo encontrado');
+                    }
+
                     const games = data.items.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
+                    console.log('Total de jogos:', games.length);
                     
                     games.forEach(game => {
                         const leagueName = game.competition.name;
@@ -823,15 +846,23 @@
                         leagues[leagueName].push(game);
                     });
                     
+                    console.log('Ligas organizadas:', Object.keys(leagues));
+                    console.log('Total de ligas:', Object.keys(leagues).length);
+                    
+                    if (Object.keys(leagues).length === 0) {
+                        throw new Error('Nenhuma liga encontrada');
+                    }
+                    
                     applyFilter();
                 })
                 .catch(error => {
-                    console.error('Erro ao buscar dados:', error);
+                    console.error('Erro detalhado:', error);
                     document.getElementById('contentContainer').innerHTML = `
                         <div style="text-align: center; padding: 50px;">
                             <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: var(--danger-color);"></i>
                             <h2 style="margin-top: 20px;">Erro ao carregar dados</h2>
-                            <p style="color: var(--text-secondary);">Por favor, tente novamente mais tarde.</p>
+                            <p style="color: var(--text-secondary);">${error.message}</p>
+                            <p style="color: var(--text-secondary); margin-top: 10px;">Verifique o console para mais detalhes.</p>
                             <button class="btn btn-primary" onclick="location.reload()" style="margin-top: 20px;">
                                 <i class="fas fa-redo"></i> Tentar Novamente
                             </button>
