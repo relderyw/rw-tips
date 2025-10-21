@@ -1,4 +1,128 @@
-<!DOCTYPE html>
+.comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .comparison-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .comparison-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .comparison-value {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .comparison-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* OPPORTUNITIES GRID */
+        .opportunities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .opportunity-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .opportunity-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent-color);
+        }
+
+        .opportunity-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .opportunity-icon {
+            font-size: 1.5rem;
+        }
+
+        .opportunity-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .opportunity-stats {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .opp-stat {
+            text-align: center;
+        }
+
+        .opp-stat.avg {
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            padding: 0 10px;
+        }
+
+        .opp-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .opp-value {
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .opp-value-large {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .opp-percentage {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 5px 0;
+        }
+
+        .opp-games {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* CORRELATION MATRIX */
+        .correlation-info {
+            margin-bottom: 15px;
+        }
+
+        #correlationMatrix {
+            background: rgba(255, <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -740,246 +864,229 @@
             container.innerHTML = '<div class="detailed-container"></div>';
             const detailedContainer = container.querySelector('.detailed-container');
 
-            // Preparar dados para os gráficos
-            const leagueNames = [];
-            const over25Data = [];
-            const over35Data = [];
-            const bttsHTData = [];
-            const bttsFTData = [];
-            const over05HTData = [];
-            const over15HTData = [];
-            const colors = [];
-
+            // Calcular todas as estatísticas
+            const leagueStats = [];
             for (const [leagueName, games] of Object.entries(leaguesData)) {
                 const stats = calculateStats(games);
                 const leagueInfo = leagueMapping[leagueName] || { name: leagueName, color: "#FFFFFF" };
-                
-                leagueNames.push(leagueInfo.name);
-                over25Data.push(stats['Over 2.5 FT']);
-                over35Data.push(stats['Over 3.5 FT']);
-                bttsHTData.push(stats['BTTS HT']);
-                bttsFTData.push(stats['BTTS FT']);
-                over05HTData.push(stats['Over 0.5 HT']);
-                over15HTData.push(stats['Over 1.5 HT']);
-                colors.push(leagueInfo.color);
+                leagueStats.push({
+                    name: leagueInfo.name,
+                    fullName: leagueName,
+                    color: leagueInfo.color,
+                    stats: stats
+                });
             }
 
-            // Gráfico 1: Over/Under Comparison
+            // SEÇÃO 1: MELHORES OPORTUNIDADES
             detailedContainer.innerHTML += `
                 <div class="chart-section">
-                    <div class="chart-title">📊 Comparação Over 2.5 vs Over 3.5 FT</div>
-                    <div class="chart-container">
-                        <canvas id="overChart"></canvas>
+                    <div class="chart-title">🎯 Melhores Oportunidades por Mercado</div>
+                    <div class="opportunities-grid" id="opportunitiesGrid"></div>
+                </div>
+            `;
+
+            const opportunitiesGrid = detailedContainer.querySelector('#opportunitiesGrid');
+            const markets = [
+                { key: 'Over 0.5 HT', label: 'Over 0.5 HT', icon: '⚡' },
+                { key: 'Over 1.5 HT', label: 'Over 1.5 HT', icon: '🔥' },
+                { key: 'Over 2.5 HT', label: 'Over 2.5 HT', icon: '💥' },
+                { key: 'BTTS HT', label: 'BTTS HT', icon: '⚽' },
+                { key: 'Over 2.5 FT', label: 'Over 2.5 FT', icon: '📊' },
+                { key: 'Over 3.5 FT', label: 'Over 3.5 FT', icon: '🎲' },
+                { key: 'BTTS FT', label: 'BTTS FT', icon: '🥅' },
+            ];
+
+            opportunitiesGrid.innerHTML = markets.map(market => {
+                const sorted = leagueStats
+                    .map(l => ({ name: l.name, value: l.stats[market.key], games: l.stats['Partidas'] }))
+                    .sort((a, b) => b.value - a.value);
+                
+                const best = sorted[0];
+                const worst = sorted[sorted.length - 1];
+                const avg = (sorted.reduce((sum, l) => sum + l.value, 0) / sorted.length).toFixed(1);
+
+                return `
+                    <div class="opportunity-card">
+                        <div class="opportunity-header">
+                            <span class="opportunity-icon">${market.icon}</span>
+                            <span class="opportunity-title">${market.label}</span>
+                        </div>
+                        <div class="opportunity-stats">
+                            <div class="opp-stat best">
+                                <div class="opp-label">🏆 Melhor</div>
+                                <div class="opp-value">${best.name}</div>
+                                <div class="opp-percentage ${getValueClass(best.value)}">${best.value}%</div>
+                                <div class="opp-games">${best.games} jogos</div>
+                            </div>
+                            <div class="opp-stat avg">
+                                <div class="opp-label">📊 Média</div>
+                                <div class="opp-value-large">${avg}%</div>
+                            </div>
+                            <div class="opp-stat worst">
+                                <div class="opp-label">❄️ Pior</div>
+                                <div class="opp-value">${worst.name}</div>
+                                <div class="opp-percentage ${getValueClass(worst.value)}">${worst.value}%</div>
+                                <div class="opp-games">${worst.games} jogos</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // SEÇÃO 2: MATRIZ DE CORRELAÇÃO
+            detailedContainer.innerHTML += `
+                <div class="chart-section">
+                    <div class="chart-title">🔗 Análise de Padrões - Correlações entre Mercados</div>
+                    <div class="correlation-info">
+                        <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                            Identifique padrões: quando um mercado é verde, qual a chance do outro também ser?
+                        </p>
+                    </div>
+                    <div id="correlationMatrix"></div>
+                </div>
+            `;
+
+            const correlationMatrix = detailedContainer.querySelector('#correlationMatrix');
+            correlationMatrix.innerHTML = leagueStats.map(league => {
+                return `
+                    <div class="correlation-row">
+                        <div class="correlation-league">${league.name}</div>
+                        <div class="correlation-cells">
+                            <div class="correlation-cell" style="background: ${getHeatColor(league.stats['Over 0.5 HT'])}" title="Over 0.5 HT: ${league.stats['Over 0.5 HT']}%">
+                                <span>${league.stats['Over 0.5 HT']}%</span>
+                            </div>
+                            <div class="correlation-cell" style="background: ${getHeatColor(league.stats['Over 1.5 HT'])}" title="Over 1.5 HT: ${league.stats['Over 1.5 HT']}%">
+                                <span>${league.stats['Over 1.5 HT']}%</span>
+                            </div>
+                            <div class="correlation-cell" style="background: ${getHeatColor(league.stats['BTTS HT'])}" title="BTTS HT: ${league.stats['BTTS HT']}%">
+                                <span>${league.stats['BTTS HT']}%</span>
+                            </div>
+                            <div class="correlation-cell" style="background: ${getHeatColor(league.stats['Over 2.5 FT'])}" title="Over 2.5 FT: ${league.stats['Over 2.5 FT']}%">
+                                <span>${league.stats['Over 2.5 FT']}%</span>
+                            </div>
+                            <div class="correlation-cell" style="background: ${getHeatColor(league.stats['Over 3.5 FT'])}" title="Over 3.5 FT: ${league.stats['Over 3.5 FT']}%">
+                                <span>${league.stats['Over 3.5 FT']}%</span>
+                            </div>
+                            <div class="correlation-cell" style="background: ${getHeatColor(league.stats['BTTS FT'])}" title="BTTS FT: ${league.stats['BTTS FT']}%">
+                                <span>${league.stats['BTTS FT']}%</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Adicionar legenda para a matriz
+            correlationMatrix.innerHTML += `
+                <div class="correlation-legend">
+                    <div class="legend-labels">
+                        <span>Over 0.5 HT</span>
+                        <span>Over 1.5 HT</span>
+                        <span>BTTS HT</span>
+                        <span>Over 2.5 FT</span>
+                        <span>Over 3.5 FT</span>
+                        <span>BTTS FT</span>
                     </div>
                 </div>
             `;
 
-            // Gráfico 2: BTTS Comparison
+            // SEÇÃO 3: CONSISTÊNCIA E VOLATILIDADE
             detailedContainer.innerHTML += `
                 <div class="chart-section">
-                    <div class="chart-title">⚽ Comparação BTTS HT vs BTTS FT</div>
+                    <div class="chart-title">📈 Consistência das Ligas</div>
+                    <div class="consistency-info">
+                        <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                            Ligas com alta consistência são mais previsíveis. Score baseado em múltiplos mercados.
+                        </p>
+                    </div>
                     <div class="chart-container">
-                        <canvas id="bttsChart"></canvas>
+                        <canvas id="consistencyChart"></canvas>
                     </div>
                 </div>
             `;
 
-            // Gráfico 3: HT Analysis
+            // SEÇÃO 4: TABELA COMPARATIVA COMPLETA
             detailedContainer.innerHTML += `
                 <div class="chart-section">
-                    <div class="chart-title">🕐 Análise Primeiro Tempo (HT)</div>
-                    <div class="chart-container">
-                        <canvas id="htChart"></canvas>
+                    <div class="chart-title">📋 Tabela Comparativa Completa</div>
+                    <div class="comparison-table-container">
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>Liga</th>
+                                    <th>Jogos</th>
+                                    <th>Over 0.5 HT</th>
+                                    <th>Over 1.5 HT</th>
+                                    <th>BTTS HT</th>
+                                    <th>Over 2.5 FT</th>
+                                    <th>Over 3.5 FT</th>
+                                    <th>BTTS FT</th>
+                                    <th>Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${leagueStats.map(league => {
+                                    const score = (
+                                        league.stats['Over 2.5 FT'] + 
+                                        league.stats['BTTS FT'] + 
+                                        league.stats['Over 1.5 HT']
+                                    ) / 3;
+                                    
+                                    return `
+                                        <tr>
+                                            <td class="league-cell">
+                                                <div class="league-dot" style="background: ${league.color}"></div>
+                                                ${league.name}
+                                            </td>
+                                            <td>${league.stats['Partidas']}</td>
+                                            <td class="${getTableCellClass(league.stats['Over 0.5 HT'])}">${league.stats['Over 0.5 HT']}%</td>
+                                            <td class="${getTableCellClass(league.stats['Over 1.5 HT'])}">${league.stats['Over 1.5 HT']}%</td>
+                                            <td class="${getTableCellClass(league.stats['BTTS HT'])}">${league.stats['BTTS HT']}%</td>
+                                            <td class="${getTableCellClass(league.stats['Over 2.5 FT'])}">${league.stats['Over 2.5 FT']}%</td>
+                                            <td class="${getTableCellClass(league.stats['Over 3.5 FT'])}">${league.stats['Over 3.5 FT']}%</td>
+                                            <td class="${getTableCellClass(league.stats['BTTS FT'])}">${league.stats['BTTS FT']}%</td>
+                                            <td class="${getTableCellClass(score.toFixed(1))}">${score.toFixed(1)}%</td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             `;
 
-            // Gráfico 4: Ranking Geral
-            detailedContainer.innerHTML += `
-                <div class="chart-section">
-                    <div class="chart-title">🏆 Ranking de Ligas - Tendência Over/Under</div>
-                    <div class="chart-container">
-                        <canvas id="rankingChart"></canvas>
-                    </div>
-                </div>
-            `;
-
-            // Create charts after DOM is updated
+            // Criar gráfico de consistência
             setTimeout(() => {
-                // Over/Under Chart
-                const overCtx = document.getElementById('overChart');
-                if (overCtx) {
-                    charts.overChart = new Chart(overCtx, {
-                        type: 'line',
-                        data: {
-                            labels: leagueNames,
-                            datasets: [{
-                                label: 'Over 2.5 FT',
-                                data: over25Data,
-                                borderColor: '#00ff88',
-                                backgroundColor: 'rgba(0, 255, 136, 0.1)',
-                                borderWidth: 3,
-                                tension: 0.4,
-                                fill: true
-                            }, {
-                                label: 'Over 3.5 FT',
-                                data: over35Data,
-                                borderColor: '#ffa500',
-                                backgroundColor: 'rgba(255, 165, 0, 0.1)',
-                                borderWidth: 3,
-                                tension: 0.4,
-                                fill: true
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    labels: { color: '#ffffff', font: { size: 14 } }
-                                },
-                                tooltip: {
-                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                    titleColor: '#00ff88',
-                                    bodyColor: '#ffffff'
-                                }
-                            },
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    max: 100,
-                                    ticks: { color: '#a0a0a0', callback: (value) => value + '%' },
-                                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
-                                },
-                                x: {
-                                    ticks: { color: '#a0a0a0' },
-                                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
-                                }
-                            }
-                        }
-                    });
-                }
+                const consistencyCtx = document.getElementById('consistencyChart');
+                if (consistencyCtx) {
+                    const consistencyScores = leagueStats.map(league => {
+                        // Calcular desvio padrão dos principais mercados
+                        const values = [
+                            league.stats['Over 0.5 HT'],
+                            league.stats['Over 1.5 HT'],
+                            league.stats['Over 2.5 FT'],
+                            league.stats['BTTS FT']
+                        ];
+                        const avg = values.reduce((a, b) => a + b) / values.length;
+                        const variance = values.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / values.length;
+                        const stdDev = Math.sqrt(variance);
+                        
+                        // Score de consistência (100 - desvio padrão)
+                        return {
+                            name: league.name,
+                            score: Math.max(0, 100 - stdDev),
+                            color: league.color
+                        };
+                    }).sort((a, b) => b.score - a.score);
 
-                // BTTS Chart
-                const bttsCtx = document.getElementById('bttsChart');
-                if (bttsCtx) {
-                    charts.bttsChart = new Chart(bttsCtx, {
+                    charts.consistencyChart = new Chart(consistencyCtx, {
                         type: 'bar',
                         data: {
-                            labels: leagueNames,
+                            labels: consistencyScores.map(d => d.name),
                             datasets: [{
-                                label: 'BTTS HT',
-                                data: bttsHTData,
-                                backgroundColor: '#6c5ce7',
-                                borderColor: '#a29bfe',
-                                borderWidth: 2
-                            }, {
-                                label: 'BTTS FT',
-                                data: bttsFTData,
-                                backgroundColor: '#00ff88',
-                                borderColor: '#00ffaa',
-                                borderWidth: 2
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    labels: { color: '#ffffff', font: { size: 14 } }
-                                },
-                                tooltip: {
-                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                    titleColor: '#00ff88',
-                                    bodyColor: '#ffffff'
-                                }
-                            },
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    max: 100,
-                                    ticks: { color: '#a0a0a0', callback: (value) => value + '%' },
-                                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
-                                },
-                                x: {
-                                    ticks: { color: '#a0a0a0' },
-                                    grid: { color: 'rgba(255, 255, 255, 0.05)' }
-                                }
-                            }
-                        }
-                    });
-                }
-
-                // HT Chart
-                const htCtx = document.getElementById('htChart');
-                if (htCtx) {
-                    charts.htChart = new Chart(htCtx, {
-                        type: 'radar',
-                        data: {
-                            labels: leagueNames,
-                            datasets: [{
-                                label: 'Over 0.5 HT',
-                                data: over05HTData,
-                                borderColor: '#00ff88',
-                                backgroundColor: 'rgba(0, 255, 136, 0.2)',
-                                borderWidth: 2
-                            }, {
-                                label: 'Over 1.5 HT',
-                                data: over15HTData,
-                                borderColor: '#ffa500',
-                                backgroundColor: 'rgba(255, 165, 0, 0.2)',
-                                borderWidth: 2
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    labels: { color: '#ffffff', font: { size: 14 } }
-                                }
-                            },
-                            scales: {
-                                r: {
-                                    beginAtZero: true,
-                                    max: 100,
-                                    ticks: { 
-                                        color: '#a0a0a0',
-                                        backdropColor: 'transparent',
-                                        callback: (value) => value + '%'
-                                    },
-                                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                                    pointLabels: { color: '#ffffff' }
-                                }
-                            }
-                        }
-                    });
-                }
-
-                // Ranking Chart
-                const rankingCtx = document.getElementById('rankingChart');
-                if (rankingCtx) {
-                    // Calcular score geral (média de Over 2.5 FT e BTTS FT)
-                    const overallScores = over25Data.map((over25, index) => {
-                        return (over25 + bttsFTData[index]) / 2;
-                    });
-
-                    // Ordenar por score
-                    const sortedData = leagueNames.map((name, index) => ({
-                        name,
-                        score: overallScores[index],
-                        color: colors[index]
-                    })).sort((a, b) => b.score - a.score);
-
-                    charts.rankingChart = new Chart(rankingCtx, {
-                        type: 'bar',
-                        data: {
-                            labels: sortedData.map(d => d.name),
-                            datasets: [{
-                                label: 'Score Geral (Over + BTTS)',
-                                data: sortedData.map(d => d.score),
-                                backgroundColor: sortedData.map(d => d.color),
-                                borderColor: sortedData.map(d => d.color),
+                                label: 'Score de Consistência',
+                                data: consistencyScores.map(d => d.score),
+                                backgroundColor: consistencyScores.map(d => d.color),
+                                borderColor: consistencyScores.map(d => d.color),
                                 borderWidth: 2
                             }]
                         },
@@ -996,7 +1103,7 @@
                                     titleColor: '#00ff88',
                                     bodyColor: '#ffffff',
                                     callbacks: {
-                                        label: (context) => `Score: ${context.parsed.x.toFixed(1)}%`
+                                        label: (context) => `Consistência: ${context.parsed.x.toFixed(1)}%`
                                     }
                                 }
                             },
@@ -1016,6 +1123,21 @@
                     });
                 }
             }, 100);
+        }
+
+        function getHeatColor(value) {
+            if (value >= 80) return 'rgba(0, 255, 136, 0.8)';
+            if (value >= 70) return 'rgba(0, 255, 136, 0.6)';
+            if (value >= 60) return 'rgba(255, 193, 7, 0.6)';
+            if (value >= 50) return 'rgba(255, 152, 0, 0.6)';
+            return 'rgba(255, 82, 82, 0.6)';
+        }
+
+        function getTableCellClass(value) {
+            const numValue = parseFloat(value);
+            if (numValue >= 75) return 'cell-high';
+            if (numValue >= 50) return 'cell-medium';
+            return 'cell-low';
         }
 
         function getValueClass(value) {
