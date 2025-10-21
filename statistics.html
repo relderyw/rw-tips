@@ -1,41 +1,41 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <title>RW TIPS - Estatísticas das Ligas</title>
+    <title>RW TIPS - Análise de Ligas</title>
     <style>
         :root {
             --primary-color: #6c5ce7;
             --secondary-color: #a29bfe;
             --background-dark: #000000;
-            --card-bg: #000000;
+            --card-bg: #0a0a0a;
             --card-hover: #1a1a1a;
             --text-primary: #ffffff;
             --text-secondary: #a0a0a0;
             --accent-color: #00ff88;
             --danger-color: #ff5252;
-            --success-color: #00ff88;
+            --warning-color: #ffa500;
             --border-color: rgba(255, 255, 255, 0.05);
-            --gold-gradient: linear-gradient(135deg, #ffd700, #ffa500);
         }
 
-        /* ========== BODY AJUSTADO PARA SIDEBAR ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Oxanium', sans-serif;
             background: var(--background-dark);
             color: var(--text-primary);
             min-height: 100vh;
-            line-height: 1.6;
-            padding: 20px 20px 20px 90px; /* ← PADDING-LEFT ADICIONADO */
-            transition: padding-left 0.3s ease; /* ← TRANSIÇÃO ADICIONADA */
+            padding: 20px 20px 20px 90px;
         }
 
-        /* ========== INÍCIO DOS ESTILOS DA SIDEBAR ========== */
+        /* SIDEBAR */
         .sidebar {
             position: fixed;
             left: 0;
@@ -115,7 +115,6 @@
             background: linear-gradient(90deg, rgba(0, 255, 136, 0.2), transparent);
             color: var(--accent-color);
             border-left: 4px solid var(--accent-color);
-            position: relative;
         }
 
         .sidebar-menu .icon {
@@ -134,324 +133,344 @@
         .sidebar:hover .sidebar-menu .label {
             opacity: 1;
         }
-        /* ========== FIM DOS ESTILOS DA SIDEBAR ========== */
 
-        /* ========== LOGO-CONTAINER REMOVIDO (não é mais necessário) ========== */
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes neonPulse {
-            from {
-                text-shadow: 0 0 10px rgba(0, 255, 136, 0.5), 0 0 20px rgba(0, 255, 136, 0.3);
-            }
-            to {
-                text-shadow: 0 0 15px rgba(0, 255, 136, 0.7), 0 0 25px rgba(0, 255, 136, 0.5);
-            }
-        }
-
-        .button-container {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin: 30px 0;
-            animation: fadeIn 1s ease-in-out 0.3s backwards;
-        }
-
-        .action-button {
-            padding: 15px 35px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
-        }
-
-        .action-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
-        }
-
-        .filter-container {
+        /* HEADER */
+        .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
-        #gameFilter {
-            padding: 12px;
-            font-size: 1.1rem;
-            border-radius: 12px;
-            border: 1px solid var(--primary-color);
-            background-color: var(--card-bg);
-            color: var(--text-primary);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        #gameFilter:hover {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
-        }
-
-        .leagues-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 25px;
-            padding: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
-            animation: fadeIn 1s ease-in-out 0.6s backwards;
-        }
-
-        .league-stats {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .league-stats:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-            background: var(--card-hover);
-        }
-
-        .highlight {
-            border: none;
-            position: relative;
-            background: var(--card-bg);
-            border-left: 4px solid #ffd700;
-            box-shadow: -5px 0 20px rgba(255, 215, 0, 0.3);
-        }
-
-        .star {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 24px;
-            color: #ffd700;
-            animation: starPulse 2s infinite;
-            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.6));
-        }
-
-        @keyframes starPulse {
-            0% {
-                transform: scale(1) rotate(0deg);
-            }
-            50% {
-                transform: scale(1.2) rotate(180deg);
-            }
-            100% {
-                transform: scale(1) rotate(360deg);
-            }
-        }
-
-        .highlight .league-name {
-            color: var(--text-primary);
-            background: none;
-            -webkit-background-clip: unset;
-            background-clip: unset;
-        }
-
-        .highlight .bar {
-            background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
-        }
-
-        .highlight .stat {
-            background: rgba(255, 255, 255, 0.03);
-        }
-
-        .highlight .stat:hover {
-            transform: translateX(5px);
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .league-name {
-            font-weight: 600;
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            text-align: center;
-            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .stat {
-            margin: 15px 0;
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 5px 10px;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.03);
-            transition: all 0.3s ease;
-        }
-
-        .stat:hover {
-            background: rgba(255, 255, 255, 0.05);
-            transform: translateX(5px);
-        }
-
-        .stat .value-100 {
-            color: var(--accent-color);
-            font-weight: 700;
-            text-shadow: 0 0 5px rgba(0, 255, 136, 0.7);
-        }
-
-        .bar-container {
-            background-color: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 8px 0;
-            height: 10px;
-            position: relative;
-        }
-
-        .bar {
-            height: 100%;
-            border-radius: 10px;
-            background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
-            transition: width 0.6s ease-in-out;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .bar-100 {
-            background: var(--accent-color);
-            box-shadow: 0 0 10px var(--accent-color);
-        }
-
-        .bar::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            animation: shimmer 2s infinite;
-        }
-
-        .bar.zero {
-            background: linear-gradient(90deg, var(--danger-color), #ff7675);
-        }
-
-        @keyframes shimmer {
-            100% {
-                left: 100%;
-            }
-        }
-
-        h1 {
-            text-align: center;
-            font-size: 3rem;
-            font-weight: 600;
-            margin: 30px 0;
+        .header h1 {
+            font-size: 2.5rem;
             background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            position: relative;
-            display: inline-block;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 0 20px;
-            text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
-            animation: titlePulse 2s ease-in-out infinite alternate;
+            margin-bottom: 15px;
         }
 
-        @keyframes titlePulse {
-            from {
-                text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
-            }
-            to {
-                text-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
-            }
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
-        h1::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
-            border-radius: 3px;
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Oxanium', sans-serif;
         }
 
-        /* ========== MEDIA QUERIES AJUSTADOS PARA SIDEBAR ========== */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
+        }
+
+        .filter-select {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-primary);
+            font-family: 'Oxanium', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:hover {
+            border-color: var(--accent-color);
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .tab:hover {
+            border-color: var(--accent-color);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-color: transparent;
+        }
+
+        /* LEAGUE CARDS */
+        .leagues-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .league-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .league-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            background: var(--card-hover);
+        }
+
+        .league-card.recommended {
+            border-left: 4px solid var(--accent-color);
+            box-shadow: -5px 0 20px rgba(0, 255, 136, 0.2);
+        }
+
+        .league-card.warning {
+            border-left: 4px solid var(--warning-color);
+            box-shadow: -5px 0 20px rgba(255, 165, 0, 0.2);
+        }
+
+        .league-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .league-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .league-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-hot {
+            background: linear-gradient(135deg, #ff5252, #ff7675);
+            color: white;
+        }
+
+        .badge-good {
+            background: linear-gradient(135deg, var(--accent-color), #00ffaa);
+            color: black;
+        }
+
+        .badge-moderate {
+            background: linear-gradient(135deg, #ffa500, #ffcc00);
+            color: black;
+        }
+
+        .badge-cold {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        /* INSIGHTS */
+        .insights {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .insight-box {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .insight-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .insight-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .value-high {
+            color: var(--accent-color);
+        }
+
+        .value-medium {
+            color: var(--warning-color);
+        }
+
+        .value-low {
+            color: var(--danger-color);
+        }
+
+        /* RECOMMENDATIONS */
+        .recommendations {
+            background: rgba(0, 255, 136, 0.05);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 15px;
+        }
+
+        .recommendations h4 {
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .recommendation-list {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .recommendation-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .recommendation-item strong {
+            color: var(--accent-color);
+        }
+
+        /* STATS TOGGLE */
+        .stats-toggle {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .stats-toggle:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .stats-details {
+            display: none;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .stats-details.open {
+            display: block;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 0.9rem;
+        }
+
+        .stat-row:not(:last-child) {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* COMPARISON VIEW */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .comparison-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .comparison-value {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .comparison-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* RESPONSIVE */
         @media (max-width: 768px) {
             body {
-                padding: 20px 10px 20px 70px; /* ← PADDING AJUSTADO */
+                padding: 20px 10px 20px 70px;
             }
 
             .sidebar {
-                width: 60px; /* ← SIDEBAR MENOR EM MOBILE */
+                width: 60px;
             }
 
             .sidebar:hover {
-                width: 220px; /* ← EXPANSÃO MENOR EM MOBILE */
+                width: 220px;
             }
 
-            .button-container {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .header-controls {
                 flex-direction: column;
-                padding: 0 20px;
-            }
-
-            .leagues-container {
-                grid-template-columns: 1fr;
-                padding: 10px;
-            }
-
-            .action-button {
                 width: 100%;
             }
 
-            h1 {
-                font-size: 2rem;
-                padding: 0 15px;
-                margin: 20px 0;
+            .btn, .filter-select {
+                width: 100%;
             }
 
-            h1::after {
-                width: 60px;
-                bottom: -8px;
+            .leagues-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .insights {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
-
 <body>
-    <!-- ========== SIDEBAR ADICIONADA AQUI (LOGO APÓS <body>) ========== -->
     <nav class="sidebar">
         <div class="sidebar-header">
             <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips" class="sidebar-logo">
@@ -463,8 +482,7 @@
             <li><a href="live_v2.html"><span class="icon">🔴</span><span class="label">AO VIVO</span></a></li>
             <li class="active"><a href="statistics.html"><span class="icon">📈</span><span class="label">Estatísticas das Ligas</span></a></li>
             <li><a href="formularioApostas.html"><span class="icon">💰</span><span class="label">Registrar Apostas</span></a></li>
-            <li><a href="players.html"><span class="icon">🎮</span><span class="label">Análise de
-                        Jogadores</span></a></li>
+            <li><a href="players.html"><span class="icon">🎮</span><span class="label">Análise de Jogadores</span></a></li>
             <li><a href="dashboard.html"><span class="icon">📋</span><span class="label">Dashboard</span></a></li>
             <li><a href="nba.html"><span class="icon">🏀</span><span class="label">NBA Stats</span></a></li>
             <li><a href="radar.html"><span class="icon">🎯</span><span class="label">Radar</span></a></li>
@@ -472,22 +490,52 @@
         </ul>
     </nav>
 
-    <h1>Estatísticas das Ligas</h1>
-    <div class="button-container">
-        <button id="viewResultsButton" class="action-button">Ver Últimos Resultados</button>
-        <button id="backButton" class="action-button">Voltar para Próximos Jogos</button>
-        <button id="logoutButton" class="action-button">Sair</button>
+    <div class="header">
+        <h1>🎯 Análise Estratégica de Ligas</h1>
+        <div class="header-controls">
+            <button class="btn btn-primary" onclick="window.location.href='results.html'">
+                <i class="fas fa-chart-bar"></i> Resultados
+            </button>
+            <button class="btn btn-primary" onclick="window.location.href='visualization.html'">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </button>
+            <select class="filter-select" id="gameFilter" onchange="applyFilter()">
+                <option value="10">Últimos 10 jogos</option>
+                <option value="5">Últimos 5 jogos</option>
+                <option value="all">Todos os jogos</option>
+            </select>
+            <button class="btn btn-primary" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Sair
+            </button>
+        </div>
     </div>
-    <div class="filter-container">
-        <select id="gameFilter" onchange="applyFilter()">
-            <option value="all">Todos os jogos</option>
-            <option value="10">Últimos 10 jogos</option>
-            <option value="5">Últimos 5 jogos</option>
-        </select>
+
+    <div class="tabs">
+        <div class="tab active" data-view="overview" onclick="switchView('overview')">
+            <i class="fas fa-th-large"></i> Visão Geral
+        </div>
+        <div class="tab" data-view="comparison" onclick="switchView('comparison')">
+            <i class="fas fa-balance-scale"></i> Comparação
+        </div>
+        <div class="tab" data-view="detailed" onclick="switchView('detailed')">
+            <i class="fas fa-chart-line"></i> Detalhado
+        </div>
     </div>
-    <div id="statsContainer" class="leagues-container"></div>
+
+    <div id="contentContainer"></div>
 
     <script>
+        let leagues = {};
+        let currentView = 'overview';
+
+        const leagueMapping = {
+            "Esoccer Battle - 8 mins play": { name: "Battle 8m", color: "#FF4C4C" },
+            "Esoccer Battle Volta - 6 mins play": { name: "Battle Volta 6m", color: "#FFD700" },
+            "Esoccer GT Leagues – 12 mins play": { name: "GT Leagues 12m", color: "#32CD32" },
+            "Esoccer H2H GG League - 8 mins play": { name: "H2H GG 8m", color: "#8A2BE2" },
+            "Esoccer Adriatic League - 10 mins play": { name: "Adriatic 10m", color: "#1E90FF" }
+        };
+
         function checkUserLogin() {
             if (!sessionStorage.getItem('loggedIn')) {
                 window.location.replace('index.html');
@@ -503,101 +551,186 @@
             window.location.replace('index.html');
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            if (!checkUserLogin()) return;
-
-            document.getElementById('logoutButton').addEventListener('click', logout);
-            document.getElementById('viewResultsButton').addEventListener('click', function () {
-                localStorage.setItem('needsUpdate', 'true');
-                window.location.href = 'results.html';
-            });
-            document.getElementById('backButton').addEventListener('click', function () {
-                localStorage.setItem('needsUpdate', 'true');
-                window.location.href = 'visualization.html';
-            });
-
-            const leagueMapping = {
-                "Esoccer Battle - 8 mins play": { name: "Battle 8m", color: "#FF4C4C" },
-                "Esoccer Battle Volta - 6 mins play": { name: "Battle Volta 6m", color: "#FFD700" },
-                "Esoccer GT Leagues – 12 mins play": { name: "GT Leagues 12m", color: "#32CD32" },
-                "Esoccer H2H GG League - 8 mins play": { name: "H2H GG 8m", color: "#8A2BE2" },
-                "Esoccer Adriatic League - 10 mins play": { name: "Adriatic 10m", color: "#1E90FF" }
-            };
-
-            let leagues = {};
-
-            fetch('https://api-v2.green365.com.br/api/v2/sport-events?page=1&limit=150&sport=esoccer&status=ended')
-                .then(response => response.json())
-                .then(data => {
-                    const games = data.items.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
-                    console.log('Games fetched and sorted:', games);
-                    games.forEach(game => {
-                        const leagueName = game.competition.name;
-                        if (!leagues[leagueName]) {
-                            leagues[leagueName] = [];
-                        }
-                        leagues[leagueName].push(game);
-                    });
-                    console.log('Leagues organized:', leagues);
-                    applyFilter();
-                })
-                .catch(error => {
-                    console.error('Erro ao buscar dados:', error);
-                    alert('Erro ao carregar estatísticas. Por favor, tente novamente.');
-                });
-
-            window.applyFilter = function() {
-                const filterValue = document.getElementById('gameFilter').value;
-                console.log('Filter changed to:', filterValue);
-                const statsContainer = document.getElementById('statsContainer');
-                statsContainer.innerHTML = '';
-
-                for (const league in leagues) {
-                    const leagueInfo = leagueMapping[league] || { name: league, color: "#FFFFFF" };
-                    let filteredGames = [...leagues[league]]; // Cria uma cópia
-                    console.log(`Processing league: ${league}, Total games: ${filteredGames.length}`);
-                    if (filterValue !== 'all') {
-                        const limit = parseInt(filterValue);
-                        filteredGames = filteredGames.slice(0, limit);
-                        console.log(`Filtered to ${limit} games:`, filteredGames);
-                    }
-                    const leagueStats = calculateStats(filteredGames);
-                    console.log(`Stats for ${league}:`, leagueStats);
-                    const isStarred = leagueStats['Over 1.5 HT'] === 100 &&
-                        leagueStats['Over 2.5 HT'] === 100 &&
-                        leagueStats['Over 3.5 FT'] >= 85 &&
-                        leagueStats['BTTS FT'] >= 85 &&
-                        leagueStats['0 X 0 FT'] === 100;
-                    const star = isStarred ? '<div class="star">⭐</div>' : '';
-                    const highlightClass = isStarred ? 'highlight' : '';
-                    const leagueDiv = document.createElement('div');
-                    leagueDiv.className = `league-stats ${highlightClass}`;
-                    leagueDiv.style.setProperty('background', 'var(--card-bg)');
-                    leagueDiv.style.borderColor = leagueInfo.color;
-                    leagueDiv.innerHTML = `
-                        ${star}
-                        <div class="league-name">${leagueInfo.name}</div>
-                        <div class="stat">
-                            <span>Partidas</span>
-                            <span>${leagueStats['Partidas']}</span>
-                        </div>
-                        <div class="stat-title">Mercados HT</div>
-                        ${generateBar('Over 1.5 HT', leagueStats['Over 1.5 HT'])}
-                        ${generateBar('Over 2.5 HT', leagueStats['Over 2.5 HT'])}
-                        ${generateBar('BTTS HT', leagueStats['BTTS HT'])}
-                        ${generateBar('0 X 0 HT', leagueStats['0 X 0 HT'])}
-                        <div class="stat-title">Mercados FT</div>
-                        ${generateBar('Over 1.5 FT', leagueStats['Over 1.5 FT'])}
-                        ${generateBar('Over 2.5 FT', leagueStats['Over 2.5 FT'])}
-                        ${generateBar('Over 3.5 FT', leagueStats['Over 3.5 FT'])}
-                        ${generateBar('Over 4.5 FT', leagueStats['Over 4.5 FT'])}
-                        ${generateBar('BTTS FT', leagueStats['BTTS FT'])}
-                        ${generateBar('0 X 0 FT', leagueStats['0 X 0 FT'])}
-                    `;
-                    statsContainer.appendChild(leagueDiv);
+        function switchView(view) {
+            currentView = view;
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.view === view) {
+                    tab.classList.add('active');
                 }
-            };
-        });
+            });
+            applyFilter();
+        }
+
+        function getLeagueRating(stats) {
+            const over25FT = stats['Over 2.5 FT'];
+            const btts = stats['BTTS FT'];
+            const over15HT = stats['Over 1.5 HT'];
+            
+            const score = (over25FT + btts + over15HT) / 3;
+            
+            if (score >= 80) return { badge: 'hot', class: 'recommended', label: '🔥 QUENTE' };
+            if (score >= 65) return { badge: 'good', class: 'recommended', label: '✅ BOM' };
+            if (score >= 50) return { badge: 'moderate', class: '', label: '⚠️ MODERADO' };
+            return { badge: 'cold', class: 'warning', label: '❄️ FRIO' };
+        }
+
+        function getRecommendations(stats) {
+            const recommendations = [];
+            
+            if (stats['Over 2.5 FT'] >= 75) {
+                recommendations.push({ market: 'Over 2.5 FT', confidence: stats['Over 2.5 FT'] });
+            }
+            if (stats['BTTS FT'] >= 75) {
+                recommendations.push({ market: 'BTTS FT', confidence: stats['BTTS FT'] });
+            }
+            if (stats['Over 1.5 HT'] >= 70) {
+                recommendations.push({ market: 'Over 1.5 HT', confidence: stats['Over 1.5 HT'] });
+            }
+            if (stats['Over 3.5 FT'] >= 65) {
+                recommendations.push({ market: 'Over 3.5 FT', confidence: stats['Over 3.5 FT'] });
+            }
+            
+            return recommendations.sort((a, b) => b.confidence - a.confidence);
+        }
+
+        function renderOverviewView(leaguesData) {
+            const container = document.getElementById('contentContainer');
+            container.innerHTML = '<div class="leagues-grid"></div>';
+            const grid = container.querySelector('.leagues-grid');
+            
+            for (const [leagueName, games] of Object.entries(leaguesData)) {
+                const stats = calculateStats(games);
+                const rating = getLeagueRating(stats);
+                const recommendations = getRecommendations(stats);
+                const leagueInfo = leagueMapping[leagueName] || { name: leagueName, color: "#FFFFFF" };
+                
+                const card = document.createElement('div');
+                card.className = `league-card ${rating.class}`;
+                card.innerHTML = `
+                    <div class="league-header">
+                        <div class="league-name">${leagueInfo.name}</div>
+                        <div class="league-badge badge-${rating.badge}">${rating.label}</div>
+                    </div>
+                    
+                    <div class="insights">
+                        <div class="insight-box">
+                            <div class="insight-label">Over 2.5 FT</div>
+                            <div class="insight-value ${getValueClass(stats['Over 2.5 FT'])}">${stats['Over 2.5 FT']}%</div>
+                        </div>
+                        <div class="insight-box">
+                            <div class="insight-label">BTTS FT</div>
+                            <div class="insight-value ${getValueClass(stats['BTTS FT'])}">${stats['BTTS FT']}%</div>
+                        </div>
+                        <div class="insight-box">
+                            <div class="insight-label">Over 1.5 HT</div>
+                            <div class="insight-value ${getValueClass(stats['Over 1.5 HT'])}">${stats['Over 1.5 HT']}%</div>
+                        </div>
+                        <div class="insight-box">
+                            <div class="insight-label">Jogos</div>
+                            <div class="insight-value" style="color: var(--text-primary)">${stats['Partidas']}</div>
+                        </div>
+                    </div>
+                    
+                    ${recommendations.length > 0 ? `
+                        <div class="recommendations">
+                            <h4><i class="fas fa-lightbulb"></i> Mercados Recomendados</h4>
+                            <div class="recommendation-list">
+                                ${recommendations.map(rec => `
+                                    <div class="recommendation-item">
+                                        <span>${rec.market}</span>
+                                        <strong>${rec.confidence}%</strong>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="stats-toggle" onclick="toggleStats(this)">
+                        <span>Ver todas as estatísticas</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="stats-details">
+                        <div class="stat-row">
+                            <span>Over 1.5 HT</span>
+                            <strong>${stats['Over 1.5 HT']}%</strong>
+                        </div>
+                        <div class="stat-row">
+                            <span>Over 2.5 HT</span>
+                            <strong>${stats['Over 2.5 HT']}%</strong>
+                        </div>
+                        <div class="stat-row">
+                            <span>BTTS HT</span>
+                            <strong>${stats['BTTS HT']}%</strong>
+                        </div>
+                        <div class="stat-row">
+                            <span>0 X 0 HT</span>
+                            <strong>${stats['0 X 0 HT']}%</strong>
+                        </div>
+                        <div class="stat-row">
+                            <span>Over 1.5 FT</span>
+                            <strong>${stats['Over 1.5 FT']}%</strong>
+                        </div>
+                        <div class="stat-row">
+                            <span>Over 3.5 FT</span>
+                            <strong>${stats['Over 3.5 FT']}%</strong>
+                        </div>
+                        <div class="stat-row">
+                            <span>Over 4.5 FT</span>
+                            <strong>${stats['Over 4.5 FT']}%</strong>
+                        </div>
+                        <div class="stat-row">
+                            <span>0 X 0 FT</span>
+                            <strong>${stats['0 X 0 FT']}%</strong>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            }
+        }
+
+        function renderComparisonView(leaguesData) {
+            const container = document.getElementById('contentContainer');
+            container.innerHTML = '<div class="comparison-grid"></div>';
+            const grid = container.querySelector('.comparison-grid');
+            
+            const markets = ['Over 2.5 FT', 'BTTS FT', 'Over 1.5 HT', 'Over 3.5 FT'];
+            
+            markets.forEach(market => {
+                const bestLeague = Object.entries(leaguesData)
+                    .map(([name, games]) => ({
+                        name: leagueMapping[name]?.name || name,
+                        value: calculateStats(games)[market]
+                    }))
+                    .sort((a, b) => b.value - a.value)[0];
+                
+                const card = document.createElement('div');
+                card.className = 'comparison-card';
+                card.innerHTML = `
+                    <div class="comparison-label">${market}</div>
+                    <div class="comparison-value ${getValueClass(bestLeague.value)}">${bestLeague.value}%</div>
+                    <div class="comparison-label" style="margin-top: 10px;">${bestLeague.name}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderDetailedView(leaguesData) {
+            renderOverviewView(leaguesData);
+        }
+
+        function getValueClass(value) {
+            if (value >= 75) return 'value-high';
+            if (value >= 50) return 'value-medium';
+            return 'value-low';
+        }
+
+        function toggleStats(element) {
+            const details = element.nextElementSibling;
+            const icon = element.querySelector('i');
+            details.classList.toggle('open');
+            icon.style.transform = details.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0)';
+        }
 
         function calculateStats(games) {
             const totalGames = games.length;
@@ -647,19 +780,62 @@
             return stats;
         }
 
-        function generateBar(label, percentage) {
-            const isHundred = percentage === 100;
-            return `
-                <div class="stat">
-                    <span>${label}</span>
-                    <span class="${isHundred ? 'value-100' : ''}">${percentage}%</span>
-                </div>
-                <div class="bar-container">
-                    <div class="bar ${isHundred ? 'bar-100' : ''}" style="width: ${percentage}%"></div>
-                </div>
-            `;
+        function applyFilter() {
+            const filterValue = document.getElementById('gameFilter').value;
+            const filteredLeagues = {};
+            
+            for (const [leagueName, games] of Object.entries(leagues)) {
+                let filtered = [...games];
+                if (filterValue !== 'all') {
+                    const limit = parseInt(filterValue);
+                    filtered = filtered.slice(0, limit);
+                }
+                filteredLeagues[leagueName] = filtered;
+            }
+            
+            switch(currentView) {
+                case 'overview':
+                    renderOverviewView(filteredLeagues);
+                    break;
+                case 'comparison':
+                    renderComparisonView(filteredLeagues);
+                    break;
+                case 'detailed':
+                    renderDetailedView(filteredLeagues);
+                    break;
+            }
         }
-    </script>
-</body>
 
-</html>
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!checkUserLogin()) return;
+
+            fetch('https://api-v2.green365.com.br/api/v2/sport-events?page=1&limit=150&sport=esoccer&status=ended')
+                .then(response => response.json())
+                .then(data => {
+                    const games = data.items.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
+                    
+                    games.forEach(game => {
+                        const leagueName = game.competition.name;
+                        if (!leagues[leagueName]) {
+                            leagues[leagueName] = [];
+                        }
+                        leagues[leagueName].push(game);
+                    });
+                    
+                    applyFilter();
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar dados:', error);
+                    document.getElementById('contentContainer').innerHTML = `
+                        <div style="text-align: center; padding: 50px;">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: var(--danger-color);"></i>
+                            <h2 style="margin-top: 20px;">Erro ao carregar dados</h2>
+                            <p style="color: var(--text-secondary);">Por favor, tente novamente mais tarde.</p>
+                            <button class="btn btn-primary" onclick="location.reload()" style="margin-top: 20px;">
+                                <i class="fas fa-redo"></i> Tentar Novamente
+                            </button>
+                        </div>
+                    `;
+                });
+        });
