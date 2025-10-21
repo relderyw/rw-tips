@@ -385,6 +385,10 @@
             background: rgba(255, 255, 255, 0.05);
         }
 
+        .stats-toggle i {
+            transition: transform 0.3s ease;
+        }
+
         .stats-details {
             display: none;
             margin-top: 10px;
@@ -412,6 +416,8 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 15px;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
         .comparison-card {
@@ -420,6 +426,12 @@
             border-radius: 12px;
             padding: 20px;
             text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .comparison-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
         .comparison-value {
@@ -465,6 +477,10 @@
             }
 
             .insights {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -870,3 +886,6 @@
                     `;
                 });
         });
+    </script>
+</body>
+</html>
