@@ -981,6 +981,28 @@
     </div>
 
     <script>
+        // Converte strings BRT (UTC-03) para Date no fuso local
+        function parseBrtToLocal(brtStr) {
+            if (!brtStr) return new Date(NaN);
+            const raw = String(brtStr).trim().replace(' ', 'T');
+            const parts = raw.split('T');
+            if (parts.length < 2) {
+                const d = new Date(`${raw}-03:00`);
+                return isNaN(d.getTime()) ? new Date(raw) : d;
+            }
+            const datePart = parts[0];
+            let timePart = parts[1];
+            if (/^\d{2}:\d{2}$/.test(timePart)) {
+                timePart = `${timePart}:00`;
+            }
+            const withOffset = `${datePart}T${timePart}-03:00`;
+            const d = new Date(withOffset);
+            if (isNaN(d.getTime())) {
+                const fallback = new Date(raw);
+                return fallback;
+            }
+            return d;
+        }
         class EsoccerAnalyzer {
             constructor() {
                 this.gamesData = [];
@@ -1061,7 +1083,7 @@
                     const rawMatches = Array.isArray(data.scraped_matches) ? data.scraped_matches : [];
                     const sortedLimited = rawMatches
                         .filter(m => !!m.scheduled_time_brt)
-                        .sort((a, b) => new Date(String(a.scheduled_time_brt).replace(' ', 'T')).getTime() - new Date(String(b.scheduled_time_brt).replace(' ', 'T')).getTime())
+                        .sort((a, b) => parseBrtToLocal(a.scheduled_time_brt).getTime() - parseBrtToLocal(b.scheduled_time_brt).getTime())
                         .slice(0, 20);
 
                     this.gamesData = await Promise.all(
@@ -1079,7 +1101,7 @@
                             // Set premium flags independently of 100% score
                             processedGame.premiumFT = this.isPremiumMatch(processedGame);
                             processedGame.premiumHT = this.isHTPremiumMatch(processedGame);
-                            const startDate = new Date(String(item.scheduled_time_brt).replace(' ', 'T'));
+                            const startDate = parseBrtToLocal(item.scheduled_time_brt);
                             processedGame.day = startDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
                             processedGame.hour = startDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
                             processedGame.startMS = startDate.getTime();
