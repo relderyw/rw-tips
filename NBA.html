@@ -1173,49 +1173,52 @@
                     awayProb = 100 - homeProb;
                 }
 
-                document.getElementById('awayProbName').textContent = awayName;
-                document.getElementById('homeProbName').textContent = homeName;
-                document.getElementById('awayWinProb').textContent = `${Math.round(awayProb)}%`;
-                document.getElementById('homeWinProb').textContent = `${Math.round(homeProb)}%`;
+                // Helpers seguros para evitar erros quando elementos não existem
+                const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+                const setSrc = (id, val) => { const el = document.getElementById(id); if (el) el.src = val; };
+
+                setText('awayProbName', awayName);
+                setText('homeProbName', homeName);
+                setText('awayWinProb', `${Math.round(awayProb)}%`);
+                setText('homeWinProb', `${Math.round(homeProb)}%`);
 
                 const avgHome = (homePointsFor + awayPointsAgainst) / 2;
                 const avgAway = (awayPointsFor + homePointsAgainst) / 2;
                 const totalPredicted = avgHome + avgAway;
                 const overLine = Math.ceil(totalPredicted / 5) * 5;
-                document.getElementById('predictedTotal').textContent = `O/U ${overLine}`;
+                setText('predictedTotal', `O/U ${overLine}`);
                 const spread = (homePointsFor - awayPointsFor) + 2.5;
-                document.getElementById('predictedSpread').textContent = `${spread >= 0 ? '+' : ''}${spread.toFixed(1)}`;
-                document.getElementById('keyMatchupText').textContent = 
-                    `(Ataque ${awayName}: ${awayPointsFor.toFixed(1)} pts) vs Defesa ${homeName}: ${homePointsAgainst.toFixed(1)} pts sofridos)`;
+                setText('predictedSpread', `${spread >= 0 ? '+' : ''}${spread.toFixed(1)}`);
+                setText('keyMatchupText', `(Ataque ${awayName}: ${awayPointsFor.toFixed(1)} pts) vs Defesa ${homeName}: ${homePointsAgainst.toFixed(1)} pts sofridos)`);
 
                 // === Comparação ===
-                document.getElementById('awayTeamLogoCompare').src = awayLogoUrl;
-                document.getElementById('homeTeamLogoCompare').src = homeLogoUrl;
-                document.getElementById('awayTeamNameCompare').textContent = awayName;
-                document.getElementById('homeTeamNameCompare').textContent = homeName;
-                document.getElementById('awayWinProbCompare').textContent = `${Math.round(awayProb)}% Chance`;
-                document.getElementById('homeWinProbCompare').textContent = `${Math.round(homeProb)}% Chance`;
+                setSrc('awayTeamLogoCompare', awayLogoUrl);
+                setSrc('homeTeamLogoCompare', homeLogoUrl);
+                setText('awayTeamNameCompare', awayName);
+                setText('homeTeamNameCompare', homeName);
+                setText('awayWinProbCompare', `${Math.round(awayProb)}% Chance`);
+                setText('homeWinProbCompare', `${Math.round(homeProb)}% Chance`);
 
-                document.getElementById('awayPoints').textContent = awayPointsFor.toFixed(1);
-                document.getElementById('homePoints').textContent = homePointsFor.toFixed(1);
-                document.getElementById('awayPointsAgainst').textContent = awayPointsAgainst.toFixed(1);
-                document.getElementById('homePointsAgainst').textContent = homePointsAgainst.toFixed(1);
-                document.getElementById('awayFGPct').textContent = `${((parseFloat(statsData?.away?.stats?.fieldGoalsPercentage) || 0) * 100).toFixed(1)}%`;
-                document.getElementById('homeFGPct').textContent = `${((parseFloat(statsData?.home?.stats?.fieldGoalsPercentage) || 0) * 100).toFixed(1)}%`;
+                setText('awayPoints', awayPointsFor.toFixed(1));
+                setText('homePoints', homePointsFor.toFixed(1));
+                setText('awayPointsAgainst', awayPointsAgainst.toFixed(1));
+                setText('homePointsAgainst', homePointsAgainst.toFixed(1));
+                setText('awayFGPct', `${((parseFloat(statsData?.away?.stats?.fieldGoalsPercentage) || 0) * 100).toFixed(1)}%`);
+                setText('homeFGPct', `${((parseFloat(statsData?.home?.stats?.fieldGoalsPercentage) || 0) * 100).toFixed(1)}%`);
 
                 const awayRecordStr = game?.bottom.record || '0-0';
                 const homeRecordStr = game?.top.record || '0-0';
-                document.getElementById('awayRecord').textContent = awayRecordStr;
-                document.getElementById('homeRecord').textContent = homeRecordStr;
+                setText('awayRecord', awayRecordStr);
+                setText('homeRecord', homeRecordStr);
                 const [awayW, awayL] = awayRecordStr.split('-').map(Number);
                 const [homeW, homeL] = homeRecordStr.split('-').map(Number);
                 const awayWinPct = awayW + awayL > 0 ? (awayW / (awayW + awayL) * 100).toFixed(1) : '0.0';
                 const homeWinPct = homeW + homeL > 0 ? (homeW / (homeW + homeL) * 100).toFixed(1) : '0.0';
-                document.getElementById('awayWinRate').textContent = `${awayWinPct}% de aproveitamento`;
-                document.getElementById('homeWinRate').textContent = `${homeWinPct}% de aproveitamento`;
+                setText('awayWinRate', `${awayWinPct}% de aproveitamento`);
+                setText('homeWinRate', `${homeWinPct}% de aproveitamento`);
 
-                document.getElementById('awayCampaignTitle').textContent = `CAMPAÑHA - ${awayName}`;
-                document.getElementById('homeCampaignTitle').textContent = `CAMPAÑHA - ${homeName}`;
+                setText('awayCampaignTitle', `CAMPAÑHA - ${awayName}`);
+                setText('homeCampaignTitle', `CAMPAÑHA - ${homeName}`);
 
                 // === Apostas ===
                 const bets = [];
@@ -1327,8 +1330,11 @@
 
             } catch (error) {
                 console.error('Failed to load game stats:', error);
+                const loadingOverlayErr = document.getElementById('modalLoading');
+                if (loadingOverlayErr) loadingOverlayErr.style.display = 'none';
                 modalTitle.textContent = 'Erro ao carregar dados';
-                document.getElementById('overviewTab').innerHTML = `<div class="error">Erro: ${error.message}</div>`;
+                const overviewEl = document.getElementById('overviewTab');
+                if (overviewEl) overviewEl.innerHTML = `<div class="error">Erro: ${error.message}</div>`;
                 modal.style.display = 'flex';
                 setTimeout(() => modal.classList.add('show'), 10);
             }
