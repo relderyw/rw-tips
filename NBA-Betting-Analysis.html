@@ -682,8 +682,10 @@
     <script src="betting-calculator.js"></script>
     <script>
         // Configuração da API
-        const API_BASE = 'https://api.sportsdata.io/v3/nba';
-        const API_KEY = 'your-api-key'; // Substitua pela sua chave da API
+        // Endpoints da API local (TSN via proxy)
+        const TSN_SCHEDULE = 'https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/scheduleV2/subset/dates';
+        const TSN_EVENT_BASE = 'https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/event/';
+        const PROXY_URL = 'https://api.allorigins.win/raw?url=';
 
         // Cache para otimizar requisições
         const cache = new Map();
@@ -759,11 +761,20 @@
                     </div>
                 `;
 
-                // Buscar jogos de hoje
-                const today = new Date().toISOString().split('T')[0];
-                const games = await fetchWithCache(`${API_BASE}/scores/json/GamesByDate/${today}?key=${API_KEY}`);
+                // Data atual em timezone São Paulo (YYYY-MM-DD)
+                const nowSP = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
+                const yyyy = nowSP.getFullYear();
+                const mm = String(nowSP.getMonth() + 1).padStart(2, '0');
+                const dd = String(nowSP.getDate()).padStart(2, '0');
+                const today = `${yyyy}-${mm}-${dd}`;
                 
-                if (!games || games.length === 0) {
+                // Buscar calendário TSN via proxy
+                const apiUrl = `${TSN_SCHEDULE}?brand=tsn&type=json&dateOrId=${today}`;
+                const scheduleData = await fetchWithCache(`${PROXY_URL}${encodeURIComponent(apiUrl)}`);
+                const dayData = scheduleData?.[today];
+                const events = dayData?.events || [];
+                
+                if (!events || events.length === 0) {
                     container.innerHTML = `
                         <div class="error">
                             <i class="fas fa-exclamation-triangle"></i>
@@ -772,6 +783,23 @@
                     `;
                     return;
                 }
+
+                // Mapear eventos para o formato de análise de apostas
+                const games = events.map(ev => {
+                    const e = ev.event;
+                    return {
+                        GameID: ev.eventId,
+                        DateTime: e.dateET || e.date || new Date().toISOString(),
+                        HomeTeam: e.bottom?.shortName || '',
+                        AwayTeam: e.top?.shortName || '',
+                        HomeTeamName: e.bottom?.name || '',
+                        AwayTeamName: e.top?.name || '',
+                        Status: e.status || 'Scheduled',
+                        PointSpread: null,
+                        OverUnder: null,
+                        _raw: e
+                    };
+                });
 
                 // Renderizar jogos
                 container.innerHTML = '';
