@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -57,10 +58,23 @@
         }
 
         @keyframes particleFloat {
-            0% { transform: translateY(0) translateX(0); opacity: 0; }
-            10% { opacity: 0.8; }
-            90% { opacity: 0.8; }
-            100% { transform: translateY(-100vh) translateX(30px); opacity: 0; }
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.8;
+            }
+
+            90% {
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: translateY(-100vh) translateX(30px);
+                opacity: 0;
+            }
         }
 
         .sidebar {
@@ -424,10 +438,21 @@
             font-weight: 600;
         }
 
-        .prediction-over { color: var(--color-success); }
-        .prediction-under { color: var(--color-danger); }
-        .prediction-home { color: var(--color-info); }
-        .prediction-away { color: var(--color-warning); }
+        .prediction-over {
+            color: var(--color-success);
+        }
+
+        .prediction-under {
+            color: var(--color-danger);
+        }
+
+        .prediction-home {
+            color: var(--color-info);
+        }
+
+        .prediction-away {
+            color: var(--color-warning);
+        }
 
         .key-insights {
             margin-top: 12px;
@@ -471,6 +496,90 @@
         .analyze-btn:hover {
             background: linear-gradient(45deg, var(--color-accent), var(--color-primary));
             transform: translateY(-2px);
+        }
+
+        /* Estilos para análise avançada */
+        .injury-alert {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .injury-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--color-danger);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .injury-team {
+            font-size: 11px;
+            color: var(--color-text-secondary);
+            margin-bottom: 2px;
+        }
+
+        .key-players-section {
+            background: var(--color-bg-medium);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid var(--color-border);
+        }
+
+        .players-title {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .players-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .team-players {
+            background: var(--color-bg-dark);
+            border-radius: 6px;
+            padding: 8px;
+        }
+
+        .team-label {
+            font-size: 10px;
+            color: var(--color-primary);
+            font-weight: 600;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .key-player {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+            padding: 2px 0;
+        }
+
+        .player-name {
+            font-size: 11px;
+            color: #FFFFFF;
+            font-weight: 500;
+        }
+
+        .player-stats {
+            font-size: 10px;
+            color: var(--color-text-secondary);
+        }
+
+        .market-confidence {
+            font-size: 10px;
+            color: var(--color-text-secondary);
+            margin-top: 2px;
         }
 
         .modal {
@@ -654,38 +763,50 @@
             body {
                 padding-left: 60px;
             }
+
             .sidebar {
                 width: 60px;
             }
+
             .sidebar:hover {
                 width: 220px;
             }
+
             .games-grid {
                 grid-template-columns: 1fr;
             }
+
             .detailed-analysis {
                 grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="particles" id="particles"></div>
 
     <nav class="sidebar">
         <div class="sidebar-header">
-            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips" class="sidebar-logo">
+            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips"
+                class="sidebar-logo">
             <span class="sidebar-title">RW Tips</span>
         </div>
         <ul class="sidebar-menu">
-            <li><a href="visualization.html"><span class="icon">⚽</span><span class="label">Próximos Jogos</span></a></li>
-            <li><a href="results.html"><span class="icon">📊</span><span class="label">Últimos Resultados</span></a></li>
+            <li><a href="visualization.html"><span class="icon">⚽</span><span class="label">Próximos Jogos</span></a>
+            </li>
+            <li><a href="results.html"><span class="icon">📊</span><span class="label">Últimos Resultados</span></a>
+            </li>
             <li><a href="live_v2.html"><span class="icon">🔴</span><span class="label">AO VIVO</span></a></li>
-            <li><a href="statistics.html"><span class="icon">📈</span><span class="label">Estatísticas das Ligas</span></a></li>
-            <li><a href="formularioApostas.html"><span class="icon">💰</span><span class="label">Registrar Apostas</span></a></li>
-            <li><a href="players.html"><span class="icon">🎮</span><span class="label">Análise de Jogadores</span></a></li>
+            <li><a href="statistics.html"><span class="icon">📈</span><span class="label">Estatísticas das
+                        Ligas</span></a></li>
+            <li><a href="formularioApostas.html"><span class="icon">💰</span><span class="label">Registrar
+                        Apostas</span></a></li>
+            <li><a href="players.html"><span class="icon">🎮</span><span class="label">Análise de Jogadores</span></a>
+            </li>
             <li><a href="dashboard.html"><span class="icon">📋</span><span class="label">Dashboard</span></a></li>
-            <li class="active"><a href="NBA-Enhanced.html"><span class="icon">🏀</span><span class="label">NBA Enhanced</span></a></li>
+            <li class="active"><a href="NBA-Enhanced.html"><span class="icon">🏀</span><span class="label">NBA
+                        Enhanced</span></a></li>
             <li><a href="radar.html"><span class="icon">🎯</span><span class="label">Radar</span></a></li>
             <li><a href="over.html"><span class="icon">📍</span><span class="label">Over Analysis</span></a></li>
         </ul>
@@ -780,11 +901,11 @@
 
         function formatTime(dateET) {
             const date = new Date(dateET);
-            return date.toLocaleTimeString('pt-BR', { 
-                timeZone: 'America/Sao_Paulo', 
-                hour: 'numeric', 
-                minute: 'numeric', 
-                hour12: false 
+            return date.toLocaleTimeString('pt-BR', {
+                timeZone: 'America/Sao_Paulo',
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: false
             });
         }
 
@@ -817,6 +938,218 @@
             const proxyUrl = `${API_CONFIG.PROXY_URL}${encodeURIComponent(url)}`;
             const response = await fetch(proxyUrl);
             return await response.json();
+        }
+
+        // Cache para estatísticas de jogadores e lesões
+        const playerStatsCache = new Map();
+        const injuryReportsCache = new Map();
+
+        // Função para buscar estatísticas detalhadas de jogadores
+        async function fetchDetailedPlayerStats(eventId) {
+            const cacheKey = `player_stats_${eventId}`;
+            if (playerStatsCache.has(cacheKey)) {
+                return playerStatsCache.get(cacheKey);
+            }
+
+            try {
+                const response = await fetch(`${API_CONFIG.PROXY_URL}${encodeURIComponent(API_CONFIG.BASE_URL + '/event/' + eventId + '/playerSeasonStats?brand=' + API_CONFIG.BRAND + '&type=' + API_CONFIG.TYPE)}`);
+                
+                if (!response.ok) throw new Error('Falha ao buscar estatísticas de jogadores');
+                
+                const data = await response.json();
+                const processedData = processPlayerStatsData(data);
+                
+                playerStatsCache.set(cacheKey, processedData);
+                return processedData;
+            } catch (error) {
+                console.error('Erro ao buscar estatísticas de jogadores:', error);
+                return null;
+            }
+        }
+
+        // Função para processar dados de jogadores
+        function processPlayerStatsData(data) {
+            if (!data || !data.playerSeasonStats) return null;
+
+            const homeTeam = data.playerSeasonStats.home || [];
+            const awayTeam = data.playerSeasonStats.away || [];
+
+            return {
+                home: {
+                    topScorers: getTopPlayers(homeTeam, 'pointsPerGame', 3),
+                    topRebounders: getTopPlayers(homeTeam, 'reboundsPerGame', 3),
+                    topAssists: getTopPlayers(homeTeam, 'assistsPerGame', 3),
+                    keyPlayers: getKeyPlayers(homeTeam),
+                    teamDepth: calculateTeamDepth(homeTeam)
+                },
+                away: {
+                    topScorers: getTopPlayers(awayTeam, 'pointsPerGame', 3),
+                    topRebounders: getTopPlayers(awayTeam, 'reboundsPerGame', 3),
+                    topAssists: getTopPlayers(awayTeam, 'assistsPerGame', 3),
+                    keyPlayers: getKeyPlayers(awayTeam),
+                    teamDepth: calculateTeamDepth(awayTeam)
+                }
+            };
+        }
+
+        // Função para obter os melhores jogadores por categoria
+        function getTopPlayers(players, stat, count = 3) {
+            if (!players || !Array.isArray(players)) return [];
+            
+            return players
+                .filter(player => player.stats && parseFloat(player.stats[stat]) > 0)
+                .sort((a, b) => parseFloat(b.stats[stat]) - parseFloat(a.stats[stat]))
+                .slice(0, count)
+                .map(player => ({
+                    name: player.player?.displayName || 'N/A',
+                    value: parseFloat(player.stats[stat]).toFixed(1),
+                    gamesPlayed: parseInt(player.stats.gamesPlayed) || 0,
+                    efficiency: calculatePlayerEfficiency(player.stats)
+                }));
+        }
+
+        // Função para identificar jogadores-chave
+        function getKeyPlayers(players) {
+            if (!players || !Array.isArray(players)) return [];
+            
+            return players
+                .filter(player => {
+                    const stats = player.stats;
+                    if (!stats) return false;
+                    
+                    const ppg = parseFloat(stats.pointsPerGame) || 0;
+                    const rpg = parseFloat(stats.reboundsPerGame) || 0;
+                    const apg = parseFloat(stats.assistsPerGame) || 0;
+                    const games = parseInt(stats.gamesPlayed) || 0;
+                    
+                    return games >= 10 && (ppg >= 15 || rpg >= 8 || apg >= 6);
+                })
+                .sort((a, b) => calculatePlayerEfficiency(b.stats) - calculatePlayerEfficiency(a.stats))
+                .slice(0, 5)
+                .map(player => ({
+                    name: player.player?.displayName || 'N/A',
+                    ppg: parseFloat(player.stats.pointsPerGame).toFixed(1),
+                    rpg: parseFloat(player.stats.reboundsPerGame).toFixed(1),
+                    apg: parseFloat(player.stats.assistsPerGame).toFixed(1),
+                    efficiency: calculatePlayerEfficiency(player.stats).toFixed(1),
+                    impact: calculatePlayerImpact(player.stats)
+                }));
+        }
+
+        // Função para calcular eficiência do jogador
+        function calculatePlayerEfficiency(stats) {
+            if (!stats) return 0;
+            
+            const ppg = parseFloat(stats.pointsPerGame) || 0;
+            const rpg = parseFloat(stats.reboundsPerGame) || 0;
+            const apg = parseFloat(stats.assistsPerGame) || 0;
+            const spg = parseFloat(stats.stealsPerGame) || 0;
+            const bpg = parseFloat(stats.blocksPerGame) || 0;
+            const tpg = parseFloat(stats.turnoversPerGame) || 0;
+            const fgPct = parseFloat(stats.fieldGoalPercentage) || 0;
+            
+            return (ppg + rpg + apg + spg + bpg - tpg) * fgPct;
+        }
+
+        // Função para calcular impacto do jogador
+        function calculatePlayerImpact(stats) {
+            const efficiency = calculatePlayerEfficiency(stats);
+            const minutes = parseFloat(stats.minutesPerGame) || 0;
+            
+            if (efficiency > 20 && minutes > 30) return 'Alto';
+            if (efficiency > 12 && minutes > 25) return 'Médio';
+            return 'Baixo';
+        }
+
+        // Função para calcular profundidade do time
+        function calculateTeamDepth(players) {
+            if (!players || !Array.isArray(players)) return { score: 0, quality: 'Baixa' };
+            
+            const qualityPlayers = players.filter(player => {
+                const stats = player.stats;
+                if (!stats) return false;
+                
+                const ppg = parseFloat(stats.pointsPerGame) || 0;
+                const minutes = parseFloat(stats.minutesPerGame) || 0;
+                const games = parseInt(stats.gamesPlayed) || 0;
+                
+                return games >= 5 && minutes >= 15 && ppg >= 8;
+            });
+            
+            const depthScore = qualityPlayers.length;
+            let quality = 'Baixa';
+            
+            if (depthScore >= 8) quality = 'Excelente';
+            else if (depthScore >= 6) quality = 'Boa';
+            else if (depthScore >= 4) quality = 'Média';
+            
+            return { score: depthScore, quality };
+        }
+
+        // Sistema de análise de lesões (placeholder com dados simulados)
+        async function fetchInjuryReports(eventId) {
+            const cacheKey = `injuries_${eventId}`;
+            if (injuryReportsCache.has(cacheKey)) {
+                return injuryReportsCache.get(cacheKey);
+            }
+
+            try {
+                const simulatedInjuries = generateSimulatedInjuries(eventId);
+                injuryReportsCache.set(cacheKey, simulatedInjuries);
+                return simulatedInjuries;
+            } catch (error) {
+                console.error('Erro ao buscar relatório de lesões:', error);
+                return { home: [], away: [] };
+            }
+        }
+
+        // Função para gerar dados simulados de lesões
+        function generateSimulatedInjuries(eventId) {
+            const seed = parseInt(eventId) || 0;
+            const random = (seed * 9301 + 49297) % 233280;
+            
+            const injuryTypes = [
+                { type: 'Questionável', severity: 'low', icon: '🟡' },
+                { type: 'Duvidoso', severity: 'medium', icon: '🟠' },
+                { type: 'Fora', severity: 'high', icon: '🔴' }
+            ];
+            
+            const bodyParts = ['joelho', 'tornozelo', 'ombro', 'costas', 'punho', 'coxa'];
+            const homeInjuries = [];
+            const awayInjuries = [];
+            
+            const homeInjuryCount = (random % 4);
+            const awayInjuryCount = ((random * 7) % 4);
+            
+            for (let i = 0; i < homeInjuryCount; i++) {
+                const injuryType = injuryTypes[(random + i) % injuryTypes.length];
+                const bodyPart = bodyParts[(random + i * 2) % bodyParts.length];
+                
+                homeInjuries.push({
+                    player: `Jogador ${i + 1}`,
+                    injury: `Lesão no ${bodyPart}`,
+                    status: injuryType.type,
+                    severity: injuryType.severity,
+                    icon: injuryType.icon,
+                    impact: injuryType.severity === 'high' ? 'Alto' : injuryType.severity === 'medium' ? 'Médio' : 'Baixo'
+                });
+            }
+            
+            for (let i = 0; i < awayInjuryCount; i++) {
+                const injuryType = injuryTypes[(random + i + 5) % injuryTypes.length];
+                const bodyPart = bodyParts[(random + i * 3) % bodyParts.length];
+                
+                awayInjuries.push({
+                    player: `Jogador ${i + 1}`,
+                    injury: `Lesão no ${bodyPart}`,
+                    status: injuryType.type,
+                    severity: injuryType.severity,
+                    icon: injuryType.icon,
+                    impact: injuryType.severity === 'high' ? 'Alto' : injuryType.severity === 'medium' ? 'Médio' : 'Baixo'
+                });
+            }
+            
+            return { home: homeInjuries, away: awayInjuries };
         }
 
         // Utilitários de equipe
@@ -862,6 +1195,164 @@
                 };
             }
 
+            // Análise aprimorada considerando jogadores e lesões
+            async calculateAdvancedPredictions(homeStats, awayStats, eventId) {
+                try {
+                    const [playerStats, injuries] = await Promise.all([
+                        fetchDetailedPlayerStats(eventId),
+                        fetchInjuryReports(eventId)
+                    ]);
+
+                    const basePredictions = {
+                        total: this.calculateTotalPrediction(homeStats, awayStats),
+                        spread: this.calculateSpreadPrediction(homeStats, awayStats),
+                        moneyline: this.calculateMoneylinePrediction(homeStats, awayStats)
+                    };
+
+                    // Ajustar previsões baseado em jogadores e lesões
+                    const adjustedPredictions = this.adjustPredictionsForPlayers(
+                        basePredictions, 
+                        playerStats, 
+                        injuries
+                    );
+
+                    return {
+                        ...adjustedPredictions,
+                        playerAnalysis: playerStats,
+                        injuryReport: injuries,
+                        keyFactors: this.identifyKeyFactors(homeStats, awayStats, playerStats, injuries)
+                    };
+                } catch (error) {
+                    console.error('Erro na análise avançada:', error);
+                    return {
+                        total: this.calculateTotalPrediction(homeStats, awayStats),
+                        spread: this.calculateSpreadPrediction(homeStats, awayStats),
+                        moneyline: this.calculateMoneylinePrediction(homeStats, awayStats),
+                        playerAnalysis: null,
+                        injuryReport: { home: [], away: [] },
+                        keyFactors: []
+                    };
+                }
+            }
+
+            // Ajustar previsões baseado em análise de jogadores
+            adjustPredictionsForPlayers(predictions, playerStats, injuries) {
+                if (!playerStats || !injuries) return predictions;
+
+                let totalAdjustment = 0;
+                let spreadAdjustment = 0;
+                let confidenceAdjustment = 0;
+
+                // Ajustes baseados em lesões
+                const homeInjuryImpact = this.calculateInjuryImpact(injuries.home);
+                const awayInjuryImpact = this.calculateInjuryImpact(injuries.away);
+
+                // Lesões afetam o total de pontos
+                totalAdjustment -= (homeInjuryImpact + awayInjuryImpact) * 2;
+
+                // Lesões afetam o spread
+                spreadAdjustment += (awayInjuryImpact - homeInjuryImpact) * 1.5;
+
+                // Lesões reduzem a confiança
+                confidenceAdjustment -= Math.max(homeInjuryImpact, awayInjuryImpact) * 5;
+
+                // Ajustes baseados na profundidade do elenco
+                const homeDepth = playerStats.home?.teamDepth?.score || 0;
+                const awayDepth = playerStats.away?.teamDepth?.score || 0;
+
+                if (homeDepth > awayDepth + 2) {
+                    spreadAdjustment += 1;
+                    confidenceAdjustment += 5;
+                } else if (awayDepth > homeDepth + 2) {
+                    spreadAdjustment -= 1;
+                    confidenceAdjustment += 5;
+                }
+
+                return {
+                    total: {
+                        ...predictions.total,
+                        total: Math.round(predictions.total.total + totalAdjustment),
+                        confidence: Math.max(0, Math.min(100, predictions.total.confidence + confidenceAdjustment))
+                    },
+                    spread: {
+                        ...predictions.spread,
+                        spread: Math.round((predictions.spread.spread + spreadAdjustment) * 2) / 2,
+                        confidence: Math.max(0, Math.min(100, predictions.spread.confidence + confidenceAdjustment))
+                    },
+                    moneyline: {
+                        ...predictions.moneyline,
+                        confidence: Math.max(0, Math.min(100, predictions.moneyline.confidence + confidenceAdjustment))
+                    }
+                };
+            }
+
+            // Calcular impacto das lesões
+            calculateInjuryImpact(injuries) {
+                if (!injuries || injuries.length === 0) return 0;
+
+                return injuries.reduce((total, injury) => {
+                    switch (injury.severity) {
+                        case 'high': return total + 3;
+                        case 'medium': return total + 2;
+                        case 'low': return total + 1;
+                        default: return total;
+                    }
+                }, 0);
+            }
+
+            // Identificar fatores-chave do jogo
+            identifyKeyFactors(homeStats, awayStats, playerStats, injuries) {
+                const factors = [];
+
+                // Fatores baseados em estatísticas de time
+                const homePPG = parseFloat(homeStats?.stats?.pointsForPerGame) || 0;
+                const awayPPG = parseFloat(awayStats?.stats?.pointsForPerGame) || 0;
+
+                if (Math.abs(homePPG - awayPPG) > 8) {
+                    const betterOffense = homePPG > awayPPG ? 'Casa' : 'Visitante';
+                    factors.push({
+                        icon: '🏀',
+                        text: `${betterOffense} tem vantagem ofensiva significativa`,
+                        type: 'offense',
+                        impact: 'high'
+                    });
+                }
+
+                // Fatores baseados em jogadores
+                if (playerStats) {
+                    const homeKeyPlayers = playerStats.home?.keyPlayers?.length || 0;
+                    const awayKeyPlayers = playerStats.away?.keyPlayers?.length || 0;
+
+                    if (Math.abs(homeKeyPlayers - awayKeyPlayers) >= 2) {
+                        const betterDepth = homeKeyPlayers > awayKeyPlayers ? 'Casa' : 'Visitante';
+                        factors.push({
+                            icon: '👥',
+                            text: `${betterDepth} tem elenco mais profundo`,
+                            type: 'depth',
+                            impact: 'medium'
+                        });
+                    }
+                }
+
+                // Fatores baseados em lesões
+                if (injuries) {
+                    const homeInjuries = injuries.home?.filter(inj => inj.severity === 'high').length || 0;
+                    const awayInjuries = injuries.away?.filter(inj => inj.severity === 'high').length || 0;
+
+                    if (homeInjuries > 0 || awayInjuries > 0) {
+                        const moreInjured = homeInjuries > awayInjuries ? 'Casa' : 'Visitante';
+                        factors.push({
+                            icon: '🏥',
+                            text: `${moreInjured} tem jogadores importantes lesionados`,
+                            type: 'injury',
+                            impact: 'high'
+                        });
+                    }
+                }
+
+                return factors;
+            }
+
             calculateTotalPrediction(homeStats, awayStats) {
                 const homePPG = parseFloat(homeStats?.stats?.pointsForPerGame) || 0;
                 const awayPPG = parseFloat(awayStats?.stats?.pointsForPerGame) || 0;
@@ -896,7 +1387,7 @@
                 // Net rating calculation
                 const homeNetRating = homePPG - homeDefPPG;
                 const awayNetRating = awayPPG - awayDefPPG;
-                
+
                 // Home court advantage (aproximadamente 3 pontos)
                 const homeAdvantage = 3;
                 const spread = (homeNetRating - awayNetRating) + homeAdvantage;
@@ -911,7 +1402,7 @@
             calculateMoneylinePrediction(homeStats, awayStats) {
                 const homeWinPct = parseFloat(homeStats?.stats?.winPercentage) || 0.5;
                 const awayWinPct = parseFloat(awayStats?.stats?.winPercentage) || 0.5;
-                
+
                 // Ajuste para home court advantage
                 const adjustedHomePct = Math.min(0.95, homeWinPct + 0.1);
                 const adjustedAwayPct = Math.max(0.05, awayWinPct - 0.05);
@@ -930,22 +1421,22 @@
                 // Fatores que aumentam a confiança
                 const homeGames = parseInt(homeStats?.stats?.gamesPlayed) || 0;
                 const awayGames = parseInt(awayStats?.stats?.gamesPlayed) || 0;
-                
+
                 if (homeGames > 10 && awayGames > 10) confidence += 15;
-                
+
                 // Consistência das estatísticas
                 const homePPGVar = this.calculateVariance(homeStats);
                 const awayPPGVar = this.calculateVariance(awayStats);
-                
+
                 if (homePPGVar < 10 && awayPPGVar < 10) confidence += 10;
 
                 // Diferença significativa entre times
                 if (betType === 'spread') {
-                    const homeNetRating = (parseFloat(homeStats?.stats?.pointsForPerGame) || 0) - 
-                                        (parseFloat(homeStats?.stats?.pointsAgainstPerGame) || 0);
-                    const awayNetRating = (parseFloat(awayStats?.stats?.pointsForPerGame) || 0) - 
-                                        (parseFloat(awayStats?.stats?.pointsAgainstPerGame) || 0);
-                    
+                    const homeNetRating = (parseFloat(homeStats?.stats?.pointsForPerGame) || 0) -
+                        (parseFloat(homeStats?.stats?.pointsAgainstPerGame) || 0);
+                    const awayNetRating = (parseFloat(awayStats?.stats?.pointsForPerGame) || 0) -
+                        (parseFloat(awayStats?.stats?.pointsAgainstPerGame) || 0);
+
                     const netDiff = Math.abs(homeNetRating - awayNetRating);
                     if (netDiff > 5) confidence += 15;
                     else if (netDiff > 3) confidence += 10;
@@ -958,7 +1449,7 @@
                 // Simulação de variância baseada em estatísticas disponíveis
                 const ppg = parseFloat(stats?.stats?.pointsForPerGame) || 0;
                 const games = parseInt(stats?.stats?.gamesPlayed) || 1;
-                
+
                 // Estimativa simples de variância
                 return Math.max(5, 15 - (games * 0.5));
             }
@@ -1018,7 +1509,7 @@
         // Renderização das abas
         async function renderTabs() {
             if (!checkUserLogin()) return;
-            
+
             try {
                 const dates = await fetchDates();
                 const hoje = getDataAtualSP();
@@ -1059,7 +1550,7 @@
         async function renderGames() {
             try {
                 gamesGrid.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--color-text-secondary);">Carregando jogos...</div>';
-                
+
                 const data = await fetchSchedule(currentDate);
                 if (!data || !data.events) {
                     gamesGrid.innerHTML = '<div class="error">Nenhum jogo encontrado para esta data</div>';
@@ -1085,7 +1576,7 @@
 
                     let statusClass = 'upcoming';
                     let statusText = formatTime(dateET);
-                    
+
                     if (isLive) {
                         statusClass = 'live';
                         statusText = '🔴 AO VIVO';
@@ -1094,7 +1585,7 @@
                         statusText = 'FINAL';
                     }
 
-                    // Análise rápida para jogos futuros
+                    // Análise rápida avançada para jogos futuros
                     let quickAnalysis = '';
                     if (isUpcoming) {
                         try {
@@ -1103,25 +1594,85 @@
                             const awayStats = teamStats?.away;
 
                             if (homeStats && awayStats) {
-                                const predictions = {
-                                    total: analyzer.calculateTotalPrediction(homeStats, awayStats),
-                                    spread: analyzer.calculateSpreadPrediction(homeStats, awayStats),
-                                    moneyline: analyzer.calculateMoneylinePrediction(homeStats, awayStats)
-                                };
+                                // Buscar estatísticas detalhadas de jogadores
+                                const [homePlayerStats, awayPlayerStats] = await Promise.all([
+                                    fetchDetailedPlayerStats(home.seoIdentifier),
+                                    fetchDetailedPlayerStats(away.seoIdentifier)
+                                ]);
+
+                                // Buscar relatórios de lesões
+                                const [homeInjuries, awayInjuries] = await Promise.all([
+                                    fetchInjuryReports(home.seoIdentifier),
+                                    fetchInjuryReports(away.seoIdentifier)
+                                ]);
+
+                                // Calcular previsões avançadas com análise de jogadores e lesões
+                                const predictions = analyzer.calculateAdvancedPredictions(
+                                    homeStats, awayStats, 
+                                    homePlayerStats, awayPlayerStats,
+                                    homeInjuries, awayInjuries
+                                );
 
                                 const insights = analyzer.generateInsights(homeStats, awayStats, predictions);
+                                const keyFactors = analyzer.identifyKeyFactors(
+                                    homeStats, awayStats, 
+                                    homePlayerStats, awayPlayerStats,
+                                    homeInjuries, awayInjuries
+                                );
+
                                 const avgConfidence = Math.round((predictions.total.confidence + predictions.spread.confidence + predictions.moneyline.confidence) / 3);
 
                                 let confidenceClass = 'confidence-low';
                                 if (avgConfidence >= 75) confidenceClass = 'confidence-high';
                                 else if (avgConfidence >= 60) confidenceClass = 'confidence-medium';
 
+                                // Identificar jogadores-chave
+                                const homeKeyPlayers = getKeyPlayers(homePlayerStats);
+                                const awayKeyPlayers = getKeyPlayers(awayPlayerStats);
+
+                                // Contar lesões importantes
+                                const homeInjuryCount = homeInjuries.filter(inj => inj.severity === 'high' || inj.severity === 'medium').length;
+                                const awayInjuryCount = awayInjuries.filter(inj => inj.severity === 'high' || inj.severity === 'medium').length;
+
                                 quickAnalysis = `
                                     <div class="betting-analysis">
                                         <div class="analysis-header">
-                                            <div class="analysis-title">Análise Rápida</div>
+                                            <div class="analysis-title">Análise Avançada</div>
                                             <div class="confidence-score ${confidenceClass}">${avgConfidence}%</div>
                                         </div>
+                                        
+                                        ${(homeInjuryCount > 0 || awayInjuryCount > 0) ? `
+                                        <div class="injury-alert">
+                                            <div class="injury-title">⚠️ Relatório de Lesões</div>
+                                            ${homeInjuryCount > 0 ? `<div class="injury-team">${homeTeam.city}: ${homeInjuryCount} jogador(es) lesionado(s)</div>` : ''}
+                                            ${awayInjuryCount > 0 ? `<div class="injury-team">${awayTeam.city}: ${awayInjuryCount} jogador(es) lesionado(s)</div>` : ''}
+                                        </div>
+                                        ` : ''}
+
+                                        <div class="key-players-section">
+                                            <div class="players-title">🌟 Jogadores-Chave</div>
+                                            <div class="players-grid">
+                                                <div class="team-players">
+                                                    <div class="team-label">${homeTeam.city}</div>
+                                                    ${homeKeyPlayers.slice(0, 2).map(player => `
+                                                        <div class="key-player">
+                                                            <span class="player-name">${player.name}</span>
+                                                            <span class="player-stats">${player.points}pts ${player.rebounds}reb</span>
+                                                        </div>
+                                                    `).join('')}
+                                                </div>
+                                                <div class="team-players">
+                                                    <div class="team-label">${awayTeam.city}</div>
+                                                    ${awayKeyPlayers.slice(0, 2).map(player => `
+                                                        <div class="key-player">
+                                                            <span class="player-name">${player.name}</span>
+                                                            <span class="player-stats">${player.points}pts ${player.rebounds}reb</span>
+                                                        </div>
+                                                    `).join('')}
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <div class="markets-grid">
                                             <div class="market-card">
                                                 <div class="market-title">Total</div>
@@ -1129,6 +1680,7 @@
                                                 <div class="market-prediction ${predictions.total.total > 220 ? 'prediction-over' : 'prediction-under'}">
                                                     ${predictions.total.total > 220 ? 'OVER' : 'UNDER'}
                                                 </div>
+                                                <div class="market-confidence">${predictions.total.confidence}%</div>
                                             </div>
                                             <div class="market-card">
                                                 <div class="market-title">Spread</div>
@@ -1136,6 +1688,7 @@
                                                 <div class="market-prediction ${predictions.spread.favorite === 'home' ? 'prediction-home' : 'prediction-away'}">
                                                     ${predictions.spread.favorite === 'home' ? homeTeam.city : awayTeam.city}
                                                 </div>
+                                                <div class="market-confidence">${predictions.spread.confidence}%</div>
                                             </div>
                                             <div class="market-card">
                                                 <div class="market-title">Favorito</div>
@@ -1143,17 +1696,20 @@
                                                 <div class="market-prediction ${predictions.moneyline.favorite === 'home' ? 'prediction-home' : 'prediction-away'}">
                                                     ${predictions.moneyline.favorite === 'home' ? homeTeam.city : awayTeam.city}
                                                 </div>
+                                                <div class="market-confidence">${predictions.moneyline.confidence}%</div>
                                             </div>
                                         </div>
+
                                         <div class="key-insights">
-                                            <div class="insights-title">Insights Chave</div>
-                                            ${insights.slice(0, 3).map(insight => `
+                                            <div class="insights-title">Fatores-Chave do Jogo</div>
+                                            ${keyFactors.slice(0, 3).map(factor => `
                                                 <div class="insight-item">
-                                                    <span class="insight-icon">${insight.icon}</span>
-                                                    <span>${insight.text}</span>
+                                                    <span class="insight-icon">${factor.icon}</span>
+                                                    <span>${factor.text}</span>
                                                 </div>
                                             `).join('')}
                                         </div>
+                                        
                                         <button class="analyze-btn" onclick="openDetailedAnalysis('${eventId}', '${home.name}', '${away.name}')">
                                             <i class="fas fa-chart-line"></i> Análise Completa
                                         </button>
@@ -1165,8 +1721,8 @@
                         }
                     }
 
-                    const scoreDisplay = (home.score != null && away.score != null) ? 
-                        `<div class="game-score">${away.score} - ${home.score}</div>` : 
+                    const scoreDisplay = (home.score != null && away.score != null) ?
+                        `<div class="game-score">${away.score} - ${home.score}</div>` :
                         `<div class="game-time">${statusText}</div>`;
 
                     html += `
@@ -1210,7 +1766,7 @@
         async function openDetailedAnalysis(eventId, homeName, awayName) {
             try {
                 modalTitle.textContent = `${awayName} @ ${homeName}`;
-                
+
                 // Mostrar modal com loading
                 detailedAnalysis.innerHTML = '<div style="text-align: center; padding: 40px;">Carregando análise detalhada...</div>';
                 bettingRecommendations.innerHTML = '';
@@ -1375,9 +1931,9 @@
             const strongFavorite = predictions.moneyline.homeWinProbability > 0.65 || predictions.moneyline.awayWinProbability > 0.65;
             if (strongFavorite && predictions.moneyline.confidence >= 60) {
                 const favoriteTeam = predictions.moneyline.favorite === 'home' ? homeName : awayName;
-                const probability = predictions.moneyline.favorite === 'home' ? 
+                const probability = predictions.moneyline.favorite === 'home' ?
                     predictions.moneyline.homeWinProbability : predictions.moneyline.awayWinProbability;
-                
+
                 recommendations.push({
                     title: `${favoriteTeam} Moneyline`,
                     confidence: predictions.moneyline.confidence,
@@ -1402,7 +1958,7 @@
                 recommendations.forEach(rec => {
                     const confidenceClass = rec.tier === 'high' ? 'high-confidence' : 'medium-confidence';
                     const confidenceColor = rec.tier === 'high' ? 'var(--color-success)' : 'var(--color-warning)';
-                    
+
                     html += `
                         <div class="recommendation-card ${confidenceClass}">
                             <div class="recommendation-header">
@@ -1459,13 +2015,13 @@
         // Auto-refresh a cada 5 minutos para jogos ao vivo
         function startAutoRefresh() {
             if (autoUpdateInterval) clearInterval(autoUpdateInterval);
-            
+
             autoUpdateInterval = setInterval(() => {
-                const hasLiveGames = gamesData.some(game => 
-                    game.event.status.includes('Progress') || 
+                const hasLiveGames = gamesData.some(game =>
+                    game.event.status.includes('Progress') ||
                     game.event.status.includes('Em Andamento')
                 );
-                
+
                 if (hasLiveGames) {
                     renderGames();
                 }
@@ -1546,19 +2102,19 @@
         // Função para calcular tendências
         function calculateTrends(stats) {
             const trends = {};
-            
+
             // Tendência ofensiva
             const ppg = parseFloat(stats.pointsForPerGame) || 0;
             if (ppg > 115) trends.offense = 'high';
             else if (ppg > 105) trends.offense = 'medium';
             else trends.offense = 'low';
-            
+
             // Tendência defensiva
             const oppPpg = parseFloat(stats.pointsAgainstPerGame) || 0;
             if (oppPpg < 105) trends.defense = 'high';
             else if (oppPpg < 115) trends.defense = 'medium';
             else trends.defense = 'low';
-            
+
             return trends;
         }
 
@@ -1668,4 +2224,5 @@
         debugLog('NBA Enhanced carregado com sucesso');
     </script>
 </body>
+
 </html>
