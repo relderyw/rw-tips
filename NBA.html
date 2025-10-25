@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NBA Stats - RW Tips</title>
     <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;700&display=swap" rel="stylesheet">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -16,7 +13,6 @@
             padding: 0;
             box-sizing: border-box;
         }
-
         :root {
             --color-primary: #6B21A8;
             --color-accent: #9333EA;
@@ -30,21 +26,17 @@
             --radius-sm: 8px;
             --transition: all 0.3s ease;
         }
-
         body {
             font-family: 'Oxanium', sans-serif;
             background: var(--color-bg-dark);
             color: var(--color-text-primary);
-            font-family: 'Oxanium', sans-serif;
             margin: 0;
             padding: 24px 24px 24px 70px;
-            /* Ajustado para acomodar a sidebar */
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
             transition: padding-left 0.3s ease;
         }
-
         .particles {
             position: absolute;
             width: 100%;
@@ -55,7 +47,6 @@
             left: 0;
             opacity: 0.15;
         }
-
         .particle {
             position: absolute;
             width: 2px;
@@ -65,25 +56,11 @@
             border-radius: 50%;
             animation: particleFloat 40s infinite linear;
         }
-
         @keyframes particleFloat {
-            0% {
-                transform: translateY(0) translateX(0);
-                opacity: 0;
-            }
-
-            10% {
-                opacity: 0.8;
-            }
-
-            90% {
-                opacity: 0.8;
-            }
-
-            100% {
-                transform: translateY(-100vh) translateX(30px);
-                opacity: 0;
-            }
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-100vh) translateX(30px); opacity: 0; }
         }
 
         /* Sidebar */
@@ -100,11 +77,9 @@
             z-index: 1000;
             overflow: hidden;
         }
-
         .sidebar:hover {
             width: 260px;
         }
-
         .sidebar-header {
             display: flex;
             align-items: center;
@@ -113,14 +88,12 @@
             border-bottom: 1px solid var(--sidebar-border-color);
             white-space: nowrap;
         }
-
         .sidebar-logo {
             width: 40px;
             height: 40px;
             border-radius: 50%;
             flex-shrink: 0;
         }
-
         .sidebar-title {
             font-family: 'Oxanium', sans-serif;
             font-size: 1.2rem;
@@ -132,20 +105,16 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-
         .sidebar:hover .sidebar-title {
             opacity: 1;
         }
-
         .sidebar-menu {
             list-style: none;
             padding: 20px 0;
         }
-
         .sidebar-menu li {
             margin: 5px 0;
         }
-
         .sidebar-menu a {
             display: flex;
             align-items: center;
@@ -156,32 +125,27 @@
             gap: 15px;
             white-space: nowrap;
         }
-
         .sidebar-menu a:hover {
             background: rgba(107, 33, 168, 0.1);
             color: var(--color-accent);
             transform: translateX(5px);
         }
-
         .sidebar-menu li.active a {
             background: linear-gradient(90deg, rgba(0, 255, 136, 0.2), transparent);
             color: var(--color-accent);
             border-left: 3px solid var(--color-accent);
         }
-
         .sidebar-menu .icon {
             font-size: 1.3rem;
             width: 30px;
             text-align: center;
             flex-shrink: 0;
         }
-
         .sidebar-menu .label {
             opacity: 0;
             transition: opacity 0.3s ease;
             font-weight: 600;
         }
-
         .sidebar:hover .sidebar-menu .label {
             opacity: 1;
         }
@@ -197,7 +161,6 @@
             position: relative;
             z-index: 1;
         }
-
         .header {
             display: flex;
             justify-content: space-between;
@@ -206,7 +169,6 @@
             padding-bottom: 16px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-
         .header h1 {
             font-family: 'Oxanium', sans-serif;
             font-size: 28px;
@@ -214,7 +176,6 @@
             letter-spacing: 1.5px;
             text-transform: uppercase;
         }
-
         .logo {
             font-family: 'Oxanium', sans-serif;
             font-size: 20px;
@@ -223,7 +184,6 @@
             align-items: center;
             gap: 8px;
         }
-
         .tabs {
             display: flex;
             gap: 12px;
@@ -233,7 +193,6 @@
             padding-bottom: 8px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-
         .tab {
             background: #1F1F1F;
             padding: 10px 24px;
@@ -247,28 +206,24 @@
             transition: all 0.3s ease;
             border: 1px solid transparent;
         }
-
         .tab:hover {
             background: linear-gradient(45deg, #2A2A2A, #3A3A3A);
             color: #FFFFFF;
             border-color: var(--color-primary);
             box-shadow: 0 0 8px rgba(107, 33, 168, 0.3);
         }
-
         .tab.active {
             background: linear-gradient(45deg, var(--color-primary), var(--color-accent));
             color: #FFFFFF;
             border-color: var(--color-primary);
             box-shadow: 0 0 12px rgba(107, 33, 168, 0.5);
         }
-
         .schedule {
             background: #1A1A1A;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
-
         .day-header {
             background: #222222;
             padding: 12px;
@@ -279,7 +234,6 @@
             text-align: center;
             letter-spacing: 1px;
         }
-
         .match {
             display: flex;
             flex-direction: column;
@@ -289,41 +243,27 @@
             transition: all 0.3s ease;
             background: #1F1F1F;
         }
-
         .match:hover {
             background: linear-gradient(45deg, #2A2A2A, #333333);
             box-shadow: inset 0 0 5px rgba(107, 33, 168, 0.2);
         }
-
         .match:last-child {
             border-bottom: none;
         }
-
         .match.live-game {
             border-left: 4px solid #EF4444;
             background: rgba(239, 68, 68, 0.05);
             animation: livePulse 2s infinite;
         }
-
         .match.final-game {
             opacity: 0.85;
             background: rgba(30, 30, 30, 0.7);
         }
-
         @keyframes livePulse {
-            0% {
-                box-shadow: 0 0 4px rgba(239, 68, 68, 0.3);
-            }
-
-            50% {
-                box-shadow: 0 0 12px rgba(239, 68, 68, 0.5);
-            }
-
-            100% {
-                box-shadow: 0 0 4px rgba(239, 68, 68, 0.3);
-            }
+            0% { box-shadow: 0 0 4px rgba(239, 68, 68, 0.3); }
+            50% { box-shadow: 0 0 12px rgba(239, 68, 68, 0.5); }
+            100% { box-shadow: 0 0 4px rgba(239, 68, 68, 0.3); }
         }
-
         .live-badge {
             position: absolute;
             top: 12px;
@@ -341,7 +281,6 @@
             align-items: center;
             gap: 6px;
         }
-
         .live-badge::before {
             content: '';
             display: block;
@@ -351,35 +290,16 @@
             border-radius: 50%;
             animation: blink 1.5s infinite;
         }
-
         @keyframes pulse {
-            0% {
-                opacity: 0.7;
-            }
-
-            50% {
-                opacity: 1;
-            }
-
-            100% {
-                opacity: 0.7;
-            }
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
         }
-
         @keyframes blink {
-            0% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.5;
-            }
-
-            100% {
-                opacity: 1;
-            }
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
         }
-
         .match-header {
             font-family: 'Oxanium', sans-serif;
             font-size: 14px;
@@ -387,7 +307,6 @@
             margin-bottom: 12px;
             font-weight: 600;
         }
-
         .teams {
             display: flex;
             justify-content: center;
@@ -396,7 +315,6 @@
             width: 100%;
             margin-bottom: 12px;
         }
-
         .team {
             display: flex;
             flex-direction: column;
@@ -406,7 +324,6 @@
             flex: 1;
             text-align: center;
         }
-
         .team img {
             width: 48px;
             height: 48px;
@@ -415,65 +332,53 @@
             box-shadow: 0 0 6px rgba(6, 182, 212, 0.3);
             transition: transform 0.3s ease;
         }
-
         .team img:hover {
             transform: scale(1.1);
         }
-
         .team-name {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 2px;
         }
-
         .team-city {
             font-size: 16px;
             font-weight: 600;
             color: #FFFFFF;
         }
-
         .team-nickname {
             font-size: 12px;
             color: var(--color-text-secondary);
         }
-
         .team-record {
             font-size: 12px;
             color: var(--color-text-secondary);
         }
-
         .wins {
             color: #22C55E;
         }
-
         .losses {
             color: #EF4444;
         }
-
         .team .winner {
             color: #22C55E;
             font-size: 12px;
             font-weight: 600;
         }
-
         .versus {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 6px;
         }
-
         .score {
             font-family: 'Oxanium', sans-serif;
             font-size: 32px;
             color: #FFFFFF;
         }
-
         .score-updated {
             animation: pulse 1s ease-in-out;
         }
-
         .status {
             font-family: 'Oxanium', sans-serif;
             font-size: 12px;
@@ -481,28 +386,23 @@
             border-radius: 12px;
             text-transform: uppercase;
         }
-
         .status.in-progress {
             background: #EF4444;
             color: #FFFFFF;
             animation: pulse 1.5s infinite;
         }
-
         .status.final {
             background: #525252;
             color: var(--color-text-secondary);
         }
-
         .time {
             font-family: 'Oxanium', sans-serif;
             font-size: 24px;
             color: #06B6D4;
         }
-
         .details {
             margin-top: 12px;
         }
-
         .details button {
             background: linear-gradient(45deg, var(--color-primary), var(--color-accent));
             border: none;
@@ -517,13 +417,11 @@
             transition: all 0.3s ease;
             box-shadow: 0 2px 8px rgba(107, 33, 168, 0.3);
         }
-
         .details button:hover {
             background: linear-gradient(45deg, var(--color-accent), var(--color-primary));
             box-shadow: 0 4px 12px rgba(107, 33, 168, 0.5);
             transform: translateY(-2px);
         }
-
         .error {
             color: #EF4444;
             padding: 16px;
@@ -532,6 +430,7 @@
             font-size: 14px;
         }
 
+        /* Modal Reestruturado */
         .modal {
             display: none;
             position: fixed;
@@ -546,11 +445,9 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-
         .modal.show {
             opacity: 1;
         }
-
         .modal-content {
             background: var(--color-bg-medium);
             border-radius: 16px;
@@ -564,11 +461,9 @@
             transform: scale(0.95);
             transition: transform 0.3s ease;
         }
-
         .modal.show .modal-content {
             transform: scale(1);
         }
-
         .modal-header {
             display: flex;
             justify-content: space-between;
@@ -577,14 +472,12 @@
             padding-bottom: 16px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-
         .modal-header h2 {
             font-family: 'Oxanium', sans-serif;
             font-size: 24px;
             color: #FFFFFF;
             margin: 0;
         }
-
         .close-btn {
             background: none;
             border: none;
@@ -593,398 +486,174 @@
             cursor: pointer;
             transition: color 0.3s ease;
         }
-
         .close-btn:hover {
             color: #06B6D4;
         }
 
-        .stats-header {
+        /* Novos estilos para abas e análise */
+        .modal-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: #1F1F1F;
+            border-radius: 8px;
+            padding: 4px;
+            overflow-x: auto;
+        }
+        .modal-tab {
+            background: transparent;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Oxanium', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        .modal-tab:hover {
+            background: rgba(107, 33, 168, 0.1);
+            color: var(--color-accent);
+        }
+        .modal-tab.active {
+            background: linear-gradient(45deg, var(--color-primary), var(--color-accent));
+            color: #FFFFFF;
+            box-shadow: 0 0 8px rgba(107, 33, 168, 0.5);
+        }
+        .tab-content {
+            display: none;
+            padding: 20px 0;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        .overview-card, .comparison-teams, .stat-comparison, .campaign-box,
+        .bets-section, .alerts-section, .strategy-summary, .player-column {
+            background: #222222;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .card-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 20px;
-            padding: 0 16px;
-        }
-
-        .stats-header span {
-            font-family: 'Oxanium', sans-serif;
-            font-size: 18px;
-            color: #FFFFFF;
-            width: 33%;
-            text-align: center;
-            font-weight: 600;
-        }
-
-        .stat-row {
-            display: grid;
-            grid-template-columns: 1fr 2fr 1fr;
             align-items: center;
-            margin: 10px 0;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 8px;
         }
-
-        .stat-value {
-            font-family: 'Oxanium', sans-serif;
-            font-size: 16px;
-            text-align: center;
+        .card-value {
+            font-size: 24px;
+            font-weight: 700;
             color: #FFFFFF;
+            margin: 8px 0;
         }
-
-        .stat-label {
-            font-family: 'Oxanium', sans-serif;
+        .confidence-badge {
             font-size: 12px;
-            color: #06B6D4;
-            text-align: center;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-
-        .stat-bar-container {
-            display: flex;
-            justify-content: center;
-            gap: 4px;
-            margin: 0 auto;
-            width: 100%;
-            max-width: 400px;
-            padding: 0 16px;
-        }
-
-        .stat-bar {
-            height: 6px;
-            border-radius: 3px;
-            transition: width 0.5s ease;
-        }
-
-        .stat-bar.home {
-            background: #06B6D4;
-            box-shadow: 0 0 6px rgba(6, 182, 212, 0.3);
-        }
-
-        .stat-bar.away {
-            background: #EF4444;
-            box-shadow: 0 0 6px rgba(239, 68, 68, 0.3);
-        }
-
-        .section-container {
-            padding: 20px;
-            background: #1A1A1A;
+            padding: 4px 8px;
             border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .section-title {
-            font-family: 'Oxanium', sans-serif;
-            font-size: 20px;
-            text-align: center;
-            margin-bottom: 20px;
-            color: #FFFFFF;
-            letter-spacing: 1px;
             text-transform: uppercase;
-            position: relative;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
-        }
-
-        .category-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .category-tab {
-            background: #1F1F1F;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: 'Oxanium', sans-serif;
-            font-size: 13px;
             font-weight: 600;
-            color: var(--color-text-secondary);
-            text-transform: uppercase;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
+            background: #F59E0B;
+            color: #000;
         }
-
-        .category-tab:hover {
-            background: linear-gradient(45deg, #2A2A2A, #3A3A3A);
-            color: #FFFFFF;
-            border-color: var(--color-primary);
-            box-shadow: 0 0 8px rgba(107, 33, 168, 0.3);
+        .confidence-badge.high { background: #10B981; }
+        .confidence-badge.medium { background: #F59E0B; }
+        .confidence-badge.low { background: #EF4444; color: #fff; }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-
-        .category-tab.active {
-            background: linear-gradient(45deg, var(--color-primary), var(--color-accent));
-            color: #FFFFFF;
-            border-color: var(--color-primary);
-            box-shadow: 0 0 12px rgba(107, 33, 168, 0.5);
-        }
-
-        .leaders-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 16px;
-        }
-
-        .leader-team {
+        .stat-value { font-weight: 600; }
+        .stat-value.away { color: #06B6D4; }
+        .stat-value.home { color: #EF4444; }
+        .bet-item, .alert-item {
             display: flex;
             align-items: center;
-            gap: 12px;
             padding: 12px;
-            border-radius: 8px;
-            background: #222222;
-            transition: all 0.3s ease;
-            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+            background: #2A2A2A;
+            border-radius: 6px;
+            margin-bottom: 8px;
         }
-
-        .leader-team:hover {
-            background: linear-gradient(45deg, #2A2A2A, #333333);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(107, 33, 168, 0.2);
+        .player-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-
-        .leader-photo {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 2px solid var(--color-primary);
-            box-shadow: 0 0 6px rgba(107, 33, 168, 0.3);
-            object-fit: cover;
-        }
-
-        .leader-info {
-            flex-grow: 1;
-        }
-
-        .leader-info .position {
-            display: inline-block;
+        .players-columns { display: flex; gap: 20px; }
+        .player-column { flex: 1; }
+        .vs { font-size: 24px; font-weight: 700; color: #FFFFFF; margin: 0 12px; }
+        .team-logo { width: 40px; height: 40px; border-radius: 50%; }
+        .team-name { font-size: 16px; font-weight: 600; color: #FFFFFF; }
+        .win-prob { font-size: 12px; color: #06B6D4; }
+        .strategy-note {
             font-size: 12px;
-            padding: 3px 8px;
-            background: var(--color-primary);
+            color: var(--color-text-secondary);
+            background: rgba(107, 33, 168, 0.1);
+            padding: 8px;
             border-radius: 4px;
-            margin-bottom: 4px;
-            color: #FFFFFF;
-            font-weight: 600;
-        }
-
-        .leader-info .name {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #FFFFFF;
-        }
-
-        .stat {
-            font-family: 'Oxanium', sans-serif;
-            font-size: 18px;
-            color: #06B6D4;
-        }
-
-        .injuries-grid,
-        .bets-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 16px;
-        }
-
-        .injury-team,
-        .bet-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            border-radius: 8px;
-            background: #222222;
-            transition: all 0.3s ease;
-            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
-        }
-
-        .injury-team:hover,
-        .bet-item:hover {
-            background: linear-gradient(45deg, #2A2A2A, #333333);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(107, 33, 168, 0.2);
-        }
-
-        .injury-icon,
-        .bet-icon {
-            font-size: 20px;
-        }
-
-        .injury-icon {
-            color: #EF4444;
-        }
-
-        .bet-icon {
-            color: #06B6D4;
-        }
-
-        .injury-info,
-        .bet-info {
-            flex-grow: 1;
-        }
-
-        .injury-info .name,
-        .bet-info .type {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #FFFFFF;
-        }
-
-        .injury-info .description {
-            font-size: 12px;
-            color: #EF4444;
-        }
-
-        .injury-info .date,
-        .bet-info .value {
-            font-size: 12px;
-            color: var(--color-text-secondary);
-        }
-
-        .error-details {
-            font-family: 'Oxanium', sans-serif;
-            font-size: 14px;
-            color: var(--color-text-secondary);
-            text-align: center;
             margin-top: 12px;
-        }
-
-        .retry-btn {
-            background: linear-gradient(45deg, #EF4444, #F87171);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            color: #FFFFFF;
-            font-family: 'Oxanium', sans-serif;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
-            display: block;
-            margin: 12px auto;
-        }
-
-        .retry-btn:hover {
-            background: linear-gradient(45deg, #F87171, #EF4444);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
-            transform: translateY(-2px);
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 12px;
-        }
-
-        .nav-button {
-            background: linear-gradient(45deg, var(--color-primary), var(--color-accent));
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            color: #FFFFFF;
-            font-family: 'Oxanium', sans-serif;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(107, 33, 168, 0.3);
-        }
-
-        .nav-button:hover {
-            background: linear-gradient(45deg, var(--color-accent), var(--color-primary));
-            box-shadow: 0 4px 12px rgba(107, 33, 168, 0.5);
-            transform: translateY(-2px);
         }
 
         /* Responsiveness */
         @media (max-width: 768px) {
             body {
                 padding-left: 60px;
-                /* Ajuste para mobile */
             }
-
             .sidebar {
                 width: 60px;
             }
-
             .sidebar:hover {
                 width: 220px;
             }
-
             .container {
                 padding: 16px;
             }
-
             .header h1 {
                 font-size: 24px;
             }
-
             .tabs {
                 flex-direction: column;
                 align-items: stretch;
             }
-
             .tab {
                 width: 100%;
                 text-align: center;
             }
-
             .nav-buttons {
                 flex-direction: column;
                 width: 100%;
             }
-
             .nav-button {
                 width: 100%;
             }
         }
     </style>
 </head>
-
 <body>
     <div class="particles" id="particles"></div>
-
     <nav class="sidebar">
         <div class="sidebar-header">
-            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips"
-                class="sidebar-logo">
+            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips" class="sidebar-logo">
             <span class="sidebar-title">RW Tips</span>
         </div>
         <ul class="sidebar-menu">
-            <li><a href="visualization.html"><span class="icon">⚽</span><span class="label">Próximos Jogos</span></a>
-            </li>
-            <li><a href="results.html"><span class="icon">📊</span><span class="label">Últimos Resultados</span></a>
-            </li>
+            <li><a href="visualization.html"><span class="icon">⚽</span><span class="label">Próximos Jogos</span></a></li>
+            <li><a href="results.html"><span class="icon">📊</span><span class="label">Últimos Resultados</span></a></li>
             <li><a href="live_v2.html"><span class="icon">🔴</span><span class="label">AO VIVO</span></a></li>
-            <li><a href="statistics.html"><span class="icon">📈</span><span class="label">Estatísticas das
-                        Ligas</span></a></li>
-            <li><a href="formularioApostas.html"><span class="icon">💰</span><span class="label">Registrar
-                        Apostas</span></a></li>
-            <li><a href="players.html"><span class="icon">🎮</span><span class="label">Análise de Jogadores</span></a>
-            </li>
+            <li><a href="statistics.html"><span class="icon">📈</span><span class="label">Estatísticas das Ligas</span></a></li>
+            <li><a href="formularioApostas.html"><span class="icon">💰</span><span class="label">Registrar Apostas</span></a></li>
+            <li><a href="players.html"><span class="icon">🎮</span><span class="label">Análise de Jogadores</span></a></li>
             <li><a href="dashboard.html"><span class="icon">📋</span><span class="label">Dashboard</span></a></li>
-            <li class="active"><a href="nba.html"><span class="icon">🏀</span><span class="label">NBA Stats</span></a>
-            </li>
+            <li class="active"><a href="nba.html"><span class="icon">🏀</span><span class="label">NBA Stats</span></a></li>
             <li><a href="radar.html"><span class="icon">🎯</span><span class="label">Radar</span></a></li>
             <li><a href="over.html"><span class="icon">📍</span><span class="label">Over Analysis</span></a></li>
         </ul>
     </nav>
-
     <div class="container">
         <div class="header">
             <h1>CALENDÁRIO NBA</h1>
@@ -998,36 +667,139 @@
         <div class="schedule" id="schedule"></div>
     </div>
 
+    <!-- Modal Reestruturado -->
     <div class="modal" id="gameStatsModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="modalTitle"></h2>
                 <button class="close-btn" id="closeModal">×</button>
             </div>
-            <div class="stats-header">
-                <span id="homeTeamName"></span>
-                <span></span>
-                <span id="awayTeamName"></span>
+
+            <div class="modal-tabs">
+                <button class="modal-tab active" data-tab="overview">Visão Geral</button>
+                <button class="modal-tab" data-tab="comparison">Comparação</button>
+                <button class="modal-tab" data-tab="bets">Apostas</button>
+                <button class="modal-tab" data-tab="players">Jogadores</button>
             </div>
-            <div class="section-container" id="teamLeadersContainer">
-                <div class="section-title">Líderes do Time</div>
-                <div class="category-tabs" id="categoryTabs">
-                    <div class="category-tab active" data-category="points">Points</div>
-                    <div class="category-tab" data-category="rebounds">Rebounds</div>
-                    <div class="category-tab" data-category="assists">Assists</div>
-                    <div class="category-tab" data-category="blocks">Blocks</div>
-                    <div class="category-tab" data-category="steals">Steals</div>
+
+            <div id="overviewTab" class="tab-content active">
+                <div class="overview-card">
+                    <div class="card-header">
+                        <h3>Total Previsto</h3>
+                        <span class="confidence-badge medium">Média Confiança</span>
+                    </div>
+                    <div class="card-value" id="predictedTotal">O/U 220</div>
+                    <div class="card-subtext">Baseado em médias ofensivas e defensivas</div>
                 </div>
-                <div class="leaders-grid" id="leadersGrid"></div>
+                <div class="overview-card">
+                    <div class="card-header">
+                        <h3>Spread Previsto</h3>
+                        <span class="confidence-badge medium">Média Confiança</span>
+                    </div>
+                    <div class="card-value" id="predictedSpread">+2.5</div>
+                    <div class="card-subtext">Incluindo vantagem de casa</div>
+                </div>
+                <div class="overview-card">
+                    <div class="card-header">
+                        <h3>Probabilidade de Vitória</h3>
+                        <span class="confidence-badge high">Alta Confiança</span>
+                    </div>
+                    <div class="prob-container">
+                        <div class="prob-item">
+                            <span class="team-name" id="awayProbName">Visitante</span>
+                            <span class="prob-value" id="awayWinProb">48%</span>
+                        </div>
+                        <div class="prob-item">
+                            <span class="team-name" id="homeProbName">Mandante</span>
+                            <span class="prob-value" id="homeWinProb">52%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="key-matchup">
+                    <h4>Confrontos Chave</h4>
+                    <p id="keyMatchupText">Análise em tempo real...</p>
+                </div>
             </div>
-            <div class="section-container" id="statsContent"></div>
-            <div class="section-container" id="injuriesContainer">
-                <div class="section-title">Jogadores Lesionados</div>
-                <div class="injuries-grid" id="injuriesGrid"></div>
+
+            <div id="comparisonTab" class="tab-content">
+                <div class="comparison-teams">
+                    <div class="team-compare">
+                        <img src="" alt="Visitante" class="team-logo" id="awayTeamLogoCompare">
+                        <div class="team-info">
+                            <span class="team-name" id="awayTeamNameCompare">Visitante</span>
+                            <span class="win-prob" id="awayWinProbCompare">48% Chance</span>
+                        </div>
+                    </div>
+                    <div class="vs">VS</div>
+                    <div class="team-compare">
+                        <img src="" alt="Mandante" class="team-logo" id="homeTeamLogoCompare">
+                        <div class="team-info">
+                            <span class="team-name" id="homeTeamNameCompare">Mandante</span>
+                            <span class="win-prob" id="homeWinProbCompare">52% Chance</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-comparison">
+                    <h4>Comparação Estatística</h4>
+                    <div class="stat-row">
+                        <span class="stat-label">Pontos por Jogo</span>
+                        <span class="stat-value away" id="awayPoints">115.2</span>
+                        <span class="stat-value home" id="homePoints">118.4</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Pontos Sofridos</span>
+                        <span class="stat-value away" id="awayPointsAgainst">112.1</span>
+                        <span class="stat-value home" id="homePointsAgainst">110.3</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">% Arremessos</span>
+                        <span class="stat-value away" id="awayFGPct">45.2%</span>
+                        <span class="stat-value home" id="homeFGPct">47.1%</span>
+                    </div>
+                </div>
+                <div class="campaign-stats">
+                    <div class="campaign-box">
+                        <h5 id="awayCampaignTitle">CAMPAÑHA - Visitante</h5>
+                        <div class="record" id="awayRecord">30-33</div>
+                        <div class="win-rate" id="awayWinRate">47.6% de aproveitamento</div>
+                    </div>
+                    <div class="campaign-box">
+                        <h5 id="homeCampaignTitle">CAMPAÑHA - Mandante</h5>
+                        <div class="record" id="homeRecord">40-23</div>
+                        <div class="win-rate" id="homeWinRate">63.5% de aproveitamento</div>
+                    </div>
+                </div>
             </div>
-            <div class="section-container" id="betsContainer">
-                <div class="section-title">Possíveis Entradas</div>
-                <div class="bets-grid" id="betsGrid"></div>
+
+            <div id="betsTab" class="tab-content">
+                <div class="bets-section">
+                    <h4>Linhas Recomendadas</h4>
+                    <div id="betsList"></div>
+                </div>
+                <div class="alerts-section">
+                    <h4>Alertas de Valor</h4>
+                    <div id="alertsList"></div>
+                </div>
+                <div class="strategy-summary">
+                    <h4>Resumo da Estratégia</h4>
+                    <div id="strategySummary"></div>
+                    <div class="strategy-note">
+                        Diversifique suas apostas. Nunca arrisque mais de 2-3% do seu bankroll por jogo.
+                    </div>
+                </div>
+            </div>
+
+            <div id="playersTab" class="tab-content">
+                <div class="players-columns">
+                    <div class="player-column">
+                        <h4 id="awayPlayersTitle">Visitante - Top Jogadores</h4>
+                        <div id="awayPlayersList"></div>
+                    </div>
+                    <div class="player-column">
+                        <h4 id="homePlayersTitle">Mandante - Top Jogadores</h4>
+                        <div id="homePlayersList"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1042,7 +814,6 @@
             return true;
         }
 
-        // Função de logout
         function logout() {
             sessionStorage.removeItem('loggedIn');
             localStorage.removeItem('currentUser');
@@ -1051,46 +822,31 @@
         }
 
         const tabsDiv = document.querySelector('#tabs');
-        const categoryTabsDiv = document.querySelector('#categoryTabs');
-        const leadersGrid = document.querySelector('#leadersGrid');
-        const injuriesGrid = document.querySelector('#injuriesGrid');
-        const betsGrid = document.querySelector('#betsGrid');
         const scheduleDiv = document.querySelector('#schedule');
         let currentDate = null;
         let autoUpdateInterval = null;
         let previousScores = {};
-
         const modal = document.querySelector('#gameStatsModal');
         const modalTitle = document.querySelector('#modalTitle');
-        const awayTeamName = document.querySelector('#awayTeamName');
-        const homeTeamName = document.querySelector('#homeTeamName');
-        const teamLeadersContainer = document.querySelector('#teamLeadersContainer');
-        const statsContent = document.querySelector('#statsContent');
-        const injuriesContainer = document.querySelector('#injuriesContainer');
-        const betsContainer = document.querySelector('#betsContainer');
         const closeModalBtn = document.querySelector('#closeModal');
 
         function createParticles() {
             const particlesContainer = document.getElementById('particles');
             const numberOfParticles = 10;
-
             for (let i = 0; i < numberOfParticles; i++) {
                 const particle = document.createElement('div');
                 particle.classList.add('particle');
-
                 const posX = Math.random() * 100;
                 const posY = Math.random() * 100 + 100;
                 const size = Math.random() * 1.5 + 1;
                 const duration = Math.random() * 20 + 20;
                 const delay = Math.random() * 5;
-
                 particle.style.left = `${posX}%`;
                 particle.style.top = `${posY}%`;
                 particle.style.width = `${size}px`;
                 particle.style.height = `${size}px`;
                 particle.style.animationDuration = `${duration}s`;
                 particle.style.animationDelay = `${delay}s`;
-
                 particlesContainer.appendChild(particle);
             }
         }
@@ -1168,48 +924,6 @@
             }
         }
 
-        async function renderTabs() {
-            if (!checkUserLogin()) return;
-            try {
-                const dates = await fetchDates();
-                const hoje = getDataAtualSP();
-
-                let html = '';
-                let dataAtiva = dates.includes(hoje) ? hoje : dates[0];
-
-                dates.forEach(date => {
-                    const ativa = date === dataAtiva;
-                    const textoAba = formatarDataBrasil(date);
-                    html += `<div class="tab${ativa ? ' active' : ''}" data-date="${date}">${textoAba}</div>`;
-                });
-
-                tabsDiv.innerHTML = html;
-                currentDate = dataAtiva;
-
-                document.querySelectorAll('.tab').forEach(tab => {
-                    tab.addEventListener('click', () => {
-                        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                        tab.classList.add('active');
-                        currentDate = tab.dataset.date;
-                        previousScores = {};
-                        startAutoUpdate();
-                    });
-                });
-
-                document.getElementById('visualizationBtn').addEventListener('click', () => {
-                    window.location.href = 'visualization.html';
-                });
-
-                document.getElementById('logoutBtn').addEventListener('click', logout);
-
-                createParticles();
-                startAutoUpdate();
-            } catch (error) {
-                console.error('Erro ao renderizar abas:', error);
-                tabsDiv.innerHTML = '<div class="error">Erro ao carregar datas</div>';
-            }
-        }
-
         function splitTeamName(fullName) {
             const specialCases = {
                 'Trail Blazers': 'Portland', 'Timberwolves': 'Minnesota', 'Thunder': 'Oklahoma City', 'Jazz': 'Utah',
@@ -1245,6 +959,41 @@
             return date.toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo', hour: 'numeric', minute: 'numeric', hour12: true }).replace(':', 'h');
         }
 
+        async function renderTabs() {
+            if (!checkUserLogin()) return;
+            try {
+                const dates = await fetchDates();
+                const hoje = getDataAtualSP();
+                let html = '';
+                let dataAtiva = dates.includes(hoje) ? hoje : dates[0];
+                dates.forEach(date => {
+                    const ativa = date === dataAtiva;
+                    const textoAba = formatarDataBrasil(date);
+                    html += `<div class="tab${ativa ? ' active' : ''}" data-date="${date}">${textoAba}</div>`;
+                });
+                tabsDiv.innerHTML = html;
+                currentDate = dataAtiva;
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        currentDate = tab.dataset.date;
+                        previousScores = {};
+                        startAutoUpdate();
+                    });
+                });
+                document.getElementById('visualizationBtn').addEventListener('click', () => {
+                    window.location.href = 'visualization.html';
+                });
+                document.getElementById('logoutBtn').addEventListener('click', logout);
+                createParticles();
+                startAutoUpdate();
+            } catch (error) {
+                console.error('Erro ao renderizar abas:', error);
+                tabsDiv.innerHTML = '<div class="error">Erro ao carregar datas</div>';
+            }
+        }
+
         async function renderSchedule(date) {
             try {
                 const data = await fetchSchedule(date);
@@ -1252,24 +1001,19 @@
                     scheduleDiv.innerHTML = `<div class="day-header">${formatarDataBrasil(date)}</div><div class="match">Nenhum jogo agendado</div>`;
                     return;
                 }
-
                 let html = `<div class="day-header">${formatarDataBrasil(date)}</div>`;
                 data.events.forEach(event => {
                     const eventData = event.event;
                     const { top, bottom: away, status, dateET } = eventData;
                     const eventId = event.eventId;
-
                     const isLiveGame = status.includes('Progress') || status.includes('Em Andamento');
                     const isFinalGame = status.includes('Final') || status.includes('Terminado');
-
                     const topTeam = splitTeamName(top.name);
                     const awayTeam = splitTeamName(away.name);
-
                     const scoreDisplay = (top.score != null && away.score != null) ? `${away.score} - ${top.score}` : '';
                     const timeDisplay = formatTime(dateET);
                     const topLogo = getTeamLogoUrl(top.seoIdentifier);
                     const awayLogo = getTeamLogoUrl(away.seoIdentifier);
-
                     const hasScore = top.score != null && away.score != null;
                     const scoreKey = `${eventId}`;
                     const previousScore = previousScores[scoreKey] || '';
@@ -1277,73 +1021,63 @@
                     const scoreChanged = previousScore && currentScore && previousScore !== currentScore;
                     previousScores[scoreKey] = currentScore;
 
-                    if (status === 'Final' || hasScore) {
-                        html += `
-                            <div class="match ${isLiveGame ? 'live-game' : ''} ${isFinalGame ? 'final-game' : ''}">
-                                ${isLiveGame ? '<div class="live-badge">AO VIVO</div>' : ''}
-                                <div class="match-header">${away.name} vs ${top.name}</div>
-                                <div class="teams">
-                                    <div class="team">
-                                        <img src="${awayLogo}" alt="${away.name}" onerror="this.src='https://via.placeholder.com/50?text=${away.shortName}'">
-                                        <span class="team-name">
-                                            <span class="team-city">${awayTeam.city}</span>
-                                            <span class="team-nickname">${awayTeam.nickname}</span>
-                                        </span>
-                                        <span class="team-record">${formatRecord(away.record)}</span>
-                                        ${away.hasWon ? '<span class="winner">(V)</span>' : ''}
-                                    </div>
-                                    <div class="versus">
+                    // Botão com data-* (sem onclick inline)
+                    html += `
+                        <div class="match ${isLiveGame ? 'live-game' : ''} ${isFinalGame ? 'final-game' : ''}">
+                            ${isLiveGame ? '<div class="live-badge">AO VIVO</div>' : ''}
+                            <div class="match-header">${away.name} vs ${top.name}</div>
+                            <div class="teams">
+                                <div class="team">
+                                    <img src="${awayLogo}" alt="${away.name}" onerror="this.src='https://via.placeholder.com/50?text=${away.shortName}'">
+                                    <span class="team-name">
+                                        <span class="team-city">${awayTeam.city}</span>
+                                        <span class="team-nickname">${awayTeam.nickname}</span>
+                                    </span>
+                                    <span class="team-record">${formatRecord(away.record)}</span>
+                                    ${away.hasWon ? '<span class="winner">(V)</span>' : ''}
+                                </div>
+                                <div class="versus">
+                                    ${hasScore ? `
                                         <div class="score${scoreChanged ? ' score-updated' : ''}">${scoreDisplay}</div>
                                         <div class="status ${isLiveGame ? 'in-progress' : 'final'}">${status}</div>
-                                    </div>
-                                    <div class="team">
-                                        <img src="${topLogo}" alt="${top.name}" onerror="this.src='https://via.placeholder.com/50?text=${top.shortName}'">
-                                        <span class="team-name">
-                                            <span class="team-city">${topTeam.city}</span>
-                                            <span class="team-nickname">${topTeam.nickname}</span>
-                                        </span>
-                                        <span class="team-record">${formatRecord(top.record)}</span>
-                                        ${top.hasWon ? '<span class="winner">(V)</span>' : ''}
-                                    </div>
+                                    ` : `<div class="time">${timeDisplay}</div>`}
                                 </div>
-                                <div class="details">
-                                    <button onclick="showGameStats('${eventId}', '${away.name}', '${top.name}', '${away.seoIdentifier}', '${top.seoIdentifier}')">Estatísticas</button>
+                                <div class="team">
+                                    <img src="${topLogo}" alt="${top.name}" onerror="this.src='https://via.placeholder.com/50?text=${top.shortName}'">
+                                    <span class="team-name">
+                                        <span class="team-city">${topTeam.city}</span>
+                                        <span class="team-nickname">${topTeam.nickname}</span>
+                                    </span>
+                                    <span class="team-record">${formatRecord(top.record)}</span>
+                                    ${top.hasWon ? '<span class="winner">(V)</span>' : ''}
                                 </div>
                             </div>
-                        `;
-                    } else {
-                        html += `
-                            <div class="match">
-                                <div class="match-header">${away.name} vs ${top.name}</div>
-                                <div class="teams">
-                                    <div class="team">
-                                        <img src="${awayLogo}" alt="${away.name}" onerror="this.src='https://via.placeholder.com/50?text=${away.shortName}'">
-                                        <span class="team-name">
-                                            <span class="team-city">${awayTeam.city}</span>
-                                            <span class="team-nickname">${awayTeam.nickname}</span>
-                                        </span>
-                                        <span class="team-record">${formatRecord(away.record)}</span>
-                                    </div>
-                                    <div class="versus">
-                                        <div class="time">${timeDisplay}</div>
-                                    </div>
-                                    <div class="team">
-                                        <img src="${topLogo}" alt="${top.name}" onerror="this.src='https://via.placeholder.com/50?text=${top.shortName}'">
-                                        <span class="team-name">
-                                            <span class="team-city">${topTeam.city}</span>
-                                            <span class="team-nickname">${topTeam.nickname}</span>
-                                        </span>
-                                        <span class="team-record">${formatRecord(top.record)}</span>
-                                    </div>
-                                </div>
-                                <div class="details">
-                                    <button onclick="showGameStats('${eventId}', '${away.name}', '${top.name}', '${away.seoIdentifier}', '${top.seoIdentifier}')">Estatísticas</button>
-                                </div>
+                            <div class="details">
+                                <button class="stats-btn"
+                                    data-event-id="${eventId}"
+                                    data-home-name="${top.name}"
+                                    data-away-name="${away.name}"
+                                    data-home-seo="${top.seoIdentifier}"
+                                    data-away-seo="${away.seoIdentifier}">
+                                    Estatísticas
+                                </button>
                             </div>
-                        `;
-                    }
+                        </div>
+                    `;
                 });
                 scheduleDiv.innerHTML = html;
+
+                // Adicionar event listeners aos botões
+                scheduleDiv.querySelectorAll('.stats-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const eventId = btn.dataset.eventId;
+                        const homeName = btn.dataset.homeName;
+                        const awayName = btn.dataset.awayName;
+                        const homeSeo = btn.dataset.homeSeo;
+                        const awaySeo = btn.dataset.awaySeo;
+                        showGameStats(eventId, homeName, awayName, homeSeo, awaySeo);
+                    });
+                });
             } catch (error) {
                 scheduleDiv.innerHTML = `<div class="day-header">${formatarDataBrasil(date)}</div><div class="error">Erro ao carregar o calendário: ${error.message}</div>`;
             }
@@ -1356,6 +1090,7 @@
                 if (currentDate) await renderSchedule(currentDate);
             }, 30000);
         }
+
         async function showGameStats(eventId, homeName, awayName, homeSeoIdentifier, awaySeoIdentifier) {
             try {
                 const scheduleData = await fetchSchedule(currentDate);
@@ -1378,10 +1113,8 @@
                 playerData = await fetchPlayerSeasonStats(eventId);
                 injuriesData = await fetchInjuries();
 
-                // Atualizar título
                 modalTitle.textContent = `${homeName} vs ${awayName}`;
 
-                // Logos
                 const homeLogoUrl = getTeamLogoUrl(homeSeoIdentifier);
                 const awayLogoUrl = getTeamLogoUrl(awaySeoIdentifier);
 
@@ -1391,7 +1124,6 @@
                 const homePointsAgainst = parseFloat(statsData?.home?.stats?.pointsAgainstPerGame) || 0;
                 const awayPointsAgainst = parseFloat(statsData?.away?.stats?.pointsAgainstPerGame) || 0;
 
-                // Probabilidades
                 const homeStrength = homePointsFor - homePointsAgainst;
                 const awayStrength = awayPointsFor - awayPointsAgainst;
                 const totalStrength = Math.abs(homeStrength) + Math.abs(awayStrength);
@@ -1406,19 +1138,14 @@
                 document.getElementById('awayWinProb').textContent = `${Math.round(awayProb)}%`;
                 document.getElementById('homeWinProb').textContent = `${Math.round(homeProb)}%`;
 
-                // Total Previsto
                 const avgHome = (homePointsFor + awayPointsAgainst) / 2;
                 const avgAway = (awayPointsFor + homePointsAgainst) / 2;
                 const totalPredicted = avgHome + avgAway;
                 const overLine = Math.ceil(totalPredicted / 5) * 5;
                 document.getElementById('predictedTotal').textContent = `O/U ${overLine}`;
-
-                // Spread Previsto
                 const spread = (homePointsFor - awayPointsFor) + 2.5;
                 document.getElementById('predictedSpread').textContent = `${spread >= 0 ? '+' : ''}${spread.toFixed(1)}`;
-
-                // Confronto chave
-                document.getElementById('keyMatchupText').textContent =
+                document.getElementById('keyMatchupText').textContent = 
                     `(Ataque ${awayName}: ${awayPointsFor.toFixed(1)} pts) vs Defesa ${homeName}: ${homePointsAgainst.toFixed(1)} pts sofridos)`;
 
                 // === Comparação ===
@@ -1436,7 +1163,6 @@
                 document.getElementById('awayFGPct').textContent = `${((parseFloat(statsData?.away?.stats?.fieldGoalsPercentage) || 0) * 100).toFixed(1)}%`;
                 document.getElementById('homeFGPct').textContent = `${((parseFloat(statsData?.home?.stats?.fieldGoalsPercentage) || 0) * 100).toFixed(1)}%`;
 
-                // Campanhas
                 const awayRecordStr = game?.bottom.record || '0-0';
                 const homeRecordStr = game?.top.record || '0-0';
                 document.getElementById('awayRecord').textContent = awayRecordStr;
@@ -1496,7 +1222,6 @@
                     </div>
                 `).join('');
 
-                // Alertas
                 let alerts = [];
                 if (totalPredicted > 225) {
                     alerts.push({
@@ -1561,7 +1286,7 @@
                 });
 
             } catch (error) {
-                console.error('Erro ao carregar estatísticas:', error);
+                console.error('Failed to load game stats:', error);
                 modalTitle.textContent = 'Erro ao carregar dados';
                 document.getElementById('overviewTab').innerHTML = `<div class="error">Erro: ${error.message}</div>`;
                 modal.style.display = 'flex';
@@ -1569,119 +1294,6 @@
             }
         }
 
-        // Adicione os novos estilos no <style> (ou cole no final do seu bloco <style>)
-        const style = document.createElement('style');
-        style.textContent = `
-            .modal-tabs {
-                display: flex;
-                gap: 8px;
-                margin-bottom: 20px;
-                background: #1F1F1F;
-                border-radius: 8px;
-                padding: 4px;
-                overflow-x: auto;
-            }
-            .modal-tab {
-                background: transparent;
-                border: none;
-                padding: 8px 16px;
-                border-radius: 6px;
-                cursor: pointer;
-                font-family: 'Oxanium', sans-serif;
-                font-size: 14px;
-                font-weight: 600;
-                color: var(--color-text-secondary);
-                transition: all 0.3s ease;
-                white-space: nowrap;
-            }
-            .modal-tab:hover {
-                background: rgba(107, 33, 168, 0.1);
-                color: var(--color-accent);
-            }
-            .modal-tab.active {
-                background: linear-gradient(45deg, var(--color-primary), var(--color-accent));
-                color: #FFFFFF;
-                box-shadow: 0 0 8px rgba(107, 33, 168, 0.5);
-            }
-            .tab-content {
-                display: none;
-                padding: 20px 0;
-            }
-            .tab-content.active {
-                display: block;
-            }
-            .overview-card, .comparison-teams, .stat-comparison, .campaign-box,
-            .bets-section, .alerts-section, .strategy-summary, .player-column {
-                background: #222222;
-                border-radius: 8px;
-                padding: 16px;
-                margin-bottom: 16px;
-            }
-            .card-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 8px;
-            }
-            .card-value {
-                font-size: 24px;
-                font-weight: 700;
-                color: #FFFFFF;
-                margin: 8px 0;
-            }
-            .confidence-badge {
-                font-size: 12px;
-                padding: 4px 8px;
-                border-radius: 12px;
-                text-transform: uppercase;
-                font-weight: 600;
-                background: #F59E0B;
-                color: #000;
-            }
-            .confidence-badge.high { background: #10B981; }
-            .confidence-badge.medium { background: #F59E0B; }
-            .confidence-badge.low { background: #EF4444; color: #fff; }
-            .stat-row {
-                display: flex;
-                justify-content: space-between;
-                padding: 8px 0;
-                border-bottom: 1px solid rgba(255,255,255,0.05);
-            }
-            .stat-value { font-weight: 600; }
-            .stat-value.away { color: #06B6D4; }
-            .stat-value.home { color: #EF4444; }
-            .bet-item, .alert-item {
-                display: flex;
-                align-items: center;
-                padding: 12px;
-                background: #2A2A2A;
-                border-radius: 6px;
-                margin-bottom: 8px;
-            }
-            .player-stat {
-                display: flex;
-                justify-content: space-between;
-                padding: 8px 0;
-                border-bottom: 1px solid rgba(255,255,255,0.05);
-            }
-            .players-columns { display: flex; gap: 20px; }
-            .player-column { flex: 1; }
-            .vs { font-size: 24px; font-weight: 700; color: #FFFFFF; margin: 0 12px; }
-            .team-logo { width: 40px; height: 40px; border-radius: 50%; }
-            .team-name { font-size: 16px; font-weight: 600; color: #FFFFFF; }
-            .win-prob { font-size: 12px; color: #06B6D4; }
-            .strategy-note {
-                font-size: 12px;
-                color: var(--color-text-secondary);
-                background: rgba(107, 33, 168, 0.1);
-                padding: 8px;
-                border-radius: 4px;
-                margin-top: 12px;
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Mantenha os event listeners existentes
         closeModalBtn.addEventListener('click', () => {
             modal.classList.remove('show');
             setTimeout(() => modal.style.display = 'none', 300);
@@ -1693,9 +1305,7 @@
             }
         });
 
-
         renderTabs();
     </script>
 </body>
-
 </html>
