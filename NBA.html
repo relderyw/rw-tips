@@ -685,7 +685,7 @@
 
         .comparison-section {
             display: grid;
-            grid-template-columns: 1 Providefr auto 1fr;
+            grid-template-columns: 1fr auto 1fr;
             gap: 24px;
             align-items: center;
             margin-bottom: 24px;
@@ -839,6 +839,16 @@
         .player-stat {
             font-weight: 700;
             color: var(--color-primary);
+        }
+
+        .player-category {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-primary);
+            margin: 12px 0 8px 0;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: 4px;
         }
 
         .injury-section {
@@ -1145,6 +1155,8 @@
             constructor() {
                 this.currentDate = null;
                 this.scheduleCache = {};
+                this.statsCache = {};
+                this.seasonCache = {};
                 this.autoUpdateInterval = null;
                 this.currentFilter = 'all';
 
@@ -1271,6 +1283,21 @@
                 const apiUrl = `https://stats.sports.bellmedia.ca/sports/basketball/leagues/nba/scheduleV2/subset/dates?brand=tsn&type=json&dateOrId=${date}`;
                 const data = await this.proxyFetchJson(apiUrl, { cacheKey: `schedule:${date}`, ttlMs: 25 * 1000 });
                 const games = data[date]?.events || [];
+                
+                // Buscar stats para cada jogo e armazenar no cache
+                for (const game of games) {
+                    try {
+                        const [gameStats, seasonStats] = await Promise.all([
+                            this.fetchGameStats(game.eventId),
+                            this.fetchSeasonStats(game.eventId)
+                        ]);
+                        this.statsCache[game.eventId] = gameStats;
+                        this.seasonCache[game.eventId] = seasonStats;
+                    } catch (err) {
+                        console.warn(`Erro ao buscar stats para jogo ${game.eventId}:`, err);
+                    }
+                }
+                
                 this.scheduleCache[date] = games;
                 return games;
             }
@@ -1309,6 +1336,82 @@
                 } catch {
                     return [];
                 }
+            }
+
+            // Função para calcular previsões dinâmicas baseadas nos stats dos times
+            calculateGamePredictions(eventId, homeTeam, awayTeam) {
+                const gameStats = this.statsCache[eventId] || { home: { stats: {} }, away: { stats: {} } };
+                const seasonStats = this.seasonCache[eventId] || {};
+                
+                // Usar stats da temporada se disponível, senão usar defaults baseados nos nomes dos times
+                const homeStats = seasonStats.home?.stats || gameStats.home?.stats || this.getDefaultTeamStats(homeTeam);
+                const awayStats = seasonStats.away?.stats || gameStats.away?.stats || this.getDefaultTeamStats(awayTeam);
+                
+                // Calcular total de pontos previsto
+                const homePts = parseFloat(homeStats.pointsForPerGame) || 115;
+                const awayPts = parseFloat(awayStats.pointsForPerGame) || 112;
+                const homeDefense = parseFloat(homeStats.pointsAgainstPerGame) || 108;
+                const awayDefense = parseFloat(awayStats.pointsAgainstPerGame) || 110;
+                
+                // Ajustar baseado na defesa adversária
+                const adjustedHomePts = (homePts + awayDefense) / 2;
+                const adjustedAwayPts = (awayPts + homeDefense) / 2;
+                const total = Math.round(adjustedHomePts + adjustedAwayPts);
+                
+                // Calcular spread (vantagem de casa + diferença de qualidade)
+                const homeAdvantage = 3; // Vantagem típica de jogar em casa
+                const qualityDiff = adjustedHomePts - adjustedAwayPts;
+                const spread = (qualityDiff + homeAdvantage).toFixed(1);
+                
+                // Calcular probabilidades
+                const spreadNum = parseFloat(spread);
+                let homeProb = 50 + (spreadNum * 2.5); // Cada ponto de spread ≈ 2.5% de probabilidade
+                homeProb = Math.max(25, Math.min(75, homeProb)); // Limitar entre 25% e 75%
+                
+                return {
+                    total: total,
+                    spread: spread,
+                    homeProb: Math.round(homeProb),
+                    awayProb: Math.round(100 - homeProb),
+                    homePts: adjustedHomePts.toFixed(1),
+                    awayPts: adjustedAwayPts.toFixed(1)
+                };
+            }
+
+            // Stats padrão baseados na força histórica dos times
+            getDefaultTeamStats(teamName) {
+                const teamStrengths = {
+                    // Times fortes ofensivamente
+                    'Celtics': { pointsForPerGame: 118, pointsAgainstPerGame: 106 },
+                    'Warriors': { pointsForPerGame: 117, pointsAgainstPerGame: 112 },
+                    'Nuggets': { pointsForPerGame: 116, pointsAgainstPerGame: 109 },
+                    'Mavericks': { pointsForPerGame: 116, pointsAgainstPerGame: 111 },
+                    'Suns': { pointsForPerGame: 115, pointsAgainstPerGame: 110 },
+                    'Lakers': { pointsForPerGame: 115, pointsAgainstPerGame: 112 },
+                    'Knicks': { pointsForPerGame: 114, pointsAgainstPerGame: 108 },
+                    'Clippers': { pointsForPerGame: 114, pointsAgainstPerGame: 109 },
+                    
+                    // Times defensivos
+                    'Heat': { pointsForPerGame: 110, pointsAgainstPerGame: 105 },
+                    'Spurs': { pointsForPerGame: 111, pointsAgainstPerGame: 107 },
+                    'Grizzlies': { pointsForPerGame: 112, pointsAgainstPerGame: 108 },
+                    
+                    // Times médios/em reconstrução
+                    'Pistons': { pointsForPerGame: 108, pointsAgainstPerGame: 118 },
+                    'Hornets': { pointsForPerGame: 109, pointsAgainstPerGame: 117 },
+                    'Trail Blazers': { pointsForPerGame: 107, pointsAgainstPerGame: 116 },
+                    'Wizards': { pointsForPerGame: 106, pointsAgainstPerGame: 119 }
+                };
+                
+                // Procurar pelo nome do time nas chaves
+                for (const [key, stats] of Object.entries(teamStrengths)) {
+                    if (teamName.includes(key)) {
+                        return stats;
+                    }
+                }
+                
+                // Padrão se não encontrar o time
+                return { pointsForPerGame: 113, pointsAgainstPerGame: 111 };
             }
 
             getPlayerPhotoUrl(playerName) {
@@ -1383,6 +1486,9 @@
                 const homeLogo = this.getTeamLogoUrl(home.seoIdentifier);
                 const awayLogo = this.getTeamLogoUrl(away.seoIdentifier);
 
+                // Calcular previsões dinâmicas para este jogo específico
+                const predictions = this.calculateGamePredictions(eventId, home.name, away.name);
+
                 let cardClass = 'game-card';
                 let statusClass = 'upcoming';
                 let statusText = this.formatTime(dateET);
@@ -1409,8 +1515,14 @@
                         </div>
                     </div>
                     <div class="game-predictions">
-                        <div class="prediction-item"><div class="prediction-label">Total</div><div class="prediction-value">O/U 220</div></div>
-                        <div class="prediction-item"><div class="prediction-label">Spread</div><div class="prediction-value">+2.5</div></div>
+                        <div class="prediction-item">
+                            <div class="prediction-label">Total</div>
+                            <div class="prediction-value">O/U ${predictions.total}</div>
+                        </div>
+                        <div class="prediction-item">
+                            <div class="prediction-label">Spread</div>
+                            <div class="prediction-value">${predictions.spread >= 0 ? '+' : ''}${predictions.spread}</div>
+                        </div>
                     </div>
                     <button class="analyze-btn" 
                             data-event-id="${eventId}"
@@ -1437,61 +1549,86 @@
                     document.getElementById('modalTitle').textContent = `${awayTeam} @ ${homeTeam}`;
                     this.showModalLoading();
 
-                    let statsData = { home: { stats: {} }, away: { stats: {} } };
+                    let statsData = this.statsCache[eventId] || { home: { stats: {} }, away: { stats: {} } };
+                    let seasonData = this.seasonCache[eventId] || {};
                     let playerData = {};
                     let injuriesData = [];
-                    let seasonData = {};
 
                     try {
-                        statsData = await this.fetchGameStats(eventId);
-                        seasonData = await this.fetchSeasonStats(eventId);
-                        playerData = await this.fetchPlayerStats(eventId);
-                        injuriesData = await this.fetchInjuries();
+                        // Se não temos dados em cache, buscar
+                        if (!this.statsCache[eventId]) {
+                            [statsData, seasonData] = await Promise.all([
+                                this.fetchGameStats(eventId),
+                                this.fetchSeasonStats(eventId)
+                            ]);
+                        }
+                        
+                        [playerData, injuriesData] = await Promise.all([
+                            this.fetchPlayerStats(eventId),
+                            this.fetchInjuries()
+                        ]);
                     } catch (err) {
                         console.warn('Erro ao carregar dados detalhados', err);
                     }
 
-                    this.populateOverviewTab(statsData, homeTeam, awayTeam);
+                    this.populateOverviewTab(statsData, seasonData, homeTeam, awayTeam, eventId);
                     this.populateComparisonTab(statsData, seasonData, homeTeam, awayTeam, homeSeo, awaySeo);
                     this.populatePlayersTab(playerData, injuriesData, homeTeam, awayTeam, homeSeo, awaySeo);
-                    this.populateBettingTab(statsData, playerData, homeTeam, awayTeam);
+                    this.populateBettingTab(statsData, seasonData, playerData, homeTeam, awayTeam, eventId);
 
                 } catch (error) {
                     this.showModalError('Erro crítico ao carregar análise');
                 }
             }
 
-            populateOverviewTab(statsData, homeTeam, awayTeam) {
-                const homePts = parseFloat(statsData?.home?.stats?.pointsForPerGame) || 115;
-                const awayPts = parseFloat(statsData?.away?.stats?.pointsForPerGame) || 112;
-                const total = Math.round(homePts + awayPts);
-                const spread = (homePts - awayPts + 3).toFixed(1);
-                const homeProb = Math.min(70, Math.round(50 + (spread * 2)));
+            populateOverviewTab(statsData, seasonData, homeTeam, awayTeam, eventId) {
+                // Usar dados reais se disponível
+                const predictions = this.calculateGamePredictions(eventId, homeTeam, awayTeam);
+                
+                // Determinar confiança baseada na disponibilidade de dados
+                const hasRealData = (statsData?.home?.stats?.pointsForPerGame || seasonData?.home?.stats?.pointsForPerGame);
+                const confidence = hasRealData ? 'high' : 'medium';
+                const confidenceText = hasRealData ? 'Alta' : 'Média';
 
                 document.getElementById('overviewTab').innerHTML = `
                 <div class="overview-grid">
                     <div class="metric-card">
-                        <div class="metric-header"><div class="metric-title">Total Previsto</div><div class="confidence-badge high">Alta</div></div>
-                        <div class="metric-value">O/U ${total}</div>
-                        <div class="metric-description">Média dos times</div>
+                        <div class="metric-header">
+                            <div class="metric-title">Total Previsto</div>
+                            <div class="confidence-badge ${confidence}">${confidenceText}</div>
+                        </div>
+                        <div class="metric-value">O/U ${predictions.total}</div>
+                        <div class="metric-description">Baseado na média ofensiva/defensiva</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-header"><div class="metric-title">Spread</div><div class="confidence-badge medium">Média</div></div>
-                        <div class="metric-value">${spread >= 0 ? '+' : ''}${spread}</div>
-                        <div class="metric-description">Vantagem da casa</div>
+                        <div class="metric-header">
+                            <div class="metric-title">Spread</div>
+                            <div class="confidence-badge ${confidence}">${confidenceText}</div>
+                        </div>
+                        <div class="metric-value">${predictions.spread >= 0 ? '+' : ''}${predictions.spread}</div>
+                        <div class="metric-description">Vantagem de casa + diferença de qualidade</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-header"><div class="metric-title">Probabilidade</div><div class="confidence-badge high">Alta</div></div>
-                        <div class="metric-value">${homeProb}% - ${100 - homeProb}%</div>
+                        <div class="metric-header">
+                            <div class="metric-title">Probabilidade</div>
+                            <div class="confidence-badge ${confidence}">${confidenceText}</div>
+                        </div>
+                        <div class="metric-value">${predictions.homeProb}% - ${predictions.awayProb}%</div>
                         <div class="metric-description">${homeTeam} vs ${awayTeam}</div>
                     </div>
+                </div>
+                <div class="overview-details">
+                    <h4>Projeção de Pontos:</h4>
+                    <p><strong>${homeTeam}:</strong> ${predictions.homePts} pontos</p>
+                    <p><strong>${awayTeam}:</strong> ${predictions.awayPts} pontos</p>
                 </div>
             `;
             }
 
             populateComparisonTab(statsData, seasonData, homeTeam, awayTeam, homeSeo, awaySeo) {
-                const h = statsData?.home?.stats || seasonData?.home?.stats || {};
-                const a = statsData?.away?.stats || seasonData?.away?.stats || {};
+                // Priorizar dados da temporada, depois dados do jogo, depois defaults
+                const h = seasonData?.home?.stats || statsData?.home?.stats || this.getDefaultTeamStats(homeTeam);
+                const a = seasonData?.away?.stats || statsData?.away?.stats || this.getDefaultTeamStats(awayTeam);
 
                 const stats = [
                     { label: 'PONTOS POR JOGO', home: h.pointsForPerGame || 115.0, away: a.pointsForPerGame || 112.0 },
@@ -1544,45 +1681,25 @@
     `;
             }
 
-            renderStatRow(label, homeVal, awayVal) {
-                const h = parseFloat(homeVal) || 0;
-                const a = parseFloat(awayVal) || 0;
-                const max = Math.max(h, a, 1);
-                const homeWidth = (h / max) * 100;
-                const awayWidth = (a / max) * 100;
-
-                return `
-                <div class="stats-row">
-                    <div class="stat-value home">${homeVal}</div>
-                    <div class="stat-label">${label}</div>
-                    <div class="stat-value away">${awayVal}</div>
-                </div>
-                <div class="stat-bar-container">
-                    <div class="stat-bar home" style="width: ${homeWidth}%"></div>
-                    <div class="stat-bar away" style="width: ${awayWidth}%"></div>
-                </div>
-            `;
-            }
-
             populatePlayersTab(playerData, injuriesData, homeTeam, awayTeam, homeSeo, awaySeo) {
                 const categories = {
-                    'points': { title: 'PONTOS', key: 'pointsAverage' },
-                    'rebounds': { title: 'REBOTES', key: 'reboundsPerGame' },
-                    'assists': { title: 'ASSISTÊNCIAS', key: 'assistsPerGame' },
-                    'blocks': { title: 'TOCOS', key: 'blocksPerGame' },
-                    'steals': { title: 'ROUBOS', key: 'stealsPerGame' }
+                    'pointsAverage': { title: 'PONTOS', key: 'pointsAverage', icon: '🏀' },
+                    'reboundsPerGame': { title: 'REBOTES', key: 'reboundsPerGame', icon: '🔄' },
+                    'assistsPerGame': { title: 'ASSISTÊNCIAS', key: 'assistsPerGame', icon: '🤝' },
+                    'blocksPerGame': { title: 'TOCOS', key: 'blocksPerGame', icon: '🛡️' },
+                    'stealsPerGame': { title: 'ROUBOS', key: 'stealsPerGame', icon: '👐' }
                 };
 
                 const getLeaders = (team) => {
                     const leaders = {};
                     Object.entries(categories).forEach(([cat, info]) => {
-                        const player = team?.playerStatsByCategory?.[info.key]?.[0];
-                        leaders[cat] = player ? {
+                        const players = team?.playerStatsByCategory?.[info.key] || [];
+                        leaders[cat] = players.slice(0, 3).map(player => ({
                             name: player.player.displayName,
                             pos: player.player.positionShort || 'N/A',
-                            stat: player.stats[info.key] || '0',
+                            stat: parseFloat(player.stats[info.key] || 0).toFixed(1),
                             photo: this.getPlayerPhotoUrl(player.player.displayName)
-                        } : { name: 'N/A', pos: '', stat: '0', photo: 'https://via.placeholder.com/60' };
+                        }));
                     });
                     return leaders;
                 };
@@ -1602,13 +1719,16 @@
                         </div>
                         <div id="awayLeaders"></div>
                         <div class="injury-section">
-                            <div class="injury-title">Lesões</div>
+                            <div class="injury-title"><strong>Relatório de Lesões</strong></div>
                             ${awayInjuries.length ? awayInjuries.map(i => `
                                 <div class="injury-item">
+                                    <div>
+                                        <strong>${i.player.displayName}</strong> (${i.player.positionShort})<br>
+                                        <small>${i.description}</small>
+                                    </div>
                                     <span class="injury-status out">OUT</span>
-                                    <div>${i.player.displayName} (${i.player.positionShort}) - ${i.description}</div>
                                 </div>
-                            `).join('') : '<p>Nenhum jogador lesionado</p>'}
+                            `).join('') : '<p style="color: var(--color-success);">✅ Nenhum jogador lesionado</p>'}
                         </div>
                     </div>
                     <div class="player-section">
@@ -1618,57 +1738,157 @@
                         </div>
                         <div id="homeLeaders"></div>
                         <div class="injury-section">
-                            <div class="injury-title">Lesões</div>
+                            <div class="injury-title"><strong>Relatório de Lesões</strong></div>
                             ${homeInjuries.length ? homeInjuries.map(i => `
                                 <div class="injury-item">
+                                    <div>
+                                        <strong>${i.player.displayName}</strong> (${i.player.positionShort})<br>
+                                        <small>${i.description}</small>
+                                    </div>
                                     <span class="injury-status out">OUT</span>
-                                    <div>${i.player.displayName} (${i.player.positionShort}) - ${i.description}</div>
                                 </div>
-                            `).join('') : '<p>Nenhum jogador lesionado</p>'}
+                            `).join('') : '<p style="color: var(--color-success);">✅ Nenhum jogador lesionado</p>'}
                         </div>
                     </div>
                 </div>
             `;
 
                 const renderLeaders = (containerId, leaders) => {
-                    document.getElementById(containerId).innerHTML = Object.entries(leaders).map(([cat, l]) => `
-                    <div class="player-item">
-                        <img src="${l.photo}" alt="${l.name}" class="leader-photo" onerror="this.src='https://via.placeholder.com/60'">
-                        <div class="player-name">${l.name} (${l.pos})</div>
-                        <div class="player-stat">${l.stat}</div>
-                    </div>
-                `).join('');
+                    const content = Object.entries(categories).map(([cat, info]) => {
+                        const players = leaders[cat] || [];
+                        if (players.length === 0) return '';
+                        
+                        return `
+                            <div class="player-category">${info.icon} ${info.title}</div>
+                            ${players.map(player => `
+                                <div class="player-item">
+                                    <div>
+                                        <div class="player-name">${player.name} (${player.pos})</div>
+                                    </div>
+                                    <div class="player-stat">${player.stat}</div>
+                                </div>
+                            `).join('')}
+                        `;
+                    }).join('');
+                    
+                    document.getElementById(containerId).innerHTML = content || '<p>Dados de jogadores não disponíveis</p>';
                 };
 
                 renderLeaders('homeLeaders', homeLeaders);
                 renderLeaders('awayLeaders', awayLeaders);
             }
 
-            populateBettingTab(statsData, playerData, homeTeam, awayTeam) {
-                const h = statsData?.home?.stats || {};
-                const a = statsData?.away?.stats || {};
-                const total = Math.round((parseFloat(h.pointsForPerGame) || 115) + (parseFloat(a.pointsForPerGame) || 112));
-                const over = Math.ceil(total / 5) * 5;
-
-                const leader = (team, cat) => {
-                    const p = team?.playerStatsByCategory?.[cat]?.[0];
-                    return p ? { name: p.player.displayName, stat: Math.floor(parseFloat(p.stats[cat]) || 0) } : null;
+            populateBettingTab(statsData, seasonData, playerData, homeTeam, awayTeam, eventId) {
+                const predictions = this.calculateGamePredictions(eventId, homeTeam, awayTeam);
+                
+                // Buscar líderes de diferentes categorias para apostas de jogadores
+                const getTopPlayer = (team, category) => {
+                    const players = team?.playerStatsByCategory?.[category];
+                    if (!players || players.length === 0) return null;
+                    const player = players[0];
+                    return {
+                        name: player.player.displayName,
+                        stat: parseFloat(player.stats[category] || 0).toFixed(1)
+                    };
                 };
 
-                const homeAst = leader(playerData?.home, 'assistsPerGame');
-                const awayAst = leader(playerData?.away, 'assistsPerGame');
-                const homeReb = leader(playerData?.home, 'reboundsPerGame');
-                const awayReb = leader(playerData?.away, 'reboundsPerGame');
+                const homeScorer = getTopPlayer(playerData?.home, 'pointsAverage');
+                const awayScorer = getTopPlayer(playerData?.away, 'pointsAverage');
+                const homeRebounder = getTopPlayer(playerData?.home, 'reboundsPerGame');
+                const awayRebounder = getTopPlayer(playerData?.away, 'reboundsPerGame');
+                const homeAssister = getTopPlayer(playerData?.home, 'assistsPerGame');
+                const awayAssister = getTopPlayer(playerData?.away, 'assistsPerGame');
+
+                // Calcular over/under para total de pontos
+                const overUnder = Math.ceil(predictions.total / 5) * 5; // Arredondar para múltiplo de 5
 
                 document.getElementById('bettingTab').innerHTML = `
                 <div class="betting-section">
                     <div class="betting-card">
-                        <div class="betting-header"><div class="betting-title">Previsões</div></div>
-                        <div id="bettingLines">
-                            <div class="bet-item"><div class="bet-details"><div class="bet-type">Total de Pontos</div><div class="bet-description">Over ${over}</div></div><div class="confidence-badge high">Alta</div></div>
-                            ${homeAst ? `<div class="bet-item"><div class="bet-details"><div class="bet-type">${homeAst.name}</div><div class="bet-description">≥ ${homeAst.stat} assists</div></div><div class="confidence-badge medium">Média</div></div>` : ''}
-                            ${awayReb ? `<div class="bet-item"><div class="bet-details"><div class="bet-type">${awayReb.name}</div><div class="bet-description">≥ ${awayReb.stat} rebotes</div></div><div class="confidence-badge medium">Média</div></div>` : ''}
+                        <div class="betting-header">
+                            <div class="betting-title">🎯 Principais Apostas</div>
                         </div>
+                        
+                        <!-- Apostas do Jogo -->
+                        <div class="bet-item">
+                            <div class="bet-details">
+                                <div class="bet-type">Total de Pontos</div>
+                                <div class="bet-description">Over ${overUnder} pontos</div>
+                            </div>
+                            <div class="confidence-badge high">Alta</div>
+                        </div>
+                        
+                        <div class="bet-item">
+                            <div class="bet-details">
+                                <div class="bet-type">Spread</div>
+                                <div class="bet-description">${homeTeam} ${predictions.spread >= 0 ? '+' : ''}${predictions.spread}</div>
+                            </div>
+                            <div class="confidence-badge medium">Média</div>
+                        </div>
+                        
+                        <!-- Apostas de Jogadores -->
+                        ${homeScorer ? `
+                        <div class="bet-item">
+                            <div class="bet-details">
+                                <div class="bet-type">${homeScorer.name} - Pontos</div>
+                                <div class="bet-description">Over ${Math.floor(parseFloat(homeScorer.stat) - 1.5)} pontos</div>
+                            </div>
+                            <div class="confidence-badge medium">Média</div>
+                        </div>` : ''}
+                        
+                        ${awayScorer ? `
+                        <div class="bet-item">
+                            <div class="bet-details">
+                                <div class="bet-type">${awayScorer.name} - Pontos</div>
+                                <div class="bet-description">Over ${Math.floor(parseFloat(awayScorer.stat) - 1.5)} pontos</div>
+                            </div>
+                            <div class="confidence-badge medium">Média</div>
+                        </div>` : ''}
+                        
+                        ${homeRebounder ? `
+                        <div class="bet-item">
+                            <div class="bet-details">
+                                <div class="bet-type">${homeRebounder.name} - Rebotes</div>
+                                <div class="bet-description">Over ${Math.floor(parseFloat(homeRebounder.stat) - 1)} rebotes</div>
+                            </div>
+                            <div class="confidence-badge low">Baixa</div>
+                        </div>` : ''}
+                        
+                        ${awayRebounder ? `
+                        <div class="bet-item">
+                            <div class="bet-details">
+                                <div class="bet-type">${awayRebounder.name} - Rebotes</div>
+                                <div class="bet-description">Over ${Math.floor(parseFloat(awayRebounder.stat) - 1)} rebotes</div>
+                            </div>
+                            <div class="confidence-badge low">Baixa</div>
+                        </div>` : ''}
+                        
+                        ${homeAssister ? `
+                        <div class="bet-item">
+                            <div class="bet-details">
+                                <div class="bet-type">${homeAssister.name} - Assistências</div>
+                                <div class="bet-description">Over ${Math.floor(parseFloat(homeAssister.stat) - 1)} assistências</div>
+                            </div>
+                            <div class="confidence-badge medium">Média</div>
+                        </div>` : ''}
+                        
+                        ${awayAssister ? `
+                        <div class="bet-item">
+                            <div class="bet-details">
+                                <div class="bet-type">${awayAssister.name} - Assistências</div>
+                                <div class="bet-description">Over ${Math.floor(parseFloat(awayAssister.stat) - 1)} assistências</div>
+                            </div>
+                            <div class="confidence-badge medium">Média</div>
+                        </div>` : ''}
+                    </div>
+                    
+                    <div class="betting-card">
+                        <div class="betting-header">
+                            <div class="betting-title">📊 Análise Estatística</div>
+                        </div>
+                        <p><strong>Projeção Total:</strong> ${predictions.total} pontos</p>
+                        <p><strong>Vantagem:</strong> ${homeTeam} por ${Math.abs(predictions.spread)} pontos</p>
+                        <p><strong>Confiança:</strong> ${predictions.homeProb >= 60 ? 'Alta' : predictions.homeProb >= 55 ? 'Média' : 'Baixa'}</p>
                     </div>
                 </div>
             `;
@@ -1743,6 +1963,8 @@
             async refreshCurrentDate() {
                 if (this.currentDate) {
                     delete this.scheduleCache[this.currentDate];
+                    delete this.statsCache[this.currentDate];
+                    delete this.seasonCache[this.currentDate];
                     await this.loadGamesForDate(this.currentDate);
                 }
             }
