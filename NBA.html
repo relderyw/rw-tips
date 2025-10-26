@@ -102,6 +102,50 @@
             padding: 24px;
         }
 
+        .section-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            background: var(--color-bg-medium);
+            border-radius: var(--radius);
+            padding: 8px;
+            border: 1px solid var(--color-border);
+        }
+
+        .section-tab {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: var(--color-text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Oxanium', sans-serif;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        .section-tab.active {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: white;
+            box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3);
+        }
+
+        .section-tab:hover:not(.active) {
+            background: var(--color-bg-light);
+            color: var(--color-text-primary);
+        }
+
+        .section-content {
+            display: none;
+        }
+
+        .section-content.active {
+            display: block;
+        }
+
         .date-selector {
             background: var(--color-bg-medium);
             border: 1px solid var(--color-border);
@@ -208,6 +252,69 @@
             border-color: var(--color-primary);
         }
 
+        /* Date Picker Styles */
+        .modern-date-picker {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .date-input-container {
+            position: relative;
+            flex: 1;
+            max-width: 200px;
+        }
+
+        .date-input {
+            width: 100%;
+            background: var(--color-bg-light);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: var(--color-text-primary);
+            font-family: 'Oxanium', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
+        }
+
+        .date-nav-btn {
+            background: var(--color-bg-light);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--color-text-primary);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+        }
+
+        .date-nav-btn:hover {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+        }
+
+        .date-nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .date-nav-btn:disabled:hover {
+            background: var(--color-bg-light);
+            border-color: var(--color-border);
+        }
+
         .games-section {
             background: var(--color-bg-medium);
             border: 1px solid var(--color-border);
@@ -300,8 +407,9 @@
         }
 
         .game-card.finished {
-            opacity: 0.8;
-            background: linear-gradient(135deg, rgba(100, 100, 100, 0.1), var(--color-bg-light));
+            opacity: 0.9;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), var(--color-bg-light));
+            border-left: 4px solid var(--color-success);
         }
 
         @keyframes livePulse {
@@ -335,7 +443,7 @@
         }
 
         .game-status.finished {
-            background: var(--color-text-secondary);
+            background: var(--color-success);
             color: white;
         }
 
@@ -416,6 +524,10 @@
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
+        .score-display.winner {
+            color: var(--color-success);
+        }
+
         .game-time {
             font-family: 'Oxanium', sans-serif;
             font-size: 18px;
@@ -450,6 +562,17 @@
             font-weight: 700;
             color: var(--color-primary);
             margin-top: 4px;
+        }
+
+        .betting-info {
+            background: var(--color-bg-dark);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 16px 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
 
         .analyze-btn {
@@ -967,6 +1090,19 @@
             .vs-divider {
                 order: -1;
             }
+
+            .section-tabs {
+                flex-direction: column;
+            }
+
+            .modern-date-picker {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .date-input-container {
+                max-width: none;
+            }
         }
 
         ::-webkit-scrollbar {
@@ -1085,32 +1221,80 @@
     </header>
 
     <main class="main-container">
-        <section class="date-selector">
-            <h3>Selecionar Data</h3>
-            <div class="date-tabs" id="dateTabs"></div>
-            <div class="date-info">
-                <div class="date-stats" id="dateStats">Carregando...</div>
-                <button class="refresh-btn" id="refreshBtn">Atualizar</button>
-            </div>
-        </section>
+        <!-- Section Tabs -->
+        <div class="section-tabs">
+            <button class="section-tab active" data-section="upcoming">Próximos Jogos</button>
+            <button class="section-tab" data-section="finished">Jogos Finalizados</button>
+        </div>
 
-        <section class="games-section">
-            <div class="games-header">
-                <h2 class="games-title">Jogos NBA</h2>
-                <div class="games-filter">
-                    <button class="filter-btn active" data-filter="all">Todos</button>
-                    <button class="filter-btn" data-filter="live">Ao Vivo</button>
-                    <button class="filter-btn" data-filter="upcoming">Próximos</button>
-                    <button class="filter-btn" data-filter="finished">Finalizados</button>
+        <!-- Upcoming Games Section -->
+        <div class="section-content active" id="upcomingSection">
+            <section class="date-selector">
+                <h3><i class="fas fa-calendar-alt"></i> Selecionar Data</h3>
+                <div class="date-tabs" id="dateTabs"></div>
+                <div class="date-info">
+                    <div class="date-stats" id="dateStats">Carregando...</div>
+                    <button class="refresh-btn" id="refreshBtn">
+                        <i class="fas fa-sync-alt"></i>
+                        Atualizar
+                    </button>
                 </div>
-            </div>
-            <div class="games-grid" id="gamesGrid">
-                <div class="loading">
-                    <div class="spinner"></div>
-                    <span>Carregando jogos...</span>
+            </section>
+
+            <section class="games-section">
+                <div class="games-header">
+                    <h2 class="games-title">Jogos NBA</h2>
+                    <div class="games-filter">
+                        <button class="filter-btn active" data-filter="all">Todos</button>
+                        <button class="filter-btn" data-filter="live">Ao Vivo</button>
+                        <button class="filter-btn" data-filter="upcoming">Próximos</button>
+                    </div>
                 </div>
-            </div>
-        </section>
+                <div class="games-grid" id="gamesGrid">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <span>Carregando jogos...</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Finished Games Section -->
+        <div class="section-content" id="finishedSection">
+            <section class="date-selector">
+                <h3><i class="fas fa-history"></i> Resultados dos Jogos</h3>
+                <div class="modern-date-picker">
+                    <button class="date-nav-btn" id="prevDateBtn">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="date-input-container">
+                        <input type="date" class="date-input" id="finishedDateInput">
+                    </div>
+                    <button class="date-nav-btn" id="nextDateBtn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <button class="refresh-btn" id="refreshFinishedBtn">
+                        <i class="fas fa-sync-alt"></i>
+                        Atualizar
+                    </button>
+                </div>
+                <div class="date-info">
+                    <div class="date-stats" id="finishedDateStats">Selecione uma data</div>
+                </div>
+            </section>
+
+            <section class="games-section">
+                <div class="games-header">
+                    <h2 class="games-title">Resultados</h2>
+                </div>
+                <div class="games-grid" id="finishedGamesGrid">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <span>Selecione uma data para ver os resultados...</span>
+                    </div>
+                </div>
+            </section>
+        </div>
     </main>
 
     <div class="modal" id="analysisModal">
@@ -1154,11 +1338,14 @@
         class NBAAnalysisApp {
             constructor() {
                 this.currentDate = null;
+                this.currentFinishedDate = null;
                 this.scheduleCache = {};
+                this.finishedGamesCache = {};
                 this.statsCache = {};
                 this.seasonCache = {};
                 this.autoUpdateInterval = null;
                 this.currentFilter = 'all';
+                this.currentSection = 'upcoming';
 
                 // PROXIES ESTÁVEIS
                 this.proxyProviders = [
@@ -1176,14 +1363,32 @@
             async initializeApp() {
                 this.setupEventListeners();
                 await this.loadAvailableDates();
+                this.setupFinishedGamesSection();
                 this.startAutoUpdate();
             }
 
             setupEventListeners() {
+                // Modal events
                 document.getElementById('closeModal').onclick = () => this.closeModal();
                 window.onclick = (e) => { if (e.target === document.getElementById('analysisModal')) this.closeModal(); };
+                
+                // Refresh buttons
                 document.getElementById('refreshBtn').onclick = () => this.refreshCurrentDate();
+                document.getElementById('refreshFinishedBtn').onclick = () => this.refreshFinishedDate();
 
+                // Section tabs
+                document.querySelectorAll('.section-tab').forEach(tab => {
+                    tab.onclick = (e) => {
+                        document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
+                        document.querySelectorAll('.section-content').forEach(c => c.classList.remove('active'));
+                        
+                        e.target.classList.add('active');
+                        this.currentSection = e.target.dataset.section;
+                        document.getElementById(`${this.currentSection}Section`).classList.add('active');
+                    };
+                });
+
+                // Filter buttons
                 document.querySelectorAll('.filter-btn').forEach(btn => {
                     btn.onclick = (e) => {
                         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -1193,6 +1398,7 @@
                     };
                 });
 
+                // Modal tabs
                 document.querySelectorAll('.modal-tab').forEach(tab => {
                     tab.onclick = (e) => {
                         document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
@@ -1201,6 +1407,38 @@
                         document.getElementById(`${e.target.dataset.tab}Tab`).classList.add('active');
                     };
                 });
+
+                // Finished games date picker
+                const finishedDateInput = document.getElementById('finishedDateInput');
+                const prevDateBtn = document.getElementById('prevDateBtn');
+                const nextDateBtn = document.getElementById('nextDateBtn');
+
+                finishedDateInput.onchange = () => this.loadFinishedGamesForDate(finishedDateInput.value);
+                
+                prevDateBtn.onclick = () => {
+                    const currentDate = new Date(finishedDateInput.value || new Date());
+                    currentDate.setDate(currentDate.getDate() - 1);
+                    finishedDateInput.value = currentDate.toISOString().split('T')[0];
+                    this.loadFinishedGamesForDate(finishedDateInput.value);
+                };
+
+                nextDateBtn.onclick = () => {
+                    const currentDate = new Date(finishedDateInput.value || new Date());
+                    const today = new Date();
+                    if (currentDate < today) {
+                        currentDate.setDate(currentDate.getDate() + 1);
+                        finishedDateInput.value = currentDate.toISOString().split('T')[0];
+                        this.loadFinishedGamesForDate(finishedDateInput.value);
+                    }
+                };
+            }
+
+            setupFinishedGamesSection() {
+                const finishedDateInput = document.getElementById('finishedDateInput');
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                finishedDateInput.value = yesterday.toISOString().split('T')[0];
+                finishedDateInput.max = new Date().toISOString().split('T')[0];
             }
 
             async proxyFetchJson(originalUrl, options = {}) {
@@ -1300,6 +1538,26 @@
                 
                 this.scheduleCache[date] = games;
                 return games;
+            }
+
+            async fetchFinishedGamesForDate(date) {
+                if (this.finishedGamesCache[date]) return this.finishedGamesCache[date];
+                
+                const apiUrl = `https://next-gen.sports.bellmedia.ca/v2/schedule/sports/basketball/leagues/nba?brand=tsn&lang=en&grouping=${date}&season=2025`;
+                
+                try {
+                    const data = await this.proxyFetchJson(apiUrl, { cacheKey: `finished:${date}`, ttlMs: 5 * 60 * 1000 });
+                    const games = data[date] || [];
+                    
+                    // Filtrar apenas jogos finalizados
+                    const finishedGames = games.filter(game => game.event.status === 'Final');
+                    
+                    this.finishedGamesCache[date] = finishedGames;
+                    return finishedGames;
+                } catch (error) {
+                    console.error('Erro ao buscar jogos finalizados:', error);
+                    return [];
+                }
             }
 
             async fetchGameStats(eventId) {
@@ -1457,6 +1715,17 @@
                 }
             }
 
+            async loadFinishedGamesForDate(date) {
+                try {
+                    this.showFinishedLoading();
+                    const games = await this.fetchFinishedGamesForDate(date);
+                    this.renderFinishedGames(games);
+                    this.updateFinishedDateStats(date, games);
+                } catch (error) {
+                    this.showFinishedError('Falha ao carregar jogos finalizados.');
+                }
+            }
+
             renderGames(games) {
                 const grid = document.getElementById('gamesGrid');
                 if (!games || games.length === 0) {
@@ -1472,6 +1741,16 @@
                     };
                 });
                 this.filterGames();
+            }
+
+            renderFinishedGames(games) {
+                const grid = document.getElementById('finishedGamesGrid');
+                if (!games || games.length === 0) {
+                    grid.innerHTML = `<div class="error"><h3>Nenhum jogo finalizado</h3><p>Não há jogos finalizados nesta data.</p></div>`;
+                    return;
+                }
+
+                grid.innerHTML = games.map(g => this.createFinishedGameCard(g.event, g.eventId)).join('');
             }
 
             createGameCard(game, eventId) {
@@ -1532,6 +1811,57 @@
                             data-away-seo="${away.seoIdentifier}">
                         Analisar Jogo
                     </button>
+                </div>
+            `;
+            }
+
+            createFinishedGameCard(game, eventId) {
+                const { top: away, bottom: home, venue, bettingData } = game;
+                
+                const homeSplit = this.splitTeamName(home.name);
+                const awaySplit = this.splitTeamName(away.name);
+
+                const homeLogo = this.getTeamLogoUrl(home.seoIdentifier);
+                const awayLogo = this.getTeamLogoUrl(away.seoIdentifier);
+
+                const homeWon = home.hasWon;
+                const awayWon = away.hasWon;
+
+                return `
+                <div class="game-card finished">
+                    <div class="game-status finished">FINAL</div>
+                    <div class="game-teams">
+                        <div class="team">
+                            <img src="${awayLogo}" alt="${away.name}" class="team-logo" onerror="this.src='https://via.placeholder.com/60x60/9333EA/ffffff?text=${away.shortName}'">
+                            <div class="team-name">${awaySplit.city}</div>
+                            <div class="team-record">${this.formatRecord(away.record)}</div>
+                        </div>
+                        <div class="game-score">
+                            <div class="score-display ${awayWon ? 'winner' : ''}">${away.score}</div>
+                            <div style="color: var(--color-text-secondary); font-size: 14px;">-</div>
+                            <div class="score-display ${homeWon ? 'winner' : ''}">${home.score}</div>
+                        </div>
+                        <div class="team">
+                            <img src="${homeLogo}" alt="${home.name}" class="team-logo" onerror="this.src='https://via.placeholder.com/60x60/9333EA/ffffff?text=${home.shortName}'">
+                            <div class="team-name">${homeSplit.city}</div>
+                            <div class="team-record">${this.formatRecord(home.record)}</div>
+                        </div>
+                    </div>
+                    ${bettingData ? `
+                    <div class="betting-info">
+                        <div class="prediction-item">
+                            <div class="prediction-label">Linha</div>
+                            <div class="prediction-value">${bettingData.line || 'N/A'}</div>
+                        </div>
+                        <div class="prediction-item">
+                            <div class="prediction-label">Total</div>
+                            <div class="prediction-value">${bettingData.total || 'N/A'}</div>
+                        </div>
+                    </div>
+                    ` : ''}
+                    <div style="text-align: center; padding: 12px; color: var(--color-text-secondary); font-size: 12px;">
+                        <i class="fas fa-map-marker-alt"></i> ${venue}
+                    </div>
                 </div>
             `;
             }
@@ -1613,8 +1943,8 @@
                             <div class="metric-title">Probabilidade</div>
                             <div class="confidence-badge ${confidence}">${confidenceText}</div>
                         </div>
-                        <div class="metric-value">${predictions.homeProb}% - ${predictions.awayProb}%</div>
-                        <div class="metric-description">${homeTeam} vs ${awayTeam}</div>
+                        <div class="metric-value">${predictions.awayProb}% - ${predictions.homeProb}%</div>
+                        <div class="metric-description">${awayTeam} vs ${homeTeam}</div>
                     </div>
                 </div>
                 <div class="overview-details">
@@ -1932,12 +2262,27 @@
             `;
             }
 
+            updateFinishedDateStats(date, games) {
+                document.getElementById('finishedDateStats').innerHTML = `
+                <span>${this.formatDateBrazil(date)}</span>
+                <span>${games.length} jogos finalizados</span>
+            `;
+            }
+
             showLoading() {
                 document.getElementById('gamesGrid').innerHTML = `<div class="loading"><div class="spinner"></div><span>Carregando...</span></div>`;
             }
 
+            showFinishedLoading() {
+                document.getElementById('finishedGamesGrid').innerHTML = `<div class="loading"><div class="spinner"></div><span>Carregando resultados...</span></div>`;
+            }
+
             showError(msg) {
                 document.getElementById('gamesGrid').innerHTML = `<div class="error"><h3>Erro</h3><p>${msg}</p></div>`;
+            }
+
+            showFinishedError(msg) {
+                document.getElementById('finishedGamesGrid').innerHTML = `<div class="error"><h3>Erro</h3><p>${msg}</p></div>`;
             }
 
             showModalLoading() {
@@ -1969,9 +2314,22 @@
                 }
             }
 
+            async refreshFinishedDate() {
+                const finishedDateInput = document.getElementById('finishedDateInput');
+                const date = finishedDateInput.value;
+                if (date) {
+                    delete this.finishedGamesCache[date];
+                    await this.loadFinishedGamesForDate(date);
+                }
+            }
+
             startAutoUpdate() {
                 if (this.autoUpdateInterval) clearInterval(this.autoUpdateInterval);
-                this.autoUpdateInterval = setInterval(() => this.refreshCurrentDate(), 30000);
+                this.autoUpdateInterval = setInterval(() => {
+                    if (this.currentSection === 'upcoming') {
+                        this.refreshCurrentDate();
+                    }
+                }, 30000);
             }
         }
 
