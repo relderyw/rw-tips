@@ -1221,8 +1221,8 @@
                 const getNextAppUrl = () => {
                     // Se estiver em netlify ou mesmo domínio
                     if (window.location.hostname.includes('netlify.app')) {
-                        // Ajuste 'app' pelo subdomínio real da sua aplicação Next.js no Netlify
-                        return 'https://app-rwtips.netlify.app'; // OU 'https://rw-tips.netlify.app' se a app Next.js estiver no mesmo site
+                        // App Next.js publicada na Vercel
+                        return 'https://rw-tips.vercel.app';
                     }
                     // Para desenvolvimento local
                     return 'http://localhost:3000';
