@@ -1560,10 +1560,22 @@
                 window.location.href = 'over.html';
             });
 
-            // Abre a aplicação Next.js (React) em nova aba
+            // Substitua seu código atual do botão por este:
             reactAnalysisAppButton.addEventListener('click', () => {
                 setActiveMainNavButton(reactAnalysisAppButton);
-                window.open('https://rw-tips.vercel.app', '_blank');
+
+                // Pegar o token de autenticação
+                const authToken = localStorage.getItem('authToken');
+                const tokenExpiry = localStorage.getItem('tokenExpiry');
+
+                if (authToken && tokenExpiry) {
+                    // Passar o token como parâmetro na URL
+                    const vercelUrl = `https://rw-tips.vercel.app?auth=${encodeURIComponent(authToken)}&expiry=${tokenExpiry}`;
+                    window.open(vercelUrl, '_blank');
+                } else {
+                    alert('Erro de autenticação. Por favor, faça login novamente.');
+                    window.location.href = 'index.html';
+                }
             });
 
             updateGames();
