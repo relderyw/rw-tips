@@ -726,6 +726,9 @@
         <button class="main-nav-button" id="playerAnalysisButton">
             <span>🔍</span> Análise de Jogadores
         </button>
+        <button class="main-nav-button" id="reactAnalysisAppButton">
+            <span>🧠</span> Análise (React)
+        </button>
         <button class="main-nav-button" id="dashboardButton">
             <span>📋</span> Dashboard
         </button>
@@ -781,6 +784,7 @@
         const registerBetsButton = document.getElementById('registerBetsButton');
         const playerAnalysisButton = document.getElementById('playerAnalysisButton');
         const dashboardButton = document.getElementById('dashboardButton');
+        const reactAnalysisAppButton = document.getElementById('reactAnalysisAppButton');
         const nbaStatsButton = document.getElementById('nbaStatsButton');
         const radarButton = document.getElementById('radarButton');
         const overButton = document.getElementById('overButton');
@@ -1467,6 +1471,12 @@
         overButton.addEventListener('click', () => {
             setActiveMainNavButton(overButton);
             window.location.href = 'over.html';
+        });
+
+        // Abre a aplicação Next.js (React) em nova aba
+        reactAnalysisAppButton.addEventListener('click', () => {
+            setActiveMainNavButton(reactAnalysisAppButton);
+            window.open('https://rw-tips.vercel.app', '_blank');
         });
 
         updateGames();
