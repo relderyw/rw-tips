@@ -419,7 +419,6 @@
             margin-left: 5px;
         }
         .h2h-button {
-            width: 100%;
             padding: 12px;
             background: var(--primary-color);
             color: var(--text-primary);
@@ -433,10 +432,17 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            margin-top: auto;
+            min-height: 44px;
         }
         .h2h-button:hover {
             background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .buttons-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
         }
         .view-more-button {
             width: 100%;
@@ -1194,18 +1200,54 @@
                 </div>
             `;
 
+            const buttonContainer = document.createElement('div');
+            buttonContainer.className = 'buttons-container';
+
             const h2hButton = document.createElement('button');
             h2hButton.className = 'h2h-button';
+            h2hButton.style.flex = '1';
             h2hButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg> Ver H2H';
             h2hButton.onclick = () => {
                 window.location.href = `h2h_analysis.html?home=${encodeURIComponent(homePlayer)}&away=${encodeURIComponent(awayPlayer)}&league=${encodeURIComponent(leagueName)}`;
             };
 
+            const reactAnalysisButton = document.createElement('button');
+            reactAnalysisButton.className = 'h2h-button';
+            reactAnalysisButton.style.flex = '1';
+            reactAnalysisButton.style.background = 'var(--secondary-color)';
+            reactAnalysisButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m22 21-3-3m0 0a5.5 5.5 0 1 0-7.8-7.8 5.5 5.5 0 0 0 7.8 7.8Z"/></svg> Análise';
+            reactAnalysisButton.onclick = () => {
+                // Detecta automaticamente a URL base ou usa uma URL padrão
+                const getNextAppUrl = () => {
+                    // Se estiver em netlify ou mesmo domínio
+                    if (window.location.hostname.includes('netlify.app')) {
+                        // Ajuste 'app' pelo subdomínio real da sua aplicação Next.js no Netlify
+                        return 'https://app-rwtips.netlify.app'; // OU 'https://rw-tips.netlify.app' se a app Next.js estiver no mesmo site
+                    }
+                    // Para desenvolvimento local
+                    return 'http://localhost:3000';
+                };
+                
+                const nextAppBaseUrl = getNextAppUrl();
+                const matchId = game.id || gameId;
+                
+                // Coleta os IDs necessários, usando fallbacks se não estiverem disponíveis
+                const homeTeamId = game.home_team_id || game.home_team || '';
+                const awayTeamId = game.away_team_id || game.away_team || '';
+                const tournamentId = game.tournament_id || game.tournament || game.league_id || '';
+                
+                const url = `${nextAppBaseUrl}/match/${matchId}?homeTeamId=${encodeURIComponent(homeTeamId)}&awayTeamId=${encodeURIComponent(awayTeamId)}&tournamentId=${encodeURIComponent(tournamentId)}`;
+                window.open(url, '_blank');
+            };
+
+            buttonContainer.appendChild(h2hButton);
+            buttonContainer.appendChild(reactAnalysisButton);
+
             card.appendChild(teams);
             card.appendChild(matchTime);
             card.appendChild(limitButtons);
             card.appendChild(metricsContainer);
-            card.appendChild(h2hButton);
+            card.appendChild(buttonContainer);
 
             return card;
         }
