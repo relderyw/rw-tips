@@ -989,6 +989,7 @@
                     "Esoccer Battle - 8 mins play": "Battle 8m",
                     "Esoccer Battle Volta - 6 mins play": "Battle Volta 6m",
                     "Esoccer GT Leagues - 12 mins play": "GT Leagues 12m",
+                    "Esoccer GT Leagues – 12 mins play": "GT Leagues 12m",
                     "Esoccer H2H GG League - 8 mins play": "H2H GG 8m",
                     "Esoccer Adriatic League - 10 mins play": "Adriatic 10m"
                 };
@@ -1000,6 +1001,7 @@
                     "Esoccer Battle - 8 mins play": { name: "Battle 8m", color: "#FF4C4C" },
                     "Esoccer Battle Volta - 6 mins play": { name: "Battle Volta 6m", color: "#FFD700" },
                     "Esoccer GT Leagues - 12 mins play": { name: "GT Leagues 12m", color: "#32CD32" },
+                    "Esoccer GT Leagues – 12 mins play": { name: "GT Leagues 12m", color: "#32CD32" },
                     "Esoccer H2H GG League - 8 mins play": { name: "H2H GG 8m", color: "#8A2BE2" },
                     "Esoccer Adriatic League - 10 mins play": { name: "Adriatic 10m", color: "#1E90FF" }
                 };
@@ -1186,7 +1188,7 @@
                     return avgHtGoals >= 2.5 && pctBttsHt >= 88 && pctBttsSecond === 100 && avgFtGoals >= 4.0;
                 } else if (leagueName === "Esoccer Battle Volta - 6 mins play") {
                     return avgHtGoals >= 3.5 && pctBttsHt >= 100 && pctBttsSecond === 100 && avgFtGoals >= 6.0;
-                } else if (leagueName === "Esoccer GT Leagues - 12 mins play") {
+                } else if (leagueName === "Esoccer GT Leagues - 12 mins play" || leagueName === "Esoccer GT Leagues – 12 mins play") {
                     return avgHtGoals >= 3.0 && pctBttsHt >= 95 && pctBttsSecond === 100 && avgFtGoals >= 5.0;
                 }
                 return false;
