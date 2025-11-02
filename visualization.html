@@ -1235,12 +1235,20 @@
                 }, {});
 
                 const targetLeagues = [
-                    "Esoccer GT Leagues - 12 mins play",
+                    "Esoccer GT Leagues – 12 mins play",
                     "Esoccer Battle - 8 mins play",
                     "Esoccer Battle Volta - 6 mins play",
                     "Esoccer H2H GG League - 8 mins play",
                     "Esoccer Adriatic League - 10 mins play"
                 ];
+
+                const leagueClasses = {
+                    "Esoccer Battle - 8 mins play": "battle-8m",
+                    "Esoccer Battle Volta - 6 mins play": "battle-volta-6m",
+                    "Esoccer GT Leagues – 12 mins play": "gt-leagues-12m",
+                    "Esoccer H2H GG League - 8 mins play": "h2h-gg-8m",
+                    "Esoccer Adriatic League - 10 mins play": "adriatic-10m"
+                };
 
                 // Primeiro renderiza todos os cards sem dados H2H
                 for (const leagueName of targetLeagues) {
