@@ -499,6 +499,19 @@
                 <p>Baseado nos últimos 5 jogos para jogadores/confrontos e últimos 10 jogos para ligas</p>
             </div>
 
+            <!-- SENSOR DE MERCADO -->
+            <div class="filters" style="margin-top: 10px;">
+                <strong style="align-self:center;">🧭 Sensor de Mercado</strong>
+                <select id="windowSelector" title="Janela de análise">
+                    <option value="5">Últimos 5</option>
+                    <option value="10">Últimos 10</option>
+                    <option value="20">Últimos 20</option>
+                    <option value="30">Últimos 30</option>
+                </select>
+                <span style="color: var(--text-sec); align-self:center;">Avalia HT/FT Over e BTTS por liga</span>
+            </div>
+            <div class="tips-grid" id="marketSensor"></div>
+
             <div class="tips-grid" id="autoTips"></div>
 
             <div class="tabs">
@@ -683,7 +696,8 @@
                     leagueStats[league] = { allGames: [] };
                 }
                 leagueStats[league].allGames.push({
-                    totalGoalsFT, totalGoalsHT, isBTTS, isOver25
+                    totalGoalsFT, totalGoalsHT, isBTTS, isOver25,
+                    homeGoalsFT, awayGoalsFT, homeGoalsHT, awayGoalsHT
                 });
             });
 
@@ -775,6 +789,79 @@
                 });
                 leagueStats[league].topMatchup = topMatchup.key;
             }
+        }
+
+        // Calcula métricas por janela para uma liga
+        function computeLeagueWindowMetrics(leagueName, windowSize) {
+            const lg = leagueStats[leagueName];
+            if (!lg || !lg.allGames || lg.allGames.length === 0) return null;
+            const games = lg.allGames.slice(0, windowSize);
+            const total = games.length;
+            if (total === 0) return null;
+
+            let over05HT = 0, over15HT = 0, over25HT = 0, over35HT = 0, bttsHT = 0, zeroHT = 0;
+            let over05FT = 0, over15FT = 0, over25FT = 0, over35FT = 0, bttsFT = 0, zeroFT = 0;
+
+            games.forEach(g => {
+                const ht = (g.homeGoalsHT || 0) + (g.awayGoalsHT || 0);
+                const ft = (g.homeGoalsFT || 0) + (g.awayGoalsFT || 0);
+                if (ht > 0.5) over05HT++;
+                if (ht > 1.5) over15HT++;
+                if (ht > 2.5) over25HT++;
+                if (ht > 3.5) over35HT++;
+                if ((g.homeGoalsHT || 0) > 0 && (g.awayGoalsHT || 0) > 0) bttsHT++;
+                if (ht === 0) zeroHT++;
+
+                if (ft > 0.5) over05FT++;
+                if (ft > 1.5) over15FT++;
+                if (ft > 2.5) over25FT++;
+                if (ft > 3.5) over35FT++;
+                if ((g.homeGoalsFT || 0) > 0 && (g.awayGoalsFT || 0) > 0) bttsFT++;
+                if (ft === 0) zeroFT++;
+            });
+
+            const pct = (n) => Math.round((n / total) * 100);
+            return {
+                total,
+                over05HT: pct(over05HT), over15HT: pct(over15HT), over25HT: pct(over25HT), over35HT: pct(over35HT), bttsHT: pct(bttsHT), zeroHT: 100 - pct(zeroHT),
+                over05FT: pct(over05FT), over15FT: pct(over15FT), over25FT: pct(over25FT), over35FT: pct(over35FT), bttsFT: pct(bttsFT), zeroFT: 100 - pct(zeroFT)
+            };
+        }
+
+        // Renderiza o sensor de mercado com base na janela selecionada
+        function renderMarketSensor() {
+            const container = document.getElementById('marketSensor');
+            const windowSize = parseInt(document.getElementById('windowSelector').value, 10);
+            const data = Object.keys(leagueStats).map(name => {
+                const m = computeLeagueWindowMetrics(name, windowSize);
+                if (!m) return null;
+                // Sinal composto: média de KPIs principais
+                const signal = (
+                    m.over25FT + m.over15FT + m.bttsFT + m.over15HT + m.bttsHT
+                ) / 5;
+                return { name, signal: Math.round(signal), m };
+            }).filter(Boolean);
+
+            data.sort((a, b) => b.signal - a.signal);
+            const top = data.slice(0, 6);
+
+            container.innerHTML = top.map(d => `
+                <div class="tip-card">
+                    <h3>🏆 ${d.name}</h3>
+                    <div class="value">Sinal: ${d.signal}</div>
+                    <div class="stats-grid">
+                        <div class="stat-item"><strong>Janela:</strong> ${d.m.total}</div>
+                        <div class="stat-item"><strong>HT O0.5:</strong> ${d.m.over05HT}%</div>
+                        <div class="stat-item"><strong>HT O1.5:</strong> ${d.m.over15HT}%</div>
+                        <div class="stat-item"><strong>HT O2.5:</strong> ${d.m.over25HT}%</div>
+                        <div class="stat-item"><strong>HT BTTS:</strong> ${d.m.bttsHT}%</div>
+                        <div class="stat-item"><strong>FT O1.5:</strong> ${d.m.over15FT}%</div>
+                        <div class="stat-item"><strong>FT O2.5:</strong> ${d.m.over25FT}%</div>
+                        <div class="stat-item"><strong>FT O3.5:</strong> ${d.m.over35FT}%</div>
+                        <div class="stat-item"><strong>FT BTTS:</strong> ${d.m.bttsFT}%</div>
+                    </div>
+                </div>
+            `).join('');
         }
 
         function calculateStdDev(arr) {
@@ -1136,6 +1223,8 @@
                 const trends = generateTrends();
                 renderTrends(trends);
 
+                renderMarketSensor();
+
                 renderPlayers();
                 renderMatchups();
                 renderLeagues();
@@ -1150,6 +1239,9 @@
                 ['searchMatchups', 'leagueMatchups', 'sortMatchups'].forEach(id => {
                     document.getElementById(id).addEventListener('input', renderMatchups);
                 });
+
+                // Atualiza sensor ao alterar janela
+                document.getElementById('windowSelector').addEventListener('change', renderMarketSensor);
 
                 document.querySelectorAll('.tab').forEach(tab => {
                     tab.addEventListener('click', () => {
