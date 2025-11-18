@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             /* Variáveis do código principal */
@@ -428,6 +429,48 @@
             border-radius: 6px;
         }
 
+        /* Radar cards */
+        .radar-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--accent);
+        }
+        .control-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .control-row select {
+            padding: 8px 12px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 6px;
+        }
+        .progress {
+            width: 100%;
+            height: 22px;
+            background: #2a2a33;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00c776);
+        }
+        .progress-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.85rem;
+            color: #fff;
+        }
+
         .stat-item strong {
             color: var(--accent);
         }
@@ -523,6 +566,13 @@
 
             <!-- TAB: Jogadores -->
             <div id="players" class="tab-content active">
+                <div class="radar-card">
+                    <div class="control-row">
+                        <select id="playerSelect"><option value="">Selecione o Jogador</option></select>
+                        <select id="playerLeagueSelect"><option value="">Todas Ligas</option></select>
+                    </div>
+                    <canvas id="playerRadar" height="220"></canvas>
+                </div>
                 <div class="filters">
                     <input type="text" id="searchPlayers" placeholder="🔍 Buscar Jogador...">
                     <select id="leaguePlayers">
@@ -559,6 +609,13 @@
 
             <!-- TAB: Confrontos -->
             <div id="matchups" class="tab-content">
+                <div class="radar-card">
+                    <div class="control-row">
+                        <select id="matchupLeagueSelect"><option value="">Todas Ligas</option></select>
+                        <select id="matchupSelect"><option value="">Selecione Confronto</option></select>
+                    </div>
+                    <canvas id="matchupRadar" height="220"></canvas>
+                </div>
                 <div class="filters">
                     <input type="text" id="searchMatchups" placeholder="🔍 Buscar Confronto...">
                     <select id="leagueMatchups">
@@ -594,6 +651,27 @@
 
             <!-- TAB: Ligas -->
             <div id="leagues" class="tab-content">
+                <div class="radar-card">
+                    <div class="control-row">
+                        <select id="leagueRadarSelect"><option value="">Selecione Liga</option></select>
+                        <select id="leagueWindowSelect" title="Janela"><option value="5">Últimos 5</option><option value="10">Últimos 10</option><option value="20">Últimos 20</option><option value="30">Últimos 30</option></select>
+                    </div>
+                    <canvas id="leagueRadar" height="220"></canvas>
+                    <div class="stats-grid" style="margin-top:12px;">
+                        <div>
+                            <div style="margin-bottom:6px;">Ambas Marcam (FT)</div>
+                            <div class="progress"><div id="bttsFtFill" class="progress-fill" style="width:0%"></div><div id="bttsFtLabel" class="progress-label">0%</div></div>
+                        </div>
+                        <div>
+                            <div style="margin-bottom:6px;">Ambas Marcam (HT)</div>
+                            <div class="progress"><div id="bttsHtFill" class="progress-fill" style="width:0%"></div><div id="bttsHtLabel" class="progress-label">0%</div></div>
+                        </div>
+                        <div>
+                            <div style="margin-bottom:6px;">Over 2.5 FT</div>
+                            <div class="progress"><div id="over25FtFill" class="progress-fill" style="width:0%"></div><div id="over25FtLabel" class="progress-label">0%</div></div>
+                        </div>
+                    </div>
+                </div>
                 <div class="table-container">
                     <table id="leaguesTable">
                         <thead>
@@ -624,6 +702,7 @@
 
     <script>
         let allGames = [], playerStats = {}, matchupStats = [], leagueStats = {}, leagues = new Set();
+        const charts = { player: null, matchup: null, league: null };
 
         // Fetch limitado a 2 páginas
         async function fetchGames() {
@@ -1066,6 +1145,85 @@
             `).join('');
         }
 
+        // ---------------- Radar Charts -----------------
+        function ensureRadar(contextId, labels, data, color='#00ff88') {
+            const ctx = document.getElementById(contextId).getContext('2d');
+            const existing = charts[contextId.replace('Radar','')];
+            if (existing) existing.destroy();
+            charts[contextId.replace('Radar','')] = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Sinal',
+                        data,
+                        backgroundColor: 'rgba(0,255,136,0.2)',
+                        borderColor: color,
+                        borderWidth: 2,
+                        pointBackgroundColor: color
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { r: { suggestedMin: 0, suggestedMax: 100, grid: { color: '#2a2a33' }, angleLines: { color: '#2a2a33' }, ticks: { color: '#b0b0b0' } } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function renderLeagueRadar() {
+            const league = document.getElementById('leagueRadarSelect').value;
+            const windowSize = parseInt(document.getElementById('leagueWindowSelect').value, 10);
+            if (!league) return;
+            const m = computeLeagueWindowMetrics(league, windowSize);
+            if (!m) return;
+            const labels = ['Over 1.5 HT','BTTS HT','Over 1.5 FT','Over 2.5 FT','BTTS FT','Over 3.5 FT'];
+            const data = [m.over15HT, m.bttsHT, m.over15FT, m.over25FT, m.bttsFT, m.over35FT];
+            ensureRadar('leagueRadar', labels, data);
+            document.getElementById('bttsFtFill').style.width = m.bttsFT + '%';
+            document.getElementById('bttsFtLabel').textContent = m.bttsFT + '%';
+            document.getElementById('bttsHtFill').style.width = m.bttsHT + '%';
+            document.getElementById('bttsHtLabel').textContent = m.bttsHT + '%';
+            document.getElementById('over25FtFill').style.width = m.over25FT + '%';
+            document.getElementById('over25FtLabel').textContent = m.over25FT + '%';
+        }
+
+        function renderPlayerRadar() {
+            const player = document.getElementById('playerSelect').value;
+            const league = document.getElementById('playerLeagueSelect').value;
+            if (!player) return;
+            // escolher liga: se vazio, pega a com maior jogos
+            const leaguesForPlayer = playerStats[player] || {};
+            let useLeague = league;
+            if (!useLeague) {
+                const entries = Object.entries(leaguesForPlayer).filter(([_, v]) => v.summary);
+                if (entries.length === 0) return;
+                useLeague = entries.sort((a,b)=> b[1].games.length - a[1].games.length)[0][0];
+            }
+            const s = playerStats[player][useLeague]?.summary;
+            if (!s) return;
+            const labels = ['Win%','Gols FT','Gols HT','BTTS%','Over 2.5%','Consistência'];
+            const goalsFtScaled = Math.min(100, parseFloat(s.avgGoalsFT) * 18); // ~5.5 FT -> ~99
+            const goalsHtScaled = Math.min(100, parseFloat(s.avgGoalsHT) * 30); // ~3.3 HT -> ~99
+            const consistencyInv = Math.max(0, 100 - Math.min(100, parseFloat(s.consistency) * 35));
+            const data = [parseFloat(s.winRate), goalsFtScaled, goalsHtScaled, parseFloat(s.bttsRate), parseFloat(s.over25Rate), consistencyInv];
+            ensureRadar('playerRadar', labels, data, '#6c5ce7');
+        }
+
+        function renderMatchupRadar() {
+            const league = document.getElementById('matchupLeagueSelect').value;
+            const key = document.getElementById('matchupSelect').value;
+            if (!key) return;
+            const m = matchupStats.find(x => x.key === key && (!league || x.league === league));
+            if (!m) return;
+            const labels = ['Gols FT','Gols HT','BTTS%','Over 2.5%','Equilíbrio'];
+            const ftScaled = Math.min(100, parseFloat(m.avgGoalsFT) * 15);
+            const htScaled = Math.min(100, parseFloat(m.avgGoalsHT) * 30);
+            const balance = m.winsP1 !== undefined && m.winsP2 !== undefined ? Math.max(0, 100 - Math.min(100, Math.abs(m.winsP1 - m.winsP2) * 20)) : 50;
+            const data = [ftScaled, htScaled, parseFloat(m.btts), parseFloat(m.over25), balance];
+            ensureRadar('matchupRadar', labels, data, '#ff4c4c');
+        }
+
         function renderTrends(trends) {
             const container = document.getElementById('trendsContent');
             container.innerHTML = trends.map(trend => `
@@ -1215,6 +1373,10 @@
 
                     const opt2 = opt1.cloneNode(true);
                     document.getElementById('leagueMatchups').appendChild(opt2);
+                    const opt3 = opt1.cloneNode(true);
+                    document.getElementById('matchupLeagueSelect').appendChild(opt3);
+                    const opt4 = opt1.cloneNode(true);
+                    document.getElementById('leagueRadarSelect').appendChild(opt4);
                 });
 
                 const tips = generateAutoTips();
@@ -1228,6 +1390,16 @@
                 renderPlayers();
                 renderMatchups();
                 renderLeagues();
+                // Preencher selects de players e matchups
+                const playerSelect = document.getElementById('playerSelect');
+                Object.keys(playerStats).forEach(p => {
+                    const opt = document.createElement('option'); opt.value = p; opt.textContent = p; playerSelect.appendChild(opt);
+                });
+                const playerLeagueSelect = document.getElementById('playerLeagueSelect');
+                leagues.forEach(lg => { const opt = document.createElement('option'); opt.value = lg; opt.textContent = lg; playerLeagueSelect.appendChild(opt); });
+
+                const matchupSelect = document.getElementById('matchupSelect');
+                matchupStats.forEach(m => { const opt = document.createElement('option'); opt.value = m.key; opt.textContent = `${m.key} (${m.league})`; matchupSelect.appendChild(opt); });
 
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('mainContent').style.display = 'block';
@@ -1249,8 +1421,25 @@
                         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                         tab.classList.add('active');
                         document.getElementById(tab.dataset.tab).classList.add('active');
+                        // Render inicial ao trocar para cada tab
+                        if (tab.dataset.tab === 'leagues') renderLeagueRadar();
+                        if (tab.dataset.tab === 'players') renderPlayerRadar();
+                        if (tab.dataset.tab === 'matchups') renderMatchupRadar();
                     });
                 });
+
+                // Eventos radar
+                ['leagueRadarSelect','leagueWindowSelect'].forEach(id => document.getElementById(id).addEventListener('change', renderLeagueRadar));
+                ['playerSelect','playerLeagueSelect'].forEach(id => document.getElementById(id).addEventListener('change', renderPlayerRadar));
+                ['matchupLeagueSelect','matchupSelect'].forEach(id => document.getElementById(id).addEventListener('change', renderMatchupRadar));
+
+                // Render padrão
+                const firstLeague = document.getElementById('leagueRadarSelect').value || [...leagues][0];
+                if (firstLeague) { document.getElementById('leagueRadarSelect').value = firstLeague; renderLeagueRadar(); }
+                const firstPlayer = document.getElementById('playerSelect').value || Object.keys(playerStats)[0];
+                if (firstPlayer) { document.getElementById('playerSelect').value = firstPlayer; renderPlayerRadar(); }
+                const firstMatchup = document.getElementById('matchupSelect').value || (matchupStats[0]?.key);
+                if (firstMatchup) { document.getElementById('matchupSelect').value = firstMatchup; renderMatchupRadar(); }
 
             } catch (error) {
                 console.error('Erro:', error);
