@@ -663,7 +663,7 @@
             const toTitleCase = (str) => str.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
             const p1 = toTitleCase(player1);
             const p2 = toTitleCase(player2);
-            const url = `https://caveira-proxy.onrender.com/api/v1/historico/confronto/${encodeURIComponent(p1)}/${encodeURIComponent(p2)}?page=1&limit=30&league=${encodeURIComponent(league)}`;
+            const url = `https://caveira-proxy.onrender.com/api/v1/historico/confronto/${p1}/${p2}?page=1&limit=30&league=${encodeURIComponent(league)}`;
 
             try {
                 const response = await fetch(url, {
