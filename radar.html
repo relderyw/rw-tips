@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -50,7 +51,7 @@
         .header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .header p {
@@ -101,8 +102,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .section {
@@ -260,12 +268,35 @@
             font-weight: 600;
         }
 
-        .green { color: var(--success); font-weight: bold; }
-        .yellow { color: var(--warning); font-weight: bold; }
-        .red { color: var(--error); font-weight: bold; }
-        .blue { color: #3b82f6; font-weight: bold; }
-        .purple { color: #a855f7; font-weight: bold; }
-        .orange { color: #f97316; font-weight: bold; }
+        .green {
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .yellow {
+            color: var(--warning);
+            font-weight: bold;
+        }
+
+        .red {
+            color: var(--error);
+            font-weight: bold;
+        }
+
+        .blue {
+            color: #3b82f6;
+            font-weight: bold;
+        }
+
+        .purple {
+            color: #a855f7;
+            font-weight: bold;
+        }
+
+        .orange {
+            color: #f97316;
+            font-weight: bold;
+        }
 
         .elite-metric {
             display: inline-flex;
@@ -279,8 +310,15 @@
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
         }
 
         .comparison-grid {
@@ -362,8 +400,13 @@
         }
 
         @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .empty-state {
@@ -436,6 +479,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -616,56 +660,81 @@
 
         // Fetch H2H data com proteção a 304/ETag + fallback local
         async function fetchH2HData(player1, player2, league) {
-            const baseUrl = `https://caveira-proxy.onrender.com/api/v1/historico/confronto/${encodeURIComponent(player1)}/${encodeURIComponent(player2)}?page=1&limit=30&league=${encodeURIComponent(league)}`;
-
-            const tryFetch = async (url, cacheMode = 'no-store') => {
-                const resp = await fetch(url, {
-                    cache: cacheMode,
-                    headers: { 'Accept': 'application/json' }
-                });
-                console.log('H2H fetch:', { url, status: resp.status });
-
-                // 304 vem com corpo vazio; evitamos json() neste caso
-                if (resp.status === 304) return null;
-                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-
-                const ct = resp.headers.get('content-type') || '';
-                if (!ct.includes('application/json')) throw new Error('Conteúdo não é JSON');
-                return await resp.json();
-            };
+            const toTitleCase = (str) => str.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            const p1 = toTitleCase(player1);
+            const p2 = toTitleCase(player2);
+            const url = `https://caveira-proxy.onrender.com/api/v1/historico/confronto/${encodeURIComponent(p1)}/${encodeURIComponent(p2)}?page=1&limit=30&league=${encodeURIComponent(league)}`;
 
             try {
-                let data = await tryFetch(`${baseUrl}&_=${Date.now()}`, 'no-store');
+                const response = await fetch(url, {
+                    headers: { 'Accept': 'application/json' },
+                    cache: 'default'
+                });
 
-                if (!data) {
-                    data = await tryFetch(`${baseUrl}&_=${Date.now()}`, 'reload');
-                }
+                console.log(`H2H: ${p1} vs ${p2} → ${response.status}`);
 
-                if (data && Array.isArray(data.matches)) return data;
+                if (!response.ok && response.status !== 304) throw new Error(`HTTP ${response.status}`);
+                if (response.status === 304) throw new Error("304 - usando fallback");
 
-                const toTitleCase = (s) => s.replace(/\S+/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
-                const tcUrl = `https://caveira-proxy.onrender.com/api/v1/historico/confronto/${encodeURIComponent(toTitleCase(player1))}/${encodeURIComponent(toTitleCase(player2))}?page=1&limit=30&league=${encodeURIComponent(league)}&_=${Date.now()}`;
-                const tcData = await tryFetch(tcUrl, 'no-store');
-                if (tcData && Array.isArray(tcData.matches)) return tcData;
+                const data = await response.json();
+                if (data?.matches?.length > 0) return data;
 
-                throw new Error('API H2H sem dados');
+                throw new Error("Sem dados");
             } catch (error) {
-                console.error('Erro ao buscar dados H2H, usando fallback local:', error);
+                console.warn("API H2H falhou → usando fallback local");
 
-                // Fallback: monta matches a partir de leagueData para manter a comparação funcional
-                const local = getH2HMatches(player1, player2, league).map(g => ({
-                    home_player: g.home.name,
-                    away_player: g.away.name,
-                    score_home: g.score.home,
-                    score_away: g.score.away,
-                    halftime_score_home: (g.scoreHT?.home || 0),
-                    halftime_score_away: (g.scoreHT?.away || 0),
-                    data_realizacao: g.start_at,
-                    league_name: league
-                }));
+                const localMatches = getH2HMatches(player1, player2, league);
+                if (localMatches.length === 0) return null;
 
-                return { player1, player2, matches: local };
+                const wins1 = localMatches.filter(g => {
+                    const homeIsP1 = g.home.name.toLowerCase() === player1.toLowerCase();
+                    return homeIsP1 ? g.score.home > g.score.away : g.score.away > g.score.home;
+                }).length;
+
+                const wins2 = localMatches.filter(g => {
+                    const homeIsP1 = g.home.name.toLowerCase() === player1.toLowerCase();
+                    return homeIsP1 ? g.score.home < g.score.away : g.score.away < g.score.home;
+                }).length;
+
+                const draws = localMatches.filter(g => g.score.home === g.score.away).length;
+
+                return {
+                    player1: p1,
+                    player2: p2,
+                    total_matches: localMatches.length,
+                    player1_wins: wins1,
+                    player2_wins: wins2,
+                    draws: draws,
+                    player1_win_percentage: (wins1 / localMatches.length) * 100,
+                    player2_win_percentage: (wins2 / localMatches.length) * 100,
+                    draw_percentage: (draws / localMatches.length) * 100,
+                    matches: localMatches.map(g => ({
+                        home_player: g.home.name,
+                        away_player: g.away.name,
+                        score_home: g.score.home,
+                        score_away: g.score.away,
+                        halftime_score_home: g.scoreHT?.home || 0,
+                        halftime_score_away: g.scoreHT?.away || 0,
+                        data_realizacao: g.start_at,
+                        league_name: league
+                    }))
+                };
             }
+        }
+
+        // Fallback local
+        function getH2HMatches(player1, player2, league) {
+            if (!leagueData[league]) return [];
+            const p1 = player1.toLowerCase();
+            const p2 = player2.toLowerCase();
+
+            return leagueData[league]
+                .filter(game => {
+                    const h = game.home.name.toLowerCase();
+                    const a = game.away.name.toLowerCase();
+                    return (h === p1 && a === p2) || (h === p2 && a === p1);
+                })
+                .sort((a, b) => new Date(b.start_at) - new Date(a.start_at));
         }
 
         // Process data
@@ -695,7 +764,7 @@
         // Populate selectors
         function populateSelectors() {
             const leagues = Object.keys(leagueData).sort();
-            
+
             const selectors = ['leagueSelector', 'playerLeagueSelector'];
             selectors.forEach(id => {
                 const select = document.getElementById(id);
@@ -760,7 +829,7 @@
         // Calculate player metrics from H2H API data
         function calculateH2HMetrics(matches, player, windowSize) {
             if (!matches || matches.length === 0) return null;
-            
+
             const recent = matches.slice(0, windowSize);
             const metrics = {
                 games: recent.length,
@@ -820,7 +889,7 @@
                 metrics.goalsScored += scored;
                 metrics.goalsConceded += conceded;
                 metrics.totalGoals += g.score.home + g.score.away;
-                
+
                 metrics.goalsHTScored += htScored;
                 metrics.goalsHTConceded += htConceded;
                 metrics.totalGoalsHT += (g.scoreHT?.home || 0) + (g.scoreHT?.away || 0);
@@ -840,10 +909,10 @@
         // Generate betting suggestions
         function generateBettingSuggestions(data) {
             if (!data || !data.matches || data.matches.length < 5) return [];
-            
+
             const suggestions = [];
             const recent10 = data.matches.slice(0, 10);
-            
+
             let over25 = 0, btts = 0, htOver05 = 0, htOver15 = 0;
             recent10.forEach(m => {
                 const total = m.score_home + m.score_away;
@@ -873,7 +942,7 @@
             if (value >= 90) colorClass = 'green';
             else if (value >= 70) colorClass = 'yellow';
             else if (value >= 50) colorClass = 'yellow';
-            
+
             const icon = value >= 90 ? ' 🔥' : '';
             return `<span class="${colorClass} elite-metric">${value}%${icon}</span>`;
         }
@@ -888,10 +957,10 @@
                 const games = leagueData[league].slice(0, windowSize);
                 return games.length > 0;
             });
-            
+
             let totalGamesInWindow = 0;
             const playersSet = new Set();
-            
+
             leaguesWithGames.forEach(league => {
                 const games = leagueData[league].slice(0, windowSize);
                 totalGamesInWindow += games.length;
@@ -1099,7 +1168,7 @@
             const p1Stats10 = calculateH2HMetrics(h2hData.matches, player1, 10);
             const p2Stats5 = calculateH2HMetrics(h2hData.matches, player2, 5);
             const p2Stats10 = calculateH2HMetrics(h2hData.matches, player2, 10);
-            
+
             const suggestions = generateBettingSuggestions(h2hData);
 
             // Render comparison
@@ -1289,12 +1358,12 @@
                     <div class="match-history">
                         <h4 style="color: var(--accent); font-size: 1.3rem; margin-bottom: 20px;">📋 Últimos 10 Confrontos</h4>
                         ${h2hData.matches.slice(0, 10).map(match => {
-                            const isP1Home = match.home_player === player1;
-                            const p1Score = isP1Home ? match.score_home : match.score_away;
-                            const p2Score = isP1Home ? match.score_away : match.score_home;
-                            const winner = p1Score > p2Score ? player1 : (p2Score > p1Score ? player2 : 'Empate');
-                            
-                            return `
+                const isP1Home = match.home_player === player1;
+                const p1Score = isP1Home ? match.score_home : match.score_away;
+                const p2Score = isP1Home ? match.score_away : match.score_home;
+                const winner = p1Score > p2Score ? player1 : (p2Score > p1Score ? player2 : 'Empate');
+
+                return `
                                 <div class="match-item">
                                     <div style="margin-bottom: 10px;">
                                         <div style="display: flex; justify-between; align-items: center; margin-bottom: 5px;">
@@ -1312,7 +1381,7 @@
                                     </div>
                                 </div>
                             `;
-                        }).join('')}
+            }).join('')}
                     </div>
                 </div>
             `;
@@ -1339,7 +1408,7 @@
             try {
                 allGames = await fetchGames();
                 processData();
-                
+
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('overview').classList.add('active');
             } catch (error) {
@@ -1352,4 +1421,5 @@
         });
     </script>
 </body>
+
 </html>
