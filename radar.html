@@ -614,17 +614,56 @@
             return games;
         }
 
-        // Fetch H2H data
+        // Fetch H2H data com proteção a 304/ETag + fallback local
         async function fetchH2HData(player1, player2, league) {
+            const baseUrl = `https://caveira-proxy.onrender.com/api/v1/historico/confronto/${encodeURIComponent(player1)}/${encodeURIComponent(player2)}?page=1&limit=30&league=${encodeURIComponent(league)}`;
+
+            const tryFetch = async (url, cacheMode = 'no-store') => {
+                const resp = await fetch(url, {
+                    cache: cacheMode,
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                // 304 vem com corpo vazio; evitamos json() neste caso
+                if (resp.status === 304) return null;
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+                const ct = resp.headers.get('content-type') || '';
+                if (!ct.includes('application/json')) throw new Error('Conteúdo não é JSON');
+                return await resp.json();
+            };
+
             try {
-                const response = await fetch(
-                    `https://caveira-proxy.onrender.com/api/v1/historico/confronto/${player1}/${player2}?page=1&limit=30&league=${encodeURIComponent(league)}`
-                );
-                const data = await response.json();
-                return data;
+                // 1ª tentativa: sem usar cache
+                let data = await tryFetch(baseUrl, 'no-store');
+
+                // 2ª tentativa: cache-buster se vier 304 ou falhar em parse
+                if (!data) {
+                    const busted = `${baseUrl}&_=${Date.now()}`;
+                    data = await tryFetch(busted, 'reload');
+                }
+
+                // Sucesso
+                if (data && Array.isArray(data.matches)) return data;
+
+                // Se a API respondeu sem matches, cai no fallback
+                throw new Error('API H2H sem dados');
             } catch (error) {
-                console.error('Erro ao buscar dados H2H:', error);
-                return null;
+                console.error('Erro ao buscar dados H2H, usando fallback local:', error);
+
+                // Fallback: monta matches a partir de leagueData para manter a comparação funcional
+                const local = getH2HMatches(player1, player2, league).map(g => ({
+                    home_player: g.home.name,
+                    away_player: g.away.name,
+                    score_home: g.score.home,
+                    score_away: g.score.away,
+                    halftime_score_home: (g.scoreHT?.home || 0),
+                    halftime_score_away: (g.scoreHT?.away || 0),
+                    data_realizacao: g.start_at,
+                    league_name: league
+                }));
+
+                return { player1, player2, matches: local };
             }
         }
 
