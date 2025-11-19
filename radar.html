@@ -478,129 +478,108 @@
             }
         }
 
-        /* Sidebar */
+        /* Sidebar estilo players.html */
+        body {
+            padding: 20px 20px 20px 90px; /* espaço para sidebar estreita */
+            transition: padding-left 0.3s ease;
+        }
+
         .sidebar {
             position: fixed;
-            top: 0;
             left: 0;
+            top: 0;
             height: 100vh;
-            width: 280px;
-            background: var(--card-bg);
+            width: 70px;
+            background: rgba(26, 26, 35, 0.95);
+            backdrop-filter: blur(10px);
             border-right: 1px solid var(--border);
-            transform: translateX(-100%);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: width 0.3s ease;
             z-index: 1000;
+            overflow: hidden;
         }
 
-        .sidebar.open {
-            transform: translateX(0);
-            box-shadow: 12px 0 30px rgba(0, 0, 0, 0.35);
-        }
+        .sidebar:hover { width: 260px; }
 
         .sidebar-header {
-            padding: 20px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            padding: 20px 15px;
+            gap: 15px;
             border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            flex-shrink: 0;
         }
 
         .sidebar-title {
+            font-size: 1.2rem;
             font-weight: 700;
-            color: var(--accent);
-            letter-spacing: 1px;
-        }
-
-        .sidebar-nav {
-            padding: 10px;
-        }
-
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 16px;
-            border-radius: 10px;
-            color: var(--text);
-            cursor: pointer;
-            border: 1px solid transparent;
-            transition: background 0.2s ease, border-color 0.2s ease;
-        }
-
-        .sidebar-link:hover {
-            background: rgba(108, 92, 231, 0.15);
-            border-color: rgba(108, 92, 231, 0.3);
-        }
-
-        .sidebar-link.active {
-            background: linear-gradient(135deg, #6c5ce7, #00ff88);
-            color: #0f0f13;
-            font-weight: 600;
-        }
-
-        .sidebar-toggle {
-            position: fixed;
-            top: 24px;
-            left: 24px;
-            z-index: 1100;
-            background: rgba(30, 30, 40, 0.8);
-            color: var(--text);
-            border: 1px solid rgba(108, 92, 231, 0.4);
-            border-radius: 12px;
-            padding: 10px 12px;
-            cursor: pointer;
-            backdrop-filter: blur(6px);
-        }
-
-        .sidebar-toggle:hover {
-            border-color: var(--accent);
-        }
-
-        .sidebar-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.35);
-            z-index: 900;
+            background: linear-gradient(45deg, #00ff88, #00ffaa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
             opacity: 0;
-            pointer-events: none;
             transition: opacity 0.3s ease;
         }
+        .sidebar:hover .sidebar-title { opacity: 1; }
 
-        .sidebar-overlay.visible {
-            opacity: 1;
-            pointer-events: auto;
+        .sidebar-menu { list-style: none; padding: 20px 0; }
+        .sidebar-menu li { margin: 5px 0; }
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: var(--text-sec);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            gap: 15px;
+            white-space: nowrap;
         }
-
-        @media (min-width: 1024px) {
-            body.sidebar-open .container {
-                margin-left: 280px;
-                transition: margin 0.3s ease;
-            }
+        .sidebar-menu a:hover {
+            background: rgba(108, 92, 231, 0.1);
+            color: var(--accent);
+            transform: translateX(5px);
         }
+        .sidebar-menu li.active a {
+            background: linear-gradient(90deg, rgba(0, 255, 136, 0.2), transparent);
+            color: var(--success);
+            border-left: 4px solid var(--success);
+            position: relative;
+        }
+        .sidebar-menu .icon { font-size: 1.3rem; width: 30px; text-align: center; flex-shrink: 0; }
+        .sidebar-menu .label { opacity: 0; transition: opacity 0.3s ease; font-weight: 500; }
+        .sidebar:hover .sidebar-menu .label { opacity: 1; }
 
-        @media (max-width: 1023px) {
-            .sidebar {
-                width: 82%;
-                max-width: 360px;
-            }
+        @media (max-width: 768px) {
+            body { padding: 20px 10px 20px 70px; }
+            .sidebar { width: 60px; }
+            .sidebar:hover { width: 220px; }
         }
     </style>
 </head>
 
 <body>
-    <button id="sidebarToggle" class="sidebar-toggle">☰ Menu</button>
-    <aside id="sidebar" class="sidebar">
+    <nav class="sidebar">
         <div class="sidebar-header">
-            <div class="sidebar-title">RW Radar</div>
-            <button id="sidebarClose" class="sidebar-toggle" style="position: static; padding: 8px 10px;">✕</button>
+            <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips" class="sidebar-logo">
+            <span class="sidebar-title">RW TIPS</span>
         </div>
-        <nav class="sidebar-nav">
-            <div class="sidebar-link" data-tab="overview">📊 Visão Geral</div>
-            <div class="sidebar-link" data-tab="leagues">🏆 Ligas</div>
-            <div class="sidebar-link" data-tab="players">👥 Jogadores</div>
-        </nav>
-    </aside>
-    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+        <ul class="sidebar-menu">
+            <li><a href="visualization.html"><span class="icon">⚽</span><span class="label">Próximos Jogos</span></a></li>
+            <li><a href="results.html"><span class="icon">📊</span><span class="label">Últimos Resultados</span></a></li>
+            <li><a href="live_v2.html"><span class="icon">🔴</span><span class="label">AO VIVO</span></a></li>
+            <li><a href="formularioApostas.html"><span class="icon">💰</span><span class="label">Registrar Apostas</span></a></li>
+            <li><a href="players.html"><span class="icon">🎮</span><span class="label">Análise de Jogadores</span></a></li>
+            <li class="active"><a href="radar.html"><span class="icon">🎯</span><span class="label">Radar</span></a></li>
+            <li><a href="nba.html"><span class="icon">🏀</span><span class="label">NBA Stats</span></a></li>
+            <li><a href="over.html"><span class="icon">📍</span><span class="label">Over Analysis</span></a></li>
+        </ul>
+    </nav>
     <div class="container">
         <div class="header">
             <h1>🎯 RW TIPS - RADAR DE MERCADO</h1>
@@ -1524,70 +1503,18 @@
 
             document.getElementById(tab).classList.add('active');
 
-            // Sync sidebar active state
-            setActiveSidebarLink(tab);
+            // Navegação por abas dentro da página
 
             if (tab === 'leagues') renderLeagueDetails();
             else if (tab === 'players') updatePlayersList();
             else if (tab === 'overview') renderOverview();
         }
 
-        // Sidebar logic
-        function initSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const toggle = document.getElementById('sidebarToggle');
-            const closeBtn = document.getElementById('sidebarClose');
-            const overlay = document.getElementById('sidebarOverlay');
-            const links = Array.from(document.querySelectorAll('.sidebar-link'));
-
-            const open = () => {
-                sidebar.classList.add('open');
-                document.body.classList.add('sidebar-open');
-                overlay.classList.add('visible');
-                localStorage.setItem('sidebar-open', '1');
-            };
-
-            const close = () => {
-                sidebar.classList.remove('open');
-                document.body.classList.remove('sidebar-open');
-                overlay.classList.remove('visible');
-                localStorage.removeItem('sidebar-open');
-            };
-
-            toggle?.addEventListener('click', () => {
-                sidebar.classList.contains('open') ? close() : open();
-            });
-            closeBtn?.addEventListener('click', close);
-            overlay?.addEventListener('click', close);
-
-            links.forEach(link => link.addEventListener('click', () => {
-                const tab = link.getAttribute('data-tab');
-                if (tab) switchTab(tab);
-                close();
-            }));
-
-            // Restore previous state
-            if (localStorage.getItem('sidebar-open') === '1') open();
-
-            // Set initial active link
-            setActiveSidebarLink(getActiveTab());
-        }
-
-        function setActiveSidebarLink(tab) {
-            document.querySelectorAll('.sidebar-link').forEach(el => {
-                el.classList.toggle('active', el.getAttribute('data-tab') === tab);
-            });
-        }
-
-        function getActiveTab() {
-            const active = document.querySelector('.tab-content.active');
-            return active ? active.id : 'overview';
-        }
+        // Sidebar não requer JS; usa hover-expand como players.html
 
         // Initialize
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                initSidebar();
                 allGames = await fetchGames();
                 processData();
 
