@@ -623,6 +623,7 @@
                     cache: cacheMode,
                     headers: { 'Accept': 'application/json' }
                 });
+                console.log('H2H fetch:', { url, status: resp.status });
 
                 // 304 vem com corpo vazio; evitamos json() neste caso
                 if (resp.status === 304) return null;
@@ -634,19 +635,19 @@
             };
 
             try {
-                // 1ª tentativa: sem usar cache
-                let data = await tryFetch(baseUrl, 'no-store');
+                let data = await tryFetch(`${baseUrl}&_=${Date.now()}`, 'no-store');
 
-                // 2ª tentativa: cache-buster se vier 304 ou falhar em parse
                 if (!data) {
-                    const busted = `${baseUrl}&_=${Date.now()}`;
-                    data = await tryFetch(busted, 'reload');
+                    data = await tryFetch(`${baseUrl}&_=${Date.now()}`, 'reload');
                 }
 
-                // Sucesso
                 if (data && Array.isArray(data.matches)) return data;
 
-                // Se a API respondeu sem matches, cai no fallback
+                const toTitleCase = (s) => s.replace(/\S+/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+                const tcUrl = `https://caveira-proxy.onrender.com/api/v1/historico/confronto/${encodeURIComponent(toTitleCase(player1))}/${encodeURIComponent(toTitleCase(player2))}?page=1&limit=30&league=${encodeURIComponent(league)}&_=${Date.now()}`;
+                const tcData = await tryFetch(tcUrl, 'no-store');
+                if (tcData && Array.isArray(tcData.matches)) return tcData;
+
                 throw new Error('API H2H sem dados');
             } catch (error) {
                 console.error('Erro ao buscar dados H2H, usando fallback local:', error);
