@@ -660,67 +660,84 @@
 
         // Fetch H2H data com proteção a 304/ETag + fallback local
         async function fetchH2HData(player1, player2, league) {
-            const toTitleCase = (str) => str.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-            const p1 = toTitleCase(player1);
-            const p2 = toTitleCase(player2);
-            const url = `https://caveira-proxy.onrender.com/api/v1/historico/confronto/${p1}/${p2}?page=1&limit=30&league=${encodeURIComponent(league)}`;
+            // Nomes exatamente como digitados (sem toLowerCase, sem TitleCase)
+            const p1 = player1.trim();
+            const p2 = player2.trim();
+
+            const url = `https://caveira-proxy.onrender.com/api/v1/historico/confronto/${encodeURIComponent(p1)}/${encodeURIComponent(p2)}?page=1&limit=30&league=${encodeURIComponent(league)}`;
 
             try {
                 const response = await fetch(url, {
                     headers: { 'Accept': 'application/json' },
-                    cache: 'default'
+                    cache: 'no-cache'
                 });
 
-                console.log(`H2H: ${p1} vs ${p2} → ${response.status}`);
+                console.log(`📡 H2H Request → ${p1} vs ${p2} | Status: ${response.status}`);
 
-                if (!response.ok && response.status !== 304) throw new Error(`HTTP ${response.status}`);
-                if (response.status === 304) throw new Error("304 - usando fallback");
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP ${response.status}`);
+                }
 
                 const data = await response.json();
-                if (data?.matches?.length > 0) return data;
 
-                throw new Error("Sem dados");
-            } catch (error) {
-                console.warn("API H2H falhou → usando fallback local");
+                // A API retornou algo?
+                if (data?.matches && data.matches.length > 0) {
+                    console.log(`✅ H2H carregado da API (${data.matches.length} jogos)`);
+                    return data;
+                }
 
-                const localMatches = getH2HMatches(player1, player2, league);
-                if (localMatches.length === 0) return null;
+                // Se chegou aqui, veio vazio da API
+                console.warn("⚠ API retornou vazio → ativando fallback local");
+                return buildFallback(player1, player2, league);
 
-                const wins1 = localMatches.filter(g => {
-                    const homeIsP1 = g.home.name.toLowerCase() === player1.toLowerCase();
-                    return homeIsP1 ? g.score.home > g.score.away : g.score.away > g.score.home;
-                }).length;
-
-                const wins2 = localMatches.filter(g => {
-                    const homeIsP1 = g.home.name.toLowerCase() === player1.toLowerCase();
-                    return homeIsP1 ? g.score.home < g.score.away : g.score.away < g.score.home;
-                }).length;
-
-                const draws = localMatches.filter(g => g.score.home === g.score.away).length;
-
-                return {
-                    player1: p1,
-                    player2: p2,
-                    total_matches: localMatches.length,
-                    player1_wins: wins1,
-                    player2_wins: wins2,
-                    draws: draws,
-                    player1_win_percentage: (wins1 / localMatches.length) * 100,
-                    player2_win_percentage: (wins2 / localMatches.length) * 100,
-                    draw_percentage: (draws / localMatches.length) * 100,
-                    matches: localMatches.map(g => ({
-                        home_player: g.home.name,
-                        away_player: g.away.name,
-                        score_home: g.score.home,
-                        score_away: g.score.away,
-                        halftime_score_home: g.scoreHT?.home || 0,
-                        halftime_score_away: g.scoreHT?.away || 0,
-                        data_realizacao: g.start_at,
-                        league_name: league
-                    }))
-                };
+            } catch (err) {
+                console.warn("❌ Erro ao consultar H2H → usando fallback", err);
+                return buildFallback(player1, player2, league);
             }
         }
+        function buildFallback(player1, player2, league) {
+            const localMatches = getH2HMatches(player1, player2, league);
+
+            if (!localMatches || localMatches.length === 0) {
+                console.warn("⚠ Nenhum dado encontrado no fallback local.");
+                return null;
+            }
+
+            const wins1 = localMatches.filter(g => {
+                const homeIsP1 = g.home.name.toLowerCase() === player1.toLowerCase();
+                return homeIsP1 ? g.score.home > g.score.away : g.score.away > g.score.home;
+            }).length;
+
+            const wins2 = localMatches.filter(g => {
+                const homeIsP1 = g.home.name.toLowerCase() === player1.toLowerCase();
+                return homeIsP1 ? g.score.home < g.score.away : g.score.away < g.score.home;
+            }).length;
+
+            const draws = localMatches.filter(g => g.score.home === g.score.away).length;
+
+            return {
+                player1,
+                player2,
+                total_matches: localMatches.length,
+                player1_wins: wins1,
+                player2_wins: wins2,
+                draws,
+                player1_win_percentage: (wins1 / localMatches.length) * 100,
+                player2_win_percentage: (wins2 / localMatches.length) * 100,
+                draw_percentage: (draws / localMatches.length) * 100,
+                matches: localMatches.map(g => ({
+                    home_player: g.home.name,
+                    away_player: g.away.name,
+                    score_home: g.score.home,
+                    score_away: g.score.away,
+                    halftime_score_home: g.scoreHT?.home || 0,
+                    halftime_score_away: g.scoreHT?.away || 0,
+                    data_realizacao: g.start_at,
+                    league_name: league
+                }))
+            };
+        }
+
 
         // Fallback local
         function getH2HMatches(player1, player2, league) {
