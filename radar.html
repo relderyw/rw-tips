@@ -1092,11 +1092,26 @@
         }
 
         function switchTab(tab) {
+            // Desativar todos os botões e conteúdos
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
 
-            event.target.classList.add('active');
+            // Ativar o botão correto sem depender de 'event'
+            const btn = Array.from(document.querySelectorAll('.tab-btn'))
+                .find(b => (b.getAttribute('onclick') || '').includes(tab));
+            if (btn) btn.classList.add('active');
+
+            // Ativar conteúdo da aba
             document.getElementById(tab).classList.add('active');
+
+            // Renderizar conteúdo relacionado à aba
+            if (tab === 'leagues') {
+                renderLeagueDetails();
+            } else if (tab === 'players') {
+                renderPlayerComparison();
+            } else if (tab === 'overview') {
+                renderOverview();
+            }
         }
 
         // Event Listeners
