@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RW TIPS - Radar de Mercado</title>
-    <link href__="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #6c5ce7;
@@ -499,7 +499,7 @@
         </div>
 
         <!-- TAB: VISÃO GERAL -->
-        <div id="overview" class="tab-content">
+        <div id="overview" class="tab-content active">
             <div class="section">
                 <div class="section-title">
                     <span class="icon">📈</span>
@@ -612,7 +612,7 @@
                     Comparação de Jogadores
                 </div>
                 <div class="controls">
-                    <select id="playerLeagueSelector" onchange="handlePlayerLeagueChange()">
+                    <select id="playerLeagueSelector" onchange="updatePlayersList()">
                         <option value="">Selecione uma Liga</option>
                     </select>
                     <select id="player1Selector" onchange="renderPlayerComparison()" disabled>
@@ -658,100 +658,120 @@
             return games;
         }
 
-        // Fetch H2H data com proteção a 304/ETag + fallback local
-        async function fetchH2HData(player1, player2, league) {
-            // Nomes exatamente como digitados (sem toLowerCase, sem TitleCase)
-            const p1 = player1.trim();
-            const p2 = player2.trim();
-
-            const url = `https://caveira-proxy.onrender.com/api/v1/historico/confronto/${encodeURIComponent(p1)}/${encodeURIComponent(p2)}?page=1&limit=30&league=${encodeURIComponent(league)}`;
-
+        // Fetch data from a URL
+        async function fetchData(url) {
             try {
-                const response = await fetch(url, {
-                    headers: { 'Accept': 'application/json' },
-                    cache: 'no-cache'
-                });
-
-                console.log(`📡 H2H Request → ${p1} vs ${p2} | Status: ${response.status}`);
-
-                if (!response.ok) {
-                    throw new Error(`Erro HTTP ${response.status}`);
-                }
-
-                const data = await response.json();
-
-                // A API retornou algo?
-                if (data?.matches && data.matches.length > 0) {
-                    console.log(`✅ H2H carregado da API (${data.matches.length} jogos)`);
-                    return data;
-                }
-
-                // Se chegou aqui, veio vazio da API
-                console.warn("⚠ API retornou vazio → ativando fallback local");
-                return buildFallback(player1, player2, league);
-
-            } catch (err) {
-                console.warn("❌ Erro ao consultar H2H → usando fallback", err);
-                return buildFallback(player1, player2, league);
-            }
-        }
-        function buildFallback(player1, player2, league) {
-            const localMatches = getH2HMatches(player1, player2, league);
-
-            if (!localMatches || localMatches.length === 0) {
-                console.warn("⚠ Nenhum dado encontrado no fallback local.");
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`Erro na API: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                console.error('Erro ao buscar dados:', error);
                 return null;
             }
+        }
 
-            const wins1 = localMatches.filter(g => {
-                const homeIsP1 = g.home.name.toLowerCase() === player1.toLowerCase();
-                return homeIsP1 ? g.score.home > g.score.away : g.score.away > g.score.home;
-            }).length;
+        // Update players list using the new API
+        async function updatePlayersList() {
+            const playerLeagueSelector = document.getElementById('playerLeagueSelector');
+            const player1Selector = document.getElementById('player1Selector');
+            const player2Selector = document.getElementById('player2Selector');
+            const currentLeague = playerLeagueSelector.value;
+            const currentPlayer1 = player1Selector.value;
+            const currentPlayer2 = player2Selector.value;
 
-            const wins2 = localMatches.filter(g => {
-                const homeIsP1 = g.home.name.toLowerCase() === player1.toLowerCase();
-                return homeIsP1 ? g.score.home < g.score.away : g.score.away < g.score.home;
-            }).length;
+            const data = await fetchData('https://caveira-proxy.onrender.com/api/historico/partidas?page=1&limit=30');
+            if (!data?.partidas) return;
 
-            const draws = localMatches.filter(g => g.score.home === g.score.away).length;
+            // Update league options and preserve selection
+            const uniqueLeagues = new Set(data.partidas.map(m => m.league_name));
+            playerLeagueSelector.innerHTML = '<option value="">Selecione uma Liga</option>';
+            Array.from(uniqueLeagues).sort().forEach(league => {
+                const option = document.createElement('option');
+                option.value = league;
+                option.textContent = league;
+                playerLeagueSelector.appendChild(option);
+            });
+            playerLeagueSelector.value = currentLeague;
 
-            return {
-                player1,
-                player2,
-                total_matches: localMatches.length,
-                player1_wins: wins1,
-                player2_wins: wins2,
-                draws,
-                player1_win_percentage: (wins1 / localMatches.length) * 100,
-                player2_win_percentage: (wins2 / localMatches.length) * 100,
-                draw_percentage: (draws / localMatches.length) * 100,
-                matches: localMatches.map(g => ({
+            // Filter players based on selected league
+            const uniquePlayers = new Set(data.partidas
+                .filter(match => !currentLeague || match.league_name === currentLeague)
+                .flatMap(match => [match.home_player, match.away_player]));
+
+            const playersList = Array.from(uniquePlayers).sort();
+            player1Selector.innerHTML = '<option value="">Jogador 1</option>';
+            player2Selector.innerHTML = '<option value="">Jogador 2</option>';
+
+            playersList.forEach(player => {
+                player1Selector.innerHTML += `<option value="${player}">${player}</option>`;
+                player2Selector.innerHTML += `<option value="${player}">${player}</option>`;
+            });
+
+            // Restore selected players if they exist
+            if (playersList.includes(currentPlayer1)) player1Selector.value = currentPlayer1;
+            if (playersList.includes(currentPlayer2)) player2Selector.value = currentPlayer2;
+
+            player1Selector.disabled = false;
+            player2Selector.disabled = false;
+
+            // Trigger analysis update if players are selected
+            if (player1Selector.value && player2Selector.value && player1Selector.value !== player2Selector.value) {
+                renderPlayerComparison();
+            }
+        }
+
+        // Fetch H2H data com proteção a 304/ETag + fallback local
+        async function fetchH2HData(player1, player2, league) {
+            const baseUrl = `https://caveira-proxy.onrender.com/api/v1/historico/confronto/${encodeURIComponent(player1)}/${encodeURIComponent(player2)}?page=1&limit=30&league=${encodeURIComponent(league)}`;
+
+            const tryFetch = async (url, cacheMode = 'no-store') => {
+                const resp = await fetch(url, {
+                    cache: cacheMode,
+                    headers: { 'Accept': 'application/json' }
+                });
+                console.log('H2H fetch:', { url, status: resp.status });
+
+                // 304 vem com corpo vazio; evitamos json() neste caso
+                if (resp.status === 304) return null;
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+
+                const ct = resp.headers.get('content-type') || '';
+                if (!ct.includes('application/json')) throw new Error('Conteúdo não é JSON');
+                return await resp.json();
+            };
+
+            try {
+                let data = await tryFetch(`${baseUrl}&_=${Date.now()}`, 'no-store');
+
+                if (!data) {
+                    data = await tryFetch(`${baseUrl}&_=${Date.now()}`, 'reload');
+                }
+
+                if (data && Array.isArray(data.matches)) return data;
+
+                const toTitleCase = (s) => s.replace(/\S+/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+                const tcUrl = `https://caveira-proxy.onrender.com/api/v1/historico/confronto/${encodeURIComponent(toTitleCase(player1))}/${encodeURIComponent(toTitleCase(player2))}?page=1&limit=30&league=${encodeURIComponent(league)}&_=${Date.now()}`;
+                const tcData = await tryFetch(tcUrl, 'no-store');
+                if (tcData && Array.isArray(tcData.matches)) return tcData;
+
+                throw new Error('API H2H sem dados');
+            } catch (error) {
+                console.error('Erro ao buscar dados H2H, usando fallback local:', error);
+
+                // Fallback: monta matches a partir de leagueData para manter a comparação funcional
+                const local = getH2HMatches(player1, player2, league).map(g => ({
                     home_player: g.home.name,
                     away_player: g.away.name,
                     score_home: g.score.home,
                     score_away: g.score.away,
-                    halftime_score_home: g.scoreHT?.home || 0,
-                    halftime_score_away: g.scoreHT?.away || 0,
+                    halftime_score_home: (g.scoreHT?.home || 0),
+                    halftime_score_away: (g.scoreHT?.away || 0),
                     data_realizacao: g.start_at,
                     league_name: league
-                }))
-            };
-        }
+                }));
 
-
-        // Fallback local
-        function getH2HMatches(player1, player2, league) {
-            if (!leagueData[league]) return [];
-            const p1 = player1.toLowerCase();
-            const p2 = player2.toLowerCase();
-
-            return leagueData[league]
-                .filter(game => {
-                    const h = game.home.name.toLowerCase();
-                    const a = game.away.name.toLowerCase();
-                    return (h === p1 && a === p2) || (h === p2 && a === p1);
-                })
-                .sort((a, b) => new Date(b.start_at) - new Date(a.start_at));
+                return { player1, player2, matches: local };
+            }
         }
 
         // Process data
@@ -782,7 +802,7 @@
         function populateSelectors() {
             const leagues = Object.keys(leagueData).sort();
 
-            const selectors = ['leagueSelector', 'playerLeagueSelector'];
+            const selectors = ['leagueSelector'];
             selectors.forEach(id => {
                 const select = document.getElementById(id);
                 select.innerHTML = '<option value="">Selecione uma Liga</option>';
@@ -793,6 +813,9 @@
                     select.appendChild(option);
                 });
             });
+
+            // Para a aba de players, usamos a nova lógica
+            updatePlayersList();
         }
 
         // Calculate league metrics
@@ -1108,43 +1131,9 @@
             `).join('');
         }
 
-        // Handle player league change
+        // Handle player league change (chama updatePlayersList)
         function handlePlayerLeagueChange() {
-            const league = document.getElementById('playerLeagueSelector').value;
-            const player1Select = document.getElementById('player1Selector');
-            const player2Select = document.getElementById('player2Selector');
-
-            if (!league) {
-                player1Select.disabled = true;
-                player2Select.disabled = true;
-                player1Select.innerHTML = '<option value="">Jogador 1</option>';
-                player2Select.innerHTML = '<option value="">Jogador 2</option>';
-                document.getElementById('playerComparison').style.display = 'none';
-                document.getElementById('playerEmpty').style.display = 'block';
-                return;
-            }
-
-            const players = Object.keys(playerData)
-                .filter(player => playerData[player][league])
-                .sort();
-
-            player1Select.disabled = false;
-            player2Select.disabled = false;
-
-            player1Select.innerHTML = '<option value="">Jogador 1</option>';
-            player2Select.innerHTML = '<option value="">Jogador 2</option>';
-
-            players.forEach(player => {
-                const opt1 = document.createElement('option');
-                opt1.value = player;
-                opt1.textContent = player;
-                player1Select.appendChild(opt1);
-
-                const opt2 = document.createElement('option');
-                opt2.value = player;
-                opt2.textContent = player;
-                player2Select.appendChild(opt2);
-            });
+            updatePlayersList();
         }
 
         // Render Player Comparison
@@ -1171,7 +1160,7 @@
             // Fetch H2H data
             h2hData = await fetchH2HData(player1, player2, league);
 
-            if (!h2hData || !h2hData.matches || h2hData.matches.length === 0) {
+            if (!h2hData || !h2hData.matches || h2hData.length === 0) {
                 document.getElementById('playerComparison').innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">⚔️</div>
@@ -1383,7 +1372,7 @@
                 return `
                                 <div class="match-item">
                                     <div style="margin-bottom: 10px;">
-                                        <div style="display: flex; justify-between; align-items: center; margin-bottom: 5px;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                                             <span style="font-weight: bold; color: var(--text);">${match.home_player} vs ${match.away_player}</span>
                                             <span style="font-size: 0.85rem; color: var(--text-sec);">${new Date(match.data_realizacao).toLocaleDateString('pt-BR')}</span>
                                         </div>
@@ -1416,7 +1405,7 @@
             document.getElementById(tab).classList.add('active');
 
             if (tab === 'leagues') renderLeagueDetails();
-            else if (tab === 'players') renderPlayerComparison();
+            else if (tab === 'players') updatePlayersList();
             else if (tab === 'overview') renderOverview();
         }
 
