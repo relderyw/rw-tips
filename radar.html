@@ -233,6 +233,23 @@
         .yellow { color: var(--warning); font-weight: bold; }
         .red { color: var(--error); font-weight: bold; }
 
+        .elite-metric {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .elite-icon {
+            font-size: 1.2rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
         .comparison-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -589,6 +606,30 @@
             });
         }
 
+        function getColorClass(value, metric) {
+            if (value >= 90) return 'green';
+            if (metric.includes('Over') || metric.includes('BTTS')) {
+                if (value >= 70) return 'green';
+                if (value >= 50) return 'yellow';
+            } else if (metric.includes('Win')) {
+                if (value >= 60) return 'green';
+                if (value >= 40) return 'yellow';
+            }
+            return 'red';
+        }
+
+        function addEliteIcon(value) {
+            if (value >= 90) {
+                return ` <span class="elite-icon" title="Métrica Elite (≥90%)">🔥</span>`;
+            }
+            return '';
+        }
+
+        function formatPercentage(value, label = '') {
+            const colorClass = getColorClass(value, label);
+            const icon = addEliteIcon(value);
+            return `<span class="${colorClass} elite-metric">${value}%${icon}</span>`;
+        }
         function calculateLeagueMetrics(games, windowSize) {
             const recent = games.slice(0, windowSize);
             if (recent.length === 0) return null;
@@ -736,12 +777,12 @@
                 <tr>
                     <td>${league}</td>
                     <td>${metrics.total}</td>
-                    <td class="${metrics.htOver05Pct >= 70 ? 'green' : metrics.htOver05Pct >= 50 ? 'yellow' : ''}">${metrics.htOver05Pct}%</td>
-                    <td class="${metrics.htOver15Pct >= 60 ? 'green' : metrics.htOver15Pct >= 40 ? 'yellow' : ''}">${metrics.htOver15Pct}%</td>
-                    <td class="${metrics.htBttsPct >= 50 ? 'green' : metrics.htBttsPct >= 30 ? 'yellow' : ''}">${metrics.htBttsPct}%</td>
-                    <td class="${metrics.ftOver25Pct >= 70 ? 'green' : metrics.ftOver25Pct >= 50 ? 'yellow' : ''}">${metrics.ftOver25Pct}%</td>
-                    <td class="${metrics.ftOver35Pct >= 50 ? 'green' : metrics.ftOver35Pct >= 30 ? 'yellow' : ''}">${metrics.ftOver35Pct}%</td>
-                    <td class="${metrics.ftBttsPct >= 60 ? 'green' : metrics.ftBttsPct >= 40 ? 'yellow' : ''}">${metrics.ftBttsPct}%</td>
+                    <td>${formatPercentage(metrics.htOver05Pct, 'HT Over 0.5')}</td>
+                    <td>${formatPercentage(metrics.htOver15Pct, 'HT Over 1.5')}</td>
+                    <td>${formatPercentage(metrics.htBttsPct, 'HT BTTS')}</td>
+                    <td>${formatPercentage(metrics.ftOver25Pct, 'FT Over 2.5')}</td>
+                    <td>${formatPercentage(metrics.ftOver35Pct, 'FT Over 3.5')}</td>
+                    <td>${formatPercentage(metrics.ftBttsPct, 'FT BTTS')}</td>
                 </tr>
             `).join('');
         }
@@ -749,6 +790,8 @@
         function renderLeagueDetails() {
             const league = document.getElementById('leagueSelector').value;
             const windowSize = parseInt(document.getElementById('leagueWindow').value);
+
+            console.log('renderLeagueDetails chamado:', { league, windowSize });
 
             if (!league) {
                 document.getElementById('leagueDetails').style.display = 'none';
@@ -760,6 +803,8 @@
             document.getElementById('leagueDetails').style.display = 'block';
 
             const metrics = calculateLeagueMetrics(leagueData[league], windowSize);
+            
+            console.log('Métricas calculadas:', metrics);
 
             // Stats Grid
             document.getElementById('leagueStatsGrid').innerHTML = `
@@ -793,7 +838,7 @@
                 <div style="margin-bottom: 20px;">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                         <span>${p.label}</span>
-                        <span style="font-weight: bold; color: var(--accent);">${p.value}%</span>
+                        <span style="font-weight: bold;">${formatPercentage(p.value, p.label)}</span>
                     </div>
                     <div class="percentage-bar">
                         <div class="percentage-fill" style="width: ${p.value}%">${p.value}%</div>
@@ -820,7 +865,7 @@
                     <td>${player}</td>
                     <td>${stats.games}</td>
                     <td>${stats.wins}</td>
-                    <td class="${stats.winPct >= 60 ? 'green' : stats.winPct >= 40 ? 'yellow' : 'red'}">${stats.winPct}%</td>
+                    <td>${formatPercentage(stats.winPct, 'Win')}</td>
                     <td class="green">${stats.goalsScored} (${stats.avgScored}/jogo)</td>
                     <td class="red">${stats.goalsConceded} (${stats.avgConceded}/jogo)</td>
                     <td>${stats.avgTotal}</td>
@@ -863,8 +908,8 @@
                     <td>${m.key}</td>
                     <td>${m.games}</td>
                     <td class="${m.avgGoals >= 5 ? 'green' : m.avgGoals >= 3.5 ? 'yellow' : ''}">${m.avgGoals}</td>
-                    <td class="${m.over25Pct >= 70 ? 'green' : m.over25Pct >= 50 ? 'yellow' : ''}">${m.over25Pct}%</td>
-                    <td class="${m.bttsPct >= 60 ? 'green' : m.bttsPct >= 40 ? 'yellow' : ''}">${m.bttsPct}%</td>
+                    <td>${formatPercentage(m.over25Pct, 'Over 2.5')}</td>
+                    <td>${formatPercentage(m.bttsPct, 'BTTS')}</td>
                 </tr>
             `).join('');
         }
@@ -873,6 +918,8 @@
             const league = document.getElementById('playerLeagueSelector').value;
             const player1 = document.getElementById('player1Selector').value;
             const player2 = document.getElementById('player2Selector').value;
+
+            console.log('renderPlayerComparison chamado:', { league, player1, player2 });
 
             if (!league || !player1 || !player2) {
                 document.getElementById('playerComparison').style.display = 'none';
@@ -920,7 +967,9 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Win Rate</div>
-                    <div class="stat-value ${stats.winPct >= 60 ? 'green' : stats.winPct >= 40 ? 'yellow' : 'red'}">${stats.winPct}%</div>
+                    <div class="stat-value" style="color: ${stats.winPct >= 90 ? 'var(--success)' : stats.winPct >= 60 ? 'var(--accent)' : stats.winPct >= 40 ? 'var(--warning)' : 'var(--error)'}">
+                        ${stats.winPct}%${addEliteIcon(stats.winPct)}
+                    </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Empates</div>
@@ -1005,11 +1054,15 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">BTTS</div>
-                    <div class="stat-value ${bttsPct >= 60 ? 'green' : bttsPct >= 40 ? 'yellow' : 'red'}">${bttsPct}%</div>
+                    <div class="stat-value" style="color: ${bttsPct >= 90 ? 'var(--success)' : bttsPct >= 60 ? 'var(--accent)' : bttsPct >= 40 ? 'var(--warning)' : 'var(--error)'}">
+                        ${bttsPct}%${addEliteIcon(bttsPct)}
+                    </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Over 2.5</div>
-                    <div class="stat-value ${over25Pct >= 70 ? 'green' : over25Pct >= 50 ? 'yellow' : 'red'}">${over25Pct}%</div>
+                    <div class="stat-value" style="color: ${over25Pct >= 90 ? 'var(--success)' : over25Pct >= 70 ? 'var(--accent)' : over25Pct >= 50 ? 'var(--warning)' : 'var(--error)'}">
+                        ${over25Pct}%${addEliteIcon(over25Pct)}
+                    </div>
                 </div>
             `;
 
