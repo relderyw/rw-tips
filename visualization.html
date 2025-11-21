@@ -1580,7 +1580,17 @@
 
             radarButton.addEventListener('click', () => {
                 setActiveMainNavButton(radarButton);
-                window.location.href = 'radar.html';
+
+                const authToken = localStorage.getItem('authToken');
+                const tokenExpiry = localStorage.getItem('tokenExpiry');
+
+                if (authToken && tokenExpiry) {
+                    const radarUrl = `https://rwtips.netlify.app/?auth=${encodeURIComponent(authToken)}&expiry=${tokenExpiry}`;
+                    window.open(radarUrl, '_blank');
+                } else {
+                    alert('Erro de autenticação. Por favor, faça login novamente.');
+                    window.location.href = 'index.html';
+                }
             });
 
             overButton.addEventListener('click', () => {
