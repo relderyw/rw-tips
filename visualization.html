@@ -834,14 +834,8 @@
         <button class="main-nav-button active" id="viewUpcomingButton">
             <span>⚽</span> Próximos Jogos
         </button>
-        <button class="main-nav-button" id="viewResultsButton">
-            <span>🏁</span> Últimos Resultados
-        </button>
         <button class="main-nav-button" id="viewLiveButton">
             <span>🔴</span> AO VIVO
-        </button>
-        <button class="main-nav-button" id="viewStatsButton">
-            <span>📊</span> Estatísticas das Ligas
         </button>
         <button class="main-nav-button" id="registerBetsButton">
             <span>💲</span> Registrar Apostas
@@ -851,9 +845,6 @@
         </button>
         <button class="main-nav-button" id="reactAnalysisAppButton">
             <span>🧠</span> Análise (Futebol)
-        </button>
-        <button class="main-nav-button" id="dashboardButton">
-            <span>📋</span> Dashboard
         </button>
         <button class="main-nav-button" id="nbaStatsButton">
             <span>🏀</span> NBA Stats
@@ -901,12 +892,10 @@
             const searchFilter = document.getElementById('searchFilter');
             const topNavButtons = document.querySelectorAll('.top-nav-button');
             const viewUpcomingButton = document.getElementById('viewUpcomingButton');
-            const viewResultsButton = document.getElementById('viewResultsButton');
             const viewLiveButton = document.getElementById('viewLiveButton');
-            const viewStatsButton = document.getElementById('viewStatsButton');
             const registerBetsButton = document.getElementById('registerBetsButton');
             const playerAnalysisButton = document.getElementById('playerAnalysisButton');
-            const dashboardButton = document.getElementById('dashboardButton');
+            // Removido: dashboardButton
             const reactAnalysisAppButton = document.getElementById('reactAnalysisAppButton');
             const nbaStatsButton = document.getElementById('nbaStatsButton');
             const radarButton = document.getElementById('radarButton');
@@ -1543,20 +1532,12 @@
                 window.location.href = 'index.html';
             });
 
-            viewResultsButton.addEventListener('click', () => {
-                setActiveMainNavButton(viewResultsButton);
-                window.location.href = 'results.html';
-            });
 
             viewLiveButton.addEventListener('click', () => {
                 setActiveMainNavButton(viewLiveButton);
                 window.location.href = 'live_v2.html';
             });
 
-            viewStatsButton.addEventListener('click', () => {
-                setActiveMainNavButton(viewStatsButton);
-                window.location.href = 'statistics.html';
-            });
 
             registerBetsButton.addEventListener('click', () => {
                 setActiveMainNavButton(registerBetsButton);
@@ -1568,10 +1549,6 @@
                 window.location.href = 'players.html';
             });
 
-            dashboardButton.addEventListener('click', () => {
-                setActiveMainNavButton(dashboardButton);
-                window.location.href = 'dashboard.html';
-            });
 
             nbaStatsButton.addEventListener('click', () => {
                 setActiveMainNavButton(nbaStatsButton);
