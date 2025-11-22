@@ -1067,6 +1067,19 @@
                 this.applyFilters();
             }
 
+            // Extrai o conteúdo mais interno entre parênteses de um texto
+            extractPlayerName(text) {
+                if (!text || typeof text !== 'string') return '';
+                const s = String(text);
+                const regex = /\(([^()]*)\)/g;
+                let match, last;
+                while ((match = regex.exec(s)) !== null) {
+                    last = match[1];
+                }
+                const candidate = (last && last.trim()) ? last.trim() : s.trim();
+                return candidate.replace(/^\s+|\s+$/g, '');
+            }
+
             async fetchGames() {
                 try {
                     this.showLoading('Buscando jogos...');
@@ -1106,8 +1119,8 @@
                             this.showLoading(`Processando jogo ${index + 1}/${sortedLimited.length}...`);
                             const normalizedGame = {
                                 competition: { name: item.leagueName || 'Desconhecida' },
-                                home: { name: item.home || item.home_player_name || '-', teamName: item.home_team_name || '-' },
-                                away: { name: item.away || item.away_player_name || '-', teamName: item.away_team_name || '-' },
+                                home: { name: this.extractPlayerName(item.home || item.home_player_name || '-'), teamName: item.home_team_name || '-' },
+                                away: { name: this.extractPlayerName(item.away || item.away_player_name || '-'), teamName: item.away_team_name || '-' },
                                 startTime: item.timestamp ? new Date(item.timestamp * 1000).toISOString() : `${item.day} ${item.hour}`
                             };
                             const stats = await this.fetchGameStats(normalizedGame);
