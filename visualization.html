@@ -1007,30 +1007,62 @@
 
             async function fetchUpcomingGames() {
                 try {
-                    // Array para armazenar todos os jogos
+                    // Nova API: https://api.green365.com.br/api/league/upcoming?sport=fifa&leagueId=&page=1
+                    // Estrutura esperada:
+                    // {
+                    //   pagination: { total, totalPages, page, limit },
+                    //   data: [ { home_team_name, home, away_team_name, away, homeID, awayID, eventID, timestamp, day, hour, leagueID, leagueName, sportType, homeImage, awayImage } ]
+                    // }
+
+                    const baseUrl = 'https://api.green365.com.br/api/league/upcoming?sport=fifa&leagueId=&page=';
                     let allGames = [];
-                    
-                    // Buscar primeira página
-                    const response1 = await fetch('https://api-v2.green365.com.br/api/v2/sport-events?page=1&limit=24&sport=esoccer&status=upcoming');
-                    if (!response1.ok) {
-                        throw new Error(`Erro na API (página 1): ${response1.status} - ${response1.statusText}`);
+
+                    // Buscar página 1
+                    const respPage1 = await fetch(`${baseUrl}1`);
+                    if (!respPage1.ok) {
+                        throw new Error(`Erro na API (página 1): ${respPage1.status} - ${respPage1.statusText}`);
                     }
-                    const data1 = await response1.json();
-                    
-                    // Adicionar jogos da primeira página
-                    allGames = [...data1.items];
-                    
-                    // Verificar se há mais de uma página e buscar a segunda página
-                    if (data1.pagination.totalPages > 1) {
-                        const response2 = await fetch('https://api-v2.green365.com.br/api/v2/sport-events?page=2&limit=24&sport=esoccer&status=upcoming');
-                        if (response2.ok) {
-                            const data2 = await response2.json();
-                            // Adicionar jogos da segunda página
-                            allGames = [...allGames, ...data2.items];
+                    const jsonPage1 = await respPage1.json();
+
+                    const totalPages = (jsonPage1.pagination && jsonPage1.pagination.totalPages) ? jsonPage1.pagination.totalPages : 1;
+
+                    const mapItem = (item) => ({
+                        eventID: item.eventID,
+                        competition: { name: item.leagueName || 'Desconhecida', id: item.leagueID },
+                        startTime: item.timestamp ? Number(item.timestamp) * 1000 : null,
+                        home: {
+                            name: extractPlayerName(item.home),
+                            teamName: extractTeamName(item.home_team_name),
+                            id: item.homeID,
+                            image: item.homeImage
+                        },
+                        away: {
+                            name: extractPlayerName(item.away),
+                            teamName: extractTeamName(item.away_team_name),
+                            id: item.awayID,
+                            image: item.awayImage
+                        }
+                    });
+
+                    allGames = (jsonPage1.data || []).map(mapItem);
+
+                    // Buscar demais páginas, se existirem
+                    for (let p = 2; p <= totalPages; p++) {
+                        try {
+                            const resp = await fetch(`${baseUrl}${p}`);
+                            if (!resp.ok) {
+                                console.warn(`Falha ao buscar página ${p}: ${resp.status}`);
+                                continue;
+                            }
+                            const json = await resp.json();
+                            const pageItems = (json.data || []).map(mapItem);
+                            allGames = allGames.concat(pageItems);
+                        } catch (err) {
+                            console.warn(`Erro ao processar página ${p}:`, err.message);
                         }
                     }
-                    
-                    console.log("Jogos futuros obtidos:", allGames.length);
+
+                    console.log('Jogos futuros obtidos:', allGames.length);
                     return allGames || [];
                 } catch (error) {
                     console.error('Erro ao buscar jogos futuros:', error.message);
