@@ -1150,7 +1150,7 @@
 
             async fetchGameStats(game) {
                 try {
-                    const url = `https://caveira-proxy.onrender.com/api/v1/historico/confronto/${encodeURIComponent(game.home.name)}/${encodeURIComponent(game.away.name)}?page=1&limit=20`;
+                    const url = `https://rwtips-r943.onrender.com/api/v1/historico/confronto/${encodeURIComponent(game.home.name)}/${encodeURIComponent(game.away.name)}?page=1&limit=20`;
                     const response = await fetch(url);
                     
                     if (!response.ok) throw new Error(`Erro nas estatísticas: ${response.status}`);
