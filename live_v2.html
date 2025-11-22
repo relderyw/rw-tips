@@ -1362,7 +1362,7 @@
             <li><a href="players.html"><span class="icon">🎮</span><span class="label">Análise de Jogadores</span></a>
             </li>
             <li><a href="nba.html"><span class="icon">🏀</span><span class="label">NBA Stats</span></a></li>
-            <li><a href="radar.html"><span class="icon">🎯</span><span class="label">Radar</span></a></li>
+            <li><a href="#" id="sidebarRadar"><span class="icon">🎯</span><span class="label">Radar</span></a></li>
             <li><a href="over.html"><span class="icon">📍</span><span class="label">Over Analysis</span></a></li>
         </ul>
     </nav>
@@ -2494,6 +2494,26 @@
             window.initialLoad = true;
             openTab('live');
         });
+    </script>
+    <script>
+        // Lógica do botão Radar na sidebar (mesma da visualization.html)
+        (function(){
+            const radarSidebarLink = document.getElementById('sidebarRadar');
+            if (radarSidebarLink) {
+                radarSidebarLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const authToken = localStorage.getItem('authToken');
+                    const tokenExpiry = localStorage.getItem('tokenExpiry');
+                    if (authToken && tokenExpiry) {
+                        const radarUrl = `https://rwtips.netlify.app/?auth=${encodeURIComponent(authToken)}&expiry=${tokenExpiry}`;
+                        window.open(radarUrl, '_blank');
+                    } else {
+                        alert('Erro de autenticação. Por favor, faça login novamente.');
+                        window.location.href = 'index.html';
+                    }
+                });
+            }
+        })();
     </script>
 </body>
 
