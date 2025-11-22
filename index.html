@@ -1488,6 +1488,19 @@
             return new Date(`${iso}-03:00`);
         }
 
+        // Extrai o conteúdo mais interno entre parênteses
+        function extractPlayerName(text) {
+            if (!text || typeof text !== 'string') return '';
+            const s = String(text);
+            const regex = /\(([^()]*)\)/g;
+            let match, last;
+            while ((match = regex.exec(s)) !== null) {
+                last = match[1];
+            }
+            const candidate = (last && last.trim()) ? last.trim() : s.trim();
+            return candidate.replace(/^\s+|\s+$/g, '');
+        }
+
         async function loadGames() {
             const loadingGames = document.getElementById('loadingGames');
             const gamesTable = document.getElementById('gamesTable');
@@ -1528,8 +1541,8 @@
                     sortedLimited.map(async (item) => {
                         const normalizedGame = {
                             competition: { name: item.leagueName || 'Desconhecida' },
-                            home: { name: item.home || item.home_player_name || '-', teamName: item.home_team_name || '-' },
-                            away: { name: item.away || item.away_player_name || '-', teamName: item.away_team_name || '-' },
+                            home: { name: extractPlayerName(item.home || item.home_player_name || '-'), teamName: item.home_team_name || '-' },
+                            away: { name: extractPlayerName(item.away || item.away_player_name || '-'), teamName: item.away_team_name || '-' },
                             startTime: item.timestamp ? new Date(item.timestamp * 1000).toISOString() : `${item.day} ${item.hour}`
                         };
 
