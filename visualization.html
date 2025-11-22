@@ -1048,7 +1048,7 @@
                 }
 
                 try {
-                    const response = await fetch(`https://caveira-proxy.onrender.com/api/v1/historico/confronto/${encodeURIComponent(homePlayer)}/${encodeURIComponent(awayPlayer)}?page=1&limit=20`);
+                    const response = await fetch(`https://rwtips-r943.onrender.com/api/v1/historico/confronto/${encodeURIComponent(homePlayer)}/${encodeURIComponent(awayPlayer)}?page=1&limit=20`);
                     if (!response.ok) {
                         throw new Error(`Erro ao buscar H2H: ${response.status}`);
                     }
