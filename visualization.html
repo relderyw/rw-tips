@@ -965,7 +965,16 @@
 
             function extractPlayerName(text) {
                 if (!text || typeof text !== 'string') return 'Desconhecido';
-                return text;
+                const s = String(text);
+                // Captura o conteúdo mais interno entre parênteses, ex.: PSG (PSG (fantazer)) -> fantazer
+                const regex = /\(([^()]*)\)/g;
+                let match, last;
+                while ((match = regex.exec(s)) !== null) {
+                    last = match[1];
+                }
+                const candidate = (last && last.trim()) ? last.trim() : s.trim();
+                // Remove possíveis espaços extras
+                return candidate.replace(/^\s+|\s+$/g, '');
             }
 
             function extractTeamName(text) {
