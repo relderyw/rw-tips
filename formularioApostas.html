@@ -5,7 +5,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema de Apostas</title>
-  <link rel="stylesheet" href="styles.css">
   <style>
     /* Todo o CSS permanece o mesmo */
     :root {
@@ -291,8 +290,7 @@
     }
 
     .submit-button,
-    .back-button-link,
-    .logout-button {
+    .back-button-link {
       width: 100%;
       padding: 0.875rem 1.75rem;
       border: none;
@@ -313,15 +311,13 @@
     }
 
     .submit-button:hover,
-    .back-button-link:hover,
-    .logout-button:hover {
+    .back-button-link:hover {
       transform: translateY(-2px);
       box-shadow: 0 0 20px rgba(0, 255, 100, 0.5);
     }
 
     .submit-button::after,
-    .back-button-link::after,
-    .logout-button::after {
+    .back-button-link::after {
       content: '';
       position: absolute;
       top: 0;
@@ -333,8 +329,7 @@
     }
 
     .submit-button:hover::after,
-    .back-button-link:hover::after,
-    .logout-button:hover::after {
+    .back-button-link:hover::after {
       left: 100%;
     }
 
@@ -342,12 +337,10 @@
     .back-to-visualization {
       margin-bottom: 1rem;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      justify-content: flex-end;
     }
 
-    .back-button-link,
-    .logout-button {
+    .back-button-link {
       width: auto;
       display: inline-flex;
       align-items: center;
@@ -649,61 +642,6 @@
       font-weight: 600;
       text-shadow: 0 0 5px rgba(239, 68, 68, 0.3);
     }
-    
-    .status-blue {
-      color: #3b82f6;
-      font-weight: 600;
-      text-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
-    }
-    
-    .banca-inicial-container {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 0.5rem;
-    }
-    
-    .banca-inicial-container input {
-      flex: 1;
-    }
-    
-    .banca-inicial-container button {
-      width: auto;
-      padding: 0.875rem 1.25rem;
-    }
-    
-    .unidade-info {
-      font-size: 0.9rem;
-      color: var(--color-text-secondary);
-      margin-top: 0.5rem;
-    }
-    
-    .sub-value {
-      font-size: 0.85rem;
-      color: var(--color-text-tertiary);
-      margin-top: 0.5rem;
-    }
-    
-    .stats-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
-    }
-    
-    .stat-item {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.9rem;
-    }
-    
-    .stat-label {
-      color: var(--color-text-tertiary);
-    }
-    
-    .stat-value {
-      font-weight: 600;
-      color: var(--color-text-primary);
-    }
 
     /* Markets form */
     .market-form {
@@ -933,15 +871,6 @@
         </svg>
         Voltar
       </a>
-      <button class="logout-button" onclick="logout()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-          <polyline points="16 17 21 12 16 7"></polyline>
-          <line x1="21" y1="12" x2="9" y2="12"></line>
-        </svg>
-        Sair
-      </button>
     </div>
 
     <div class="container">
@@ -967,53 +896,18 @@
 
       <!-- Dashboard Tab -->
       <div class="tab-content active" id="dashboard-tab">
-        <div class="form-group">
-          <label for="banca-inicial">Banca Inicial</label>
-          <div class="banca-inicial-container">
-            <input type="number" id="banca-inicial" placeholder="Valor da banca inicial" min="0" step="0.01">
-            <button id="salvar-banca" class="submit-button">Salvar</button>
-          </div>
-          <div class="unidade-info">
-            <span>Unidade (10 partes): </span>
-            <span id="valor-unidade">R$ 0,00</span>
-          </div>
-        </div>
-        
         <div class="summary">
           <div class="summary-item gain">
             <div class="label">Ganho Total</div>
             <div class="value" id="ganho-total">R$ 0,00</div>
-            <div class="sub-value">Unidades: <span id="unidades-ganhas">0</span></div>
           </div>
           <div class="summary-item loss">
             <div class="label">Perda Total</div>
             <div class="value" id="perda-total">R$ 0,00</div>
-            <div class="sub-value">Unidades: <span id="unidades-perdidas">0</span></div>
           </div>
           <div class="summary-item balance">
             <div class="label">Saldo Total</div>
             <div class="value" id="saldo-total">R$ 0,00</div>
-          </div>
-          <div class="summary-item">
-            <div class="label">Estatísticas</div>
-            <div class="stats-container">
-              <div class="stat-item">
-                <span class="stat-label">Greens:</span>
-                <span id="total-greens" class="stat-value">0</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-label">Reds:</span>
-                <span id="total-reds" class="stat-value">0</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-label">Reembolsos:</span>
-                <span id="total-reembolsos" class="stat-value">0</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-label">Aguardando:</span>
-                <span id="total-aguardando" class="stat-value">0</span>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -1095,7 +989,6 @@
           <div class="form-group">
             <label for="resultado">Resultado</label>
             <select id="resultado" required>
-              <option value="aguardando" selected>Aguardando</option>
               <option value="green">Green</option>
               <option value="red">Red</option>
               <option value="meio-green">Meio Green</option>
@@ -1175,49 +1068,6 @@
     let currentUserKey = null;
     let chart = null;
     let todasApostas = [];
-    let bancaInicial = 0;
-    let valorUnidade = 0;
-    
-    // Carregar banca inicial do localStorage ao iniciar
-    document.addEventListener('DOMContentLoaded', function() {
-      // Configurar evento para salvar banca inicial
-      document.getElementById('salvar-banca').addEventListener('click', function() {
-        const valor = parseFloat(document.getElementById('banca-inicial').value);
-        if (isNaN(valor) || valor <= 0) {
-          alert('Por favor, insira um valor válido para a banca inicial.');
-          return;
-        }
-        
-        bancaInicial = valor;
-        localStorage.setItem('bancaInicial_' + currentUser, bancaInicial);
-        calcularValorUnidade();
-        atualizarInterfaceApostas();
-        alert('Banca inicial salva com sucesso!');
-      });
-    });
-
-    // Função para atualizar o resultado de uma aposta
-    window.atualizarResultado = async function(apostaId, novoResultado) {
-      if (!confirm(`Tem certeza que deseja alterar o resultado para ${novoResultado}?`)) return;
-      
-      try {
-        const apostaRef = doc(db, "apostas", apostaId);
-        await setDoc(apostaRef, { resultado: novoResultado }, { merge: true });
-        alert("Resultado atualizado com sucesso!");
-        await carregarApostas();
-      } catch (error) {
-        console.error("Erro ao atualizar resultado:", error);
-        alert("Erro ao atualizar resultado: " + error.message);
-      }
-    }
-    
-    // Função de logout
-    window.logout = function () {
-      sessionStorage.removeItem('loggedIn');
-      localStorage.removeItem('currentUser');
-      localStorage.removeItem('currentUserKey');
-      window.location.replace('index.html');
-    };
 
     // Definindo função removerAposta no escopo global
     window.removerAposta = async function (id) {
@@ -1267,8 +1117,6 @@
           return -stake / 2;
         case 'reembolso':
           return 0;
-        case 'aguardando':
-          return 0;
         default:
           return 0;
       }
@@ -1307,18 +1155,17 @@
 
     // Funções de autenticação
     function checkUserLogin() {
-      if (!sessionStorage.getItem('loggedIn')) {
+      currentUser = localStorage.getItem('currentUser');
+      currentUserKey = localStorage.getItem('currentUserKey');
+
+      if (!currentUser || !currentUserKey) {
         window.location.replace('index.html');
         return false;
       }
 
       // Atualizar interface do usuário
-      currentUser = localStorage.getItem('currentUser');
-      currentUserKey = localStorage.getItem('currentUserKey') || 'user';
-      if (currentUser) {
-        document.getElementById('user-email').textContent = currentUser;
-        document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
-      }
+      document.getElementById('user-email').textContent = currentUser;
+      document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
 
       // Verificar se é admin ou dono dos mercados para mostrar/ocultar o formulário de adicionar mercados
       const marketForm = document.getElementById("market-form");
@@ -1498,27 +1345,12 @@
           }
         }
 
-        // Adicionar botões de edição para apostas com status "aguardando"
-        let botoesEdicao = '';
-        if (aposta.resultado === 'aguardando') {
-          botoesEdicao = `
-            <div class="botoes-edicao">
-              <button class="botao-green" onclick="atualizarResultado('${aposta.id}', 'green')">Green</button>
-              <button class="botao-meio-green" onclick="atualizarResultado('${aposta.id}', 'meio-green')">Meio Green</button>
-              <button class="botao-red" onclick="atualizarResultado('${aposta.id}', 'red')">Red</button>
-              <button class="botao-meio-red" onclick="atualizarResultado('${aposta.id}', 'meio-red')">Meio Red</button>
-              <button class="botao-reembolso" onclick="atualizarResultado('${aposta.id}', 'reembolso')">Reembolso</button>
-            </div>
-          `;
-        }
-        
         apostaItem.innerHTML = `
           <div class="aposta-info">
             <strong>${aposta.liga}</strong> · <span class="${statusClass}">${statusText}${valorFinalText}</span><br>
             ${aposta.jogador1} vs ${aposta.jogador2}<br>
             <small>${aposta.mercado} · Stake: ${formatarMoeda(stake)} · Odds: ${odds}</small><br>
             <small>${dataFormatada}</small>
-            ${botoesEdicao}
           </div>
           <div class="aposta-actions">
             <button onclick="removerAposta('${aposta.id}')">Remover</button>
@@ -1577,8 +1409,7 @@
         'red': 'Red',
         'meio-green': '½ Green',
         'meio-red': '½ Red',
-        'reembolso': 'Reembolso',
-        'aguardando': 'Aguardando'
+        'reembolso': 'Reembolso'
       };
       return statusMap[resultado] || resultado;
     }
@@ -1589,30 +1420,10 @@
         'red': 'status-red',
         'meio-green': 'status-green',
         'meio-red': 'status-red',
-        'reembolso': 'status-green',
-        'aguardando': 'status-blue'
+        'reembolso': 'status-green'
       };
       return statusMap[resultado] || 'status-green';
     }
-    
-    // Função para calcular o valor da unidade
-    function calcularValorUnidade() {
-      valorUnidade = bancaInicial / 10;
-      document.getElementById('valor-unidade').textContent = formatarMoeda(valorUnidade);
-    }
-    
-    // Função para atualizar resultado de uma aposta
-    window.atualizarResultado = async function(id, novoResultado) {
-      try {
-        const apostaRef = doc(db, "apostas", id);
-        await setDoc(apostaRef, { resultado: novoResultado }, { merge: true });
-        console.log("Resultado atualizado com sucesso!");
-        await carregarApostas();
-      } catch (error) {
-        console.error("Erro ao atualizar resultado:", error);
-        alert("Erro ao atualizar resultado: " + error.message);
-      }
-    };
 
     async function updateChartPeriod(days) {
       // Update period buttons
@@ -1811,20 +1622,20 @@
                 stepSize: 5, // Define o intervalo de 5 em 5 reais
               },
             },
-            x: {
-              grid: {
-                display: false
-              },
-              ticks: {
-                color: "#e0e0e0",
-                padding: 8,
-                font: {
-                  size: 12
-                },
-                maxRotation: 45,
-                minRotation: 45
-              },
+          },
+        },
+        x: {
+          grid: {
+            display: false
+          },
+          ticks: {
+            color: "#e0e0e0",
+            padding: 8,
+            font: {
+              size: 12
             },
+            maxRotation: 45,
+            minRotation: 45
           },
         },
       });
@@ -1920,8 +1731,24 @@
     // Event Listeners
     document.addEventListener("DOMContentLoaded", async () => {
       try {
-        // Verificar login
-        if (!checkUserLogin()) return;
+        // Verificar se os dados do usuário existem no localStorage
+        currentUser = localStorage.getItem('currentUser');
+        currentUserKey = localStorage.getItem('currentUserKey');
+
+        console.log("Usuário logado:", currentUser);
+        console.log("Chave do usuário:", currentUserKey);
+
+        if (!currentUser || !currentUserKey) {
+          console.log("Usuário não logado. Redirecionando para index.html...");
+          window.location.replace('index.html');
+          return;
+        }
+
+        console.log("Usuário logado com sucesso. Carregando página...");
+
+        // Atualizar interface do usuário
+        document.getElementById('user-email').textContent = currentUser;
+        document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
 
         // Inicializar a página
         setupTabs();
