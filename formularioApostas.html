@@ -5,13 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema de Apostas</title>
-  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;700&display=swap" rel="stylesheet">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
   <style>
-    /* Todo o CSS permanece o mesmo com adições para a sidebar */
+    /* Todo o CSS permanece o mesmo */
     :root {
       --color-primary: rgb(0, 255, 100);
       --color-primary-light: hsl(140, 100%, 60%);
@@ -22,9 +18,9 @@
       --color-accent-light: #34d399;
       --color-danger: #ef4444;
       --color-danger-light: #f87171;
-      --color-bg-dark: #000000;
+      --color-bg-dark: #0a0e17;
       --color-bg-medium: #111827;
-      --color-bg-light: rgb(0, 0, 0);
+      --color-bg-light: #1f2937;
       --color-text-primary: #f8fafc;
       --color-text-secondary: #cbd5e1;
       --color-text-tertiary: #94a3b8;
@@ -36,129 +32,21 @@
       --radius-md: 12px;
       --radius-lg: 20px;
       --transition: all 0.25s ease;
-      /* Variáveis da sidebar */
-      --sidebar-primary-color: var(--color-primary);
-      --sidebar-accent-color: var(--color-accent);
-      --sidebar-border-color: rgba(255, 255, 255, 0.05);
     }
 
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Oxanium', sans-serif;
+      font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
     body {
-      font-family: 'Oxanium', sans-serif;
       background: linear-gradient(145deg, var(--color-bg-dark), var(--color-bg-medium));
       color: var(--color-text-primary);
       min-height: 100vh;
       font-size: 16px;
       line-height: 1.5;
-      padding-left: 70px;
-      /* Espaço para a sidebar */
-      transition: padding-left 0.3s ease;
-    }
-
-    /* Sidebar */
-    .sidebar {
-      position: fixed;
-      left: 0;
-      top: 0;
-      height: 100vh;
-      width: 70px;
-      background: rgba(17, 24, 39, 0.95);
-      backdrop-filter: blur(10px);
-      border-right: 1px solid var(--sidebar-border-color);
-      transition: width 0.3s ease;
-      z-index: 1000;
-      overflow: hidden;
-    }
-
-    .sidebar:hover {
-      width: 260px;
-    }
-
-    .sidebar-header {
-      display: flex;
-      align-items: center;
-      padding: 20px 15px;
-      gap: 15px;
-      border-bottom: 1px solid var(--sidebar-border-color);
-      white-space: nowrap;
-    }
-
-    .sidebar-logo {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .sidebar-title {
-      font-size: 1.2rem;
-      font-weight: 700;
-      background: linear-gradient(45deg, var(--sidebar-accent-color), #60a5fa);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .sidebar:hover .sidebar-title {
-      opacity: 1;
-    }
-
-    .sidebar-menu {
-      list-style: none;
-      padding: 20px 0;
-    }
-
-    .sidebar-menu li {
-      margin: 5px 0;
-    }
-
-    .sidebar-menu a {
-      display: flex;
-      align-items: center;
-      padding: 15px 20px;
-      color: var(--color-text-secondary);
-      text-decoration: none;
-      transition: all 0.3s ease;
-      gap: 15px;
-      white-space: nowrap;
-    }
-
-    .sidebar-menu a:hover {
-      background: rgba(59, 130, 246, 0.1);
-      color: var(--sidebar-accent-color);
-      transform: translateX(5px);
-    }
-
-    .sidebar-menu li.active a {
-      background: linear-gradient(90deg, rgba(16, 185, 129, 0.2), transparent);
-      /* Ajustado para verde */
-      color: var(--sidebar-accent-color);
-      border-left: 3px solid var(--sidebar-accent-color);
-    }
-
-    .sidebar-menu .icon {
-      font-size: 1.3rem;
-      width: 30px;
-      text-align: center;
-      flex-shrink: 0;
-    }
-
-    .sidebar-menu .label {
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      font-weight: 500;
-    }
-
-    .sidebar:hover .sidebar-menu .label {
-      opacity: 1;
     }
 
     /* Layout e containers */
@@ -923,19 +811,6 @@
     }
 
     @media (max-width: 768px) {
-      body {
-        padding-left: 60px;
-        /* Ajuste para mobile */
-      }
-
-      .sidebar {
-        width: 60px;
-      }
-
-      .sidebar:hover {
-        width: 220px;
-      }
-
       .app-container {
         padding: 1rem;
         margin: 1rem auto;
@@ -1037,29 +912,27 @@
 </head>
 
 <body>
-  <nav class="sidebar">
-    <div class="sidebar-header">
-      <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips"
-        class="sidebar-logo">
-      <span class="sidebar-title">RW TIPS</span>
-    </div>
-    <ul class="sidebar-menu">
-      <li><a href="visualization.html"><span class="icon">⚽</span><span class="label">Próximos Jogos</span></a></li>
-      <li><a href="results.html"><span class="icon">📊</span><span class="label">Últimos Resultados</span></a></li>
-      <li><a href="live_v2.html"><span class="icon">🔴</span><span class="label">AO VIVO</span></a></li>
-      <li><a href="statistics.html"><span class="icon">📈</span><span class="label">Estatísticas das Ligas</span></a>
-      </li>
-      <li class="active"><a href="formularioApostas.html"><span class="icon">💰</span><span class="label">Registrar
-            Apostas</span></a></li>
-      <li><a href="players.html"><span class="icon">🎮</span><span class="label">Análise de Jogadores</span></a></li>
-      <li><a href="dashboard.html"><span class="icon">📋</span><span class="label">Dashboard</span></a></li>
-      <li><a href="nba.html"><span class="icon">🏀</span><span class="label">NBA Stats</span></a></li>
-      <li><a href="radar.html"><span class="icon">🎯</span><span class="label">Radar</span></a></li>
-      <li><a href="over.html"><span class="icon">📍</span><span class="label">Over Analysis</span></a></li>
-    </ul>
-  </nav>
-
   <div class="app-container">
+    <div class="back-to-visualization">
+      <a href="visualization.html" class="back-button-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5"></path>
+          <path d="M12 19l-7-7 7-7"></path>
+        </svg>
+        Voltar
+      </a>
+      <button class="logout-button" onclick="logout()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        Sair
+      </button>
+    </div>
+
     <div class="container">
       <header class="header">
         <h1 class="app-title">Controle de Apostas</h1>
@@ -1086,8 +959,7 @@
         <div class="form-group">
           <label for="valor-unidade-input">Valor da Unidade</label>
           <div class="banca-inicial-container">
-            <input type="number" id="valor-unidade-input" placeholder="Valor da unidade (ex: 10.00)" min="0.01"
-              step="0.01">
+            <input type="number" id="valor-unidade-input" placeholder="Valor da unidade (ex: 10.00)" min="0.01" step="0.01">
             <button id="salvar-unidade" class="submit-button">Salvar Unidade</button>
           </div>
           <div class="unidade-info">
@@ -1110,7 +982,6 @@
           <div class="summary-item balance">
             <div class="label">Saldo Total</div>
             <div class="value" id="saldo-total">R$ 0,00</div>
-            <div class="sub-value">Unidades: <span id="unidades-saldo">0</span></div>
           </div>
           <div class="summary-item">
             <div class="label">Estatísticas</div>
@@ -1344,14 +1215,6 @@
       localStorage.removeItem('valorUnidade_' + currentUser);
       window.location.replace('index.html');
     };
-
-    const currentPath = window.location.pathname.split('/').pop() || 'bets.html';
-    const menuItems = document.querySelectorAll('.sidebar-menu a');
-    menuItems.forEach(item => {
-      if (item.getAttribute('href') === currentPath) {
-        item.parentElement.classList.add('active');
-      }
-    });
 
     // Definindo função removerAposta no escopo global
     window.removerAposta = async function (id) {
@@ -1703,10 +1566,9 @@
       // Calcular e atualizar unidades
       const unidadesGanhas = valorUnidade > 0 ? (ganhoTotal / valorUnidade).toFixed(2) : "0.00";
       const unidadesPerdidas = valorUnidade > 0 ? (perdaTotal / valorUnidade).toFixed(2) : "0.00";
-      const unidadesSaldo = valorUnidade > 0 ? ((ganhoTotal - perdaTotal) / valorUnidade).toFixed(2) : "0.00";
       document.getElementById("unidades-ganhas").textContent = unidadesGanhas;
       document.getElementById("unidades-perdidas").textContent = unidadesPerdidas;
-      document.getElementById("unidades-saldo").textContent = unidadesSaldo;
+
       // Criar gráfico inicial com 7 dias
       criarGrafico(7);
     }
