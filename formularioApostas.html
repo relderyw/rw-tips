@@ -1035,6 +1035,18 @@
     }
   </style>
     <script src="js/protection.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "firebase/": "https://aistudiocdn.com/firebase@^12.6.0/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "recharts": "https://aistudiocdn.com/recharts@^3.5.0"
+  }
+}
+</script>
 </head>
 
 <body>
@@ -1502,11 +1514,7 @@
       if (!currentUser) return;
 
       try {
-        // Para usuários não administradores, carregamos todos os mercados existentes
-        // Isso permite que todos usuários possam escolher entre os mercados disponíveis
         const mercadosRef = collection(db, "mercados");
-
-        // Não filtramos por usuário para permitir que todos vejam todos os mercados
         const querySnapshot = await getDocs(mercadosRef);
 
         const mercados = [];
@@ -1532,28 +1540,36 @@
           selectMercado.appendChild(option);
         });
 
-        // Para a lista de mercados, mostramos apenas os mercados do usuário atual ou se for admin
-        const mercadosUsuario = mercados.filter(m =>
-          m.userEmail === currentUser || currentUserKey === 'admin'
-        );
-
         // Atualizar lista de mercados
+        // MOSTRA TODOS OS MERCADOS, MAS O BOTÃO DE REMOVER APENAS PARA DONOS/ADMINS
         const mercadosLista = document.getElementById("mercados-lista");
-        mercadosLista.innerHTML = mercados.length === 0
-          ? '<div class="history-empty">Nenhum mercado cadastrado</div>'
-          : mercados.map(mercado => `
-          <div class="market-item">
-            <span>${mercado.nome}</span>
-            <button class="remove-button" data-id="${mercado.id}">
-              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                <line x1="10" y1="11" x2="10" y2="17"></line>
-                <line x1="14" y1="11" x2="14" y2="17"></line>
-              </svg>
-            </button>
-          </div>
-        `).join("");
+        
+        if (mercados.length === 0) {
+           mercadosLista.innerHTML = '<div class="history-empty">Nenhum mercado cadastrado</div>';
+        } else {
+           mercadosLista.innerHTML = mercados.map(mercado => {
+              // Check permissions for delete button
+              const canDelete = mercado.userEmail === currentUser || currentUserKey === 'admin';
+              
+              const deleteBtn = canDelete ? `
+                <button class="remove-button" data-id="${mercado.id}">
+                  <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2-2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                  </svg>
+                </button>
+              ` : '';
+
+              return `
+                <div class="market-item">
+                  <span>${mercado.nome}</span>
+                  ${deleteBtn}
+                </div>
+              `;
+           }).join("");
+        }
 
       } catch (error) {
         console.error("Erro ao carregar mercados:", error);
