@@ -5,8 +5,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema de Apostas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <style>
-    /* Todo o CSS permanece o mesmo */
+    /* Todo o CSS permanece o mesmo com adições para a sidebar */
     :root {
       --color-primary: rgb(0, 255, 100);
       --color-primary-light: hsl(140, 100%, 60%);
@@ -17,9 +22,9 @@
       --color-accent-light: #34d399;
       --color-danger: #ef4444;
       --color-danger-light: #f87171;
-      --color-bg-dark: #0a0e17;
+      --color-bg-dark: #000000;
       --color-bg-medium: #111827;
-      --color-bg-light: #1f2937;
+      --color-bg-light: rgb(0, 0, 0);
       --color-text-primary: #f8fafc;
       --color-text-secondary: #cbd5e1;
       --color-text-tertiary: #94a3b8;
@@ -31,21 +36,129 @@
       --radius-md: 12px;
       --radius-lg: 20px;
       --transition: all 0.25s ease;
+      /* Variáveis da sidebar */
+      --sidebar-primary-color: var(--color-primary);
+      --sidebar-accent-color: var(--color-accent);
+      --sidebar-border-color: rgba(255, 255, 255, 0.05);
     }
 
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Oxanium', sans-serif;
     }
 
     body {
+      font-family: 'Oxanium', sans-serif;
       background: linear-gradient(145deg, var(--color-bg-dark), var(--color-bg-medium));
       color: var(--color-text-primary);
       min-height: 100vh;
       font-size: 16px;
       line-height: 1.5;
+      padding-left: 70px;
+      /* Espaço para a sidebar */
+      transition: padding-left 0.3s ease;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100vh;
+      width: 70px;
+      background: rgba(17, 24, 39, 0.95);
+      backdrop-filter: blur(10px);
+      border-right: 1px solid var(--sidebar-border-color);
+      transition: width 0.3s ease;
+      z-index: 1000;
+      overflow: hidden;
+    }
+
+    .sidebar:hover {
+      width: 260px;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      padding: 20px 15px;
+      gap: 15px;
+      border-bottom: 1px solid var(--sidebar-border-color);
+      white-space: nowrap;
+    }
+
+    .sidebar-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .sidebar-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      background: linear-gradient(45deg, var(--sidebar-accent-color), #60a5fa);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .sidebar:hover .sidebar-title {
+      opacity: 1;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      padding: 20px 0;
+    }
+
+    .sidebar-menu li {
+      margin: 5px 0;
+    }
+
+    .sidebar-menu a {
+      display: flex;
+      align-items: center;
+      padding: 15px 20px;
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      gap: 15px;
+      white-space: nowrap;
+    }
+
+    .sidebar-menu a:hover {
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--sidebar-accent-color);
+      transform: translateX(5px);
+    }
+
+    .sidebar-menu li.active a {
+      background: linear-gradient(90deg, rgba(16, 185, 129, 0.2), transparent);
+      /* Ajustado para verde */
+      color: var(--sidebar-accent-color);
+      border-left: 3px solid var(--sidebar-accent-color);
+    }
+
+    .sidebar-menu .icon {
+      font-size: 1.3rem;
+      width: 30px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .sidebar-menu .label {
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      font-weight: 500;
+    }
+
+    .sidebar:hover .sidebar-menu .label {
+      opacity: 1;
     }
 
     /* Layout e containers */
@@ -290,7 +403,8 @@
     }
 
     .submit-button,
-    .back-button-link {
+    .back-button-link,
+    .logout-button {
       width: 100%;
       padding: 0.875rem 1.75rem;
       border: none;
@@ -311,13 +425,15 @@
     }
 
     .submit-button:hover,
-    .back-button-link:hover {
+    .back-button-link:hover,
+    .logout-button:hover {
       transform: translateY(-2px);
       box-shadow: 0 0 20px rgba(0, 255, 100, 0.5);
     }
 
     .submit-button::after,
-    .back-button-link::after {
+    .back-button-link::after,
+    .logout-button::after {
       content: '';
       position: absolute;
       top: 0;
@@ -329,7 +445,8 @@
     }
 
     .submit-button:hover::after,
-    .back-button-link:hover::after {
+    .back-button-link:hover::after,
+    .logout-button:hover::after {
       left: 100%;
     }
 
@@ -337,10 +454,12 @@
     .back-to-visualization {
       margin-bottom: 1rem;
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .back-button-link {
+    .back-button-link,
+    .logout-button {
       width: auto;
       display: inline-flex;
       align-items: center;
@@ -643,6 +762,50 @@
       text-shadow: 0 0 5px rgba(239, 68, 68, 0.3);
     }
 
+    .status-blue {
+      color: #3b82f6;
+      font-weight: 600;
+      text-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
+    }
+
+    .unidade-info {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+      margin-top: 0.5rem;
+      background: rgba(0, 255, 100, 0.1);
+      padding: 0.75rem;
+      border-radius: var(--radius-sm);
+      border-left: 3px solid var(--color-primary);
+    }
+
+    .sub-value {
+      font-size: 0.85rem;
+      color: var(--color-text-tertiary);
+      margin-top: 0.5rem;
+    }
+
+    .stats-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+    }
+
+    .stat-label {
+      color: var(--color-text-tertiary);
+    }
+
+    .stat-value {
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+
     /* Markets form */
     .market-form {
       display: flex;
@@ -760,6 +923,19 @@
     }
 
     @media (max-width: 768px) {
+      body {
+        padding-left: 60px;
+        /* Ajuste para mobile */
+      }
+
+      .sidebar {
+        width: 60px;
+      }
+
+      .sidebar:hover {
+        width: 220px;
+      }
+
       .app-container {
         padding: 1rem;
         margin: 1rem auto;
@@ -861,18 +1037,25 @@
 </head>
 
 <body>
-  <div class="app-container">
-    <div class="back-to-visualization">
-      <a href="visualization.html" class="back-button-link">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M19 12H5"></path>
-          <path d="M12 19l-7-7 7-7"></path>
-        </svg>
-        Voltar
-      </a>
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <img src="https://i.ibb.co/G4Y8sHMk/Chat-GPT-Image-21-de-abr-de-2025-16-14-34-1.png" alt="RW Tips"
+        class="sidebar-logo">
+      <span class="sidebar-title">RW TIPS</span>
     </div>
+    <ul class="sidebar-menu">
+      <li><a href="visualization.html"><span class="icon">⚽</span><span class="label">Próximos Jogos</span></a></li>
+      <li><a href="live_v2.html"><span class="icon">🔴</span><span class="label">AO VIVO</span></a></li>
+      <li class="active"><a href="formularioApostas.html"><span class="icon">💰</span><span class="label">Registrar
+            Apostas</span></a></li>
+      <li><a href="players.html"><span class="icon">🎮</span><span class="label">Análise de Jogadores</span></a></li>
+      <li><a href="nba.html"><span class="icon">🏀</span><span class="label">NBA Stats</span></a></li>
+      <li><a href="#" id="sidebarRadar"><span class="icon">🎯</span><span class="label">Radar</span></a></li>
+      <li><a href="over.html"><span class="icon">📍</span><span class="label">Over Analysis</span></a></li>
+    </ul>
+  </nav>
 
+  <div class="app-container">
     <div class="container">
       <header class="header">
         <h1 class="app-title">Controle de Apostas</h1>
@@ -896,18 +1079,55 @@
 
       <!-- Dashboard Tab -->
       <div class="tab-content active" id="dashboard-tab">
+        <div class="form-group">
+          <label for="valor-unidade-input">Valor da Unidade</label>
+          <div class="banca-inicial-container">
+            <input type="number" id="valor-unidade-input" placeholder="Valor da unidade (ex: 10.00)" min="0.01"
+              step="0.01">
+            <button id="salvar-unidade" class="submit-button">Salvar Unidade</button>
+          </div>
+          <div class="unidade-info">
+            <span>Valor da Unidade Atual: </span>
+            <span id="valor-unidade">R$ 0,00</span>
+          </div>
+        </div>
+
         <div class="summary">
           <div class="summary-item gain">
             <div class="label">Ganho Total</div>
             <div class="value" id="ganho-total">R$ 0,00</div>
+            <div class="sub-value">Unidades: <span id="unidades-ganhas">0</span></div>
           </div>
           <div class="summary-item loss">
             <div class="label">Perda Total</div>
-            <div class="value" id="perda-total">R$F 0,00</div>
+            <div class="value" id="perda-total">R$ 0,00</div>
+            <div class="sub-value">Unidades: <span id="unidades-perdidas">0</span></div>
           </div>
           <div class="summary-item balance">
             <div class="label">Saldo Total</div>
             <div class="value" id="saldo-total">R$ 0,00</div>
+            <div class="sub-value">Unidades: <span id="unidades-saldo">0</span></div>
+          </div>
+          <div class="summary-item">
+            <div class="label">Estatísticas</div>
+            <div class="stats-container">
+              <div class="stat-item">
+                <span class="stat-label">Greens:</span>
+                <span id="total-greens" class="stat-value">0</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Reds:</span>
+                <span id="total-reds" class="stat-value">0</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Reembolsos:</span>
+                <span id="total-reembolsos" class="stat-value">0</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Aguardando:</span>
+                <span id="total-aguardando" class="stat-value">0</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -989,6 +1209,7 @@
           <div class="form-group">
             <label for="resultado">Resultado</label>
             <select id="resultado" required>
+              <option value="aguardando" selected>Aguardando</option>
               <option value="green">Green</option>
               <option value="red">Red</option>
               <option value="meio-green">Meio Green</option>
@@ -1068,6 +1289,65 @@
     let currentUserKey = null;
     let chart = null;
     let todasApostas = [];
+    let valorUnidade = 0;
+
+    // Carregar valor da unidade do localStorage ao iniciar
+    document.addEventListener('DOMContentLoaded', function () {
+      // Carregar valor da unidade salvo
+      const savedUnidade = localStorage.getItem('valorUnidade_' + currentUser);
+      if (savedUnidade) {
+        valorUnidade = parseFloat(savedUnidade);
+        document.getElementById('valor-unidade-input').value = valorUnidade;
+        document.getElementById('valor-unidade').textContent = formatarMoeda(valorUnidade);
+      }
+
+      // Configurar evento para salvar valor da unidade
+      document.getElementById('salvar-unidade').addEventListener('click', function () {
+        const valor = parseFloat(document.getElementById('valor-unidade-input').value);
+        if (isNaN(valor) || valor <= 0) {
+          alert('Por favor, insira um valor válido para a unidade (maior que zero).');
+          return;
+        }
+
+        valorUnidade = valor;
+        localStorage.setItem('valorUnidade_' + currentUser, valorUnidade);
+        document.getElementById('valor-unidade').textContent = formatarMoeda(valorUnidade);
+        atualizarInterfaceApostas();
+        alert('Valor da unidade salvo com sucesso!');
+      });
+    });
+
+    // Função para atualizar o resultado de uma aposta
+    window.atualizarResultado = async function (apostaId, novoResultado) {
+      if (!confirm(`Tem certeza que deseja alterar o resultado para ${novoResultado}?`)) return;
+
+      try {
+        const apostaRef = doc(db, "apostas", apostaId);
+        await setDoc(apostaRef, { resultado: novoResultado }, { merge: true });
+        alert("Resultado atualizado com sucesso!");
+        await carregarApostas();
+      } catch (error) {
+        console.error("Erro ao atualizar resultado:", error);
+        alert("Erro ao atualizar resultado: " + error.message);
+      }
+    }
+
+    // Função de logout
+    window.logout = function () {
+      sessionStorage.removeItem('loggedIn');
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('currentUserKey');
+      localStorage.removeItem('valorUnidade_' + currentUser);
+      window.location.replace('index.html');
+    };
+
+    const currentPath = window.location.pathname.split('/').pop() || 'bets.html';
+    const menuItems = document.querySelectorAll('.sidebar-menu a');
+    menuItems.forEach(item => {
+      if (item.getAttribute('href') === currentPath) {
+        item.parentElement.classList.add('active');
+      }
+    });
 
     // Definindo função removerAposta no escopo global
     window.removerAposta = async function (id) {
@@ -1117,6 +1397,8 @@
           return -stake / 2;
         case 'reembolso':
           return 0;
+        case 'aguardando':
+          return 0;
         default:
           return 0;
       }
@@ -1155,17 +1437,18 @@
 
     // Funções de autenticação
     function checkUserLogin() {
-      currentUser = localStorage.getItem('currentUser');
-      currentUserKey = localStorage.getItem('currentUserKey');
-
-      if (!currentUser || !currentUserKey) {
+      if (!sessionStorage.getItem('loggedIn')) {
         window.location.replace('index.html');
         return false;
       }
 
       // Atualizar interface do usuário
-      document.getElementById('user-email').textContent = currentUser;
-      document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
+      currentUser = localStorage.getItem('currentUser');
+      currentUserKey = localStorage.getItem('currentUserKey') || 'user';
+      if (currentUser) {
+        document.getElementById('user-email').textContent = currentUser;
+        document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
+      }
 
       // Verificar se é admin ou dono dos mercados para mostrar/ocultar o formulário de adicionar mercados
       const marketForm = document.getElementById("market-form");
@@ -1295,11 +1578,26 @@
       if (todasApostas.length === 0) {
         apostasLista.innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Nenhuma aposta registrada</div>';
         document.getElementById("grafico").innerHTML = '<div style="text-align: center; padding: 15px; color: #888;">Sem dados para exibir</div>';
+        document.getElementById("ganho-total").textContent = formatarMoeda(0);
+        document.getElementById("perda-total").textContent = formatarMoeda(0);
+        document.getElementById("saldo-total").textContent = formatarMoeda(0);
+        document.getElementById("total-greens").textContent = "0";
+        document.getElementById("total-reds").textContent = "0";
+        document.getElementById("total-reembolsos").textContent = "0";
+        document.getElementById("total-aguardando").textContent = "0";
+        document.getElementById("unidades-ganhas").textContent = "0";
+        document.getElementById("unidades-perdidas").textContent = "0";
         return;
       }
 
       let ganhoTotal = 0;
       let perdaTotal = 0;
+      let countGreen = 0;
+      let countRed = 0;
+      let countReembolso = 0;
+      let countAguardando = 0;
+      let countMeioGreen = 0;
+      let countMeioRed = 0;
 
       apostasLista.innerHTML = "";
 
@@ -1315,18 +1613,30 @@
           case "green":
             valorFinal = stake * (odds - 1);
             ganhoTotal += valorFinal;
+            countGreen++;
             break;
           case "red":
             valorFinal = -stake;
             perdaTotal += stake;
+            countRed++;
             break;
           case "meio-green":
             valorFinal = (stake / 2) * (odds - 1);
             ganhoTotal += valorFinal;
+            countMeioGreen++;
             break;
           case "meio-red":
             valorFinal = -stake / 2;
             perdaTotal += stake / 2;
+            countMeioRed++;
+            break;
+          case "reembolso":
+            valorFinal = 0;
+            countReembolso++;
+            break;
+          case "aguardando":
+            valorFinal = 0;
+            countAguardando++;
             break;
         }
 
@@ -1345,12 +1655,27 @@
           }
         }
 
+        // Adicionar botões de edição para apostas com status "aguardando"
+        let botoesEdicao = '';
+        if (aposta.resultado === 'aguardando') {
+          botoesEdicao = `
+            <div class="botoes-edicao">
+              <button class="botao-green" onclick="atualizarResultado('${aposta.id}', 'green')">Green</button>
+              <button class="botao-meio-green" onclick="atualizarResultado('${aposta.id}', 'meio-green')">Meio Green</button>
+              <button class="botao-red" onclick="atualizarResultado('${aposta.id}', 'red')">Red</button>
+              <button class="botao-meio-red" onclick="atualizarResultado('${aposta.id}', 'meio-red')">Meio Red</button>
+              <button class="botao-reembolso" onclick="atualizarResultado('${aposta.id}', 'reembolso')">Reembolso</button>
+            </div>
+          `;
+        }
+
         apostaItem.innerHTML = `
           <div class="aposta-info">
             <strong>${aposta.liga}</strong> · <span class="${statusClass}">${statusText}${valorFinalText}</span><br>
             ${aposta.jogador1} vs ${aposta.jogador2}<br>
             <small>${aposta.mercado} · Stake: ${formatarMoeda(stake)} · Odds: ${odds}</small><br>
             <small>${dataFormatada}</small>
+            ${botoesEdicao}
           </div>
           <div class="aposta-actions">
             <button onclick="removerAposta('${aposta.id}')">Remover</button>
@@ -1365,6 +1690,19 @@
       document.getElementById("perda-total").textContent = formatarMoeda(perdaTotal);
       document.getElementById("saldo-total").textContent = formatarMoeda(ganhoTotal - perdaTotal);
 
+      // Atualizar contadores
+      document.getElementById("total-greens").textContent = countGreen + countMeioGreen;
+      document.getElementById("total-reds").textContent = countRed + countMeioRed;
+      document.getElementById("total-reembolsos").textContent = countReembolso;
+      document.getElementById("total-aguardando").textContent = countAguardando;
+
+      // Calcular e atualizar unidades
+      const unidadesGanhas = valorUnidade > 0 ? (ganhoTotal / valorUnidade).toFixed(2) : "0.00";
+      const unidadesPerdidas = valorUnidade > 0 ? (perdaTotal / valorUnidade).toFixed(2) : "0.00";
+      const unidadesSaldo = valorUnidade > 0 ? ((ganhoTotal - perdaTotal) / valorUnidade).toFixed(2) : "0.00";
+      document.getElementById("unidades-ganhas").textContent = unidadesGanhas;
+      document.getElementById("unidades-perdidas").textContent = unidadesPerdidas;
+      document.getElementById("unidades-saldo").textContent = unidadesSaldo;
       // Criar gráfico inicial com 7 dias
       criarGrafico(7);
     }
@@ -1409,7 +1747,8 @@
         'red': 'Red',
         'meio-green': '½ Green',
         'meio-red': '½ Red',
-        'reembolso': 'Reembolso'
+        'reembolso': 'Reembolso',
+        'aguardando': 'Aguardando'
       };
       return statusMap[resultado] || resultado;
     }
@@ -1420,10 +1759,38 @@
         'red': 'status-red',
         'meio-green': 'status-green',
         'meio-red': 'status-red',
-        'reembolso': 'status-green'
+        'reembolso': 'status-green',
+        'aguardando': 'status-blue'
       };
       return statusMap[resultado] || 'status-green';
     }
+
+    // Função para carregar o valor da unidade
+    function carregarValorUnidade() {
+      const savedUnidade = localStorage.getItem('valorUnidade_' + currentUser);
+      if (savedUnidade) {
+        valorUnidade = parseFloat(savedUnidade);
+        document.getElementById('valor-unidade-input').value = valorUnidade;
+        document.getElementById('valor-unidade').textContent = formatarMoeda(valorUnidade);
+      } else {
+        valorUnidade = 0;
+        document.getElementById('valor-unidade').textContent = formatarMoeda(0);
+      }
+      return valorUnidade;
+    }
+
+    // Função para atualizar resultado de uma aposta
+    window.atualizarResultado = async function (id, novoResultado) {
+      try {
+        const apostaRef = doc(db, "apostas", id);
+        await setDoc(apostaRef, { resultado: novoResultado }, { merge: true });
+        console.log("Resultado atualizado com sucesso!");
+        await carregarApostas();
+      } catch (error) {
+        console.error("Erro ao atualizar resultado:", error);
+        alert("Erro ao atualizar resultado: " + error.message);
+      }
+    };
 
     async function updateChartPeriod(days) {
       // Update period buttons
@@ -1622,20 +1989,20 @@
                 stepSize: 5, // Define o intervalo de 5 em 5 reais
               },
             },
-          },
-        },
-        x: {
-          grid: {
-            display: false
-          },
-          ticks: {
-            color: "#e0e0e0",
-            padding: 8,
-            font: {
-              size: 12
+            x: {
+              grid: {
+                display: false
+              },
+              ticks: {
+                color: "#e0e0e0",
+                padding: 8,
+                font: {
+                  size: 12
+                },
+                maxRotation: 45,
+                minRotation: 45
+              },
             },
-            maxRotation: 45,
-            minRotation: 45
           },
         },
       });
@@ -1731,24 +2098,11 @@
     // Event Listeners
     document.addEventListener("DOMContentLoaded", async () => {
       try {
-        // Verificar se os dados do usuário existem no localStorage
-        currentUser = localStorage.getItem('currentUser');
-        currentUserKey = localStorage.getItem('currentUserKey');
+        // Verificar login
+        if (!checkUserLogin()) return;
 
-        console.log("Usuário logado:", currentUser);
-        console.log("Chave do usuário:", currentUserKey);
-
-        if (!currentUser || !currentUserKey) {
-          console.log("Usuário não logado. Redirecionando para index.html...");
-          window.location.replace('index.html');
-          return;
-        }
-
-        console.log("Usuário logado com sucesso. Carregando página...");
-
-        // Atualizar interface do usuário
-        document.getElementById('user-email').textContent = currentUser;
-        document.getElementById('user-avatar').textContent = currentUser.charAt(0).toUpperCase();
+        // Carregar valor da unidade
+        carregarValorUnidade();
 
         // Inicializar a página
         setupTabs();
@@ -1937,6 +2291,26 @@
         }
       }
     });
+  </script>
+  <script>
+    // Lógica do botão Radar na sidebar (mesma da visualization.html)
+    (function(){
+      const radarSidebarLink = document.getElementById('sidebarRadar');
+      if (radarSidebarLink) {
+        radarSidebarLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          const authToken = localStorage.getItem('authToken');
+          const tokenExpiry = localStorage.getItem('tokenExpiry');
+          if (authToken && tokenExpiry) {
+            const radarUrl = `https://rwtips.netlify.app/?auth=${encodeURIComponent(authToken)}&expiry=${tokenExpiry}`;
+            window.open(radarUrl, '_blank');
+          } else {
+            alert('Erro de autenticação. Por favor, faça login novamente.');
+            window.location.href = 'index.html';
+          }
+        });
+      }
+    })();
   </script>
 </body>
 
