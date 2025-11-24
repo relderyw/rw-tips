@@ -1539,9 +1539,9 @@
 
         // Atualizar lista de mercados
         const mercadosLista = document.getElementById("mercados-lista");
-        mercadosLista.innerHTML = mercadosUsuario.length === 0
+        mercadosLista.innerHTML = mercados.length === 0
           ? '<div class="history-empty">Nenhum mercado cadastrado</div>'
-          : mercadosUsuario.map(mercado => `
+          : mercados.map(mercado => `
           <div class="market-item">
             <span>${mercado.nome}</span>
             <button class="remove-button" data-id="${mercado.id}">
